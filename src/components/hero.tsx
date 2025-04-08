@@ -1,3 +1,5 @@
+import Link from "next/link"
+
 export default function Hero() {
     return (
         <section className="pt-36 pb-28 px-6 relative overflow-hidden">
@@ -10,9 +12,9 @@ export default function Hero() {
             코드를 공유하고, 지식을 나누며, 함께 미래를 만들어갑니다.
           </p>
           <div className="flex flex-wrap gap-5">
-            <button className="bg-purple-600 px-8 py-3.5 rounded-md font-medium hover:bg-purple-900 transition-all duration-300">
+            <Link href="/signin" className="bg-purple-600 px-8 py-3.5 rounded-md font-medium hover:bg-purple-900 transition-all duration-300">
               가입하기
-            </button>
+            </Link>
             <button className="bg-transparent border border-gray-700 px-8 py-3.5 rounded-md font-medium hover:bg-white/5 transition-colors">
               더 알아보기
             </button>
