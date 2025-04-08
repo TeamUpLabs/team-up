@@ -2,6 +2,7 @@ import Header from "@/components/header"
 import Hero from "@/components/hero"
 import Stats from "@/components/stats"
 import Events from "@/components/events"
+import Footer from "@/components/footer"
 
 export default function Home() {
   return (
@@ -17,6 +18,9 @@ export default function Home() {
 
       {/* Events */}
       <Events />
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }
