@@ -32,8 +32,23 @@ export default function SignIn() {
                     
                     <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                            <input id="remember" type="checkbox" className="h-4 w-4 rounded bg-gray-700 border-gray-600 text-purple-600 focus:ring-purple-500" />
-                            <label htmlFor="remember" className="ml-2 block text-sm text-gray-300">로그인 상태 유지</label>
+                            <div className="relative inline-flex items-center">
+                                <input 
+                                    id="remember" 
+                                    type="checkbox" 
+                                    className="appearance-none h-5 w-5 border border-gray-600 rounded bg-gray-700 checked:bg-purple-600 checked:border-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 focus:ring-offset-gray-800 transition-colors duration-200 cursor-pointer peer"
+                                />
+                                <svg 
+                                    className="absolute w-3 h-3 text-white left-1 top-1 opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity duration-200"
+                                    fill="none" 
+                                    viewBox="0 0 24 24" 
+                                    stroke="currentColor" 
+                                    strokeWidth="3"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <label htmlFor="remember" className="ml-2 block text-sm text-gray-300 cursor-pointer">로그인 상태 유지</label>
+                            </div>
                         </div>
                         <a href="#" className="text-sm text-purple-400 hover:text-purple-300">비밀번호를 잊으셨나요?</a>
                     </div>
@@ -78,7 +93,7 @@ export default function SignIn() {
                     </div>
                 </div>
                 
-                <div className="mt-6 text-center">
+                <div className="mt-6 text-center text-sm">
                     <p className="text-gray-400">
                         계정이 없으신가요? 
                         <Link href="#" className="text-purple-400 hover:text-purple-300 ml-1">회원가입</Link>
