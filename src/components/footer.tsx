@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import Logo from "@/components/logo";
 
 export default function Footer() {
     const [openSection, setOpenSection] = useState<string | null>(null);
@@ -19,11 +20,7 @@ export default function Footer() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-8 md:mb-12">
             <div className="col-span-1 xs:col-span-2 md:col-span-1 lg:col-span-2 self-center text-center md:text-left ">
-              <div className="font-mono text-xl mb-4">
-                <span className="text-green-400">&lt;</span>
-                <span className="text-purple-400">TeamUp</span>
-                <span className="text-green-400">/&gt;</span>
-              </div>
+              <Logo className="mb-4" />
               <p className="text-gray-400 text-sm mb-4">
                 개발자들을 위한 신뢰 기반 협업 플랫폼.<br />
                 함께 만들어가는 더 나은 개발 문화.
