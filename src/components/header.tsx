@@ -12,10 +12,10 @@ export default function Header() {
             </Link>
           </div>
           <nav className="hidden md:flex space-x-10 text-sm font-medium">
-            <a href="#" className="hover:text-purple-400 transition-colors duration-200">플랫폼</a>
-            <a href="#" className="hover:text-purple-400 transition-colors duration-200">커뮤니티</a>
-            <a href="#" className="hover:text-purple-400 transition-colors duration-200">멘토링</a>
-            <a href="#" className="hover:text-purple-400 transition-colors duration-200">이벤트</a>
+            <Link href="/platform" className="hover:text-purple-400 transition-colors duration-200">플랫폼</Link>
+            <Link href="#" className="hover:text-purple-400 transition-colors duration-200">커뮤니티</Link>
+            <Link href="#" className="hover:text-purple-400 transition-colors duration-200">멘토링</Link>
+            <Link href="#" className="hover:text-purple-400 transition-colors duration-200">이벤트</Link>
           </nav>
           <Link href="/signin" className="bg-purple-600 hover:bg-purple-700 px-5 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-md shadow-purple-900/30">
             시작하기
