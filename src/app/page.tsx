@@ -1,6 +1,7 @@
 import Header from "@/components/header"
 import Hero from "@/components/hero"
 import Stats from "@/components/stats"
+import Events from "@/components/events"
 
 export default function Home() {
   return (
@@ -13,6 +14,9 @@ export default function Home() {
 
       {/* Stats */}
       <Stats />
+
+      {/* Events */}
+      <Events />
     </div>
   )
 }
