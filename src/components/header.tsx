@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export default function Header() {
     return (
-        <header className="w-full backdrop-blur-md bg-(--color-background)/50 z-50">
+        <header className="fixed w-full backdrop-blur-md bg-(--color-background)/50 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="font-mono text-xl">
             <Link href="/">
