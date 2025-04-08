@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function Stats() {
     const [counts, setCounts] = useState({
@@ -10,12 +10,12 @@ export default function Stats() {
         partners: 0
     });
     
-    const targets = {
+    const targets = useRef({
         developers: 5000,
         projects: 300,
         mentors: 120,
         partners: 50
-    };
+    });
     
     useEffect(() => {
         const duration = 3000; // Animation duration in milliseconds
@@ -36,10 +36,10 @@ export default function Stats() {
             const easedProgress = easeOutQuart(linearProgress);
             
             setCounts({
-                developers: Math.floor(easedProgress * targets.developers),
-                projects: Math.floor(easedProgress * targets.projects),
-                mentors: Math.floor(easedProgress * targets.mentors),
-                partners: Math.floor(easedProgress * targets.partners)
+                developers: Math.floor(easedProgress * targets.current.developers),
+                projects: Math.floor(easedProgress * targets.current.projects),
+                mentors: Math.floor(easedProgress * targets.current.mentors),
+                partners: Math.floor(easedProgress * targets.current.partners)
             });
             
             if (currentStep >= steps) {
@@ -55,19 +55,19 @@ export default function Stats() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-purple-400 mb-2">{counts.developers >= targets.developers ? `${counts.developers/1000}K+` : counts.developers}</p>
+              <p className="text-4xl md:text-5xl font-bold text-purple-400 mb-2">{counts.developers >= targets.current.developers ? `${counts.developers/1000}K+` : counts.developers}</p>
               <p className="text-gray-400 text-sm uppercase tracking-wider">개발자</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-green-400 mb-2">{counts.projects >= targets.projects ? `${counts.projects}+` : counts.projects}</p>
+              <p className="text-4xl md:text-5xl font-bold text-green-400 mb-2">{counts.projects >= targets.current.projects ? `${counts.projects}+` : counts.projects}</p>
               <p className="text-gray-400 text-sm uppercase tracking-wider">프로젝트</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-purple-400 mb-2">{counts.mentors >= targets.mentors ? `${counts.mentors}+` : counts.mentors}</p>
+              <p className="text-4xl md:text-5xl font-bold text-purple-400 mb-2">{counts.mentors >= targets.current.mentors ? `${counts.mentors}+` : counts.mentors}</p>
               <p className="text-gray-400 text-sm uppercase tracking-wider">멘토</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-green-400 mb-2">{counts.partners >= targets.partners ? `${counts.partners}+` : counts.partners}</p>
+              <p className="text-4xl md:text-5xl font-bold text-green-400 mb-2">{counts.partners >= targets.current.partners ? `${counts.partners}+` : counts.partners}</p>
               <p className="text-gray-400 text-sm uppercase tracking-wider">기업 파트너</p>
             </div>
           </div>
