@@ -7,7 +7,6 @@ export interface Task {
   assignee?: string;
   dueDate?: string;
   tags: string[];
-  progress: number;
   subtasks: {
     title: string;
     completed: boolean;

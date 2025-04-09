@@ -8,7 +8,6 @@
     "assignee": "김철수",
     "dueDate": "2025-04-01",
     "tags": ["기획", "문서작성", "중요"],
-    "progress": 65,
     "subtasks": [
       {
         "title": "요구사항 분석",
@@ -42,7 +41,6 @@
     "assignee": "박지은",
     "dueDate": "2025-04-15",
     "tags": ["디자인", "UI/UX"],
-    "progress": 0,
     "subtasks": [
       {
         "title": "컬러 팔레트 정의",
@@ -66,7 +64,6 @@
     "assignee": "이민호",
     "dueDate": "2025-04-15",
     "tags": ["백엔드", "API", "개발"],
-    "progress": 100,
     "subtasks": [
       {
         "title": "API 설계",
@@ -100,7 +97,6 @@
     "assignee": "최지훈",
     "dueDate": "2025-05-01",
     "tags": ["프론트엔드", "개발"],
-    "progress": 50,
     "subtasks": [
       {
         "title": "메인 페이지 구현",
@@ -124,7 +120,6 @@
     "assignee": "이수민",
     "dueDate": "2025-05-15",
     "tags": ["테스트", "QA"],
-    "progress": 0,
     "subtasks": [
       {
         "title": "단위 테스트 작성",
@@ -148,7 +143,6 @@
     "assignee": "김철수",
     "dueDate": "2025-05-20",
     "tags": ["배포", "서버"],
-    "progress": 0,
     "subtasks": [
       {
         "title": "서버 환경 설정",
