@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "베타 버전 출시",
+    "description": "핵심 기능 구현 및 초기 사용자 테스트",
+    "startDate": "2024-01-01",
+    "endDate": "2024-02-29",
+    "progress": 75,
+    "status": "in-progress",
+    "assignee": "김철수"
+  },
+  {
+    "id": 2,
+    "title": "정식 출시",
+    "description": "모든 기능 완성 및 버그 수정 완료",
+    "startDate": "2024-03-01",
+    "endDate": "2024-04-30",
+    "progress": 50,
+    "status": "in-progress",
+    "assignee": "이영희"
+  },
+  {
+    "id": 3,
+    "title": "사용자 피드백 반영",
+    "description": "사용자 피드백을 바탕으로 기능 개선 및 추가",
+    "startDate": "2024-05-01",
+    "endDate": "2024-06-30",
+    "progress": 0,
+    "status": "not-started",
+    "assignee": "박민수"
+  },
+  {
+    "id": 4,
+    "title": "마케팅 캠페인 시작",
+    "description": "소셜 미디어 및 이메일 캠페인 시작",
+    "startDate": "2024-07-01",
+    "endDate": "2024-08-31",
+    "progress": 0,
+    "status": "not-started",
+    "assignee": "최지은"
+  }
+]
