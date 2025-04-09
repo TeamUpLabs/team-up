@@ -8,6 +8,7 @@ import Sidebar from "@/components/platform/sidebar";
 import { useState, use } from "react";
 import Link from "next/link";
 import { Project } from "@/types/Project";
+import { usePathname } from "next/navigation";
 
 export default function ProjectLayout({ 
   children,
@@ -17,6 +18,7 @@ export default function ProjectLayout({
   params: Promise<{ projectId: string }>;
 }) {
   const { projectId } = use(params);
+  const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const projects: Project[] = ProjectData.slice();
   const project = projects.find((project) => project.id === projectId);
@@ -26,11 +28,11 @@ export default function ProjectLayout({
   }
 
   const projectNavItems = [
-    { icon: faHouse, label: "대시보드", href: `/platform/${projectId}` },
-    { icon: faUsers, label: "팀원", href: `/platform/${projectId}/members` },
-    { icon: faMessage, label: "채팅", href: `/platform/${projectId}/chat` },
-    { icon: faTasks, label: "작업", href: `/platform/${projectId}/tasks` },
-    { icon: faCalendar, label: "일정", href: `/platform/${projectId}/calendar` },
+    { icon: faHouse, label: "대시보드", href: `/platform/${projectId}`, isActive: pathname === `/platform/${projectId}` },
+    { icon: faUsers, label: "팀원", href: `/platform/${projectId}/members`, isActive: pathname === `/platform/${projectId}/members` },
+    { icon: faMessage, label: "채팅", href: `/platform/${projectId}/chat`, isActive: pathname === `/platform/${projectId}/chat` },
+    { icon: faTasks, label: "작업", href: `/platform/${projectId}/tasks`, isActive: pathname === `/platform/${projectId}/tasks` },
+    { icon: faCalendar, label: "일정", href: `/platform/${projectId}/calendar`, isActive: pathname === `/platform/${projectId}/calendar` },
   ];
 
   return (

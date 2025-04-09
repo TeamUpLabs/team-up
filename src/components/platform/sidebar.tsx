@@ -9,6 +9,7 @@ interface NavItem {
   icon: IconDefinition;
   label: string;
   href: string;
+  isActive?: boolean;
 }
 
 interface Channel {
@@ -48,7 +49,9 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
                 <div key={index}>
                   <button 
                     onClick={() => setIsChatOpen(!isChatOpen)}
-                    className="w-full flex items-center justify-between text-gray-300 hover:text-white"
+                    className={`w-full flex items-center justify-between ${
+                      item.isActive ? 'text-white font-semibold' : 'text-gray-300'
+                    } hover:text-white`}
                   >
                     <div className="flex items-center">
                       <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
@@ -76,7 +79,13 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
               );
             }
             return (
-              <Link key={index} href={item.href} className="flex items-center text-gray-300 hover:text-white">
+              <Link 
+                key={index} 
+                href={item.href} 
+                className={`flex items-center ${
+                  item.isActive ? 'text-white font-semibold' : 'text-gray-300'
+                } hover:text-white`}
+              >
                 <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
                 {item.label}
               </Link>
