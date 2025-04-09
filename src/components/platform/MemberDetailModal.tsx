@@ -37,7 +37,7 @@ export default function MemberDetailModal({ member, cardPosition, onClose }: Mem
             <div className="flex-shrink-0">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 
                           flex items-center justify-center text-xl font-bold text-white">
-                {member.abbreviation}
+                {member.name.charAt(0)}
               </div>
             </div>
             <div>

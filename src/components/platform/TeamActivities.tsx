@@ -32,7 +32,7 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
             <div key={member.id} className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className={`w-10 h-10 ${getColorForMember(member.id)} rounded-full flex items-center justify-center text-white font-bold`}>
-                  {member.abbreviation}
+                  {member.name.charAt(0)}
                 </div>
                 <div className="ml-3">
                   <p className="text-white">{member.name}</p>

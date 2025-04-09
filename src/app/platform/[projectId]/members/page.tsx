@@ -106,14 +106,11 @@ export default function MembersPage() {
                      border border-gray-700 hover:border-purple-500 cursor-pointer"
             onClick={(e) => handleCardClick(member, e)}
           >
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-start">
               <div>
                 <h2 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
                   {member.name}
                 </h2>
-                <span className="inline-block px-2 py-1 text-xs rounded-full bg-gray-700 text-gray-300 mt-2">
-                  {member.abbreviation}
-                </span>
               </div>
               <div className="flex flex-col items-end">
                 <div className="flex items-center bg-gray-700/50 px-3 py-1 rounded-full">
