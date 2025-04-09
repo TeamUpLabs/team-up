@@ -40,7 +40,7 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
     }`}>
       <div className="p-6">
         <Link href={titleHref}>
-          <h1 className="text-xl font-bold text-white mb-8">{title}</h1>
+          <h1 className="text-xl font-bold text-white mb-8 text-center">{title}</h1>
         </Link>
         <nav className="space-y-4">
           {navItems.map((item, index) => {
