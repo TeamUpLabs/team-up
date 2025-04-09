@@ -1,14 +1,6 @@
 import Link from "next/link";
-
-interface TeamMember {
-  id: number;
-  name: string;
-  abbreviation: string;
-  role: string;
-  currentTask: string;
-  status: string;
-  statusTime: string;
-}
+import TeamMembersData from "../../../public/json/members.json"
+import { TeamMember } from "@/types/member";
 
 export default function TeamActivities({ projectId }: { projectId: string }) {
   const bgColors = [
@@ -21,53 +13,8 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
     return bgColors[Math.floor(Math.random() * bgColors.length)];
   };
 
-  const teamMembers: TeamMember[] = [
-    {
-      id: 1,
-      name: "김철수",
-      abbreviation: "KS",
-      role: "프론트엔드 개발자",
-      currentTask: "UI 디자인 개선",
-      status: "활성",
-      statusTime: "2시간 접속중",
-    },
-    {
-      id: 2,
-      name: "이영희",
-      abbreviation: "YH",
-      role: "백엔드 개발자",
-      currentTask: "API 개발",
-      status: "자리비움",
-      statusTime: "15분 전",
-    },
-    {
-      id: 3,
-      name: "박민준",
-      abbreviation: "MJ",
-      role: "디자이너",
-      currentTask: "로고 디자인",
-      status: "오프라인",
-      statusTime: "3시간 전",
-    },
-    {
-      id: 4,
-      name: "최지우",
-      abbreviation: "JW",
-      role: "QA 엔지니어",
-      currentTask: "테스트 케이스 작성",
-      status: "활성",
-      statusTime: "1시간 접속중",
-    },
-    {
-      id: 5,
-      name: "홍길동",
-      abbreviation: "GD",
-      role: "프로젝트 매니저",
-      currentTask: "일정 조율",
-      status: "자리비움",
-      statusTime: "30분 전",
-    },
-  ]
+  const teamMembers: TeamMember[] = TeamMembersData.slice(0, 3);
+
   return (
     <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
