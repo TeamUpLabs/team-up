@@ -6,6 +6,7 @@ import { faHouse, faMessage, faTasks, faCalendar, faUsers } from "@fortawesome/f
 import { faBell } from "@fortawesome/free-regular-svg-icons";
 import Sidebar from "@/components/platform/sidebar";
 import { useState, use } from "react";
+import Link from "next/link";
 
 interface Project {
   id: string;
@@ -76,8 +77,11 @@ export default function ProjectLayout({
                 </span>
               </div>
             </div>
-            <div className="flex items-center p-2 border border-gray-700 rounded ml-2">
-              <FontAwesomeIcon icon={faBell} className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="flex items-center gap-3">
+              <FontAwesomeIcon icon={faBell} className="w-4 h-4 sm:w-5 sm:h-5 p-2 border border-gray-700 rounded" />
+              <Link href={`/platform`} className="p-2 text-sm font-bold bg-red-500 rounded">
+                <span>나가기</span>
+              </Link>
             </div>
           </div>
         </header>
