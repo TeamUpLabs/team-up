@@ -2,41 +2,76 @@
   {
     "id": 1,
     "name": "김철수",
+    "email": "chulsoo.kim@teamup.com",
     "role": "프론트엔드 개발자",
+    "department": "개발팀",
     "currentTask": "UI 디자인 개선",
     "status": "활성",
-    "statusTime": "2시간 접속중"
+    "statusTime": "2시간 접속중",
+    "startDate": "2022-03-15",
+    "skills": ["React", "TypeScript", "CSS"],
+    "projects": ["웹 리뉴얼", "모바일 앱"],
+    "profileImage": "/images/profiles/kim.jpg",
+    "contactNumber": "010-1234-5678"
   },
   {
     "id": 2,
     "name": "이영희",
+    "email": "younghee.lee@teamup.com",
     "role": "백엔드 개발자",
+    "department": "개발팀",
     "currentTask": "API 개발",
     "status": "자리비움",
-    "statusTime": "15분 전"
+    "statusTime": "15분 전",
+    "startDate": "2021-08-20",
+    "skills": ["Node.js", "Python", "MongoDB"],
+    "projects": ["서버 마이그레이션", "API 구축"],
+    "profileImage": "/images/profiles/lee.jpg",
+    "contactNumber": "010-2345-6789"
   },
   {
     "id": 3,
     "name": "박민준",
+    "email": "minjun.park@teamup.com",
     "role": "디자이너",
+    "department": "디자인팀",
     "currentTask": "로고 디자인",
     "status": "오프라인",
-    "statusTime": "3시간 전"
+    "statusTime": "3시간 전",
+    "startDate": "2020-11-10",
+    "skills": ["Photoshop", "Illustrator", "Figma"],
+    "projects": ["브랜드 리뉴얼", "UI 디자인"],
+    "profileImage": "/images/profiles/park.jpg",
+    "contactNumber": "010-3456-7890"
   },
   {
     "id": 4,
     "name": "최지우",
+    "email": "jiwoo.choi@teamup.com",
     "role": "QA 엔지니어",
+    "department": "품질관리팀",
     "currentTask": "테스트 케이스 작성",
     "status": "활성",
-    "statusTime": "1시간 접속중"
+    "statusTime": "1시간 접속중",
+    "startDate": "2019-05-25",
+    "skills": ["Selenium", "Postman", "JIRA"],
+    "projects": ["테스트 자동화", "버그 리포트"],
+    "profileImage": "/images/profiles/choi.jpg",
+    "contactNumber": "010-4567-8901"
   },
   {
     "id": 5,
     "name": "홍길동",
+    "email": "gildong.hong@teamup.com",
     "role": "프로젝트 매니저",
+    "department": "관리팀",
     "currentTask": "일정 조율",
     "status": "자리비움",
-    "statusTime": "30분 전"
+    "statusTime": "30분 전",
+    "startDate": "2018-02-14",
+    "skills": ["Agile", "Scrum", "Communication"],
+    "projects": ["프로젝트 관리", "팀 빌딩"],
+    "profileImage": "/images/profiles/hong.jpg",
+    "contactNumber": "010-5678-9012"
   }
 ]
