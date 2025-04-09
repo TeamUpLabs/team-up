@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
-
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  assignee: string;
-  dueDate: string;
-}
+import { Task } from '@/types/Task';
 
 export default function ProjectProgressCard() {
   const [tasks, setTasks] = useState<Task[]>([]);
