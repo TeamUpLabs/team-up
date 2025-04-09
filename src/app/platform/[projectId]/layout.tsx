@@ -79,7 +79,7 @@ export default function ProjectLayout({
           </div>
         </header>
 
-        <main className="pt-16 px-2 sm:px-4 md:px-6">
+        <main className="pt-16">
           {children}
         </main>
       </div>
