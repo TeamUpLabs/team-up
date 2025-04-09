@@ -5,14 +5,8 @@ import ProjectData from "../../public/json/projects.json";
 import { useState } from "react";
 import Sidebar from "@/components/platform/sidebar";
 import { faHouse, faFolder, faPeopleGroup, faGear } from "@fortawesome/free-solid-svg-icons";
+import { Project } from "@/types/Project";
 
-interface Project {
-  id: string;
-  title: string;
-  status: string;
-  description: string;
-  roles: string[];
-}
 
 export default function Platform() {
   const projects: Project[] = ProjectData.slice();

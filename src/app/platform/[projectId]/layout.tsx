@@ -7,14 +7,7 @@ import { faBell } from "@fortawesome/free-regular-svg-icons";
 import Sidebar from "@/components/platform/sidebar";
 import { useState, use } from "react";
 import Link from "next/link";
-
-interface Project {
-  id: string;
-  title: string;
-  status: string;
-  description: string;
-  roles: string[];
-}
+import { Project } from "@/types/Project";
 
 export default function ProjectLayout({ 
   children,
