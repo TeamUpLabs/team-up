@@ -7,11 +7,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { Task } from '@/types/Task';
 import TaskComponent from '@/components/platform/TaskComponent';
+import TaskModal from '@/components/task/TaskModal';
 import TaskData from "../../../../../public/json/tasks.json";
 
-
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>(TaskData.map(task => ({ ...task, id: String(task.id), status: task.status as "todo" | "in-progress" | "done" })));
+  const [tasks, setTasks] = useState<Task[]>(TaskData.map(task => ({ ...task, id: String(task.id), status: task.status as "todo" | "in-progress" | "done", priority: task.priority as "high" | "medium" | "low" })));
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getStatusBadgeColor = (status: Task['status']) => {
     switch (status) {
@@ -45,6 +47,11 @@ export default function TasksPage() {
     setTasks(tasks.map(task =>
       task.id === taskId ? { ...task, status: newStatus } : task
     ));
+  };
+
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task);
+    setIsModalOpen(true);
   };
 
   return (
@@ -94,12 +101,20 @@ export default function TasksPage() {
               </div>
               <div className="p-2">
                 {tasksList.map((task) => (
-                  <TaskComponent key={task.id} task={task} />
+                  <div key={task.id} onClick={() => handleTaskClick(task)}>
+                    <TaskComponent task={task} />
+                  </div>
                 ))}
               </div>
             </div>
           ))}
         </div>
+
+        <TaskModal
+          task={selectedTask}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </DndProvider>
   );
