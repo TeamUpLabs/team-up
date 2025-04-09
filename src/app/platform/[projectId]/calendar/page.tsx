@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isToday, isSameMonth } from 'date-fns';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { Task } from '@/types/Task';
 import TaskModal from '@/components/task/TaskModal';
 
@@ -44,13 +45,13 @@ export default function CalendarPage() {
             <h1 className="text-2xl font-bold text-gray-100">일정 관리</h1>
             <div className="flex items-center space-x-4">
               <button onClick={previousMonth} className="p-2 hover:bg-gray-700 rounded-lg transition-colors">
-                <ChevronLeftIcon className="w-5 h-5 text-gray-300" />
+                <FontAwesomeIcon icon={faChevronLeft} className="w-5 h-5 text-gray-300" />
               </button>
               <h2 className="text-xl font-semibold text-gray-100">
                 {format(currentDate, 'yyyy년 M월')}
               </h2>
               <button onClick={nextMonth} className="p-2 hover:bg-gray-700 rounded-lg transition-colors">
-                <ChevronRightIcon className="w-5 h-5 text-gray-300" />
+                <FontAwesomeIcon icon={faChevronRight} className="w-5 h-5 text-gray-300" />
               </button>
             </div>
           </div>

@@ -1,5 +1,8 @@
+import { Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
 import { Task } from '@/types/Task';
-import { XMarkIcon } from '@heroicons/react/24/solid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 interface TaskModalProps {
   task: Task | null;
@@ -8,13 +11,7 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
-  if (!isOpen || !task) return null;
-
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
+  if (!task) return null;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -26,41 +23,140 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   };
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={handleOverlayClick}
-    >
-      <div className="bg-gray-800 rounded-xl w-full max-w-lg mx-4">
-        <div className="flex items-center justify-between p-4 border-b border-gray-700">
-          <h3 className="text-xl font-semibold text-gray-100">Task Details</h3>
-          <button
-            onClick={onClose}
-            className="p-1 hover:bg-gray-700 rounded-lg transition-colors"
-          >
-            <XMarkIcon className="w-6 h-6 text-gray-400" />
-          </button>
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/50" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800/95 backdrop-blur-sm p-8 text-left align-middle shadow-xl transition-all border border-gray-700">
+                <div className="flex items-center justify-between pb-6 border-b border-gray-700">
+                  <div>
+                    <h3 className="text-2xl font-semibold text-gray-100">{task.title}</h3>
+                    <div className="flex gap-2 mt-2">
+                      {task.tags.map((tag, index) => (
+                        <span key={index} className="px-2 py-1 text-xs rounded-md bg-gray-700/50 text-gray-300">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    onClick={onClose}
+                    className="p-2 hover:bg-gray-700/50 rounded-lg transition-all duration-200 hover:rotate-90"
+                  >
+                    <FontAwesomeIcon icon={faXmark} className="w-5 h-5 text-gray-400" />
+                  </button>
+                </div>
+
+                <div className="mt-6 space-y-6">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-400 mb-2">상세 설명</h4>
+                    <p className="text-gray-200">{task.description}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1 bg-gray-700/10 p-4 rounded-lg">
+                      <h4 className="text-sm font-medium text-gray-400">상태</h4>
+                      <span className={`inline-block px-3 py-1 rounded-md text-sm font-medium ${getStatusColor(task.status)}`}>
+                        {task.status === 'todo' ? '예정' : task.status === 'in-progress' ? '진행중' : '완료'}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1 bg-gray-700/10 p-4 rounded-lg">
+                      <h4 className="text-sm font-medium text-gray-400">우선순위</h4>
+                      <span className={`inline-block px-3 py-1 rounded-md text-sm font-medium
+                        ${task.priority === 'high' ? 'bg-red-500/20 text-red-500' : 
+                          task.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-500' : 
+                          'bg-blue-500/20 text-blue-500'}`}>
+                        {task.priority === 'high' ? '높음' : task.priority === 'medium' ? '중간' : '낮음'}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1 bg-gray-700/10 p-4 rounded-lg">
+                      <h4 className="text-sm font-medium text-gray-400">담당자</h4>
+                      <p className="text-gray-200">{task.assignee}</p>
+                    </div>
+
+                    <div className="space-y-1 bg-gray-700/10 p-4 rounded-lg">
+                      <h4 className="text-sm font-medium text-gray-400">마감일</h4>
+                      <p className="text-gray-200">{task.dueDate}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-400 mb-2">진행률</h4>
+                    <div className="w-full bg-gray-700/30 rounded-full h-2.5">
+                      <div 
+                        className="bg-blue-500 h-2.5 rounded-full" 
+                        style={{ width: `${task.progress}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-right text-sm text-gray-400 mt-1">{task.progress}%</p>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-400 mb-3">하위 작업</h4>
+                    <div className="space-y-2">
+                      {task.subtasks.map((subtask, index) => (
+                        <div key={index} className="flex items-center gap-2 bg-gray-700/10 p-3 rounded-lg">
+                          <input
+                            type="checkbox"
+                            checked={subtask.completed}
+                            readOnly
+                            className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-500"
+                          />
+                          <span className={`text-sm ${subtask.completed ? 'text-gray-500 line-through' : 'text-gray-200'}`}>
+                            {subtask.title}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {task.comments.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-400 mb-3">댓글</h4>
+                      <div className="space-y-3">
+                        {task.comments.map((comment, index) => (
+                          <div key={index} className="bg-gray-700/10 p-4 rounded-lg">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-gray-200">{comment.author}</span>
+                              <span className="text-xs text-gray-400">
+                                {new Date(comment.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <p className="text-gray-300 text-sm">{comment.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
         </div>
-        <div className="p-6 space-y-4">
-          <div>
-            <h4 className="text-sm text-gray-400">Title</h4>
-            <p className="text-gray-100 font-medium">{task.title}</p>
-          </div>
-          <div>
-            <h4 className="text-sm text-gray-400">Status</h4>
-            <span className={`inline-block px-3 py-1 rounded-full text-sm ${getStatusColor(task.status)}`}>
-              {task.status === 'todo' ? '예정' : task.status === 'in-progress' ? '진행중' : '완료'}
-            </span>
-          </div>
-          <div>
-            <h4 className="text-sm text-gray-400">Assignee</h4>
-            <p className="text-gray-100">{task.assignee}</p>
-          </div>
-          <div>
-            <h4 className="text-sm text-gray-400">Due Date</h4>
-            <p className="text-gray-100">{task.dueDate}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+      </Dialog>
+    </Transition>
   );
 }

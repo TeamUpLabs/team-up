@@ -1,44 +1,166 @@
 [
   {
-    "id": 1,
+    "id": "1",
     "title": "프로젝트 기획안 작성",
+    "description": "프로젝트의 목표, 범위, 일정, 리소스 계획을 포함한 종합적인 기획안 작성",
     "status": "in-progress",
+    "priority": "high",
     "assignee": "김철수",
-    "dueDate": "2025-04-01"
+    "dueDate": "2025-04-01",
+    "tags": ["기획", "문서작성", "중요"],
+    "progress": 65,
+    "subtasks": [
+      {
+        "title": "요구사항 분석",
+        "completed": true
+      },
+      {
+        "title": "일정 계획 수립",
+        "completed": true
+      },
+      {
+        "title": "리소스 계획 작성",
+        "completed": false
+      }
+    ],
+    "comments": [
+      {
+        "author": "박지은",
+        "content": "디자인 팀의 일정도 고려해주세요.",
+        "createdAt": "2025-03-15T09:00:00Z"
+      }
+    ],
+    "createdAt": "2025-03-10T08:00:00Z",
+    "updatedAt": "2025-03-15T10:00:00Z"
   },
   {
-    "id": 2,
+    "id": "2",
     "title": "디자인 시스템 구축",
+    "description": "재사용 가능한 컴포넌트와 스타일 가이드 작성",
     "status": "todo",
+    "priority": "medium",
     "assignee": "박지은",
-    "dueDate": "2025-04-15"
+    "dueDate": "2025-04-15",
+    "tags": ["디자인", "UI/UX"],
+    "progress": 0,
+    "subtasks": [
+      {
+        "title": "컬러 팔레트 정의",
+        "completed": false
+      },
+      {
+        "title": "타이포그래피 설정",
+        "completed": false
+      }
+    ],
+    "comments": [],
+    "createdAt": "2025-03-12T08:00:00Z",
+    "updatedAt": "2025-03-12T08:00:00Z"
   },
   {
-    "id": 3,
+    "id": "3",
     "title": "백엔드 API 개발",
+    "description": "RESTful API 설계 및 구현",
     "status": "done",
+    "priority": "high",
     "assignee": "이민호",
-    "dueDate": "2025-04-15"
+    "dueDate": "2025-04-15",
+    "tags": ["백엔드", "API", "개발"],
+    "progress": 100,
+    "subtasks": [
+      {
+        "title": "API 설계",
+        "completed": true
+      },
+      {
+        "title": "데이터베이스 설계",
+        "completed": true
+      },
+      {
+        "title": "API 구현",
+        "completed": true
+      }
+    ],
+    "comments": [
+      {
+        "author": "김영희",
+        "content": "API 문서화도 완료해주세요.",
+        "createdAt": "2025-04-10T15:00:00Z"
+      }
+    ],
+    "createdAt": "2025-03-20T08:00:00Z",
+    "updatedAt": "2025-04-15T16:00:00Z"
   },
   {
-    "id": 4,
-    "title": "사용자 테스트 진행",
-    "status": "todo",
-    "assignee": "홍길동",
-    "dueDate": "2025-04-28"
-  },
-  {
-    "id": 5,
-    "title": "배포 및 모니터링",
+    "id": "4",
+    "title": "프론트엔드 개발",
+    "description": "UI 구현 및 기능 개발",
     "status": "in-progress",
-    "assignee": "김영희",
-    "dueDate": "2025-05-01"
+    "priority": "high",
+    "assignee": "최지훈",
+    "dueDate": "2025-05-01",
+    "tags": ["프론트엔드", "개발"],
+    "progress": 50,
+    "subtasks": [
+      {
+        "title": "메인 페이지 구현",
+        "completed": false
+      },
+      {
+        "title": "상세 페이지 구현",
+        "completed": false
+      }
+    ],
+    "comments": [],
+    "createdAt": "2025-03-25T08:00:00Z",
+    "updatedAt": "2025-03-30T10:00:00Z"
   },
   {
-    "id": 6,
-    "title": "버그 수정 및 최적화",
+    "id": "5",
+    "title": "테스트 케이스 작성",
+    "description": "기능 테스트 및 버그 수정",
     "status": "todo",
+    "priority": "medium",
     "assignee": "이수민",
-    "dueDate": "2025-05-15"
+    "dueDate": "2025-05-15",
+    "tags": ["테스트", "QA"],
+    "progress": 0,
+    "subtasks": [
+      {
+        "title": "단위 테스트 작성",
+        "completed": false
+      },
+      {
+        "title": "통합 테스트 작성",
+        "completed": false
+      }
+    ],
+    "comments": [],
+    "createdAt": "2025-03-28T08:00:00Z",
+    "updatedAt": "2025-03-28T08:00:00Z"
+  },
+  {
+    "id": "6",
+    "title": "배포 준비",
+    "description": "서버 설정 및 배포 스크립트 작성",
+    "status": "todo",
+    "priority": "low",
+    "assignee": "김철수",
+    "dueDate": "2025-05-20",
+    "tags": ["배포", "서버"],
+    "progress": 0,
+    "subtasks": [
+      {
+        "title": "서버 환경 설정",
+        "completed": false
+      },
+      {
+        "title": "배포 스크립트 작성",
+        "completed": false
+      }
+    ],
+    "comments": [],
+    "createdAt": "2025-04-01T08:00:00Z",
+    "updatedAt": "2025-04-01T08:00:00Z"
   }
 ]
