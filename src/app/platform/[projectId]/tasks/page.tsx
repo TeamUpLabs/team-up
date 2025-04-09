@@ -6,6 +6,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { Task } from '@/types/Task';
+import TaskComponent from '@/components/platform/TaskComponent';
 import TaskData from "../../../../../public/json/tasks.json";
 
 
@@ -93,33 +94,7 @@ export default function TasksPage() {
               </div>
               <div className="p-2">
                 {tasksList.map((task) => (
-                  <div
-                    key={task.id}
-                    draggable
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData('taskId', task.id);
-                    }}
-                    className="p-3 mb-2 bg-gray-700/50 rounded-lg hover:bg-gray-700 cursor-move transition-colors"
-                  >
-                    <div className="text-sm font-medium text-gray-100 mb-2">
-                      {task.title}
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                      {task.assignee && (
-                        <span className="flex items-center">
-                          <span className="w-4 h-4 bg-gray-600 rounded-full flex items-center justify-center mr-1 text-[10px]">
-                            {task.assignee.charAt(0)}
-                          </span>
-                          {task.assignee}
-                        </span>
-                      )}
-                      {task.dueDate && (
-                        <span>
-                          마감일: {task.dueDate}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                  <TaskComponent key={task.id} task={task} />
                 ))}
               </div>
             </div>
