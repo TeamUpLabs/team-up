@@ -2,7 +2,7 @@
 
 import ProjectData from "../../../../public/json/projects.json";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faMessage, faTasks, faCalendar, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faMessage, faTasks, faCalendar, faUsers, faFlag, faGear } from "@fortawesome/free-solid-svg-icons";
 import { faBell } from "@fortawesome/free-regular-svg-icons";
 import Sidebar from "@/components/platform/sidebar";
 import { useState, use } from "react";
@@ -33,6 +33,8 @@ export default function ProjectLayout({
     { icon: faMessage, label: "채팅", href: `/platform/${projectId}/chat`, isActive: pathname === `/platform/${projectId}/chat` },
     { icon: faTasks, label: "작업", href: `/platform/${projectId}/tasks`, isActive: pathname === `/platform/${projectId}/tasks` },
     { icon: faCalendar, label: "일정", href: `/platform/${projectId}/calendar`, isActive: pathname === `/platform/${projectId}/calendar` },
+    { icon: faFlag, label: "마일스톤", href: `/platform/${projectId}/milestone`, isActive: pathname === `/platform/${projectId}/milestone` },
+    { icon: faGear, label: "설정", href: `/platform/${projectId}/setting`, isActive: pathname === `/platform/${projectId}/setting` }
   ];
 
   return (
