@@ -1,9 +1,9 @@
 "use client";
 
-import ProjectProgressCard from "@/components/platform/ProjectProgressCard";
-import MileStoneCard from "@/components/platform/MileStoneCard";
-import TeamActivities from "@/components/platform/TeamActivities";
-import RecentFileCard from "@/components/platform/RecentFileCard";
+import ProjectProgressCard from "@/components/project/ProjectProgressCard";
+import MileStoneCard from "@/components/project/MileStoneCard";
+import TeamActivities from "@/components/project/TeamActivities";
+import RecentFileCard from "@/components/project/RecentFileCard";
 import { use } from "react";
 
 export default function ProjectPage({ params }: { params: Promise<{ projectId: string }> }) {
