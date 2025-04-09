@@ -1,4 +1,4 @@
-import { TeamMember } from '@/types/member';
+import { TeamMember } from '@/types/Member';
 
 interface MemberDetailModalProps {
   member: TeamMember;

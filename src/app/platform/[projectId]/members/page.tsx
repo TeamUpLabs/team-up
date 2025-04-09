@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import TeamMembersData from "../../../../../public/json/members.json";
 import MemberDetailModal from '@/components/platform/MemberDetailModal';
-import { TeamMember } from '@/types/member';
+import { TeamMember } from '@/types/Member';
 
 export default function MembersPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -134,12 +134,12 @@ export default function MembersPage() {
                 </span>
               </div>
               <div className="border-t border-gray-700 pt-3 mt-3">
-                <p className="text-sm">
+                <div className="text-sm">
                   <span className="text-gray-400 font-medium">현재 작업</span>
                   <div className="mt-2 p-3 bg-gray-700/30 rounded-lg text-gray-300">
                     {member.currentTask}
                   </div>
-                </p>
+                </div>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import TeamMembersData from "../../../public/json/members.json"
-import { TeamMember } from "@/types/member";
+import { TeamMember } from "@/types/Member";
 
 export default function TeamActivities({ projectId }: { projectId: string }) {
   const bgColors = [
