@@ -9,8 +9,8 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
     'bg-indigo-500', 'bg-teal-500'
   ];
 
-  const getRandomColor = () => {
-    return bgColors[Math.floor(Math.random() * bgColors.length)];
+  const getColorForMember = (memberId: number) => {
+    return bgColors[memberId % bgColors.length];
   };
 
   const teamMembers: TeamMember[] = TeamMembersData;
@@ -31,7 +31,7 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
           teamMembers.map((member) => (
             <div key={member.id} className="flex items-center justify-between">
               <div className="flex items-center">
-                <div className={`w-10 h-10 ${getRandomColor()} rounded-full flex items-center justify-center text-white font-bold`}>
+                <div className={`w-10 h-10 ${getColorForMember(member.id)} rounded-full flex items-center justify-center text-white font-bold`}>
                   {member.abbreviation}
                 </div>
                 <div className="ml-3">
