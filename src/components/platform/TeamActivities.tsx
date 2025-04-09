@@ -16,7 +16,7 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
   const teamMembers: TeamMember[] = TeamMembersData;
 
   return (
-    <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg">
+    <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-700">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-semibold text-white">팀원 활동</h2>
         <Link href={`/platform/${projectId}/members`} className="flex items-center text-gray-400 hover:text-gray-300">

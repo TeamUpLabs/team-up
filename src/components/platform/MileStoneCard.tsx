@@ -1,6 +1,6 @@
 export default function MileStoneCard() {
   return (
-    <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg overflow-x-auto">
+    <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg overflow-x-auto border border-gray-700">
       <h2 className="text-xl font-semibold text-white mb-4">다가오는 마일스톤</h2>
       <div className="space-y-4">
         <div className="bg-gray-700 p-3 rounded-lg">
