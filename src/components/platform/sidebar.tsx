@@ -27,7 +27,7 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
         <nav className="space-y-4">
           {navItems.map((item, index) => (
             <Link key={index} href={item.href} className="flex items-center text-gray-300 hover:text-white">
-              <FontAwesomeIcon icon={item.icon} className="mr-3" />
+              <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
               {item.label}
             </Link>
           ))}
