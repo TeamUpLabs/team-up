@@ -37,7 +37,7 @@ export default function MembersPage() {
   };
 
   return (
-    <div className="py-6 px-4 sm:px-6">
+    <div className="py-6 px-2 sm:px-4 md:px-6">
       <div className="rounded-xl shadow-lg">
         <div className="flex flex-col sm:flex-row gap-4 lg:items-center justify-between">
           <div className="relative w-full">
