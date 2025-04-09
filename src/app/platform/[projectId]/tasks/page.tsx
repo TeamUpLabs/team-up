@@ -6,25 +6,15 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { Task } from '@/types/Task';
-import TaskComponent from '@/components/platform/TaskComponent';
-import TaskModal from '@/components/task/TaskModal';
+import TaskComponent from '@/components/project/task/TaskComponent';
+import TaskModal from '@/components/project/task/TaskModal';
 import TaskData from "../../../../../public/json/tasks.json";
+import { getStatusColor } from "@/utils/getStatusColor";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>(TaskData.map(task => ({ ...task, id: String(task.id), status: task.status as "todo" | "in-progress" | "done", priority: task.priority as "high" | "medium" | "low" })));
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const getStatusBadgeColor = (status: Task['status']) => {
-    switch (status) {
-      case 'todo':
-        return 'bg-yellow-500/20 text-yellow-500';
-      case 'in-progress':
-        return 'bg-blue-500/20 text-blue-500';
-      case 'done':
-        return 'bg-green-500/20 text-green-500';
-    }
-  };
 
   const getStatusText = (status: Task['status']) => {
     switch (status) {
@@ -89,7 +79,7 @@ export default function TasksPage() {
               <div className="px-4 py-3 border-b border-gray-700">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium mr-2 ${getStatusBadgeColor(status as Task['status'])}`}>
+                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium mr-2 ${getStatusColor(status as Task['status'])}`}>
                       {getStatusText(status as Task['status'])}
                     </span>
                     <span className="text-gray-400 text-sm">{tasksList.length}</span>
