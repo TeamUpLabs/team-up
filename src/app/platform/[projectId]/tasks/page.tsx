@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,13 +8,31 @@ import { faPlus, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { Task } from '@/types/Task';
 import TaskComponent from '@/components/project/task/TaskComponent';
 import TaskModal from '@/components/project/task/TaskModal';
-import TaskData from "../../../../../public/json/tasks.json";
 import { getStatusColor } from "@/utils/getStatusColor";
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>(TaskData.map(task => ({ ...task, id: String(task.id), status: task.status as "todo" | "in-progress" | "done", priority: task.priority as "high" | "medium" | "low" })));
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch('/json/tasks.json');
+        const data = await response.json();
+        setTasks(data.map((task: Task) => ({
+          ...task,
+          id: String(task.id),
+          status: task.status as "todo" | "in-progress" | "done",
+          priority: task.priority as "high" | "medium" | "low"
+        })));
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
 
   const getStatusText = (status: Task['status']) => {
     switch (status) {
