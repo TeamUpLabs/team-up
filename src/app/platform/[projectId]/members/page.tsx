@@ -14,13 +14,13 @@ export default function MembersPage() {
 
   const filteredMembers = allTeamMembers.filter(member => {
     const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         member.currentTask.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || 
-                         (statusFilter === 'active' && member.status === '활성') ||
-                         (statusFilter === 'away' && member.status === '자리비움') ||
-                         (statusFilter === 'offline' && member.status === '오프라인');
+      member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.currentTask.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus = statusFilter === 'all' ||
+      (statusFilter === 'active' && member.status === '활성') ||
+      (statusFilter === 'away' && member.status === '자리비움') ||
+      (statusFilter === 'offline' && member.status === '오프라인');
 
     return matchesSearch && matchesStatus;
   });
@@ -38,75 +38,69 @@ export default function MembersPage() {
 
   return (
     <div className="py-6 px-4 sm:px-6">
-      <div className="bg-gray-800 rounded-xl p-6 shadow-lg">
-        <div className="flex flex-col lg:flex-row justify-between gap-6">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-3">팀원 관리</h1>
-            <p className="text-gray-300 text-lg">이 곳에서 팀원들을 관리할 수 있습니다.</p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 lg:items-center">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="이름, 역할, 작업으로 검색..."
-                className="pl-10 pr-4 py-2.5 w-full sm:w-64 bg-gray-700/50 text-white rounded-xl 
+      <div className="rounded-xl shadow-lg">
+        <div className="flex flex-col sm:flex-row gap-4 lg:items-center justify-between">
+          <div className="relative w-full">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="이름, 역할, 작업으로 검색..."
+              className="pl-10 pr-4 py-2.5 w-full bg-gray-700/50 text-white rounded-xl 
                         border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 
                         outline-none transition-all duration-200 placeholder-gray-400"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              )}
-            </div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
-              </div>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="pl-10 pr-8 py-2.5 w-full sm:w-44 appearance-none bg-gray-700/50 text-white rounded-xl 
+              </button>
+            )}
+          </div>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+            </div>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="pl-10 pr-8 py-2.5 w-full sm:w-44 appearance-none bg-gray-700/50 text-white rounded-xl 
                         border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 
                         outline-none transition-all duration-200"
-              >
-                <option value="all">모든 상태</option>
-                <option value="active">활성</option>
-                <option value="away">자리비움</option>
-                <option value="offline">오프라인</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
+            >
+              <option value="all">모든 상태</option>
+              <option value="active">활성</option>
+              <option value="away">자리비움</option>
+              <option value="offline">오프라인</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
           </div>
         </div>
       </div>
-        {filteredMembers.length === 0 && (
-          <div className="text-center text-gray-400 mt-8 p-8 bg-gray-800/50 rounded-lg">
-            검색 결과가 없습니다.
-          </div>
-        )}
+      {filteredMembers.length === 0 && (
+        <div className="text-center text-gray-400 mt-8 p-8 bg-gray-800/50 rounded-lg">
+          검색 결과가 없습니다.
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
         {filteredMembers.map((member) => (
-          <div 
-            key={member.id} 
+          <div
+            key={member.id}
             className="group bg-gray-800/90 backdrop-blur p-6 rounded-xl shadow-lg 
                      hover:shadow-xl hover:scale-105 transition-all duration-300 
                      border border-gray-700 hover:border-blue-500 cursor-pointer"
@@ -123,11 +117,10 @@ export default function MembersPage() {
               </div>
               <div className="flex flex-col items-end">
                 <div className="flex items-center bg-gray-700/50 px-3 py-1 rounded-full">
-                  <span 
-                    className={`w-3 h-3 rounded-full ${
-                      member.status === "활성" ? "bg-emerald-500" : 
-                      member.status === "자리비움" ? "bg-amber-500" : "bg-gray-500"
-                    } animate-pulse`}
+                  <span
+                    className={`w-3 h-3 rounded-full ${member.status === "활성" ? "bg-emerald-500" :
+                        member.status === "자리비움" ? "bg-amber-500" : "bg-gray-500"
+                      } animate-pulse`}
                   />
                   <span className="ml-2 text-sm text-gray-300">{member.status}</span>
                 </div>
