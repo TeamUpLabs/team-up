@@ -20,3 +20,37 @@ body {
   line-height: 1.6;
   letter-spacing: -0.01em;
 }
+
+@keyframes backdropFadeIn {
+  0% { 
+    background-color: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0px);
+  }
+  100% { 
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+}
+
+@keyframes expandCard {
+  0% {
+    opacity: 0.5;
+    left: var(--card-left);
+    top: var(--card-top);
+    width: var(--card-width);
+    height: var(--card-height);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    left: calc(50vw - min(600px, 90vw) / 2);
+    top: calc(50vh - min(80vh, 600px) / 2);
+    width: min(600px, 90vw);
+    height: min(80vh, 600px);
+    transform: scale(1);
+  }
+}
