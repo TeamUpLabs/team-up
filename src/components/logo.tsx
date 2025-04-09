@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 interface LogoProps {
   className?: string;
 }
@@ -7,11 +5,9 @@ interface LogoProps {
 export default function Logo({ className }: LogoProps) {
   return (
     <div className={`font-mono text-xl font-semibold ${className}`}>
-      <Link href="/">
-        <span className="text-green-400">&lt;</span>
-        <span className="text-purple-400">TeamUp</span>
-        <span className="text-green-400">/&gt;</span>
-      </Link>
+      <span className="text-green-400">&lt;</span>
+      <span className="text-purple-400">TeamUp</span>
+      <span className="text-green-400">/&gt;</span>
     </div>
   )
 }

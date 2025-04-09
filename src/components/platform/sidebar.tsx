@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { useState } from "react";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import React from "react";
 
 interface NavItem {
   icon: IconDefinition;
@@ -17,7 +18,7 @@ interface Channel {
 
 interface SidebarProps {
   isSidebarOpen: boolean;
-  title: string;
+  title?: string | React.ReactNode;
   titleHref: string;
   navItems: NavItem[];
 }

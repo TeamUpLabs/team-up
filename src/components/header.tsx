@@ -5,7 +5,9 @@ export default function Header() {
     return (
         <header className="fixed w-full backdrop-blur-md bg-(--color-background)/70 z-50 border-b border-white/5">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Logo />
+          <Link href="/">
+            <Logo />
+          </Link>
           <nav className="hidden md:flex space-x-10 text-sm font-medium">
             <Link href="/platform" className="hover:text-purple-400 transition-colors duration-200">플랫폼</Link>
             <Link href="#" className="hover:text-purple-400 transition-colors duration-200">커뮤니티</Link>

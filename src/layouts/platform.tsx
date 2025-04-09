@@ -6,6 +6,7 @@ import { useState } from "react";
 import Sidebar from "@/components/platform/sidebar";
 import { faHouse, faFolder, faPeopleGroup, faGear } from "@fortawesome/free-solid-svg-icons";
 import { Project } from "@/types/Project";
+import Logo from "@/components/logo";
 
 
 export default function Platform() {
@@ -31,7 +32,7 @@ export default function Platform() {
 
       <Sidebar 
         isSidebarOpen={isSidebarOpen}
-        title="Team Up"
+        title={<Logo />}
         titleHref="/platform"
         navItems={mainNavItems}
       />
