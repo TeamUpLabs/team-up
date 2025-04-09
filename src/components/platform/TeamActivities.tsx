@@ -13,7 +13,7 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
     return bgColors[Math.floor(Math.random() * bgColors.length)];
   };
 
-  const teamMembers: TeamMember[] = TeamMembersData.slice(0, 3);
+  const teamMembers: TeamMember[] = TeamMembersData;
 
   return (
     <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg">
