@@ -12,7 +12,29 @@
     "skills": ["React", "TypeScript", "CSS"],
     "projects": ["웹 리뉴얼", "모바일 앱"],
     "profileImage": "/images/profiles/kim.jpg",
-    "contactNumber": "010-1234-5678"
+    "contactNumber": "010-1234-5678",
+    "birthDate": "1990-05-15",
+    "workingHours": {
+      "start": "09:00",
+      "end": "18:00",
+      "timezone": "Asia/Seoul"
+    },
+    "languages": [
+      {"name": "Korean", "level": "Native"},
+      {"name": "English", "level": "Business"}
+    ],
+    "socialLinks": {
+      "github": "https://github.com/chulsookim",
+      "linkedin": "https://linkedin.com/in/chulsookim"
+    },
+    "availability": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "weekend": false
+    }
   },
   {
     "id": 2,
@@ -27,7 +49,29 @@
     "skills": ["Node.js", "Python", "MongoDB"],
     "projects": ["서버 마이그레이션", "API 구축"],
     "profileImage": "/images/profiles/lee.jpg",
-    "contactNumber": "010-2345-6789"
+    "contactNumber": "010-2345-6789",
+    "birthDate": "1988-07-22",
+    "workingHours": {
+      "start": "10:00",
+      "end": "19:00",
+      "timezone": "Asia/Seoul"
+    },
+    "languages": [
+      {"name": "Korean", "level": "Native"},
+      {"name": "English", "level": "Intermediate"}
+    ],
+    "socialLinks": {
+      "github": "https://github.com/youngheelee",
+      "linkedin": "https://linkedin.com/in/youngheelee"
+    },
+    "availability": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "weekend": false
+    }
   },
   {
     "id": 3,
@@ -42,7 +86,29 @@
     "skills": ["Photoshop", "Illustrator", "Figma"],
     "projects": ["브랜드 리뉴얼", "UI 디자인"],
     "profileImage": "/images/profiles/park.jpg",
-    "contactNumber": "010-3456-7890"
+    "contactNumber": "010-3456-7890",
+    "birthDate": "1992-03-10",
+    "workingHours": {
+      "start": "08:00",
+      "end": "17:00",
+      "timezone": "Asia/Seoul"
+    },
+    "languages": [
+      {"name": "Korean", "level": "Native"},
+      {"name": "English", "level": "Basic"}
+    ],
+    "socialLinks": {
+      "github": "https://github.com/minjunpark",
+      "linkedin": "https://linkedin.com/in/minjunpark"
+    },
+    "availability": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "weekend": true
+    }
   },
   {
     "id": 4,
@@ -57,7 +123,29 @@
     "skills": ["Selenium", "Postman", "JIRA"],
     "projects": ["테스트 자동화", "버그 리포트"],
     "profileImage": "/images/profiles/choi.jpg",
-    "contactNumber": "010-4567-8901"
+    "contactNumber": "010-4567-8901",
+    "birthDate": "1985-11-05",
+    "workingHours": {
+      "start": "09:30",
+      "end": "18:30",
+      "timezone": "Asia/Seoul"
+    },
+    "languages": [
+      {"name": "Korean", "level": "Native"},
+      {"name": "English", "level": "Advanced"}
+    ],
+    "socialLinks": {
+      "github": "https://github.com/jiwoochoi",
+      "linkedin": "https://linkedin.com/in/jiwoochoi"
+    },
+    "availability": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "weekend": false
+    }
   },
   {
     "id": 5,
@@ -72,6 +160,28 @@
     "skills": ["Agile", "Scrum", "Communication"],
     "projects": ["프로젝트 관리", "팀 빌딩"],
     "profileImage": "/images/profiles/hong.jpg",
-    "contactNumber": "010-5678-9012"
+    "contactNumber": "010-5678-9012",
+    "birthDate": "1980-01-01",
+    "workingHours": {
+      "start": "09:00",
+      "end": "18:00",
+      "timezone": "Asia/Seoul"
+    },
+    "languages": [
+      {"name": "Korean", "level": "Native"},
+      {"name": "English", "level": "Fluent"}
+    ],
+    "socialLinks": {
+      "github": "https://github.com/gildonghong",
+      "linkedin": "https://linkedin.com/in/gildonghong"
+    },
+    "availability": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "weekend": true
+    }
   }
 ]
