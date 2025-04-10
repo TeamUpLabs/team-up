@@ -8,7 +8,7 @@ interface TaskLabelRenderType {
   value: number;
 }
 
-export default function ProjectProgressCard({  projectId }: { projectId: string }) {
+export default function ProjectProgressCard({ projectId }: { projectId: string }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,38 +24,42 @@ export default function ProjectProgressCard({  projectId }: { projectId: string 
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter(task => task.status === 'done').length;
   const inProgressTasks = tasks.filter(task => task.status === 'in-progress').length;
-  
+
   const TaskLabelRender: TaskLabelRenderType[] = [
     { label: '총 작업', color: 'text-white', value: totalTasks },
     { label: '진행중', color: 'text-blue-500', value: inProgressTasks },
-    { label: '완료', color: 'text-green-500', value: completedTasks}
+    { label: '완료', color: 'text-green-500', value: completedTasks }
   ]
 
   const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   if (loading) {
     return (
-      <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg animate-pulse">
+      <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg">
         <div className="flex items-center justify-between mb-4">
-          <div className="h-8 bg-gray-700 rounded w-32"></div>
-          <div className="flex items-center">
-            <div className="h-5 bg-gray-700 rounded w-12"></div>
-            <div className="w-4 h-4 ml-1 bg-gray-700 rounded"></div>
+          <h1 className="text-xl sm:text-2xl font-bold text-white">프로젝트 진행률</h1>
+          <div className="flex items-center text-gray-400">
+            <Link href={`/platform/${projectId}/tasks`} className="flex items-center text-gray-400 hover:text-gray-300">
+              더보기
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
         </div>
         <div className="space-y-3 sm:space-y-4">
           <div className="flex justify-between items-center">
-            <div className="h-5 bg-gray-700 rounded w-20"></div>
+            <span className="text-gray-300">전체 진행률</span>
             <div className="h-5 bg-gray-700 rounded w-12"></div>
           </div>
           <div className="relative w-full bg-gray-700 rounded-full h-2.5 overflow-hidden">
             <div className="bg-gray-600 h-2.5 rounded-full w-3/5 animate-progressBar"></div>
           </div>
           <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-3 sm:mt-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-gray-700 p-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors duration-200">
-                <div className="h-4 bg-gray-600 rounded w-16 mx-auto mb-2"></div>
-                <div className="h-7 bg-gray-600 rounded w-10 mx-auto"></div>
+            {TaskLabelRender.map((taskLabel, index) => (
+              <div key={index} className="bg-gray-700 p-4 rounded-lg text-center border border-gray-600">
+                <p className="text-gray-400">{taskLabel.label}</p>
+                <div className="h-7 bg-gray-600 rounded w-10 mx-auto mt-2"></div>
               </div>
             ))}
           </div>
