@@ -3,6 +3,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Task } from '@/types/Task';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { getPriorityColor } from '@/utils/getPriorityColor';
 
 interface TaskModalProps {
   task: Task | null;
@@ -93,9 +94,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                     <div className="space-y-1 bg-gray-700/10 p-4 rounded-lg">
                       <h4 className="text-sm font-medium text-gray-400">우선순위</h4>
                       <span className={`inline-block px-3 py-1 rounded-md text-sm font-medium
-                        ${task.priority === 'high' ? 'bg-red-500/20 text-red-500' : 
-                          task.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-500' : 
-                          'bg-blue-500/20 text-blue-500'}`}>
+                        ${getPriorityColor(task.priority)}`}>
                         {task.priority === 'high' ? '높음' : task.priority === 'medium' ? '중간' : '낮음'}
                       </span>
                     </div>

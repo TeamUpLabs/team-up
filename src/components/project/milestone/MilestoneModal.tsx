@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { MileStone } from '@/types/MileStone'; 
+import { MileStone } from '@/types/MileStone';
+import { getPriorityColor } from '@/utils/getPriorityColor';
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -10,16 +11,6 @@ interface MilestoneModalProps {
 
 export default function MilestoneModal({ milestone, isOpen, onClose }: MilestoneModalProps) {
   if (!isOpen) return null;
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'critical': return 'bg-red-500/20 text-red-400';
-      case 'high': return 'bg-orange-500/20 text-orange-400';
-      case 'medium': return 'bg-yellow-500/20 text-yellow-400';
-      case 'low': return 'bg-green-500/20 text-green-400';
-      default: return 'bg-gray-500/20 text-gray-400';
-    }
-  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
