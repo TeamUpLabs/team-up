@@ -13,7 +13,7 @@ interface MilestoneCardProps {
 
 export default function MilestoneCard({ milestone }: MilestoneCardProps) {
   return (
-    <div className="bg-gray-700/50 rounded-lg p-6 hover:bg-gray-700 transition-colors">
+    <div className="bg-gray-700/50 rounded-lg p-6 hover:bg-gray-700 transition-colors duration-200 border border-gray-600/50">
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-xl font-semibold text-white">{milestone.title}</h3>
         <span className={`px-3 py-1 rounded-full text-sm ${
