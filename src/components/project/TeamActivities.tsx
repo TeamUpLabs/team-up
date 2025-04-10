@@ -14,11 +14,44 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
   };
 
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
+    setIsLoading(true);
     fetch('/json/members.json')
       .then(res => res.json())
-      .then(data => setTeamMembers(data));
+      .then(data => {
+        setTeamMembers(data);
+        setIsLoading(false);
+      })
+      .catch(() => setIsLoading(false));
   }, []);
+
+  const SkeletonLoader = () => (
+    Array(4).fill(0).map((_, index) => (
+      <div key={index} className="flex items-center justify-between p-2 border-b border-gray-700 animate-pulse">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gray-600/50 rounded-full flex items-center justify-center">
+            <div className="w-4 h-4 bg-gray-500/50 rounded-sm"></div>
+          </div>
+          <div className="space-y-2">
+            <div className="h-4 bg-gray-600/50 rounded w-24"></div>
+            <div className="h-3 bg-gray-600/40 rounded w-20"></div>
+            <div className="flex items-center">
+              <span className="h-2.5 bg-gray-600/30 rounded w-[100px]"></span>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col items-end space-y-2">
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 bg-gray-600/50 rounded-full"></div>
+            <div className="h-3 bg-gray-600/40 rounded w-12"></div>
+          </div>
+          <div className="h-2 bg-gray-600/30 rounded w-16"></div>
+        </div>
+      </div>
+    ))
+  );
 
   return (
     <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-700">
@@ -32,7 +65,9 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
         </Link>
       </div>
       <div className="max-h-[300px] overflow-y-auto">
-        {
+        {isLoading ? (
+          <SkeletonLoader />
+        ) : (
           teamMembers.map((member) => (
             <div key={member.id} className="flex items-center justify-between p-2 border-b border-gray-700 hover:bg-gray-700 transition duration-200 rounded">
               <div className="flex items-center">
@@ -59,7 +94,7 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
               </div>
             </div>
           ))
-        }
+        )}
       </div>
     </div>
   )
