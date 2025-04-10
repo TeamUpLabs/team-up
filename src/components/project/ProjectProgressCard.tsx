@@ -23,18 +23,25 @@ export default function ProjectProgressCard({  projectId }: { projectId: string 
   if (loading) {
     return (
       <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg animate-pulse">
-        <div className="h-7 bg-gray-700 rounded w-1/3 mb-4"></div>
-        <div className="space-y-3 sm:space-y-4">
-          <div className="flex justify-between items-center">
-            <div className="h-5 bg-gray-700 rounded w-24"></div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="h-8 bg-gray-700 rounded w-32"></div>
+          <div className="flex items-center">
             <div className="h-5 bg-gray-700 rounded w-12"></div>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-2.5"></div>
+        </div>
+        <div className="space-y-3 sm:space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="h-5 bg-gray-700 rounded w-20"></div>
+            <div className="h-5 bg-gray-700 rounded w-12"></div>
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-2.5">
+            <div className="bg-gray-600 h-2.5 rounded-full w-[60%]"></div>
+          </div>
           <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-3 sm:mt-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-gray-700 p-4 rounded-lg">
                 <div className="h-4 bg-gray-600 rounded w-16 mx-auto mb-2"></div>
-                <div className="h-6 bg-gray-600 rounded w-8 mx-auto"></div>
+                <div className="h-7 bg-gray-600 rounded w-10 mx-auto"></div>
               </div>
             ))}
           </div>
