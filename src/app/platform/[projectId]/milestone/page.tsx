@@ -44,28 +44,31 @@ export default function MilestonePage() {
 
         <div className="flex gap-4 mb-6">
           <button
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${
               filter === 'all' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
             }`}
             onClick={() => setFilter('all')}
           >
-            전체
+            <span>전체</span>
+            <span>{milestones?.length}</span>
           </button>
           <button
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${
               filter === 'active' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
             }`}
             onClick={() => setFilter('active')}
           >
-            진행중
+            <span>진행중</span>
+            <span>{milestones?.filter(m => m.status === 'in-progress').length}</span>
           </button>
           <button
-            className={`px-4 py-2 rounded-lg transition-colors ${
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${
               filter === 'completed' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
             }`}
             onClick={() => setFilter('completed')}
           >
-            완료
+            <span>완료</span>
+            <span>{milestones?.filter(m => m.status === 'completed').length}</span>
           </button>
         </div>
 

@@ -2,41 +2,102 @@
   {
     "id": 1,
     "title": "베타 버전 출시",
-    "description": "핵심 기능 구현 및 초기 사용자 테스트",
+    "description": "핵심 기능 구현 및 초기 사용자 테스트를 위한 베타 버전 출시. 주요 기능으로는 사용자 인증, 프로젝트 관리, 팀 협업 도구가 포함됩니다.",
     "startDate": "2025-01-01",
     "endDate": "2025-02-29",
     "progress": 75,
     "status": "in-progress",
-    "assignee": "김철수"
+    "assignee": "김철수",
+    "priority": "high",
+    "tags": ["개발", "테스트", "핵심기능"],
+    "subtasks": [
+      {
+        "id": "1-1",
+        "title": "사용자 인증 구현",
+        "completed": true
+      },
+      {
+        "id": "1-2",
+        "title": "프로젝트 관리 기능 개발",
+        "completed": true
+      },
+      {
+        "id": "1-3",
+        "title": "베타 테스터 모집",
+        "completed": false
+      }
+    ]
   },
   {
     "id": 2,
     "title": "정식 출시",
-    "description": "모든 기능 완성 및 버그 수정 완료",
+    "description": "전체 기능이 구현된 정식 버전 출시. 베타 테스트에서 발견된 모든 버그를 수정하고, 사용자 인터페이스 개선 및 성능 최적화 완료.",
     "startDate": "2025-03-01",
     "endDate": "2025-04-30",
     "progress": 50,
     "status": "in-progress",
-    "assignee": "이영희"
+    "assignee": "이영희",
+    "priority": "critical",
+    "tags": ["출시", "안정화", "최적화"],
+    "subtasks": [
+      {
+        "id": "2-1",
+        "title": "버그 수정 및 안정화",
+        "completed": false
+      },
+      {
+        "id": "2-2",
+        "title": "성능 최적화",
+        "completed": false
+      }
+    ]
   },
   {
     "id": 3,
     "title": "사용자 피드백 반영",
-    "description": "사용자 피드백을 바탕으로 기능 개선 및 추가",
+    "description": "정식 출시 후 수집된 사용자 피드백을 분석하고 우선순위에 따라 기능 개선 및 신규 기능 추가. 사용자 만족도 조사 실시.",
     "startDate": "2025-05-01",
     "endDate": "2025-06-30",
     "progress": 0,
     "status": "not-started",
-    "assignee": "박민수"
+    "assignee": "박민수",
+    "priority": "medium",
+    "tags": ["피드백", "개선", "사용자경험"],
+    "subtasks": [
+      {
+        "id": "3-1",
+        "title": "사용자 피드백 수집",
+        "completed": false
+      },
+      {
+        "id": "3-2",
+        "title": "기능 개선 계획 수립",
+        "completed": false
+      }
+    ]
   },
   {
     "id": 4,
     "title": "마케팅 캠페인 시작",
-    "description": "소셜 미디어 및 이메일 캠페인 시작",
+    "description": "소셜 미디어 마케팅, 이메일 캠페인, 온라인 광고를 통한 사용자 확보 전략 실행. 제품 인지도 향상 및 신규 사용자 유입 증대.",
     "startDate": "2025-07-01",
     "endDate": "2025-08-31",
     "progress": 0,
     "status": "not-started",
-    "assignee": "최지은"
+    "assignee": "최지은",
+    "priority": "low",
+    "tags": ["마케팅", "홍보", "사용자확보"],
+    "subtasks": [
+      {
+        "id": "4-1",
+        "title": "마케팅 전략 수립",
+        "completed": false
+      },
+      {
+        "id": "4-2",
+        "title": "광고 캠페인 기획",
+        "completed": false
+      }
+    ]
   }
 ]
