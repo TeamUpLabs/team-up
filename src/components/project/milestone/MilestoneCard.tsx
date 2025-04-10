@@ -1,20 +1,8 @@
 import { useState } from 'react';
 import MilestoneModal from './MilestoneModal';
+import { MileStone } from '@/types/MileStone';
 
-interface MilestoneCardProps {
-  milestone: {
-    id: number;
-    title: string;
-    status: string;
-    description: string;
-    progress: number;
-    startDate: string;
-    endDate: string;
-    assignee: string;
-  }
-}
-
-export default function MilestoneCard({ milestone }: MilestoneCardProps) {
+export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (

@@ -1,23 +1,25 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import { MileStone } from '@/types/MileStone'; 
 
 interface MilestoneModalProps {
-  milestone: {
-    id: number;
-    title: string;
-    status: string;
-    description: string;
-    progress: number;
-    startDate: string;
-    endDate: string;
-    assignee: string;
-  };
+  milestone: MileStone;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export default function MilestoneModal({ milestone, isOpen, onClose }: MilestoneModalProps) {
   if (!isOpen) return null;
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'critical': return 'bg-red-500/20 text-red-400';
+      case 'high': return 'bg-orange-500/20 text-orange-400';
+      case 'medium': return 'bg-yellow-500/20 text-yellow-400';
+      case 'low': return 'bg-green-500/20 text-green-400';
+      default: return 'bg-gray-500/20 text-gray-400';
+    }
+  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -57,7 +59,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 </div>
                 
                 <div className="space-y-6">
-                  <div>
+                  <div className="flex gap-2">
                     <span className={`inline-block px-3 py-1 rounded-full text-sm ${
                       milestone.status === 'completed' ? 'bg-green-500/20 text-green-400' : 
                       milestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
@@ -66,11 +68,27 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                       {milestone.status === 'completed' ? '완료' : 
                        milestone.status === 'in-progress' ? '진행중' : '시작 전'}
                     </span>
+                    <span className={`inline-block px-3 py-1 rounded-full text-sm ${getPriorityColor(milestone.priority)}`}>
+                      {milestone.priority === 'critical' ? '최우선' :
+                       milestone.priority === 'high' ? '높음' :
+                       milestone.priority === 'medium' ? '중간' : '낮음'}
+                    </span>
                   </div>
 
                   <div>
                     <h3 className="text-gray-400 mb-2">설명</h3>
                     <p className="text-white">{milestone.description}</p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-gray-400 mb-2">태그</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {milestone.tags.map((tag, index) => (
+                        <span key={index} className="bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full text-sm">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
                   <div>
@@ -96,6 +114,25 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                     <div>
                       <h3 className="text-gray-400 mb-2">담당자</h3>
                       <p className="text-indigo-400">{milestone.assignee}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-gray-400 mb-2">하위 작업</h3>
+                    <div className="space-y-2">
+                      {milestone.subtasks.map((subtask) => (
+                        <div key={subtask.id} className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={subtask.completed}
+                            readOnly
+                            className="rounded bg-gray-700 border-gray-600"
+                          />
+                          <span className={`text-sm ${subtask.completed ? 'text-gray-400 line-through' : 'text-white'}`}>
+                            {subtask.title}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
