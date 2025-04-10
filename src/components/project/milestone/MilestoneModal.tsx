@@ -1,0 +1,109 @@
+import { Fragment } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+
+interface MilestoneModalProps {
+  milestone: {
+    id: number;
+    title: string;
+    status: string;
+    description: string;
+    progress: number;
+    startDate: string;
+    endDate: string;
+    assignee: string;
+  };
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function MilestoneModal({ milestone, isOpen, onClose }: MilestoneModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/50" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
+                <div className="flex justify-between items-start mb-6">
+                  <h2 className="text-2xl font-bold text-white">{milestone.title}</h2>
+                  <button
+                    onClick={onClose}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <div className="space-y-6">
+                  <div>
+                    <span className={`inline-block px-3 py-1 rounded-full text-sm ${
+                      milestone.status === 'completed' ? 'bg-green-500/20 text-green-400' : 
+                      milestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
+                      'bg-gray-500/20 text-gray-400'
+                    }`}>
+                      {milestone.status === 'completed' ? '완료' : 
+                       milestone.status === 'in-progress' ? '진행중' : '시작 전'}
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="text-gray-400 mb-2">설명</h3>
+                    <p className="text-white">{milestone.description}</p>
+                  </div>
+
+                  <div>
+                    <h3 className="text-gray-400 mb-2">진행률</h3>
+                    <div className="flex justify-between text-sm text-gray-400 mb-2">
+                      <span>진행도</span>
+                      <span>{milestone.progress}%</span>
+                    </div>
+                    <div className="w-full bg-gray-600 rounded-full h-2">
+                      <div
+                        className="bg-indigo-500 h-2 rounded-full transition-all"
+                        style={{ width: `${milestone.progress}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h3 className="text-gray-400 mb-2">기간</h3>
+                      <p className="text-white">시작일: {milestone.startDate}</p>
+                      <p className="text-white">종료일: {milestone.endDate}</p>
+                    </div>
+                    <div>
+                      <h3 className="text-gray-400 mb-2">담당자</h3>
+                      <p className="text-indigo-400">{milestone.assignee}</p>
+                    </div>
+                  </div>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  );
+}
