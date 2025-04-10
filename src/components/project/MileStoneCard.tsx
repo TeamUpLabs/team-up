@@ -39,8 +39,13 @@ export default function MileStoneCard({ projectId }: { projectId: string }) {
     return (
       <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg overflow-x-auto border border-gray-700">
         <div className="flex items-center justify-between mb-4">
-          <div className="h-7 bg-gray-700 rounded w-40 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
-          <div className="h-5 bg-gray-700 rounded w-16 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+          <h2 className="text-xl font-semibold text-white">다가오는 마일스톤</h2>
+          <Link href={`/platform/${projectId}/milestone`} className="flex items-center text-gray-400 hover:text-gray-300">
+            더보기
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
         <div className="space-y-4">
           <div className="bg-gray-700 p-3 rounded-lg border border-gray-600">
@@ -56,8 +61,14 @@ export default function MileStoneCard({ projectId }: { projectId: string }) {
               <div className="ml-2 h-4 bg-gray-600 rounded w-12 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
             </div>
             <div className="flex flex-col gap-2 mt-3">
-              <div className="h-4 bg-gray-600 rounded w-1/4 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
-              <div className="h-4 bg-gray-600 rounded w-1/4 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-400 mr-2">시작일:</span>
+                <div className="h-4 bg-gray-600 rounded w-24 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+              </div>
+              <div className="flex items-center">
+                <span className="text-sm text-gray-400 mr-2">종료일:</span>
+                <div className="h-4 bg-gray-600 rounded w-24 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -94,8 +105,8 @@ export default function MileStoneCard({ projectId }: { projectId: string }) {
           <div className="flex justify-between items-start mb-2">
             <h3 className="text-xl font-semibold text-white">{closestMilestone.title}</h3>
             <span className={`px-3 py-1 rounded-full text-sm ${closestMilestone.status === 'completed' ? 'bg-green-500/20 text-green-400' :
-                closestMilestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
-                  'bg-gray-500/20 text-gray-400'
+              closestMilestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
+                'bg-gray-500/20 text-gray-400'
               }`}>
               {closestMilestone.status === 'completed' ? '완료' :
                 closestMilestone.status === 'in-progress' ? '진행중' : '시작 전'}
