@@ -34,7 +34,7 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
       <div className="max-h-[300px] overflow-y-auto">
         {
           teamMembers.map((member) => (
-            <div key={member.id} className="flex items-center justify-between p-2 border-b border-gray-700 hover:bg-gray-700 transition duration-200">
+            <div key={member.id} className="flex items-center justify-between p-2 border-b border-gray-700 hover:bg-gray-700 transition duration-200 rounded">
               <div className="flex items-center">
                 <div className={`w-10 h-10 ${getColorForMember(member.id)} rounded-full flex items-center justify-center text-white font-bold`}>
                   {member.name.charAt(0)}
