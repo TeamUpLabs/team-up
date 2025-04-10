@@ -15,7 +15,7 @@ export default function MileStoneCard({ projectId }: { projectId: string }) {
           throw new Error('네트워크 응답이 올바르지 않습니다.');
         }
         const data: MileStone[] = await response.json();
-        
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -23,7 +23,7 @@ export default function MileStoneCard({ projectId }: { projectId: string }) {
           .filter(milestone => ['in-progress', 'not-started'].includes(milestone.status))
           .filter(milestone => new Date(milestone.endDate) >= today)
           .sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime())[0] || null;
-        
+
         setClosestMilestone(closest);
       } catch (error) {
         console.error('데이터를 가져오는 중 오류 발생:', error);
@@ -39,15 +39,25 @@ export default function MileStoneCard({ projectId }: { projectId: string }) {
     return (
       <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg overflow-x-auto border border-gray-700">
         <div className="flex items-center justify-between mb-4">
-          <div className="h-7 bg-gray-700 rounded w-40 animate-pulse"></div>
+          <div className="h-7 bg-gray-700 rounded w-40 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+          <div className="h-5 bg-gray-700 rounded w-16 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
         </div>
         <div className="space-y-4">
-          <div className="bg-gray-700 p-3 rounded-lg">
-            <div className="h-5 bg-gray-600 rounded w-3/4 animate-pulse mb-2"></div>
-            <div className="h-4 bg-gray-600 rounded w-1/4 animate-pulse mb-2"></div>
-            <div className="mt-2 flex items-center">
-              <div className="w-full bg-gray-600 rounded-full h-1.5 animate-pulse"></div>
-              <div className="ml-2 h-4 bg-gray-600 rounded w-8 animate-pulse"></div>
+          <div className="bg-gray-700 p-3 rounded-lg border border-gray-600">
+            <div className="flex justify-between items-start mb-2">
+              <div className="h-6 bg-gray-600 rounded w-1/3 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+              <div className="h-6 bg-gray-600 rounded-full w-16 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+            </div>
+            <div className="h-4 bg-gray-600 rounded w-2/3 animate-[pulse_1.5s_ease-in-out_infinite] mt-2"></div>
+            <div className="mt-4 flex items-center">
+              <div className="w-full bg-gray-600 rounded-full h-1.5">
+                <div className="bg-gray-500 h-1.5 rounded-full w-[60%] animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+              </div>
+              <div className="ml-2 h-4 bg-gray-600 rounded w-12 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+            </div>
+            <div className="flex flex-col gap-2 mt-3">
+              <div className="h-4 bg-gray-600 rounded w-1/4 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+              <div className="h-4 bg-gray-600 rounded w-1/4 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
             </div>
           </div>
         </div>
@@ -80,18 +90,29 @@ export default function MileStoneCard({ projectId }: { projectId: string }) {
         </Link>
       </div>
       <div className="space-y-4">
-        <div className="bg-gray-700 p-3 rounded-lg">
-          <p className="text-white font-medium">{closestMilestone.title}</p>
-          <p className="text-sm text-gray-400 mt-1">{closestMilestone.endDate}</p>
+        <div className="bg-gray-700 p-3 rounded-lg border border-gray-600 hover:border-purple-500 transition duration-200">
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="text-xl font-semibold text-white">{closestMilestone.title}</h3>
+            <span className={`px-3 py-1 rounded-full text-sm ${closestMilestone.status === 'completed' ? 'bg-green-500/20 text-green-400' :
+                closestMilestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
+                  'bg-gray-500/20 text-gray-400'
+              }`}>
+              {closestMilestone.status === 'completed' ? '완료' :
+                closestMilestone.status === 'in-progress' ? '진행중' : '시작 전'}
+            </span>
+          </div>
+          <p className="text-sm text-gray-400">{closestMilestone.description}</p>
           <div className="mt-2 flex items-center">
             <div className="w-full bg-gray-600 rounded-full h-1.5">
-              <div 
-                className="bg-green-500 h-1.5 rounded-full" 
+              <div
+                className="bg-indigo-500 h-1.5 rounded-full"
                 style={{ width: `${closestMilestone.progress}%` }}
               ></div>
             </div>
             <span className="ml-2 text-sm text-gray-400">{closestMilestone.progress}%</span>
           </div>
+          <p className="text-sm text-gray-400 mt-1">시작일: {closestMilestone.startDate}</p>
+          <p className="text-sm text-gray-400 mt-1">종료일: {closestMilestone.endDate}</p>
         </div>
       </div>
     </div>
