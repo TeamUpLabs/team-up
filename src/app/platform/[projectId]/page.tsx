@@ -16,7 +16,7 @@ export default function ProjectPage({ params }: { params: Promise<{ projectId: s
         {/* 프로젝트 진행률 - 모바일에서도 2열 span */}
         <ProjectProgressCard projectId={projectId} />
         {/* 다가오는 마일스톤 - 모바일에서 전체 너비 */}
-        <MileStoneCard />
+        <MileStoneCard projectId={projectId} />
 
         {/* 팀원 활동 - 모바일에서도 2열 span */}
         <TeamActivities projectId={projectId} />
