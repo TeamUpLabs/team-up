@@ -1,6 +1,26 @@
+"use client";
+
 import Link from "next/link"
+import { useState } from "react";
+import { login } from "@/auth/authApi";
 
 export default function SignIn() {
+  const [userEmail, setUserEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserEmail(e.target.value);
+  };
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    login(userEmail, password);
+  };
+  
+ 
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-(--color-background) p-4">
             <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-xl p-8 border border-gray-700">
@@ -14,7 +34,11 @@ export default function SignIn() {
                         <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">이메일</label>
                         <input 
                             type="email" 
-                            id="email" 
+                            id="email"
+                            value={userEmail}
+                            onChange={handleUsernameChange}
+                            required
+                            autoComplete="email"
                             className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                             placeholder="이메일 주소를 입력하세요"
                         />
@@ -25,6 +49,10 @@ export default function SignIn() {
                         <input 
                             type="password" 
                             id="password" 
+                            value={password}
+                            onChange={handlePasswordChange}
+                            required
+                            autoComplete="current-password"
                             className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                             placeholder="비밀번호를 입력하세요"
                         />
@@ -56,6 +84,7 @@ export default function SignIn() {
                     <button 
                         type="submit" 
                         className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        onClick={handleSubmit}
                     >
                         로그인
                     </button>
