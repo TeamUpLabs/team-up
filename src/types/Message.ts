@@ -1,8 +1,8 @@
 export interface Message {
-  id: string;
+  id: number;
+  channelId: string;
   userId: number;
   user: string;
-  content: string;
+  message: string;
   timestamp: string;
-  avatar: string;
 }

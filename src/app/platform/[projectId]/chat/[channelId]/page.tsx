@@ -7,6 +7,8 @@ import { Message } from '@/types/Message';
 import { TeamMember } from '@/types/Member';
 import ChannelHeader from '@/components/project/chat/ChannelHeader';
 import MessageList from '@/components/project/chat/MessageList';
+import { useWebSocket } from '@/hooks/useWebSocket';
+import { getCurrentKoreanTime } from '@/utils/dateUtils';
 
 interface PageProps {
   params: Promise<{
@@ -16,24 +18,17 @@ interface PageProps {
 
 export default function ChatPage({ params }: PageProps) {
   const [message, setMessage] = useState('');
-  const [channelMessages, setChannelMessages] = useState<{[key: string]: Message[]}>({});
   const [members, setMembers] = useState<TeamMember[]>([]);
   const { channelId } = use(params);
+  const { messages, sendMessage, isConnected } = useWebSocket(channelId);
 
   useEffect(() => {
     // 멤버 데이터 로드
     fetch('/json/members.json')
       .then(res => res.json())
       .then(data => setMembers(data));
-
-    // 메시지 데이터 로드
-    fetch('/json/messages.json')
-      .then(res => res.json())
-      .then(data => setChannelMessages(data));
+    console.log(getCurrentKoreanTime());
   }, []);
-
-  // 현재 채널의 메시지 가져오기
-  const currentMessages = channelMessages[channelId] || [];
 
   const getMemberById = (userId: number) => {
     return members.find(member => member.id === userId);
@@ -41,8 +36,17 @@ export default function ChatPage({ params }: PageProps) {
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
-      // 메시지 전송 로직
+    if (message.trim() && sendMessage && isConnected) {
+      const messageData: Message = {
+        id: Date.now(),
+        channelId: channelId,
+        userId: 1,
+        user: "test",
+        message: message,
+        timestamp: getCurrentKoreanTime(),
+      };
+      
+      sendMessage(messageData);
       setMessage('');
     }
   };
@@ -51,9 +55,16 @@ export default function ChatPage({ params }: PageProps) {
     <div className="flex flex-col h-[calc(100vh-4rem)]">
       {/* 채널 헤더 */}
       <ChannelHeader channelId={channelId} />
+      
+      {/* Connection Status */}
+      {!isConnected && (
+        <div className="bg-red-500 text-white px-4 py-2 text-center">
+          연결이 끊어졌습니다. 재연결 시도중...
+        </div>
+      )}
 
       {/* 메시지 리스트 */}
-      <MessageList messages={currentMessages} getMemberById={getMemberById} />
+      <MessageList messages={messages} getMemberById={getMemberById} />
 
       {/* 메시지 입력 */}
       <div className="px-6 py-4 border-t border-gray-800">
@@ -62,12 +73,14 @@ export default function ChatPage({ params }: PageProps) {
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="메시지를 입력하세요..."
-            className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder={isConnected ? "메시지를 입력하세요..." : "연결 대기 중..."}
+            disabled={!isConnected}
+            className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
           />
           <button
             type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            disabled={!isConnected}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:hover:bg-blue-500"
           >
             <FontAwesomeIcon icon={faPaperPlane} />
           </button>
