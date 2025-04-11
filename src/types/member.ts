@@ -22,16 +22,8 @@ export interface TeamMember {
     name: string;
     level: string;
   }[];
-  socialLinks: {
+  socialLinks: [{
     github: string;
     linkedin: string;
-  };
-  availability: {
-    monday: boolean;
-    tuesday: boolean;
-    wednesday: boolean;
-    thursday: boolean;
-    friday: boolean;
-    weekend: boolean;
-  };
+  }];
 }

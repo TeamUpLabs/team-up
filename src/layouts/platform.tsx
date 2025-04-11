@@ -7,11 +7,14 @@ import Sidebar from "@/components/platform/sidebar";
 import { faHouse, faFolder, faPeopleGroup, faGear } from "@fortawesome/free-solid-svg-icons";
 import { Project } from "@/types/Project";
 import Logo from "@/components/logo";
+import { useAuthStore } from "@/auth/authStore";
 
 
 export default function Platform() {
   const projects: Project[] = ProjectData.slice();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
 
   const mainNavItems = [
     { icon: faHouse, label: "홈", href: "/platform" },
@@ -58,6 +61,12 @@ export default function Platform() {
                 + 새 프로젝트
               </button>
               <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-700"></div>
+              {user ? (
+                <p>👤 사용자 이름: {user.name}</p>
+              ) : (
+                <p>로딩 중...</p>
+              )}
+              <button onClick={logout}>로그아웃</button>
             </div>
           </div>
         </header>
@@ -76,7 +85,7 @@ export default function Platform() {
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
                   <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a 1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a 1 1 0 01-1.414 0l-4-4a 1 1 0 010-1.414z"/>
                   </svg>
                 </div>
               </div>
