@@ -14,7 +14,11 @@ export default function Platform() {
   const projects: Project[] = ProjectData.slice();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
+
+  const logout = () => {
+    useAuthStore.getState().logout();
+    window.location.href = '/';
+  } 
 
   const mainNavItems = [
     { icon: faHouse, label: "홈", href: "/platform" },
@@ -60,12 +64,14 @@ export default function Platform() {
               <button className="px-3 py-1.5 md:px-4 md:py-2 bg-purple-600 text-white text-sm md:text-base rounded-lg hover:bg-purple-700">
                 + 새 프로젝트
               </button>
-              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-700"></div>
-              {user ? (
-                <p>👤 사용자 이름: {user.name}</p>
-              ) : (
-                <p>로딩 중...</p>
-              )}
+              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-700 flex items-center justify-center">
+                { user ? (
+                  user?.name.charAt(0)
+                ) : (
+                  "?"
+                  )
+                }
+              </div>
               <button onClick={logout}>로그아웃</button>
             </div>
           </div>
