@@ -53,6 +53,7 @@ export const checkAndRefreshAuth = async () => {
     console.error("Auth check failed:", error);
     if ((error as { response?: { status: number } }).response?.status === 401) {
       store.logout();
+      alert('세션이 만료되었습니다. 다시 로그인 해주세요.');
       window.location.href = '/signin';
     }
     return false;
