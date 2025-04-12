@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import ProjectData from "../../public/json/projects.json";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/platform/sidebar";
 import { faHouse, faFolder, faPeopleGroup, faGear } from "@fortawesome/free-solid-svg-icons";
 import { Project } from "@/types/Project";
@@ -11,9 +11,19 @@ import { useAuthStore } from "@/auth/authStore";
 
 
 export default function Platform() {
-  const projects: Project[] = ProjectData.slice();
+  const projects: Project[] = ProjectData;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
+
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  // 인증 상태 확인
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      alert("로그인 후 사용 가능합니다.");
+      window.location.href = '/signin';
+    }
+  }, [isAuthenticated]);
 
   const logout = () => {
     useAuthStore.getState().logout();
