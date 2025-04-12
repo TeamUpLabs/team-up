@@ -1,14 +1,14 @@
 "use client";
 
-import ProjectData from "../../../../public/json/projects.json";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faMessage, faTasks, faCalendar, faUsers, faFlag, faGear } from "@fortawesome/free-solid-svg-icons";
 import { faBell } from "@fortawesome/free-regular-svg-icons";
 import Sidebar from "@/components/platform/sidebar";
-import { useState, use } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { Project } from "@/types/Project";
 import { usePathname } from "next/navigation";
+import { getProjectById } from "@/hooks/getProjectData";
 
 export default function ProjectLayout({ 
   children,
@@ -20,8 +20,38 @@ export default function ProjectLayout({
   const { projectId } = use(params);
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const projects: Project[] = ProjectData.slice();
-  const project = projects.find((project) => project.id === projectId);
+  const [project, setProjects] = useState<Project>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async (project_id: string) => {
+      try {
+        const data = await getProjectById(project_id);
+        setProjects(data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        alert("프로젝트를 가져오는 데 실패했습니다.");
+        window.location.href = '/platform';
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProjects(projectId);
+  }, [projectId]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen bg-neutral-900 text-white">
+        <div className="lg:ml-64 w-full p-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-6 bg-gray-700 rounded w-1/3" />
+            <div className="h-4 bg-gray-700 rounded w-1/2" />
+            <div className="h-64 bg-gray-800 rounded" />
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   if (!project) {
     return <div className="text-white">프로젝트를 찾을 수 없습니다.</div>;

@@ -37,3 +37,22 @@ export const getProjectByMemberId = async (member_id: number) => {
     throw error;
   }
 };
+
+export const getProjectById = async (project_id: string) => {
+  try {
+    const res = await server.get(`/project/${project_id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to fetch project data");
+    }
+  } catch (error) {
+    console.error("Error fetching project data:", error);
+    throw error;
+  }
+};
