@@ -84,7 +84,7 @@ export default function Platform() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
-              <h2 className="text-lg md:text-xl font-semibold">프로젝트 둘러보기</h2>
+              <h2 className="text-lg md:text-xl font-semibold">내 프로젝트</h2>
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">
               <button className="px-3 py-1.5 md:px-4 md:py-2 bg-purple-600 text-white text-sm md:text-base rounded-lg hover:bg-purple-700">
@@ -154,7 +154,7 @@ export default function Platform() {
                     <div className="flex -space-x-2">
                       {
                         project.members.map((member => (
-                          <div key={member.id} className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-800 flex align-center justify-center">
+                          <div key={member.id} className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-800 text-sm flex align-center justify-center place-items-center">
                             {member.name.charAt(0)}
                           </div>
                         )))
