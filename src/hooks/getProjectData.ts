@@ -56,3 +56,23 @@ export const getProjectById = async (project_id: string) => {
     throw error;
   }
 };
+
+
+export const getAllProjectsExceptMyProject = async (member_id: number) => {
+  try {
+    const res = await server.get(`/project/exclude/${member_id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to fetch project data");
+    }
+  } catch (error) {
+    console.error("Error fetching filtered project data:", error);
+    throw error;
+  }
+};
