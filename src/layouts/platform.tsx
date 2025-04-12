@@ -9,6 +9,7 @@ import ProjectCard from "@/components/platform/ProjectCard";
 
 export default function Platform() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const user = useAuthStore((state) => state.user);
   // 프로젝트 데이터 가져오기
   useEffect(() => {
@@ -27,27 +28,22 @@ export default function Platform() {
     }
   }, [user]);
 
+  const filteredProjects = (projects ?? []).filter(project => {
+    const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase())
+
+    return matchesSearch;
+  })
+
   return (
           <div className="max-w-7xl mx-auto">
             {/* 필터 영역 */}
             <div className="mb-6 flex flex-col md:flex-row gap-4 md:items-center md:space-x-4">
-              <div className="relative">
-                <select className="appearance-none bg-gray-800 border border-gray-700 rounded-lg pl-4 pr-10 py-2.5 text-sm w-full md:w-48 text-gray-300 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors">
-                  <option value="">모든 카테고리</option>
-                  <option value="web">웹 개발</option>
-                  <option value="mobile">모바일 앱</option>
-                  <option value="design">디자인</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a 1 1 0 01-1.414 0l-4-4a 1 1 0 010-1.414z"/>
-                  </svg>
-                </div>
-              </div>
               <div className="relative flex-1">
                 <input
                   type="search"
                   placeholder="프로젝트 검색..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-300 placeholder-gray-400 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors"
                 />
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
@@ -61,7 +57,7 @@ export default function Platform() {
             {/* 프로젝트 그리드 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
               {/* 프로젝트 카드 */}
-              {projects.map(project => (
+              {filteredProjects.map(project => (
                 <ProjectCard key={project.id} project={project} />
               ))}
 
