@@ -16,7 +16,6 @@ export default function Platform() {
     const fetchProjects = async (member_id: number) => {
       try {
         const data = await getProjectByMemberId(member_id);
-        console.log(data);
         setProjects(data);
       } catch (error) {
         console.error("Error fetching projects:", error);
