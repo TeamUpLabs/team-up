@@ -1,20 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import ProjectData from "../../public/json/projects.json";
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/platform/sidebar";
 import { faHouse, faFolder, faPeopleGroup, faGear } from "@fortawesome/free-solid-svg-icons";
 import { Project } from "@/types/Project";
 import Logo from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
+import { getProjectByMemberId } from "@/hooks/getProjectData";
 
 
 export default function Platform() {
-  const projects: Project[] = ProjectData;
+  const [projects, setProjects] = useState<Project[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
-
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   // 인증 상태 확인
@@ -24,6 +23,23 @@ export default function Platform() {
       window.location.href = '/signin';
     }
   }, [isAuthenticated]);
+
+  // 프로젝트 데이터 가져오기
+  useEffect(() => {
+    const fetchProjects = async (member_id: number) => {
+      try {
+        const data = await getProjectByMemberId(member_id);
+        console.log(data);
+        setProjects(data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        alert("프로젝트를 가져오는 데 실패했습니다.");
+      }
+    };
+    if (user) {
+      fetchProjects(user.id);
+    }
+  }, [user]);
 
   const logout = () => {
     useAuthStore.getState().logout();
@@ -136,9 +152,13 @@ export default function Platform() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex -space-x-2">
-                      <div className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-800"></div>
-                      <div className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-800"></div>
-                      <div className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-800"></div>
+                      {
+                        project.members.map((member => (
+                          <div key={member.id} className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-800 flex align-center justify-center">
+                            {member.name.charAt(0)}
+                          </div>
+                        )))
+                      }
                     </div>
                     <Link href={`/platform/${project.id}`} className="text-sm text-purple-400 hover:text-purple-300">
                       참여하기
