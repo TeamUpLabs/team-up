@@ -6,7 +6,7 @@ import Logo from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
 import { faHouse, faFolder, faPeopleGroup, faGear } from "@fortawesome/free-solid-svg-icons";
 
-export default function PlatformLayout({ children }: { children: React.ReactNode }) {
+export default function PlatformLayout({ children, HeaderTitle }: { children: React.ReactNode, HeaderTitle: string }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -61,7 +61,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
-              <h2 className="text-lg md:text-xl font-semibold">내 프로젝트</h2>
+              <h2 className="text-lg md:text-xl font-semibold">{HeaderTitle}</h2>
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">
               <button className="px-3 py-1.5 md:px-4 md:py-2 bg-purple-600 text-white text-sm md:text-base rounded-lg hover:bg-purple-700">

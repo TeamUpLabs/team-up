@@ -3,7 +3,7 @@ import PlatformLayout from "@/layouts/PlatformLayout";
 
 export default function PlatformPage() {
     return (
-        <PlatformLayout>
+        <PlatformLayout HeaderTitle="내 프로젝트">
           <Platform />
         </PlatformLayout>
     )
