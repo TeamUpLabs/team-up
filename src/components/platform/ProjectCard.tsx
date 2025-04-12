@@ -6,7 +6,10 @@ export default function ProjectCard({ project }: { project: Project }) {
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-purple-500 transition-colors duration-200">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-semibold">{project.title}</h3>
-        <span className="text-sm text-green-400">{project.status}</span>
+        <div className="space-x-3">
+          <span className="text-sm text-gray-400">{project.members.length}/{project.teamSize}명</span>
+          <span className="text-sm text-green-400">{project.status}</span>
+        </div>
       </div>
       <p className="text-gray-400 mb-4 line-clamp-2 min-h-[3rem]">{project.description}</p>
       <div className="flex items-center space-x-2 mb-4">
