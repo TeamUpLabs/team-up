@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Task } from '@/types/Task';
+import { useProject } from '@/contexts/ProjectContext';
 
 interface TaskLabelRenderType {
   label: string;
@@ -8,7 +9,8 @@ interface TaskLabelRenderType {
   value: number;
 }
 
-export default function ProjectProgressCard({ projectId }: { projectId: string }) {
+export default function ProjectProgressCard() {
+  const { project } = useProject();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,7 +41,7 @@ export default function ProjectProgressCard({ projectId }: { projectId: string }
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl sm:text-2xl font-bold text-white">프로젝트 진행률</h1>
           <div className="flex items-center text-gray-400">
-            <Link href={`/platform/${projectId}/tasks`} className="flex items-center text-gray-400 hover:text-gray-300">
+            <Link href={`/platform/${project?.id}/tasks`} className="flex items-center text-gray-400 hover:text-gray-300">
               더보기
               <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -72,7 +74,7 @@ export default function ProjectProgressCard({ projectId }: { projectId: string }
     <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-700">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl sm:text-2xl font-bold text-white">프로젝트 진행률</h1>
-        <Link href={`/platform/${projectId}/tasks`} className="flex items-center text-gray-400 hover:text-gray-300">
+        <Link href={`/platform/${project?.id}/tasks`} className="flex items-center text-gray-400 hover:text-gray-300">
           더보기
           <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
