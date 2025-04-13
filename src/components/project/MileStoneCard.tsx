@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import { MileStone } from '@/types/MileStone';
 import Link from 'next/link';
+import { useProject } from '@/contexts/ProjectContext';
 
-export default function MileStoneCard({ projectId }: { projectId: string }) {
+export default function MileStoneCard() {
+  const { project } = useProject();
   const [closestMilestone, setClosestMilestone] = useState<MileStone | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -40,7 +42,7 @@ export default function MileStoneCard({ projectId }: { projectId: string }) {
       <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg overflow-x-auto border border-gray-700">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-white">다가오는 마일스톤</h2>
-          <Link href={`/platform/${projectId}/milestone`} className="flex items-center text-gray-400 hover:text-gray-300">
+          <Link href={`/platform/${project?.id}/milestone`} className="flex items-center text-gray-400 hover:text-gray-300">
             더보기
             <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -93,7 +95,7 @@ export default function MileStoneCard({ projectId }: { projectId: string }) {
     <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg overflow-x-auto border border-gray-700">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-white">다가오는 마일스톤</h2>
-        <Link href={`/platform/${projectId}/milestone`} className="flex items-center text-gray-400 hover:text-gray-300">
+        <Link href={`/platform/${project?.id}/milestone`} className="flex items-center text-gray-400 hover:text-gray-300">
           더보기
           <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
