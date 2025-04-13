@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { TeamMember } from "@/types/Member";
+import { useProject } from "@/contexts/ProjectContext";
 
-export default function TeamActivities({ projectId }: { projectId: string }) {
+
+export default function TeamActivities() {
   const bgColors = [
     'bg-blue-500', 'bg-red-500', 'bg-green-500', 
     'bg-yellow-500', 'bg-purple-500', 'bg-pink-500',
@@ -13,19 +14,14 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
     return bgColors[memberId % bgColors.length];
   };
 
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const { project } = useProject();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetch('/json/members.json')
-      .then(res => res.json())
-      .then(data => {
-        setTeamMembers(data);
-        setIsLoading(false);
-      })
-      .catch(() => setIsLoading(false));
-  }, []);
+    if (project && project.members) {
+      setIsLoading(false);
+    }
+  }, [project]);
 
   const SkeletonLoader = () => (
     Array(4).fill(0).map((_, index) => (
@@ -57,7 +53,7 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
     <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-700">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-semibold text-white">팀원 활동</h2>
-        <Link href={`/platform/${projectId}/members`} className="flex items-center text-gray-400 hover:text-gray-300">
+        <Link href={`/platform/${project?.id}/members`} className="flex items-center text-gray-400 hover:text-gray-300">
           더보기
           <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -68,7 +64,7 @@ export default function TeamActivities({ projectId }: { projectId: string }) {
         {isLoading ? (
           <SkeletonLoader />
         ) : (
-          teamMembers.map((member) => (
+          project?.members.map((member) => (
             <div key={member.id} className="flex items-center justify-between p-2 border-b border-gray-700 hover:bg-gray-700 transition duration-200 rounded">
               <div className="flex items-center">
                 <div className={`w-10 h-10 ${getColorForMember(member.id)} rounded-full flex items-center justify-center text-white font-bold`}>
