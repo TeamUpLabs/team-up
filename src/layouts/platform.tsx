@@ -13,7 +13,11 @@ export default function Platform() {
   const user = useAuthStore((state) => state.user);
   // 프로젝트 데이터 가져오기
   useEffect(() => {
+    let didFetch = false;
     const fetchProjects = async (member_id: number) => {
+      if (didFetch) return;
+      didFetch = true;
+      
       try {
         const data = await getProjectByMemberId(member_id);
         setProjects(data);
@@ -24,6 +28,10 @@ export default function Platform() {
     };
     if (user) {
       fetchProjects(user.id);
+    }
+
+    return () => {
+      didFetch = true; // cleanup에서 재호출 방지
     }
   }, [user]);
 
