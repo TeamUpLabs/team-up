@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import MemberDetailModal from '@/components/platform/MemberDetailModal';
 import MemberCard from '@/components/project/members/MemberCard';
 import SearchFilterBar from '@/components/project/members/SearchFilterBar';
 import { TeamMember } from '@/types/Member';
-import { getMemberByProject } from '@/hooks/getProjectData';
+import { useProject } from "@/contexts/ProjectContext";
 
-export default function MembersPage({ params }: { params: Promise<{ projectId: string }> }) {
-  const { projectId } = use(params);
+export default function MembersPage() {
+  const { project } = useProject();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
@@ -16,17 +16,8 @@ export default function MembersPage({ params }: { params: Promise<{ projectId: s
   const [allTeamMembers, setAllTeamMembers] = useState<TeamMember[]>();
 
   useEffect(() => {
-    const fetchMember = async (project_id: string) => {
-      try {
-        const data = await getMemberByProject(project_id)
-        setAllTeamMembers(data);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-        alert("프로젝트를 가져오는 데 실패했습니다.");
-      }
-    }
-    fetchMember(projectId)
-  }, [projectId]);
+    setAllTeamMembers(project?.members);
+  }, [project])
 
   const filteredMembers = (allTeamMembers ?? []).filter(member => {
     const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
