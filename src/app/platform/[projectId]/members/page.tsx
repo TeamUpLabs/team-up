@@ -22,7 +22,7 @@ export default function MembersPage() {
   const filteredMembers = (allTeamMembers ?? []).filter(member => {
     const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.currentTask.toLowerCase().includes(searchQuery.toLowerCase());
+      member.currentTask?.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesStatus = statusFilter === 'all' ||
       (statusFilter === 'active' && member.status === '활성') ||
