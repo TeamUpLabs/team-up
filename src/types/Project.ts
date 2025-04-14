@@ -1,4 +1,5 @@
 import { TeamMember } from "@/types/Member";
+import { Task } from "@/types/Task";
 
 export interface Project {
   id: string;
@@ -13,4 +14,5 @@ export interface Project {
   location: string;
   projectType: string;
   members: TeamMember[];
+  tasks: Task[] | [];
 }

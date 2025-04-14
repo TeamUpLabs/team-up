@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Task } from '@/types/Task';
 import { useProject } from '@/contexts/ProjectContext';
 
 interface TaskLabelRenderType {
@@ -11,21 +10,17 @@ interface TaskLabelRenderType {
 
 export default function ProjectProgressCard() {
   const { project } = useProject();
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/json/tasks.json')
-      .then(response => response.json())
-      .then(data => {
-        setTasks(data);
-        setLoading(false);
-      });
-  }, []);
+    if (project && project.tasks) {
+      setIsLoading(false);
+    }
+  }, [project]);
 
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(task => task.status === 'done').length;
-  const inProgressTasks = tasks.filter(task => task.status === 'in-progress').length;
+  const totalTasks = project?.tasks.length ?? 0;
+  const completedTasks = project?.tasks.filter(task => task.status === 'done').length ?? 0;
+  const inProgressTasks = project?.tasks.filter(task => task.status === 'in-progress').length ?? 0;
 
   const TaskLabelRender: TaskLabelRenderType[] = [
     { label: '총 작업', color: 'text-white', value: totalTasks },
@@ -35,7 +30,7 @@ export default function ProjectProgressCard() {
 
   const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg">
         <div className="flex items-center justify-between mb-4">
