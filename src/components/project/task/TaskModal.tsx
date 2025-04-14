@@ -101,7 +101,13 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
                     <div className="space-y-1 bg-gray-700/10 p-4 rounded-lg">
                       <h4 className="text-sm font-medium text-gray-400">담당자</h4>
-                      <p className="text-gray-200">{task.assignee}</p>
+                      <div className="grid grid-cols-3">
+                        {
+                          task?.assignee?.map((assi) => (
+                            <p key={assi.id} className="text-gray-200">{assi.name}</p>
+                          ))
+                        }
+                      </div>
                     </div>
 
                     <div className="space-y-1 bg-gray-700/10 p-4 rounded-lg">
@@ -113,8 +119,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   <div>
                     <h4 className="text-sm font-medium text-gray-400 mb-2">진행률</h4>
                     <div className="w-full bg-gray-700/30 rounded-full h-2.5">
-                      <div 
-                        className="bg-blue-500 h-2.5 rounded-full" 
+                      <div
+                        className="bg-blue-500 h-2.5 rounded-full"
                         style={{ width: `${progress}%` }}
                       ></div>
                     </div>

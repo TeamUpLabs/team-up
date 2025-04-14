@@ -14,12 +14,14 @@ export default function TaskComponent({ task }: { task: Task }) {
       </div>
       <div className="flex items-center gap-2 text-xs text-gray-400">
         {task.assignee && (
-          <span className="flex items-center">
-            <span className="w-4 h-4 bg-gray-600 rounded-full flex items-center justify-center mr-1 text-[10px]">
-              {task.assignee.charAt(0)}
+          task.assignee.map((assi, idx) => (
+            <span key={assi.id ?? idx} className="flex items-center">
+              <span className="w-4 h-4 bg-gray-600 rounded-full flex items-center justify-center mr-1 text-[10px]">
+                {assi.name.charAt(0)}
+              </span>
+              {assi.name}
             </span>
-            {task.assignee}
-          </span>
+          ))
         )}
         {task.dueDate && (
           <span>

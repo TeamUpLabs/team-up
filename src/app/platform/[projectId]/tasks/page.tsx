@@ -9,30 +9,28 @@ import { Task } from '@/types/Task';
 import TaskComponent from '@/components/project/task/TaskComponent';
 import TaskModal from '@/components/project/task/TaskModal';
 import { getStatusColor } from "@/utils/getStatusColor";
+import { useProject } from '@/contexts/ProjectContext';
 
 export default function TasksPage() {
+  const { project } = useProject();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await fetch('/json/tasks.json');
-        const data = await response.json();
-        setTasks(data.map((task: Task) => ({
-          ...task,
-          id: String(task.id),
-          status: task.status as "todo" | "in-progress" | "done",
-          priority: task.priority as "high" | "medium" | "low"
-        })));
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-      }
-    };
+    if (!project?.tasks) return;
 
-    fetchTasks();
-  }, []);
+    try {
+      setTasks(project.tasks.map((task: Task) => ({
+        ...task,
+        id: String(task.id),
+        status: task.status as "todo" | "in-progress" | "done",
+        priority: task.priority as "high" | "medium" | "low"
+      })));
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  }, [project])
 
   const getStatusText = (status: Task['status']) => {
     switch (status) {
