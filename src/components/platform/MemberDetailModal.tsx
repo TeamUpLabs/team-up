@@ -52,7 +52,6 @@ export default function MemberDetailModal({ member, cardPosition, onClose }: Mem
                     } animate-pulse`}
                   />
                   <span className="text-sm">{member.status}</span>
-                  <span className="mx-2 text-gray-600">·</span>
                   <span className="text-sm text-gray-400">{member.statusTime}</span>
                 </div>
               </div>
