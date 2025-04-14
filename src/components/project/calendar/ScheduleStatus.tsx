@@ -2,7 +2,7 @@ import { Task } from '@/types/Task';
 import { getStatusColor } from '@/utils/getStatusColor';
 
 interface ScheduleStatusProps {
-  tasks: Task[];
+  tasks?: Task[];
 }
 
 export default function ScheduleStatus({ tasks }: ScheduleStatusProps) {
@@ -16,7 +16,7 @@ export default function ScheduleStatus({ tasks }: ScheduleStatusProps) {
               {status === 'todo' ? '예정' : status === 'in-progress' ? '진행중' : '완료'}
             </h4>
             <p className="text-2xl font-bold">
-              {tasks.filter(task => task.status === status).length}
+              {tasks?.filter(task => task.status === status).length}
             </p>
           </div>
         ))}

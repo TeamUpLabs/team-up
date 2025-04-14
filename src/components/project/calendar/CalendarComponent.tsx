@@ -6,7 +6,7 @@ import { getStatusColor } from '@/utils/getStatusColor';
 
 interface CalendarProps {
   currentDate: Date;
-  tasks: Task[];
+  tasks?: Task[];
   days: Date[];
   onPreviousMonth: () => void;
   onNextMonth: () => void;
@@ -51,7 +51,7 @@ export default function Calendar({
 
       <div className="flex-1 grid grid-cols-7 gap-px bg-gray-900">
         {days.map((day) => {
-          const dayTasks = tasks.filter(task => task.dueDate === format(day, 'yyyy-MM-dd'));
+          const dayTasks = tasks?.filter(task => task.dueDate === format(day, 'yyyy-MM-dd'));
 
           return (
             <div
@@ -68,14 +68,18 @@ export default function Calendar({
                 {format(day, 'd')}
               </p>
               <div className="mt-1 space-y-1">
-                {dayTasks.map((task) => (
+                {dayTasks?.map((task) => (
                   <div
                     key={task.id}
                     onClick={() => onSelectTask(task)}
                     className={`px-2 py-1 rounded-md text-xs ${getStatusColor(task.status)} hover:opacity-80 cursor-pointer`}
                   >
                     <p className="font-medium truncate">{task.title}</p>
-                    <p className="text-xs opacity-75">{task.assignee}</p>
+                    {
+                      task?.assignee?.map(assi => (
+                        <p key={assi.id} className="text-xs opacity-75">{assi.name}</p>
+                      ))
+                    }
                   </div>
                 ))}
               </div>
