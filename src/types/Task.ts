@@ -1,5 +1,16 @@
 import { TeamMember } from "@/types/Member";
 
+interface SubTask {
+  title: string;
+  completed: boolean;
+}
+
+interface Comment {
+  author_id: number;
+  content: string;
+  createdAt: string;
+}
+
 export interface Task {
   id: string;
   title: string;
@@ -9,15 +20,8 @@ export interface Task {
   assignee?: TeamMember[];
   dueDate?: string;
   tags: string[];
-  subtasks: {
-    title: string;
-    completed: boolean;
-  }[];
-  comments: {
-    author: string;
-    content: string;
-    createdAt: string;
-  }[];
+  subtasks: SubTask[];
+  comments: Comment[];
   createdAt: string;
   updatedAt: string;
 }

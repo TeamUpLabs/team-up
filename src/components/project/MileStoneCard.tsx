@@ -10,13 +10,9 @@ export default function MileStoneCard() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMileStone = async () => {
+    const getClosestMilestone = async () => {
       try {
-        const response = await fetch('/json/milestones.json');
-        if (!response.ok) {
-          throw new Error('네트워크 응답이 올바르지 않습니다.');
-        }
-        const data: MileStone[] = await response.json();
+        const data: MileStone[] = project?.milestones ?? [];
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -34,8 +30,13 @@ export default function MileStoneCard() {
       }
     }
 
-    fetchMileStone();
-  }, []);
+    getClosestMilestone();
+  }, [project]);
+
+  const totalTasks = closestMilestone?.subtasks.length ?? 0;
+  const completedTasks = closestMilestone?.subtasks.filter(task => task.status === 'done').length ?? 0;
+
+  const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   if (isLoading) {
     return (
@@ -105,12 +106,12 @@ export default function MileStoneCard() {
       <div className="space-y-4">
         <div className="bg-gray-700 p-3 rounded-lg border border-gray-600 hover:border-purple-500 transition duration-200">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="text-xl font-semibold text-white">{closestMilestone.title}</h3>
-            <span className={`px-3 py-1 rounded-full text-sm ${closestMilestone.status === 'completed' ? 'bg-green-500/20 text-green-400' :
+            <h3 className="text-xl font-semibold text-white">{closestMilestone?.title}</h3>
+            <span className={`px-3 py-1 rounded-full text-sm ${closestMilestone?.status === 'done' ? 'bg-green-500/20 text-green-400' :
               closestMilestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
                 'bg-gray-500/20 text-gray-400'
               }`}>
-              {closestMilestone.status === 'completed' ? '완료' :
+              {closestMilestone?.status === 'done' ? '완료' :
                 closestMilestone.status === 'in-progress' ? '진행중' : '시작 전'}
             </span>
           </div>
@@ -119,10 +120,10 @@ export default function MileStoneCard() {
             <div className="w-full bg-gray-600 rounded-full h-1.5">
               <div
                 className="bg-indigo-500 h-1.5 rounded-full"
-                style={{ width: `${closestMilestone.progress}%` }}
+                style={{ width: `${progressPercentage}%` }}
               ></div>
             </div>
-            <span className="ml-2 text-sm text-gray-400">{closestMilestone.progress}%</span>
+            <span className="ml-2 text-sm text-gray-400">{progressPercentage}%</span>
           </div>
           <p className="text-sm text-gray-400 mt-1">시작일: {closestMilestone.startDate}</p>
           <p className="text-sm text-gray-400 mt-1">종료일: {closestMilestone.endDate}</p>
