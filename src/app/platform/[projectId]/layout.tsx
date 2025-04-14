@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faMessage, faTasks, faCalendar, faUsers, faFlag, faGear } from "@fortawesome/free-solid-svg-icons";
 import { faBell } from "@fortawesome/free-regular-svg-icons";
 import Sidebar from "@/components/platform/sidebar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { Project } from "@/types/Project";
 import { usePathname } from "next/navigation";
@@ -16,8 +16,9 @@ export default function ProjectLayout({
   params
 }: {
   children: React.ReactNode;
-  params: { projectId: string };
+  params: Promise<{ projectId: string }>;
 }) {
+  const { projectId } = use(params);
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [project, setProjects] = useState<Project>();
@@ -36,8 +37,8 @@ export default function ProjectLayout({
         setIsLoading(false);
       }
     };
-    fetchProjects(params.projectId);
-  }, [params.projectId]);
+    fetchProjects(projectId);
+  }, [projectId]);
 
   if (isLoading) {
     return (
@@ -58,13 +59,13 @@ export default function ProjectLayout({
   }
 
   const projectNavItems = [
-    { icon: faHouse, label: "대시보드", href: `/platform/${params.projectId}`, isActive: pathname === `/platform/${params.projectId}` },
-    { icon: faUsers, label: "팀원", href: `/platform/${params.projectId}/members`, isActive: pathname === `/platform/${params.projectId}/members` },
-    { icon: faMessage, label: "채팅", href: `/platform/${params.projectId}/chat`, isActive: pathname === `/platform/${params.projectId}/chat` },
-    { icon: faTasks, label: "작업", href: `/platform/${params.projectId}/tasks`, isActive: pathname === `/platform/${params.projectId}/tasks` },
-    { icon: faCalendar, label: "일정", href: `/platform/${params.projectId}/calendar`, isActive: pathname === `/platform/${params.projectId}/calendar` },
-    { icon: faFlag, label: "마일스톤", href: `/platform/${params.projectId}/milestone`, isActive: pathname === `/platform/${params.projectId}/milestone` },
-    { icon: faGear, label: "설정", href: `/platform/${params.projectId}/setting`, isActive: pathname === `/platform/${params.projectId}/setting` }
+    { icon: faHouse, label: "대시보드", href: `/platform/${projectId}`, isActive: pathname === `/platform/${projectId}` },
+    { icon: faUsers, label: "팀원", href: `/platform/${projectId}/members`, isActive: pathname === `/platform/${projectId}/members` },
+    { icon: faMessage, label: "채팅", href: `/platform/${projectId}/chat`, isActive: pathname === `/platform/${projectId}/chat` },
+    { icon: faTasks, label: "작업", href: `/platform/${projectId}/tasks`, isActive: pathname === `/platform/${projectId}/tasks` },
+    { icon: faCalendar, label: "일정", href: `/platform/${projectId}/calendar`, isActive: pathname === `/platform/${projectId}/calendar` },
+    { icon: faFlag, label: "마일스톤", href: `/platform/${projectId}/milestone`, isActive: pathname === `/platform/${projectId}/milestone` },
+    { icon: faGear, label: "설정", href: `/platform/${projectId}/setting`, isActive: pathname === `/platform/${projectId}/setting` }
   ];
 
   return (
@@ -80,7 +81,7 @@ export default function ProjectLayout({
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           title={project.title}
-          titleHref={`/platform/${params.projectId}`}
+          titleHref={`/platform/${projectId}`}
           navItems={projectNavItems}
         />
 
