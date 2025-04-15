@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 import Sidebar from "@/components/platform/sidebar";
 import Logo from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
-import { faHouse, faFolder, faPeopleGroup, faGear } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faFolder, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
+import UserDropdown from "@/components/platform/UserDropdown";
 
 export default function PlatformLayout({ children, HeaderTitle }: { children: React.ReactNode, HeaderTitle: string }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   
   // 인증 상태 확인
@@ -19,16 +19,10 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
     }
   }, [isAuthenticated]);
 
-  const logout = () => {
-    useAuthStore.getState().logout();
-    window.location.href = '/';
-  } 
-
   const mainNavItems = [
       { icon: faHouse, label: "홈", href: "/platform" },
       { icon: faFolder, label: "프로젝트 찾기", href: "/platform/projects" },
       { icon: faPeopleGroup, label: "팀원 찾기", href: "/platform/members" },
-      { icon: faGear, label: "설정", href: "/platform/settings" },
     ];
   return (
     <div className="flex min-h-screen bg-(--color-background)">
@@ -67,15 +61,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
               <button className="px-3 py-1.5 md:px-4 md:py-2 bg-purple-600 text-white text-sm md:text-base rounded-lg hover:bg-purple-700">
                 + 새 프로젝트
               </button>
-              <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-700 flex items-center justify-center">
-                { user ? (
-                  user?.name.charAt(0)
-                ) : (
-                  "?"
-                  )
-                }
-              </div>
-              <button onClick={logout}>로그아웃</button>
+              <UserDropdown />
             </div>
           </div>
         </header>
