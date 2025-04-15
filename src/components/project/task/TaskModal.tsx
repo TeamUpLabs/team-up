@@ -78,7 +78,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 </div>
 
                 <div className="mt-6 space-y-6">
-                  <div>
+                  <div className="bg-gray-700/30 hover:bg-gray-700/50 p-4 rounded-lg">
                     <h4 className="text-sm font-medium text-gray-400 mb-2">상세 설명</h4>
                     <p className="text-gray-200">{task.description}</p>
                   </div>
