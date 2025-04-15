@@ -1,6 +1,6 @@
 import { TeamMember } from "@/types/Member";
 
-interface SubTask {
+export interface SubTask {
   title: string;
   completed: boolean;
 }

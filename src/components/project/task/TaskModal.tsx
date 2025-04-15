@@ -1,19 +1,20 @@
-import { Fragment } from 'react';
+"use client";
+
+import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Task } from '@/types/Task';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { getPriorityColor } from '@/utils/getPriorityColor';
+import { SubTask } from '@/types/Task';
 
 interface TaskModalProps {
-  task: Task | null;
+  task: Task;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
-  if (!task) return null;
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'todo': return 'bg-yellow-500/20 text-yellow-500';
@@ -24,12 +25,28 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   };
 
   const calculateProgress = () => {
-    if (task.subtasks.length === 0) return 0;
-    const completedTasks = task.subtasks.filter(subtask => subtask.completed).length;
-    return Math.round((completedTasks / task.subtasks.length) * 100);
+    if (task?.subtasks.length === 0) return 0;
+    const completedTasks = task?.subtasks.filter(subtask => subtask.completed).length;
+    return Math.round((completedTasks / task?.subtasks.length) * 100);
   };
 
   const progress = calculateProgress();
+  const [subtasks, setSubtasks] = useState<SubTask[]>([]);
+
+  const handleSubtaskToggle = async (index: number) => {
+    const updated = subtasks.map((subtask, i) =>
+      i === index ? { ...subtask, completed: !subtask.completed } : subtask
+    );
+    setSubtasks(updated);
+
+    // api 호출
+  };
+
+  useEffect(() => {
+    if (task?.subtasks) {
+      setSubtasks(task?.subtasks);
+    }
+  }, [task]);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -60,9 +77,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800/95 backdrop-blur-sm p-8 text-left align-middle shadow-xl transition-all border border-gray-700">
                 <div className="flex items-center justify-between pb-6 border-b border-gray-700">
                   <div>
-                    <h3 className="text-2xl font-semibold text-gray-100">{task.title}</h3>
+                    <h3 className="text-2xl font-semibold text-gray-100">{task?.title}</h3>
                     <div className="flex gap-2 mt-2">
-                      {task.tags.map((tag, index) => (
+                      {task?.tags.map((tag, index) => (
                         <span key={index} className="px-2 py-1 text-xs rounded-md bg-gray-700/50 text-gray-300">
                           {tag}
                         </span>
@@ -71,7 +88,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   </div>
                   <button
                     onClick={onClose}
-                    className="p-2 hover:bg-gray-700/50 rounded-lg transition-all duration-200 hover:rotate-90"
+                    className="transition-all duration-200 hover:rotate-90"
                   >
                     <FontAwesomeIcon icon={faXmark} className="w-5 h-5 text-gray-400" />
                   </button>
@@ -80,22 +97,22 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 <div className="mt-6 space-y-6">
                   <div className="bg-gray-700/30 hover:bg-gray-700/50 p-4 rounded-lg">
                     <h4 className="text-sm font-medium text-gray-400 mb-2">상세 설명</h4>
-                    <p className="text-gray-200">{task.description}</p>
+                    <p className="text-gray-200">{task?.description}</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg hover:bg-gray-700/50">
                       <h4 className="text-sm font-medium text-gray-400">상태</h4>
-                      <span className={`inline-block px-3 py-1 rounded-md text-sm font-medium ${getStatusColor(task.status)}`}>
-                        {task.status === 'todo' ? '예정' : task.status === 'in-progress' ? '진행중' : '완료'}
+                      <span className={`inline-block px-3 py-1 rounded-md text-sm font-medium ${getStatusColor(task?.status)}`}>
+                        {task?.status === 'todo' ? '예정' : task?.status === 'in-progress' ? '진행중' : '완료'}
                       </span>
                     </div>
 
                     <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg hover:bg-gray-700/50">
                       <h4 className="text-sm font-medium text-gray-400">우선순위</h4>
                       <span className={`inline-block px-3 py-1 rounded-md text-sm font-medium
-                        ${getPriorityColor(task.priority)}`}>
-                        {task.priority === 'high' ? '높음' : task.priority === 'medium' ? '중간' : '낮음'}
+                        ${getPriorityColor(task?.priority)}`}>
+                        {task?.priority === 'high' ? '높음' : task?.priority === 'medium' ? '중간' : '낮음'}
                       </span>
                     </div>
 
@@ -112,7 +129,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
                     <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg hover:bg-gray-700/50">
                       <h4 className="text-sm font-medium text-gray-400">마감일</h4>
-                      <p className="text-gray-200">{task.dueDate}</p>
+                      <p className="text-gray-200">{task?.dueDate}</p>
                     </div>
                   </div>
 
@@ -130,12 +147,12 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   <div>
                     <h4 className="text-sm font-medium text-gray-400 mb-3">하위 작업</h4>
                     <div className="space-y-2">
-                      {task.subtasks.map((subtask, index) => (
+                      {subtasks.map((subtask, index) => (
                         <div key={index} className="flex items-center gap-2 bg-gray-700/30 hover:bg-gray-700/50 p-3 rounded-lg">
                           <input
                             type="checkbox"
                             checked={subtask.completed}
-                            readOnly
+                            onChange={() => handleSubtaskToggle(index)}
                             className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-500"
                           />
                           <span className={`text-sm ${subtask.completed ? 'text-gray-500 line-through' : 'text-gray-200'}`}>
@@ -146,11 +163,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                     </div>
                   </div>
 
-                  {task.comments.length > 0 && (
+                  {task?.comments.length > 0 && (
                     <div>
                       <h4 className="text-sm font-medium text-gray-400 mb-3">댓글</h4>
                       <div className="space-y-3">
-                        {task.comments.map((comment, index) => (
+                        {task?.comments.map((comment, index) => (
                           <div key={index} className="bg-gray-700/30 hover:bg-gray-700/50 p-4 rounded-lg">
                             <div className="flex items-center justify-between mb-2">
                               <span className="font-medium text-gray-200">{comment.author_id}</span>
