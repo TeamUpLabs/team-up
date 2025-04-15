@@ -1,30 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import MilestoneCard from '@/components/project/milestone/MilestoneCard'
-import { MileStone } from '@/types/MileStone';
+import { useProject } from '@/contexts/ProjectContext';
 
 export default function MilestonePage() {
+  const { project } = useProject();
   const [filter, setFilter] = useState('all')
-  const [milestones, setMilestones] = useState<MileStone[]>();
 
-  useEffect(() => {
-    const fetchMilestones = async () => {
-      const response = await fetch('/json/milestones.json');
-      const data = await response.json();
-      console.log(data);
-      setMilestones(data);
-    };
-
-    fetchMilestones();
-  }, []);
-
-  const filteredMilestones = milestones?.filter(milestone => {
+  const filteredMilestones = project?.milestones.filter(milestone => {
     if (filter === 'all') return true;
     if (filter === 'active') return milestone.status === 'in-progress';
-    if (filter === 'completed') return milestone.status === 'completed';
+    if (filter === 'done') return milestone.status === 'done';
     return true;
   }) ?? [];
 
@@ -50,7 +39,7 @@ export default function MilestonePage() {
             onClick={() => setFilter('all')}
           >
             <span>전체</span>
-            <span>{milestones?.length}</span>
+            <span>{project?.milestones.length}</span>
           </button>
           <button
             className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${
@@ -59,16 +48,16 @@ export default function MilestonePage() {
             onClick={() => setFilter('active')}
           >
             <span>진행중</span>
-            <span>{milestones?.filter(m => m.status === 'in-progress').length}</span>
+            <span>{project?.milestones.filter(m => m.status === 'in-progress').length}</span>
           </button>
           <button
             className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${
               filter === 'completed' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
             }`}
-            onClick={() => setFilter('completed')}
+            onClick={() => setFilter('done')}
           >
             <span>완료</span>
-            <span>{milestones?.filter(m => m.status === 'completed').length}</span>
+            <span>{project?.milestones.filter(m => m.status === 'done').length}</span>
           </button>
         </div>
 

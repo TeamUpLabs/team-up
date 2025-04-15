@@ -14,7 +14,7 @@ export interface Project {
   teamSize: number;
   location: string;
   projectType: string;
-  members: TeamMember[] | [];
+  members: TeamMember[];
   tasks: Task[] | [];
   milestones: MileStone[];
 }
