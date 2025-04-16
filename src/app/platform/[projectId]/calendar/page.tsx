@@ -39,14 +39,16 @@ export default function CalendarPage() {
 
       <ScheduleStatus tasks={project?.tasks} />
 
-      <TaskModal
-        task={selectedTask}
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedTask(null);
-        }}
-      />
+      {selectedTask && (
+        <TaskModal
+          task={selectedTask}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedTask(null);
+          }}
+        />
+      )}
     </div>
   );
 }
