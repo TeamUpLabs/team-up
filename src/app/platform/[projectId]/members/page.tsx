@@ -19,10 +19,25 @@ export default function MembersPage() {
     setAllTeamMembers(project?.members);
   }, [project])
 
+  useEffect(() => {
+    const selectedAssiId = localStorage.getItem('selectedAssiId');
+    const memberCount = project?.members?.length ?? 0
+    
+    if (selectedAssiId && memberCount > 0) {
+      const memberToOpen = project?.members.find(member => member.id === Number(selectedAssiId));
+      
+      if (memberToOpen) {
+        setSelectedMember(memberToOpen);
+      }
+    
+      localStorage.removeItem('selectedAssiId');
+    }
+  }, [project]);
+
   const filteredMembers = (allTeamMembers ?? []).filter(member => {
     const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.currentTask?.toLowerCase().includes(searchQuery.toLowerCase());
+      member.currentTask?.every((task) => task.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
     const matchesStatus = statusFilter === 'all' ||
       (statusFilter === 'active' && member.status === '활성') ||

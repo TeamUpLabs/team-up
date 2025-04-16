@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { getPriorityColor } from '@/utils/getPriorityColor';
 import { SubTask } from '@/types/Task';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 interface TaskModalProps {
   task: Task;
@@ -15,6 +17,9 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
+  const router = useRouter();
+  const params = useParams();
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'todo': return 'bg-yellow-500/20 text-yellow-500';
@@ -39,6 +44,15 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     setSubtasks(updated);
 
     // api 호출
+  };
+
+  const handleAssigneeClick = (assiId: number) => {
+    localStorage.setItem('selectedAssiId', assiId.toString());
+
+    const projectId = params?.projectId ? String(params.projectId) : 'default';
+    router.push(`/platform/${projectId}/members`);
+    
+    onClose();
   };
 
   useEffect(() => {
@@ -123,7 +137,13 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       <div className="grid grid-cols-3">
                         {
                           task?.assignee?.map((assi) => (
-                            <p key={assi.id} className="text-gray-200">{assi.name}</p>
+                            <p 
+                              key={assi.id} 
+                              className="text-gray-200 hover:text-blue-400 cursor-pointer transition-colors"
+                              onClick={() => handleAssigneeClick(assi.id)}
+                            >{
+                              assi.name}
+                            </p>
                           ))
                         }
                       </div>
