@@ -40,6 +40,11 @@ export default function ProjectLayout({
     fetchProjects(projectId);
   }, [projectId]);
 
+  // Close sidebar on navigation change (for mobile)
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen bg-neutral-900 text-white">
