@@ -1,7 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
+import {
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval
+} from 'date-fns';
 import { Task } from '@/types/Task';
 import TaskModal from '@/components/project/task/TaskModal';
 import Calendar from '@/components/project/calendar/CalendarComponent';
@@ -16,7 +22,10 @@ export default function CalendarPage() {
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }); // 일요일 시작
+  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+
+  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   const previousMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)));
   const nextMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)));

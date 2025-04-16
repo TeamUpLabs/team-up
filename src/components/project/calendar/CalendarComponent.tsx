@@ -72,8 +72,8 @@ export default function Calendar({
               key={day.toString()}
               className={`relative min-h-[80px] sm:min-h-[100px] p-1 sm:p-2 transition-colors
                 ${!isSameMonthDay
-                  ? 'bg-gray-850 hover:bg-slate-800/90'
-                  : 'bg-gray-800 hover:bg-gray-700/90'}
+                  ? 'bg-gray-850'
+                  : 'bg-gray-800 hover:bg-gray-700'}
                 ${isTodayDay ? 'ring-2 ring-blue-500 ring-inset' : ''}
                 ${isWeekend && isSameMonthDay ? 'bg-gray-780' : ''}`}
             >
