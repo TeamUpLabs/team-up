@@ -9,8 +9,8 @@ export default function MemberCard({ member, onClick }: MemberCardProps) {
   return (
     <div
       className="group bg-gray-800/90 backdrop-blur p-6 rounded-xl shadow-lg 
-                hover:shadow-xl hover:scale-105 transition-all duration-300 
-                border border-gray-700 hover:border-purple-500 cursor-pointer"
+                transition-all duration-300 border border-gray-700 
+                hover:border-purple-500 cursor-pointer"
       onClick={onClick}
     >
       <div className="flex justify-between items-start">
