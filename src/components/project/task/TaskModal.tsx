@@ -24,13 +24,12 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     }
   };
 
-  const calculateProgress = () => {
-    if (task?.subtasks.length === 0) return 0;
-    const completedTasks = task?.subtasks.filter(subtask => subtask.completed).length;
-    return Math.round((completedTasks / task?.subtasks.length) * 100);
+  const calculateProgress = (subtasksList: SubTask[]) => {
+    if (subtasksList.length === 0) return 0;
+    const completedTasks = subtasksList.filter(subtask => subtask.completed).length;
+    return Math.round((completedTasks / subtasksList.length) * 100);
   };
 
-  const progress = calculateProgress();
   const [subtasks, setSubtasks] = useState<SubTask[]>([]);
 
   const handleSubtaskToggle = async (index: number) => {
@@ -47,6 +46,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       setSubtasks(task?.subtasks);
     }
   }, [task]);
+
+  // Calculate progress based on current subtasks state
+  const progress = calculateProgress(subtasks);
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
