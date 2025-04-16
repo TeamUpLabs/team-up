@@ -65,7 +65,7 @@ export default function TeamActivities() {
           <SkeletonLoader />
         ) : (
           project?.members.map((member) => (
-            <div key={member.id} className="flex items-center justify-between p-2 border-b border-gray-700 hover:bg-gray-700 transition duration-200 rounded">
+            <div key={member.id} className="flex items-center justify-between p-2 border-b border-gray-700 hover:bg-gray-700 transition duration-200">
               <div className="flex items-center">
                 <div className={`w-10 h-10 ${getColorForMember(member.id)} rounded-full flex items-center justify-center text-white font-bold`}>
                   {member.name.charAt(0)}
@@ -73,7 +73,14 @@ export default function TeamActivities() {
                 <div className="ml-3">
                   <p className="text-white">{member.name}</p>
                   <p className="text-sm text-gray-400">{member.role}</p>
-                  <p className="text-xs text-gray-500">현재 작업: {member.currentTask}</p>
+                  <div className="flex gap-2 align-center">
+                    <p className="text-xs text-gray-500">현재 작업: </p>
+                    {
+                      member.currentTask.map((task, idx) => (
+                        <p key={idx} className="text-xs text-gray-500">{task.title}</p>
+                      ))
+                    }
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col items-end">

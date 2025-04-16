@@ -40,8 +40,12 @@ export default function MemberCard({ member, onClick }: MemberCardProps) {
         <div className="border-t border-gray-700 pt-3 mt-3">
           <div className="text-sm">
             <span className="text-gray-400 font-medium">현재 작업</span>
-            <div className="mt-2 p-3 bg-gray-700/30 rounded-lg text-gray-300">
-              {member.currentTask}
+            <div className="mt-2 p-3 bg-gray-700/30 rounded-lg text-gray-300 flex gap-2">
+              {
+                member.currentTask.map((task, idx) => (
+                  <p key={idx}>{task.title}</p>
+                ))
+              }
             </div>
           </div>
         </div>

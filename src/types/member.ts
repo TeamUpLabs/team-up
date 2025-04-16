@@ -1,10 +1,12 @@
+import { Task } from "@/types/Task";
+
 export interface TeamMember {
   id: number;
   name: string;
   email: string;
   role: string;
   department: string;
-  currentTask: string;
+  currentTask: Task[];
   status: string;
   statusTime: string;
   startDate: string;

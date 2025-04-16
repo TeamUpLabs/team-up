@@ -32,6 +32,21 @@ export default function TasksPage() {
     }
   }, [project])
 
+  useEffect(() => {
+    const selectedTaskId = localStorage.getItem('selectedTaskId');
+    
+    if (selectedTaskId && tasks.length > 0) {
+      const taskToOpen = tasks.find(task => task.id === selectedTaskId);
+      
+      if (taskToOpen) {
+        setSelectedTask(taskToOpen);
+        setIsModalOpen(true);
+      }
+    
+      localStorage.removeItem('selectedTaskId');
+    }
+  }, [tasks]);
+
   const getStatusText = (status: Task['status']) => {
     switch (status) {
       case 'todo':
@@ -116,11 +131,13 @@ export default function TasksPage() {
           ))}
         </div>
 
-        <TaskModal
-          task={selectedTask}
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
+        {selectedTask && (
+          <TaskModal
+            task={selectedTask}
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
       </div>
     </DndProvider>
   );
