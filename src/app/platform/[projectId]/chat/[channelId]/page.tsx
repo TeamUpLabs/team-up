@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, use, useEffect } from 'react';
+import { useState, use } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Message } from '@/types/Message';
-import { TeamMember } from '@/types/Member';
 import ChannelHeader from '@/components/project/chat/ChannelHeader';
 import MessageList from '@/components/project/chat/MessageList';
 import { useWebSocket } from '@/hooks/useWebSocket';
@@ -18,21 +17,8 @@ interface PageProps {
 
 export default function ChatPage({ params }: PageProps) {
   const [message, setMessage] = useState('');
-  const [members, setMembers] = useState<TeamMember[]>([]);
   const { channelId } = use(params);
   const { messages, sendMessage, isConnected } = useWebSocket(channelId);
-
-  useEffect(() => {
-    // 멤버 데이터 로드
-    fetch('/json/members.json')
-      .then(res => res.json())
-      .then(data => setMembers(data));
-    console.log(getCurrentKoreanTime());
-  }, []);
-
-  const getMemberById = (userId: number) => {
-    return members.find(member => member.id === userId);
-  };
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +50,7 @@ export default function ChatPage({ params }: PageProps) {
       )}
 
       {/* 메시지 리스트 */}
-      <MessageList messages={messages} getMemberById={getMemberById} />
+      <MessageList messages={messages} />
 
       {/* 메시지 입력 */}
       <div className="px-6 py-4 border-t border-gray-800">
