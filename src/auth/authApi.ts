@@ -15,7 +15,6 @@ export const login = async (userEmail: string, password: string) => {
     }
 
     const token = data.access_token;
-    console.log("로그인 성공", token);
     useAuthStore.getState().setToken(token);
 
     try {
