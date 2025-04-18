@@ -36,6 +36,7 @@ export default function SignUpLayout() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [roleError, setRoleError] = useState("");
 
   const [birthYear, setBirthYear] = useState("");
   const [birthMonth, setBirthMonth] = useState("");
@@ -236,6 +237,12 @@ export default function SignUpLayout() {
       };
       fetchSignup();
     } else {
+      if (step === 3 && !formData.role) {
+        setRoleError("역할을 선택해주세요.");
+        return;
+      }
+      
+      setRoleError("");
       setStep(prev => Math.min(5, prev + 1));
     }
   };
@@ -290,7 +297,11 @@ export default function SignUpLayout() {
           {step === 3 && (
             <SignupStep3
               selectedRole={formData.role}
-              onSelectRole={handleRoleSelect}
+              onSelectRole={(role) => {
+                handleRoleSelect(role);
+                setRoleError("");
+              }}
+              error={roleError}
             />
           )}
 
