@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { TeamMember } from "@/types/Member";
+import { Member } from "@/types/Member";
 import { server } from '@/auth/server';
 
 type AuthState = {
   token: string | null;
-  user: TeamMember | null;
+  user: Member | null;
   setToken: (token: string) => void;
-  setUser: (user: TeamMember) => void;
+  setUser: (user: Member) => void;
   logout: () => void;
   isAuthenticated: () => boolean;
 };
@@ -18,7 +18,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       user: null,
       setToken: (token: string) => set({ token }),
-      setUser: (user: TeamMember) => set({ user }),
+      setUser: (user: Member) => set({ user }),
       logout: () => set({ token: null, user: null }),
       isAuthenticated: () => {
         const state = get();
