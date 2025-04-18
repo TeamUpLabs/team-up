@@ -1,5 +1,5 @@
-import SignUp from "@/layouts/signup"
+import SignUpLayout from "@/layouts/signup";
 
-export default function SignInPage() {
-  return <SignUp />
-} 
+export default function SignUpPage() {
+  return <SignUpLayout />
+}
