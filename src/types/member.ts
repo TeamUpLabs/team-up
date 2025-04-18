@@ -1,6 +1,6 @@
 import { Task } from "@/types/Task";
 
-export interface TeamMember {
+export interface Member {
   id: number;
   name: string;
   email: string;

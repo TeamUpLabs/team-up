@@ -1,7 +1,7 @@
-import { TeamMember } from '@/types/Member';
+import { Member } from '@/types/Member';
 
 interface MemberCardProps {
-  member: TeamMember;
+  member: Member;
   onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 

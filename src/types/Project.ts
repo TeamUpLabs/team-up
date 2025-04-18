@@ -1,4 +1,4 @@
-import { TeamMember } from "@/types/Member";
+import { Member } from "@/types/Member";
 import { Task } from "@/types/Task";
 import { MileStone } from "@/types/MileStone";
 
@@ -14,7 +14,7 @@ export interface Project {
   teamSize: number;
   location: string;
   projectType: string;
-  members: TeamMember[];
+  members: Member[];
   tasks: Task[] | [];
   milestones: MileStone[];
 }

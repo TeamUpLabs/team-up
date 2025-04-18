@@ -1,4 +1,4 @@
-import { TeamMember } from "@/types/Member";
+import { Member } from "@/types/Member";
 
 export interface SubTask {
   title: string;
@@ -17,7 +17,7 @@ export interface Task {
   description: string;
   status: 'todo' | 'in-progress' | 'done';
   priority: 'low' | 'medium' | 'high';
-  assignee?: TeamMember[];
+  assignee?: Member[];
   dueDate?: string;
   tags: string[];
   subtasks: SubTask[];

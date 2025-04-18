@@ -1,5 +1,5 @@
 import { Task } from "@/types/Task";
-import { TeamMember } from "@/types/Member";
+import { Member } from "@/types/Member";
 
 export interface MileStone {
   id: number;
@@ -9,7 +9,7 @@ export interface MileStone {
   startDate: string;
   endDate: string;
   status: 'in-progress' | 'done' | 'not-started';
-  assignee: TeamMember[] | [];
+  assignee: Member[] | [];
   priority: 'low' | 'medium' | 'high';
   tags: string[];
   subtasks: Task[];

@@ -1,9 +1,9 @@
-import { TeamMember } from '@/types/Member';
+import { Member } from '@/types/Member';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 
 interface MemberDetailModalProps {
-  member: TeamMember;
+  member: Member;
   cardPosition: { x: number; y: number; width: number; height: number };
   onClose: () => void;
 }
@@ -23,7 +23,7 @@ export default function MemberDetailModal({ member, cardPosition, onClose }: Mem
 
     const projectId = params?.projectId ? String(params.projectId) : 'default';
     router.push(`/platform/${projectId}/tasks`);
-    
+
     onClose();
   };
 

@@ -4,16 +4,16 @@ import { useState, useEffect } from 'react';
 import MemberDetailModal from '@/components/platform/MemberDetailModal';
 import MemberCard from '@/components/project/members/MemberCard';
 import SearchFilterBar from '@/components/project/members/SearchFilterBar';
-import { TeamMember } from '@/types/Member';
+import { Member } from '@/types/Member';
 import { useProject } from "@/contexts/ProjectContext";
 
 export default function MembersPage() {
   const { project } = useProject();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [cardPosition, setCardPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  const [allTeamMembers, setAllTeamMembers] = useState<TeamMember[]>();
+  const [allTeamMembers, setAllTeamMembers] = useState<Member[]>();
 
   useEffect(() => {
     setAllTeamMembers(project?.members);
@@ -47,7 +47,7 @@ export default function MembersPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleCardClick = (member: TeamMember, e: React.MouseEvent<HTMLDivElement>) => {
+  const handleCardClick = (member: Member, e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setCardPosition({
       x: rect.left,
