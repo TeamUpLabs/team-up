@@ -1,5 +1,5 @@
 import SignIn from "@/layouts/signin"
 
-export default function SignUpPage() {
+export default function SignInPage() {
   return <SignIn />
 } 
