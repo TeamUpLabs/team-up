@@ -3,11 +3,16 @@ import { persist } from "zustand/middleware";
 import { Member } from "@/types/Member";
 import { server } from '@/auth/server';
 
+type AlertType = "success" | "error";
+
 type AuthState = {
   token: string | null;
   user: Member | null;
+  alert: { message: string; type: AlertType } | null;
   setToken: (token: string) => void;
   setUser: (user: Member) => void;
+  setAlert: (message: string, type: AlertType) => void;
+  clearAlert: () => void;
   logout: () => void;
   isAuthenticated: () => boolean;
 };
@@ -17,8 +22,11 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       token: null,
       user: null,
+      alert: null,
       setToken: (token: string) => set({ token }),
       setUser: (user: Member) => set({ user }),
+      setAlert: (message: string, type: AlertType) => set({ alert: { message, type } }),
+      clearAlert: () => set({ alert: null }),
       logout: () => set({ token: null, user: null }),
       isAuthenticated: () => {
         const state = get();
@@ -53,7 +61,7 @@ export const checkAndRefreshAuth = async () => {
     console.error("Auth check failed:", error);
     if ((error as { response?: { status: number } }).response?.status === 401) {
       store.logout();
-      alert('세션이 만료되었습니다. 다시 로그인 해주세요.');
+      store.setAlert('세션이 만료되었습니다. 다시 로그인 해주세요.', 'error');
       window.location.href = '/signin';
     }
     return false;

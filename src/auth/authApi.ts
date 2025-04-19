@@ -27,7 +27,7 @@ export const login = async (userEmail: string, password: string) => {
       
       if (userRes.data) {
         useAuthStore.getState().setUser(userRes.data);
-        alert("로그인 성공");
+        useAuthStore.getState().setAlert("로그인 성공", "success");
         window.location.href = '/platform';
       } else {
         throw new Error('User data not found');
@@ -35,15 +35,15 @@ export const login = async (userEmail: string, password: string) => {
     } catch (userError) {
       console.error("Failed to fetch user data:", userError);
       useAuthStore.getState().logout();
-      alert("사용자 정보를 가져오는데 실패했습니다.");
+      useAuthStore.getState().setAlert("사용자 정보를 가져오는데 실패했습니다.", "error");
   } 
 } catch (error: unknown) {
     console.error("Login error:", error);
     if (error instanceof AxiosError) {
       if (error.response?.status === 401) {
-        alert("이메일 또는 비밀번호가 올바르지 않습니다.");
+        useAuthStore.getState().setAlert("이메일 또는 비밀번호가 올바르지 않습니다.", "error");
       } else {
-        alert("로그인에 실패했습니다.");
+        useAuthStore.getState().setAlert("로그인에 실패했습니다.", "error");
       }
       throw error;
     }
