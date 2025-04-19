@@ -62,7 +62,7 @@ export default function Calendar({
 
       <div className="flex-1 grid grid-cols-7 gap-px bg-gray-900 overflow-y-auto">
         {days.map((day, index) => {
-          const dayTasks = tasks?.filter(task => task.dueDate === format(day, 'yyyy-MM-dd'));
+          const dayTasks = tasks?.filter(task => task?.dueDate === format(day, 'yyyy-MM-dd'));
           const isWeekend = index % 7 === 0 || index % 7 === 6;
           const isSameMonthDay = isSameMonth(day, currentDate);
           const isTodayDay = isToday(day);
@@ -88,15 +88,15 @@ export default function Calendar({
               <div className="mt-1 space-y-1 max-h-[60px] sm:max-h-[80px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
                 {dayTasks?.map((task) => (
                   <div
-                    key={task.id}
+                    key={task?.id}
                     onClick={() => onSelectTask(task)}
-                    className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getStatusColor(task.status)} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
+                    className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getStatusColor(task?.status ?? '')} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
                   >
-                    <p className="font-medium truncate">{task.title}</p>
-                    {task?.assignee && task.assignee.length > 0 && (
+                    <p className="font-medium truncate">{task?.title}</p>
+                    {task?.assignee && task?.assignee.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-0.5">
-                        {task.assignee.map(assi => (
-                          <span key={assi.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi.name}</span>
+                        {task?.assignee.map(assi => (
+                          <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
                         ))}
                       </div>
                     )}

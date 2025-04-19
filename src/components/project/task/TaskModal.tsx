@@ -138,11 +138,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                         {
                           task?.assignee?.map((assi) => (
                             <p 
-                              key={assi.id} 
+                              key={assi?.id} 
                               className="text-gray-200 hover:text-blue-400 cursor-pointer transition-colors"
-                              onClick={() => handleAssigneeClick(assi.id)}
+                              onClick={() => handleAssigneeClick(assi?.id ?? 0)}
                             >{
-                              assi.name}
+                              assi?.name}
                             </p>
                           ))
                         }
@@ -169,35 +169,35 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   <div>
                     <h4 className="text-sm font-medium text-gray-400 mb-3">하위 작업</h4>
                     <div className="space-y-2">
-                      {subtasks.map((subtask, index) => (
+                      {subtasks?.map((subtask, index) => (
                         <div key={index} className="flex items-center gap-2 bg-gray-700/30 hover:bg-gray-700/50 p-3 rounded-lg">
                           <input
                             type="checkbox"
-                            checked={subtask.completed}
+                            checked={subtask?.completed}
                             onChange={() => handleSubtaskToggle(index)}
                             className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-500"
                           />
-                          <span className={`text-sm ${subtask.completed ? 'text-gray-500 line-through' : 'text-gray-200'}`}>
-                            {subtask.title}
+                          <span className={`text-sm ${subtask?.completed ? 'text-gray-500 line-through' : 'text-gray-200'}`}>
+                            {subtask?.title}
                           </span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  {task?.comments.length > 0 && (
+                  {task?.comments?.length > 0 && (
                     <div>
                       <h4 className="text-sm font-medium text-gray-400 mb-3">댓글</h4>
                       <div className="space-y-3">
-                        {task?.comments.map((comment, index) => (
+                        {task?.comments?.map((comment, index) => (
                           <div key={index} className="bg-gray-700/30 hover:bg-gray-700/50 p-4 rounded-lg">
                             <div className="flex items-center justify-between mb-2">
-                              <span className="font-medium text-gray-200">{comment.author_id}</span>
+                              <span className="font-medium text-gray-200">{comment?.author_id}</span>
                               <span className="text-xs text-gray-400">
-                                {new Date(comment.createdAt).toLocaleDateString()}
+                                {new Date(comment?.createdAt).toLocaleDateString()}
                               </span>
                             </div>
-                            <p className="text-gray-300 text-sm">{comment.content}</p>
+                            <p className="text-gray-300 text-sm">{comment?.content}</p>
                           </div>
                         ))}
                       </div>
