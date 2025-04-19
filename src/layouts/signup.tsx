@@ -12,6 +12,7 @@ import SignupStep5 from "@/components/signup/SignupStep5";
 import { SignUpFormData } from "@/types/SignUpFormData";
 import { signup } from "@/hooks/signup";
 import axios from "axios";
+import { useAuthStore } from "@/auth/authStore";
 
 export default function SignUpLayout() {
   const [formData, setFormData] = useState<SignUpFormData>({
@@ -223,15 +224,15 @@ export default function SignUpLayout() {
       const fetchSignup = async () => {
         try {
           await signup(formData);
-          alert("회원가입이 완료되었습니다.");
+          useAuthStore.getState().setAlert("회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.", "success");
           window.location.href = "/signin";
         } catch (error) {
           console.error("회원가입 오류:", error);
           if (axios.isAxiosError(error) && error.response?.data) {
             console.log(error.response.data);
-            alert(`회원가입 오류: ${error.response.data.message || JSON.stringify(error.response.data)}`);
+            useAuthStore.getState().setAlert(`회원가입 오류 관리자에게 문의해주세요.`, "error");
           } else {
-            alert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
+            useAuthStore.getState().setAlert("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.", "error");
           }
         }
       };
