@@ -15,6 +15,7 @@ export default function UserDropdown() {
   const user = useAuthStore((state) => state.user);
   const logout = () => {
     useAuthStore.getState().logout();
+    useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");
     window.location.href = '/';
   };
 

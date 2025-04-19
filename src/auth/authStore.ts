@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import { Member } from "@/types/Member";
 import { server } from '@/auth/server';
 
-type AlertType = "success" | "error";
+type AlertType = "success" | "error" | "info" | "warning";
 
 type AuthState = {
   token: string | null;

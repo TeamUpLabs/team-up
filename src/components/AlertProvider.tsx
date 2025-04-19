@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faCheckCircle, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faCheckCircle, faExclamationTriangle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 export default function AlertProvider() {
   const alert = useAuthStore((state) => state.alert);
@@ -40,6 +40,18 @@ export default function AlertProvider() {
           bgColor: "bg-gray-800/95 border-red-500/50",
           textColor: "text-red-400"
         };
+      case "info":
+        return {
+          icon: faInfoCircle,
+          bgColor: "bg-gray-800/95 border-blue-500/50",
+          textColor: "text-blue-400"
+        };
+      case "warning":
+        return {
+          icon: faExclamationTriangle,
+          bgColor: "bg-gray-800/95 border-yellow-500/50",
+          textColor: "text-yellow-400"
+        };
       default:
         return {
           icon: faCheckCircle,
@@ -53,7 +65,7 @@ export default function AlertProvider() {
 
   return (
     <div
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out z-100 ${
         visible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       }`}
     >
