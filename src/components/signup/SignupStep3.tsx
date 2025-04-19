@@ -16,7 +16,7 @@ interface RoleOption {
 export default function SignupStep3({ selectedRole, onSelectRole, error }: Step3Props) {
   const roles: RoleOption[] = [
     {
-      value: "developer",
+      value: "개발자",
       label: "개발자",
       description: "프로젝트 구현 및 개발",
       icon: (
@@ -26,7 +26,7 @@ export default function SignupStep3({ selectedRole, onSelectRole, error }: Step3
       ),
     },
     {
-      value: "designer",
+      value: "디자이너",
       label: "디자이너",
       description: "UI/UX 디자인 및 시각화",
       icon: (
@@ -36,7 +36,7 @@ export default function SignupStep3({ selectedRole, onSelectRole, error }: Step3
       ),
     },
     {
-      value: "planner",
+      value: "기획자",
       label: "기획자",
       description: "프로젝트 기획 및 관리",
       icon: (
