@@ -9,15 +9,23 @@ import UserDropdown from "@/components/platform/UserDropdown";
 
 export default function PlatformLayout({ children, HeaderTitle }: { children: React.ReactNode, HeaderTitle: string }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   
   // 인증 상태 확인
   useEffect(() => {
     if (!isAuthenticated()) {
-      alert("로그인 후 사용 가능합니다.");
+      useAuthStore.getState().setAlert("로그인 후 사용 가능합니다.", "warning");
       window.location.href = '/signin';
+      return;
     }
+    setIsLoading(false);
   }, [isAuthenticated]);
+
+  // 로딩 중이거나 인증되지 않은 상태면 내용을 표시하지 않음
+  if (isLoading) {
+    return null;
+  }
 
   const mainNavItems = [
       { icon: faHouse, label: "홈", href: "/platform" },
@@ -72,5 +80,4 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
       </div>
     </div>
   );
-  
 }
