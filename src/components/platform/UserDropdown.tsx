@@ -13,10 +13,15 @@ export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const user = useAuthStore((state) => state.user);
-  const logout = () => {
-    useAuthStore.getState().logout();
-    useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");
-    window.location.href = '/';
+  const logout = async () => {
+    try { 
+      await useAuthStore.getState().logout();
+      useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");
+      window.location.href = '/';
+    } catch (error) {
+      console.error("Error logging out:", error);
+      useAuthStore.getState().setAlert("로그아웃 중 오류가 발생했습니다.", "error");
+    }
   };
 
   useEffect(() => {
