@@ -38,15 +38,15 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
     <div className={`w-64 fixed h-full border-r border-gray-800 bg-(--color-background) z-30 transition-transform duration-300 lg:translate-x-0 ${
       isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
     }`}>
-      <div className="p-6">
-        <Link href={titleHref}>
+      <div>
+        <Link href={titleHref} className="block pt-6 pl-6 pr-6">
           <h1 className="text-xl font-bold text-white mb-8 text-center">{title}</h1>
         </Link>
         <nav className="space-y-4">
           {navItems.map((item, index) => {
             if (item.label === "채팅") {
               return (
-                <div key={index}>
+                <div key={index} className="pl-6 pr-6">
                   <button 
                     onClick={() => setIsChatOpen(!isChatOpen)}
                     className={`w-full flex items-center justify-between ${
@@ -82,8 +82,8 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
               <Link 
                 key={index} 
                 href={item.href} 
-                className={`flex items-center ${
-                  item.isActive ? 'text-white font-semibold' : 'text-gray-300'
+                className={`flex items-center pl-6 pr-6 border-l-3 ${
+                  item.isActive ? 'text-white border-purple-500' : 'text-gray-300 border-transparent'
                 } hover:text-white`}
               >
                 <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
