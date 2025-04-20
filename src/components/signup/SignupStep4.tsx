@@ -80,9 +80,9 @@ export default function SignupStep4({
 
   // 전문분야 자동완성 데이터
   const specialtySuggestions = {
-    developer: ["React", "Vue", "Angular", "Node.js", "Python", "Java", "Spring", "Django", "Flask", "TypeScript", "JavaScript", "Next.js", "Express", "MongoDB", "MySQL", "PostgreSQL", "AWS", "Docker", "Kubernetes"],
-    designer: ["UI/UX", "Figma", "Adobe XD", "Sketch", "Photoshop", "Illustrator", "InDesign", "프로토타이핑", "와이어프레임", "인터랙션 디자인", "모션 디자인", "브랜딩", "그래픽 디자인"],
-    planner: ["서비스 기획", "프로젝트 관리", "스크럼", "애자일", "프로덕트 매니지먼트", "비즈니스 분석", "마케팅 기획", "데이터 분석", "사용자 리서치", "프로세스 개선"]
+    개발자: ["React", "Vue", "Angular", "Node.js", "Python", "Java", "Spring", "Django", "Flask", "TypeScript", "JavaScript", "Next.js", "Express", "MongoDB", "MySQL", "PostgreSQL", "AWS", "Docker", "Kubernetes"],
+    디자이너: ["UI/UX", "Figma", "Adobe XD", "Sketch", "Photoshop", "Illustrator", "InDesign", "프로토타이핑", "와이어프레임", "인터랙션 디자인", "모션 디자인", "브랜딩", "그래픽 디자인"],
+    기획자: ["서비스 기획", "프로젝트 관리", "스크럼", "애자일", "프로덕트 매니지먼트", "비즈니스 분석", "마케팅 기획", "데이터 분석", "사용자 리서치", "프로세스 개선"]
   };
 
   const handleLanguageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
