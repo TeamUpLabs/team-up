@@ -1,6 +1,7 @@
 import { Project } from "@/types/Project";
 import Link from "next/link";
 import { useAuthStore } from "@/auth/authStore";
+import { updateProjectMember } from "@/hooks/getMemberData";
 
 interface ProjectCardProps {
   project: Project;
@@ -8,6 +9,9 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
+  const user = useAuthStore((state) => state.user);
+
+
   return (
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-purple-500 transition-colors duration-200">
       <div className="flex items-center justify-between mb-4">
@@ -36,8 +40,19 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
         {isExplore ? (
           <button 
             onClick={() => {
-              useAuthStore.getState().setConfirm("참여 요청하시겠습니까?", () => {
-                useAuthStore.getState().setAlert("참여 요청이 완료되었습니다.", "success");
+              if (!user) {
+                useAuthStore.getState().setAlert("로그인이 필요합니다.", "error");
+                return;
+              }
+              useAuthStore.getState().setConfirm("참여 요청하시겠습니까?", async () => {
+                try {
+                  await updateProjectMember(project.id, user.id);
+                  useAuthStore.getState().setAlert("참여 요청이 완료되었습니다.", "success");
+                  window.location.reload();
+                } catch (error) {
+                  console.error("Error updating project member:", error);
+                  useAuthStore.getState().setAlert("참여 요청에 실패했습니다.", "error");
+                }
               });
             }}
             className="text-sm text-purple-400 hover:text-purple-300"
