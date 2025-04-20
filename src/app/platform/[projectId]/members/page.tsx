@@ -12,8 +12,8 @@ export default function MembersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
-  const [cardPosition, setCardPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [allTeamMembers, setAllTeamMembers] = useState<Member[]>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     setAllTeamMembers(project?.members);
@@ -47,15 +47,13 @@ export default function MembersPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const handleCardClick = (member: Member, e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setCardPosition({
-      x: rect.left,
-      y: rect.top,
-      width: rect.width,
-      height: rect.height
-    });
+  const handleMemberClick = (member: Member) => {
     setSelectedMember(member);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -76,7 +74,7 @@ export default function MembersPage() {
           <MemberCard
             key={member.id}
             member={member}
-            onClick={(e) => handleCardClick(member, e)}
+            onClick={() => handleMemberClick(member)}
           />
         ))}
       </div>
@@ -84,8 +82,8 @@ export default function MembersPage() {
       {selectedMember && (
         <MemberDetailModal
           member={selectedMember}
-          cardPosition={cardPosition}
-          onClose={() => setSelectedMember(null)}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
         />
       )}
     </div>
