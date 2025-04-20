@@ -3,6 +3,7 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Member } from '@/types/Member';
+import { useAuthStore } from '@/auth/authStore';
 
 interface MemberScoutDetailModalProps {
   member: Member;
@@ -14,7 +15,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-40" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -199,10 +200,10 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
                   <div className="border-t border-gray-700/50 pt-6 mt-auto">
                     <button
                       onClick={() => {
-                        if (confirm('정말로 이 팀원을 프로젝트에 스카우트하시겠습니까?')) {
-                          alert(`${member.name}님을 프로젝트에 스카우트했습니다!`);
+                        useAuthStore.getState().setConfirm("정말로 이 팀원을 프로젝트에 스카우트하시겠습니까?", () => {
+                          useAuthStore.getState().setAlert(`${member.name}님을 프로젝트에 스카우트했습니다!`, "success");
                           onClose();
-                        }
+                        });
                       }}
                       className="w-full px-4 py-3 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 
                             rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2
