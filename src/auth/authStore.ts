@@ -9,10 +9,13 @@ type AuthState = {
   token: string | null;
   user: Member | null;
   alert: { message: string; type: AlertType } | null;
+  confirm: { message: string; onConfirm?: () => void } | null;
   setToken: (token: string) => void;
   setUser: (user: Member) => void;
   setAlert: (message: string, type: AlertType) => void;
+  setConfirm: (message: string, onConfirm?: () => void) => void;
   clearAlert: () => void;
+  clearConfirm: () => void;
   logout: () => void;
   isAuthenticated: () => boolean;
 };
@@ -23,10 +26,13 @@ export const useAuthStore = create<AuthState>()(
       token: null,
       user: null,
       alert: null,
+      confirm: null,
       setToken: (token: string) => set({ token }),
       setUser: (user: Member) => set({ user }),
       setAlert: (message: string, type: AlertType) => set({ alert: { message, type } }),
+      setConfirm: (message: string, onConfirm?: () => void) => set({ confirm: { message, onConfirm } }),
       clearAlert: () => set({ alert: null }),
+      clearConfirm: () => set({ confirm: null }),
       logout: () => set({ token: null, user: null }),
       isAuthenticated: () => {
         const state = get();
