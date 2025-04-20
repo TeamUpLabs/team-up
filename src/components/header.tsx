@@ -3,7 +3,7 @@ import Logo from "@/components/logo"
 
 export default function Header() {
     return (
-        <header className="fixed w-full backdrop-blur-md bg-(--color-background)/70 z-50 border-b border-white/5">
+        <header className="fixed w-full backdrop-blur-md bg-(--color-background)/70 z-40 border-b border-white/5">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <Link href="/">
             <Logo />
