@@ -73,7 +73,7 @@ export default function AlertProvider() {
               </div>
               <button 
                 onClick={() => setAlertVisible(false)} 
-                className="text-gray-400 hover:text-white transition-all duration-200 hover:rotate-90"
+                className="text-gray-400 hover:text-white transition-all duration-200"
               >
                 <FontAwesomeIcon icon={faXmark} className="w-4 h-4" />
               </button>
