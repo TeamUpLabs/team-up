@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import Sidebar from "@/components/platform/sidebar";
 import Logo from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
+import { usePathname } from "next/navigation";
 import { faHouse, faFolder, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import UserDropdown from "@/components/platform/UserDropdown";
 
 export default function PlatformLayout({ children, HeaderTitle }: { children: React.ReactNode, HeaderTitle: string }) {
+  const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -22,15 +24,19 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
     setIsLoading(false);
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [pathname]);
+
   // 로딩 중이거나 인증되지 않은 상태면 내용을 표시하지 않음
   if (isLoading) {
     return null;
   }
 
   const mainNavItems = [
-      { icon: faHouse, label: "홈", href: "/platform" },
-      { icon: faFolder, label: "프로젝트 찾기", href: "/platform/projects" },
-      { icon: faPeopleGroup, label: "팀원 찾기", href: "/platform/members" },
+      { icon: faHouse, label: "홈", href: "/platform", isActive: pathname === "/platform" },
+      { icon: faFolder, label: "프로젝트 찾기", href: "/platform/projects", isActive: pathname === "/platform/projects" },
+      { icon: faPeopleGroup, label: "팀원 찾기", href: "/platform/members", isActive: pathname === "/platform/members" },
     ];
   return (
     <div className="flex min-h-screen bg-(--color-background)">
