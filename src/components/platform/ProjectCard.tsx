@@ -1,7 +1,13 @@
 import { Project } from "@/types/Project";
 import Link from "next/link";
+import { useAuthStore } from "@/auth/authStore";
 
-export default function ProjectCard({ project }: { project: Project }) {
+interface ProjectCardProps {
+  project: Project;
+  isExplore?: boolean;
+}
+
+export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
   return (
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-purple-500 transition-colors duration-200">
       <div className="flex items-center justify-between mb-4">
@@ -27,9 +33,22 @@ export default function ProjectCard({ project }: { project: Project }) {
             )))
           }
         </div>
-        <Link href={`/platform/${project.id}`} className="text-sm text-purple-400 hover:text-purple-300">
-          참여하기
-        </Link>
+        {isExplore ? (
+          <button 
+            onClick={() => {
+              useAuthStore.getState().setConfirm("참여 요청하시겠습니까?", () => {
+                useAuthStore.getState().setAlert("참여 요청이 완료되었습니다.", "success");
+              });
+            }}
+            className="text-sm text-purple-400 hover:text-purple-300"
+          >
+            참여 요청하기
+          </button>
+        ) : (
+          <Link href={`/platform/${project.id}`} className="text-sm text-purple-400 hover:text-purple-300">
+            참여하기
+          </Link>
+        )}
       </div>
     </div>
   )
