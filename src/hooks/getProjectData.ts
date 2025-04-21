@@ -1,4 +1,5 @@
 import { server } from "@/auth/server";
+import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
 
 export const getAllProjects = async () => {
   try {
@@ -95,3 +96,65 @@ export const getMemberByProject = async (project_id: string) => {
     throw error;
   }
 }
+
+interface ProjectFormData {
+  title: string;
+  description: string;
+  projectType: string;
+  roles: string[];
+  techStack: string[];
+  location: string;
+  teamSize: string;
+  endDate: string;
+}
+
+export const generateProjectId = async (): Promise<string> => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(randomIndex);
+  }
+
+  const res = await server.get(`/project/id`);
+  const data = res.data;
+  if (data.includes(result)) {
+    return generateProjectId();
+  }
+  
+  return result;
+}; 
+
+export const createProject = async (formData: ProjectFormData) => {
+  try {
+    const projectId = await generateProjectId();
+
+    const res = await server.post('/project', {
+      id: projectId,
+      title: formData.title,
+      description: formData.description,
+      status: "모집중",
+      projectType: formData.projectType,
+      roles: formData.roles,
+      techStack: formData.techStack,
+      location: formData.location,
+      teamSize: Number(formData.teamSize),
+      startDate: getCurrentKoreanTimeDate(),
+      endDate: formData.endDate,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (res.status === 200) {
+      return projectId;
+    } else {
+      throw new Error("Failed to create project");
+    }
+  } catch (error) {
+    console.error("Error creating project:", error);
+    throw error;
+  }
+};

@@ -7,11 +7,13 @@ import { useAuthStore } from "@/auth/authStore";
 import { usePathname } from "next/navigation";
 import { faHouse, faFolder, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import UserDropdown from "@/components/platform/UserDropdown";
+import NewProjectModal from "@/components/platform/NewProjectModal";
 
 export default function PlatformLayout({ children, HeaderTitle }: { children: React.ReactNode, HeaderTitle: string }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   
   // 인증 상태 확인
@@ -27,6 +29,10 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [pathname]);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   // 로딩 중이거나 인증되지 않은 상태면 내용을 표시하지 않음
   if (isLoading) {
@@ -72,7 +78,10 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
               <h2 className="text-lg md:text-xl font-semibold">{HeaderTitle}</h2>
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">
-              <button className="px-3 py-1.5 md:px-4 md:py-2 bg-purple-600 text-white text-sm md:text-base rounded-lg hover:bg-purple-700">
+              <button 
+                className="px-3 py-1.5 md:px-4 md:py-2 bg-purple-600 text-white text-sm md:text-base rounded-lg hover:bg-purple-700"
+                onClick={() => setIsModalOpen(true)}
+              >
                 + 새 프로젝트
               </button>
               <UserDropdown />
@@ -84,6 +93,10 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
           {children}
         </main>
       </div>
+      <NewProjectModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }
