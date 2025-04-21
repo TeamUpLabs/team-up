@@ -20,6 +20,26 @@ export const getAllMembers = async (): Promise<Member[]> => {
   }
 }
 
+export const checkMember = async (email: string) => {
+  try {
+    const res = await server.post(`/member/check`, {
+      email: email
+    });
+    if (res.status === 200) {
+      if (res.data.status === "exists") {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      throw new Error("Failed to check member");
+    }
+  } catch (error) {
+    console.error("Error checking member:", error);
+    throw error;
+  }
+}
+
 export const updateProjectMember = async (projectId: string, memberId: number) => {
   try {
     const res = await server.post(`/project/${projectId}/member`, {
