@@ -48,7 +48,8 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
                 try {
                   await updateProjectMember(project.id, user.id);
                   useAuthStore.getState().setAlert("참여 요청이 완료되었습니다.", "success");
-                  window.location.reload();
+                  useAuthStore.getState().clearConfirm();
+                  window.location.href = `/platform`;
                 } catch (error) {
                   console.error("Error updating project member:", error);
                   useAuthStore.getState().setAlert("참여 요청에 실패했습니다.", "error");
