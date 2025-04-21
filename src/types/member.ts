@@ -11,7 +11,8 @@ export interface Member {
   lastLogin: string;
   createdAt: string;
   skills: string[];
-  projects: Project[];
+  projects: string[];
+  projectDetails: Project[];
   profileImage: string;
   contactNumber: string;
   birthDate: string;

@@ -174,10 +174,15 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
                       참여중인 프로젝트
                     </h3>
                     <div className="px-4 py-3 bg-gray-700/30 rounded-lg">
-                      {member.projects.length > 0 ? (
-                        member.projects.map((project, idx) => (
-                          <p key={idx}>{project.title}</p>
-                        ))
+                      {member.projectDetails?.length > 0 ? (
+                        <div className="flex flex-wrap gap-2">
+                          {member.projectDetails.map((project, idx) => (
+                            <div key={idx} className="inline-flex items-center px-3 py-1.5 border border-gray-600/40 rounded-md bg-gray-700/40 backdrop-blur-sm text-gray-200 text-sm hover:bg-gray-700/60 transition-colors group">
+                              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 mr-2 group-hover:bg-blue-300"></span>
+                              {project.title}
+                            </div>
+                          ))}
+                        </div>
                       ) : (
                         <p className="text-gray-500">현재 참여중인 프로젝트가 없습니다.</p>
                       )}
