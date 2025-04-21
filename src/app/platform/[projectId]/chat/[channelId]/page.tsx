@@ -8,6 +8,7 @@ import ChannelHeader from '@/components/project/chat/ChannelHeader';
 import MessageList from '@/components/project/chat/MessageList';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { getCurrentKoreanTime } from '@/utils/dateUtils';
+import { useAuthStore } from '@/auth/authStore';
 
 interface PageProps {
   params: Promise<{
@@ -16,6 +17,7 @@ interface PageProps {
 }
 
 export default function ChatPage({ params }: PageProps) {
+  const user = useAuthStore((state) => state.user);
   const [message, setMessage] = useState('');
   const { channelId } = use(params);
   const { messages, sendMessage, isConnected } = useWebSocket(channelId);
@@ -26,8 +28,8 @@ export default function ChatPage({ params }: PageProps) {
       const messageData: Message = {
         id: Date.now(),
         channelId: channelId,
-        userId: 1,
-        user: "test",
+        userId: user?.id ?? 0,
+        user: user?.name ?? '',
         message: message,
         timestamp: getCurrentKoreanTime(),
       };
