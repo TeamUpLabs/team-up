@@ -45,6 +45,9 @@ export default function UserDropdown() {
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-gray-800 text-gray-200 rounded-lg shadow-lg z-30 border border-gray-700">
+          <span className="w-full text-left px-4 py-2 hover:bg-gray-700 flex items-center gap-2 rounded-t-lg">
+            {user ? user.name : "로그인"}
+          </span>
           <button
             onClick={() => { setIsOpen(false); window.location.href = "/platform/profile"; }}
             className="w-full text-left px-4 py-2 hover:bg-gray-700 flex items-center gap-2 rounded-t-lg"
