@@ -9,6 +9,7 @@ interface MilestoneFormData {
   status: string;
   priority: string;
   tags: string[];
+  assignee_id: number[];
 }
 
 export const createMilestone = async (milestone: MilestoneFormData) => {
