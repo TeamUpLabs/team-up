@@ -85,6 +85,7 @@ export default function MembersPage() {
           member={selectedMember}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
+          leader_id={project?.leader.id}
         />
       )}
     </div>

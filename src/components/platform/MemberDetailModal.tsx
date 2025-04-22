@@ -11,9 +11,11 @@ interface MemberDetailModalProps {
   member: Member;
   isOpen: boolean;
   onClose: () => void;
+  leader_id?: number;
 }
 
-export default function MemberDetailModal({ member, isOpen, onClose }: MemberDetailModalProps) {
+export default function MemberDetailModal({ member, isOpen, onClose, leader_id }: MemberDetailModalProps) {
+  const user = useAuthStore.getState().user;
   const router = useRouter();
   const params = useParams();
 
@@ -76,7 +78,12 @@ export default function MemberDetailModal({ member, isOpen, onClose }: MemberDet
                       </div>
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-white mb-1">{member.name}</h2>
+                      <div className="flex items-center">
+                        <h2 className="text-2xl font-bold text-white mb-1">
+                          {member.name}
+                        </h2>
+                        {leader_id === member.id && <span className="ml-2 text-sm bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">프로젝트 리더</span>}
+                      </div>
                       <div className="flex items-center space-x-3">
                         <div className="flex items-center px-2.5 py-1 rounded-full bg-gray-700/30 text-gray-300">
                           <span
@@ -311,8 +318,9 @@ export default function MemberDetailModal({ member, isOpen, onClose }: MemberDet
                   </div>
 
                   {/* 하단 액션 버튼 */}
-                  <div className="border-t border-gray-700/50 pt-6 mt-auto">
-                    <button
+                  {user?.id === leader_id && member.id != user?.id && (
+                    <div className="border-t border-gray-700/50 pt-6 mt-auto">
+                      <button
                       onClick={() => {
                         useAuthStore.getState().setConfirm("정말로 이 팀원을 퇴출하시겠습니까?", () => {
                           console.log('팀원 퇴출:', member.name);
@@ -328,8 +336,9 @@ export default function MemberDetailModal({ member, isOpen, onClose }: MemberDet
                           d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" />
                       </svg>
                       <span>팀원 퇴출</span>
-                    </button>
-                  </div>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </Dialog.Panel>
             </Transition.Child>
