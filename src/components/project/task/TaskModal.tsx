@@ -134,7 +134,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
                     <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg hover:bg-gray-700/50">
                       <h4 className="text-sm font-medium text-gray-400">담당자</h4>
-                      <div className="grid grid-cols-3">
+                      <div className="flex flex-wrap gap-2">
                         {
                           task?.assignee?.map((assi) => (
                             <p 
