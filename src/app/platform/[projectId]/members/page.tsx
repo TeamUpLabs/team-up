@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import MemberDetailModal from '@/components/platform/MemberDetailModal';
+import MemberDetailModal from '@/components/project/members/MemberDetailModal';
 import MemberCard from '@/components/project/members/MemberCard';
 import SearchFilterBar from '@/components/project/members/SearchFilterBar';
 import { Member } from '@/types/Member';
