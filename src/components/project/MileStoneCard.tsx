@@ -79,19 +79,6 @@ export default function MileStoneCard() {
     );
   }
 
-  if (!closestMilestone) {
-    return (
-      <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg overflow-x-auto border border-gray-700">
-        <h2 className="text-xl font-semibold text-white mb-4">다가오는 마일스톤</h2>
-        <div className="space-y-4">
-          <div className="bg-gray-700 p-3 rounded-lg">
-            <p className="text-gray-400 font-medium">예정된 마일스톤이 없습니다</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="col-span-1 sm:col-span-2 bg-gray-800 p-4 sm:p-6 rounded-lg overflow-x-auto border border-gray-700">
       <div className="flex items-center justify-between mb-4">
@@ -104,8 +91,9 @@ export default function MileStoneCard() {
         </Link>
       </div>
       <div className="space-y-4">
-        <div className="bg-gray-700 p-3 rounded-lg border border-gray-600 hover:border-purple-500 transition duration-200">
-          <div className="flex justify-between items-start mb-2">
+        {closestMilestone ? (
+          <div className="bg-gray-700 p-3 rounded-lg border border-gray-600 hover:border-purple-500 transition duration-200">
+            <div className="flex justify-between items-start mb-2">
             <h3 className="text-xl font-semibold text-white">{closestMilestone?.title}</h3>
             <span className={`px-3 py-1 rounded-full text-sm ${closestMilestone?.status === 'done' ? 'bg-green-500/20 text-green-400' :
               closestMilestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
@@ -126,8 +114,13 @@ export default function MileStoneCard() {
             <span className="ml-2 text-sm text-gray-400">{progressPercentage}%</span>
           </div>
           <p className="text-sm text-gray-400 mt-1">시작일: {closestMilestone.startDate}</p>
-          <p className="text-sm text-gray-400 mt-1">종료일: {closestMilestone.endDate}</p>
-        </div>
+            <p className="text-sm text-gray-400 mt-1">종료일: {closestMilestone.endDate}</p>
+          </div>
+        ) : (
+          <div className="bg-gray-700 p-3 rounded-lg">
+            <p className="text-gray-400 font-medium">예정된 마일스톤이 없습니다</p>
+          </div>
+        )}
       </div>
     </div>
   );
