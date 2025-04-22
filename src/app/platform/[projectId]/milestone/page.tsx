@@ -65,6 +65,11 @@ export default function MilestonePage() {
           {filteredMilestones.map((milestone) => (
             <MilestoneCard key={milestone.id} milestone={milestone} />
           ))}
+          {filteredMilestones.length === 0 && (
+            <div className="col-span-full text-center text-gray-400">
+              마일스톤이 없습니다.
+            </div>
+          )}
         </div>
       </div>
     </div>
