@@ -124,9 +124,6 @@ export default function TasksPage() {
                     </span>
                     <span className="text-gray-400 text-sm">{tasksList.length}</span>
                   </div>
-                  <button className="text-gray-400 hover:text-gray-200">
-                    <FontAwesomeIcon icon={faPlus} className="w-4 h-4" />
-                  </button>
                 </div>
               </div>
               <div className="p-2">
