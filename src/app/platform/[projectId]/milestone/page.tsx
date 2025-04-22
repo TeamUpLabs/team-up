@@ -5,10 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import MilestoneCard from '@/components/project/milestone/MilestoneCard'
 import { useProject } from '@/contexts/ProjectContext';
+import MilestoneCreateModal from '@/components/project/milestone/MilestoneCreateModal';
 
 export default function MilestonePage() {
   const { project } = useProject();
-  const [filter, setFilter] = useState('all')
+  const [filter, setFilter] = useState('all');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const filteredMilestones = project?.milestones.filter(milestone => {
     if (filter === 'all') return true;
@@ -25,7 +27,10 @@ export default function MilestonePage() {
             <h1 className="text-2xl font-bold text-gray-100">마일스톤</h1>
             <p className="text-gray-400 mt-2">프로젝트의 주요 이정표를 관리하세요</p>
           </div>
-          <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors">
+          <button 
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
             <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
             <span>마일스톤 추가</span>
           </button>
@@ -72,6 +77,10 @@ export default function MilestonePage() {
           )}
         </div>
       </div>
+      <MilestoneCreateModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </div>
   )
 }
