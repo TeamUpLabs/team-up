@@ -10,12 +10,14 @@ import TaskComponent from '@/components/project/task/TaskComponent';
 import TaskModal from '@/components/project/task/TaskModal';
 import { getStatusColor } from "@/utils/getStatusColor";
 import { useProject } from '@/contexts/ProjectContext';
+import TaskCreateModal from '@/components/project/task/TaskCreateModal';
 
 export default function TasksPage() {
   const { project } = useProject();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     if (!project?.tasks) return;
@@ -81,7 +83,10 @@ export default function TasksPage() {
         {/* Header Section */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-100">작업 관리</h1>
-          <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors">
+          <button 
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
             <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
             <span>작업 추가</span>
           </button>
@@ -142,6 +147,11 @@ export default function TasksPage() {
             onClose={() => setIsModalOpen(false)}
           />
         )}
+
+        <TaskCreateModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
       </div>
     </DndProvider>
   );
