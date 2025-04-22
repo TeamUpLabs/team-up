@@ -73,12 +73,15 @@ export default function TeamActivities() {
                 <div className="ml-3">
                   <p className="text-white">{member.name}</p>
                   <p className="text-sm text-gray-400">{member.role}</p>
-                  <div className="flex gap-2 align-center">
+                  <div className="flex gap-1 align-center">
                     <p className="text-xs text-gray-500">현재 작업: </p>
                     {
-                      member.currentTask.map((task, idx) => (
-                        <p key={idx} className="text-xs text-gray-500">{task.title}</p>
-                      ))
+                      member.currentTask.length > 0 ?
+                        member.currentTask.map((task, idx) => (
+                          <p key={idx} className="text-xs text-gray-500">{task.title}</p>
+                        ))
+                        :
+                        <p className="text-xs text-gray-500">없음</p>
                     }
                   </div>
                 </div>
@@ -93,7 +96,6 @@ export default function TeamActivities() {
                     }-500 rounded-full`}></span>
                   <span className="ml-2 text-gray-300">{member.status}</span>
                 </div>
-                <span className="text-xs text-gray-500 mt-1">{member.statusTime}</span>
               </div>
             </div>
           ))
