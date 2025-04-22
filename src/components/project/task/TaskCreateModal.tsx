@@ -36,9 +36,14 @@ export default function TaskCreateModal({ isOpen, onClose }: TaskCreateModalProp
     e.preventDefault();
     // TODO: Add task creation logic
     if (project?.id) {
-      await createTask({...formData, project_id: project.id});
-      useAuthStore.getState().setAlert('작업이 성공적으로 생성되었습니다.', 'success');
-      window.location.reload();
+      try {
+        await createTask({...formData, project_id: project.id});
+        useAuthStore.getState().setAlert('작업이 성공적으로 생성되었습니다.', 'success');
+        window.location.reload();
+      } catch (error) {
+        console.error(error);
+        useAuthStore.getState().setAlert('작업 생성에 실패했습니다. 관리자에게 문의해주세요.', 'error');
+      }
     }
     onClose();
   }
