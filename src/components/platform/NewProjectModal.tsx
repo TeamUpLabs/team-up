@@ -152,7 +152,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto mt-4 pl-2 pr-2">
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="title" className="block text-sm font-medium text-purple-300 mb-1">프로젝트 이름</label>
+                      <label htmlFor="title" className="block text-sm font-medium mb-1">프로젝트 이름</label>
                       <input
                         type="text"
                         id="title"
@@ -166,7 +166,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                     </div>
 
                     <div>
-                      <label htmlFor="description" className="block text-sm font-medium text-purple-300 mb-1">프로젝트 설명</label>
+                      <label htmlFor="description" className="block text-sm font-medium mb-1">프로젝트 설명</label>
                       <textarea
                         id="description"
                         name="description"
@@ -181,7 +181,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                       <div>
-                        <label htmlFor="projectType" className="block text-sm font-medium text-purple-300 mb-1">프로젝트 카테고리</label>
+                        <label htmlFor="projectType" className="block text-sm font-medium mb-1">프로젝트 카테고리</label>
                         <select
                           id="projectType"
                           name="projectType"
@@ -201,7 +201,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                       </div>
 
                       <div>
-                        <label htmlFor="endDate" className="block text-sm font-medium text-purple-300 mb-1">프로젝트 종료일</label>
+                        <label htmlFor="endDate" className="block text-sm font-medium mb-1">프로젝트 종료일</label>
                         <input
                           type="date"
                           id="endDate"
@@ -218,7 +218,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                       <h4 className="text-white font-medium border-b border-gray-700/50 pb-2">팀 구성 정보</h4>
 
                       <div>
-                        <label htmlFor="roles" className="block text-sm font-medium text-purple-300 mb-1">필요한 역할</label>
+                        <label htmlFor="roles" className="block text-sm font-medium mb-1">필요한 역할</label>
                         <input
                           type="text"
                           id="roles"
@@ -251,7 +251,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                       </div>
 
                       <div>
-                        <label htmlFor="techStack" className="block text-sm font-medium text-purple-300 mb-1">필요한 기술</label>
+                        <label htmlFor="techStack" className="block text-sm font-medium mb-1">필요한 기술</label>
                         <input
                           type="text"
                           id="techStack"
@@ -285,7 +285,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                         <div>
-                          <label htmlFor="location" className="block text-sm font-medium text-purple-300 mb-1">위치</label>
+                          <label htmlFor="location" className="block text-sm font-medium mb-1">위치</label>
                           <input
                             type="text"
                             id="location"
@@ -299,7 +299,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                         </div>
 
                         <div>
-                          <label htmlFor="teamSize" className="block text-sm font-medium text-purple-300 mb-1">팀 규모</label>
+                          <label htmlFor="teamSize" className="block text-sm font-medium mb-1">팀 규모</label>
                           <input
                             type="text"
                             id="teamSize"
