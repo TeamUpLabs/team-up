@@ -5,6 +5,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Member } from '@/types/Member';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
+import { useAuthStore } from '@/auth/authStore';
 
 interface MemberDetailModalProps {
   member: Member;
@@ -40,7 +41,7 @@ export default function MemberDetailModal({ member, isOpen, onClose }: MemberDet
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-40" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -144,7 +145,7 @@ export default function MemberDetailModal({ member, isOpen, onClose }: MemberDet
                       <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
                         <svg className="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         생년월일
                       </h3>
@@ -158,7 +159,7 @@ export default function MemberDetailModal({ member, isOpen, onClose }: MemberDet
                     <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
                       <svg className="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 0 012 2" />
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 010 4h-2a2 2 0 01-2-2z" />
                       </svg>
                       현재 작업
                     </h3>
@@ -313,10 +314,10 @@ export default function MemberDetailModal({ member, isOpen, onClose }: MemberDet
                   <div className="border-t border-gray-700/50 pt-6 mt-auto">
                     <button
                       onClick={() => {
-                        if (confirm('정말로 이 팀원을 퇴출하시겠습니까?')) {
+                        useAuthStore.getState().setConfirm("정말로 이 팀원을 퇴출하시겠습니까?", () => {
                           console.log('팀원 퇴출:', member.name);
                           onClose();
-                        }
+                        });
                       }}
                       className="w-full px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400 
                             rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2
