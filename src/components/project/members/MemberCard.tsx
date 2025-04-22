@@ -25,8 +25,8 @@ export default function MemberCard({ member, isLeader, onClick }: MemberCardProp
         </div>
         <div className="flex flex-row gap-2 items-end">
           {isLeader && (
-            <div className="flex items-center bg-gray-700/50 px-3 py-1 rounded-full">
-              <span className="text-sm text-gray-300">프로젝트 리더</span>
+            <div className="flex items-center bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+              <span className="text-sm">프로젝트 리더</span>
             </div>
           )}
           <div className="flex items-center bg-gray-700/50 px-3 py-1 rounded-full">
