@@ -303,6 +303,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
             id: member.id,
             name: member.name
           }}
+          memberProjects={member.projectDetails || []}
         />
       )}
     </>

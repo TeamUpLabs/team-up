@@ -12,9 +12,10 @@ interface SelectProjectModalProps {
     id: number;
     name: string;
   }
+  memberProjects?: Project[];
 }
 
-export default function SelectProjectModal({ isOpen, onClose, memberToScout }: SelectProjectModalProps) {
+export default function SelectProjectModal({ isOpen, onClose, memberToScout, memberProjects = [] }: SelectProjectModalProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
@@ -28,7 +29,12 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout }: S
       try {
         setLoading(true);
         const data = await getProjectByMemberId(user.id);
-        setProjects(data);
+        
+        // Filter out projects that the member is already participating in
+        const memberProjectIds = memberProjects.map((project: Project) => project.id);
+        const filteredProjects = data.filter((project: Project) => !memberProjectIds.includes(project.id));
+        
+        setProjects(filteredProjects);
       } catch (error) {
         console.error("Error fetching projects:", error);
         useAuthStore.getState().setAlert("프로젝트를 가져오는 데 실패했습니다.", "error");
@@ -38,7 +44,7 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout }: S
     };
 
     fetchProjects();
-  }, [user]);
+  }, [user, memberProjects]);
 
   const handleScout = async () => {
     if (!selectedProject || !memberToScout) return;
