@@ -7,6 +7,7 @@ export interface Project {
   title: string;
   status: string;
   description: string;
+  leader: Member;
   roles: string[];
   techStack: string[];
   startDate: string;

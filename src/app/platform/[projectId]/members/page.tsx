@@ -74,6 +74,7 @@ export default function MembersPage() {
           <MemberCard
             key={member.id}
             member={member}
+            isLeader={member.id === project?.leader.id}
             onClick={() => handleMemberClick(member)}
           />
         ))}

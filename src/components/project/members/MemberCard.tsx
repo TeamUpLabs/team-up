@@ -2,10 +2,11 @@ import { Member } from '@/types/Member';
 
 interface MemberCardProps {
   member: Member;
+  isLeader: boolean;
   onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-export default function MemberCard({ member, onClick }: MemberCardProps) {
+export default function MemberCard({ member, isLeader, onClick }: MemberCardProps) {
   return (
     <div
       className="group bg-gray-800/90 backdrop-blur p-6 rounded-xl shadow-lg 
@@ -22,7 +23,12 @@ export default function MemberCard({ member, onClick }: MemberCardProps) {
             {member.name}
           </h2>
         </div>
-        <div className="flex flex-col items-end">
+        <div className="flex flex-row gap-2 items-end">
+          {isLeader && (
+            <div className="flex items-center bg-gray-700/50 px-3 py-1 rounded-full">
+              <span className="text-sm text-gray-300">프로젝트 리더</span>
+            </div>
+          )}
           <div className="flex items-center bg-gray-700/50 px-3 py-1 rounded-full">
             <span className={`w-3 h-3 rounded-full ${member.status === "활성" ? "bg-emerald-500" :
               member.status === "자리비움" ? "bg-amber-500" : "bg-gray-500"
