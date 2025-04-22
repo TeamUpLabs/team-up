@@ -100,6 +100,7 @@ export const getMemberByProject = async (project_id: string) => {
 interface ProjectFormData {
   title: string;
   description: string;
+  leader_id: number;
   projectType: string;
   roles: string[];
   techStack: string[];
@@ -135,6 +136,7 @@ export const createProject = async (formData: ProjectFormData) => {
       title: formData.title,
       description: formData.description,
       status: "모집중",
+      leader_id: formData.leader_id,
       projectType: formData.projectType,
       roles: formData.roles,
       techStack: formData.techStack,

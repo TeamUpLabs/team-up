@@ -19,6 +19,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    leader_id: user?.id,
     projectType: '',
     roles: [] as string[],
     techStack: [] as string[],
@@ -90,18 +91,18 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     e.preventDefault();
     setSubmitStatus('submitting');
 
-    const projectId = await createProject(formData);
-    if (user) {
+    if (user?.id) {
+      const projectId = await createProject({...formData, leader_id: user.id});
       await updateProjectMember(projectId, user.id);
-    }
-    setSubmitStatus('success');
-    useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
+      setSubmitStatus('success');
+      useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
 
-    setTimeout(() => {
-      setSubmitStatus('idle');
-      onClose();
-      window.location.reload();
-    }, 1000);
+      setTimeout(() => {
+        setSubmitStatus('idle');
+        onClose();
+        window.location.reload();
+      }, 1000);
+    }
   };
 
   return (
