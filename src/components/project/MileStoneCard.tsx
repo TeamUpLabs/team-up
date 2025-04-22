@@ -85,7 +85,7 @@ export default function MileStoneCard() {
         <h2 className="text-xl font-semibold text-white mb-4">다가오는 마일스톤</h2>
         <div className="space-y-4">
           <div className="bg-gray-700 p-3 rounded-lg">
-            <p className="text-white font-medium">예정된 마일스톤이 없습니다</p>
+            <p className="text-gray-400 font-medium">예정된 마일스톤이 없습니다</p>
           </div>
         </div>
       </div>
