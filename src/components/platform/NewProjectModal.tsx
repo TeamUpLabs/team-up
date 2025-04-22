@@ -141,7 +141,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   </div>
                   <button
                     type="button"
-                    className="text-gray-400 hover:text-white hover:bg-gray-700 p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="p-1 text-gray-400 hover:text-white transition-all"
                     onClick={onClose}
                   >
                     <FontAwesomeIcon icon={faXmark} className="h-5 w-5" />
