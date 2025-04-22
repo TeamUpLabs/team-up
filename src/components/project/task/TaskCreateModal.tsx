@@ -344,7 +344,7 @@ export default function TaskCreateModal({ isOpen, onClose }: TaskCreateModalProp
                   <div className="w-full pt-5 border-t border-gray-700">
                     <button
                       type="submit"
-                      className="w-full px-4 py-3 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-500 transition-all duration-200"
+                      className="w-full px-4 py-3 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all duration-200"
                     >
                       작업 생성
                     </button>
