@@ -112,7 +112,7 @@ export default function TaskCreateModal({ isOpen, onClose }: TaskCreateModalProp
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-black/50" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -138,7 +138,7 @@ export default function TaskCreateModal({ isOpen, onClose }: TaskCreateModalProp
                     onClick={onClose}
                     aria-label="닫기"
                   >
-                    <FontAwesomeIcon icon={faXmark} className="h-5 w-5" />
+                    <FontAwesomeIcon icon={faXmark} />
                   </button>
                 </div>
 
