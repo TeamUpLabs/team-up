@@ -11,12 +11,14 @@ interface TaskFormData {
   tags: string[];
   priority: string;
   subtasks: string[];
+  milestone_id: number;
 }
 
 export const createTask = async (task: TaskFormData) => {
   try {
     const res = await server.post('/task', {
       project_id: task.project_id,
+      milestone_id: task.milestone_id,
       title: task.title,
       description: task.description,
       status: task.status,

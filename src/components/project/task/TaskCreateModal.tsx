@@ -5,12 +5,14 @@ import { faXmark, faCheck, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useProject } from '@/contexts/ProjectContext';
 import { createTask } from '@/hooks/getTaskData';
 import { useAuthStore } from '@/auth/authStore';
+
 interface TaskCreateModalProps {
   isOpen: boolean;
   onClose: () => void;
+  milestone_id: number | null;
 }
 
-export default function TaskCreateModal({ isOpen, onClose }: TaskCreateModalProps) {
+export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskCreateModalProps) {
   const { project } = useProject();
   const [formData, setFormData] = useState({
     project_id: project?.id,
@@ -22,6 +24,7 @@ export default function TaskCreateModal({ isOpen, onClose }: TaskCreateModalProp
     tags: [] as string[],
     priority: 'medium',
     subtasks: [] as string[],
+    milestone_id: milestone_id
   })
   const [tagsInput, setTagsInput] = useState('');
   const [subtasksInput, setSubtasksInput] = useState('');
@@ -102,7 +105,7 @@ export default function TaskCreateModal({ isOpen, onClose }: TaskCreateModalProp
 
   return (
     <Transition show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-40" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -126,15 +129,15 @@ export default function TaskCreateModal({ isOpen, onClose }: TaskCreateModalProp
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800 p-0 text-left align-middle shadow-xl transition-all border border-gray-700 flex flex-col max-h-[90vh]">
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800/95 backdrop-blur-sm p-0 text-left align-middle shadow-xl transition-all border border-gray-700 flex flex-col max-h-[90vh]">
                 {/* 헤더 섹션 */}
-                <div className="flex justify-between items-center border-b border-gray-700 p-5">
+                <div className="flex justify-between items-center border-b border-gray-700/50 p-5">
                   <div className="flex items-center space-x-4">
                     <h3 className="text-xl font-bold text-white">새로운 작업 생성</h3>
                   </div>
                   <button
                     type="button"
-                    className="p-1 text-gray-400 hover:text-white transition-all duration-150"
+                    className="p-1 text-gray-400 hover:text-white transition-all"
                     onClick={onClose}
                     aria-label="닫기"
                   >
