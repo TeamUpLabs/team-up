@@ -10,6 +10,7 @@ import { SubTask } from '@/types/Task';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { getStatusColor } from '@/utils/getStatusColor';
+import { useProject } from '@/contexts/ProjectContext';
 interface TaskModalProps {
   task: Task;
   isOpen: boolean;
@@ -17,6 +18,7 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
+  const { project } = useProject();
   const router = useRouter();
   const params = useParams();
 
@@ -43,6 +45,15 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     const projectId = params?.projectId ? String(params.projectId) : 'default';
     router.push(`/platform/${projectId}/members`);
     
+    onClose();
+  };
+
+  const handleMilestoneClick = (milestoneId: number) => {
+    localStorage.setItem('selectedMilestoneId', milestoneId.toString());
+
+    const projectId = params?.projectId ? String(params.projectId) : 'default';
+    router.push(`/platform/${projectId}/milestone`);
+
     onClose();
   };
 
@@ -102,20 +113,20 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 </div>
 
                 <div className="mt-6 space-y-6">
-                  <div className="bg-gray-700/30 hover:bg-gray-700/50 p-4 rounded-lg">
+                  <div className="bg-gray-700/30  p-4 rounded-lg">
                     <h4 className="text-sm font-medium text-gray-400 mb-2">상세 설명</h4>
                     <p className="text-gray-200">{task?.description}</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg hover:bg-gray-700/50">
+                    <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg ">
                       <h4 className="text-sm font-medium text-gray-400">상태</h4>
                       <span className={`inline-block px-3 py-1 rounded-md text-sm font-medium ${getStatusColor(task?.status)}`}>
-                        {task?.status === 'todo' ? '예정' : task?.status === 'in-progress' ? '진행중' : '완료'}
+                        {task?.status === 'not-started' ? '준비' : task?.status === 'in-progress' ? '진행 중' : '완료'}
                       </span>
                     </div>
 
-                    <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg hover:bg-gray-700/50">
+                    <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg ">
                       <h4 className="text-sm font-medium text-gray-400">우선순위</h4>
                       <span className={`inline-block px-3 py-1 rounded-md text-sm font-medium
                         ${getPriorityColor(task?.priority)}`}>
@@ -123,7 +134,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       </span>
                     </div>
 
-                    <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg hover:bg-gray-700/50">
+                    <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg ">
                       <h4 className="text-sm font-medium text-gray-400">담당자</h4>
                       <div className="flex flex-wrap gap-2">
                         {
@@ -140,10 +151,20 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       </div>
                     </div>
 
-                    <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg hover:bg-gray-700/50">
+                    <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg">
                       <h4 className="text-sm font-medium text-gray-400">마감일</h4>
                       <p className="text-gray-200">{task?.dueDate}</p>
                     </div>
+                  </div>
+
+                  <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg ">
+                    <h4 className="text-sm font-medium text-gray-400 mb-2">마일스톤</h4>
+                    <p 
+                      className="text-gray-200 cursor-pointer hover:text-blue-400 transition-colors"
+                      onClick={() => handleMilestoneClick(task?.milestone_id ?? 0)}
+                    >
+                      {project?.milestones.find(milestone => milestone.id === task?.milestone_id)?.title}
+                    </p>
                   </div>
 
                   <div>
@@ -161,7 +182,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                     <h4 className="text-sm font-medium text-gray-400 mb-3">하위 작업</h4>
                     <div className="space-y-2">
                       {subtasks?.map((subtask, index) => (
-                        <div key={index} className="flex items-center gap-2 bg-gray-700/30 hover:bg-gray-700/50 p-3 rounded-lg">
+                        <div key={index} className="flex items-center gap-2 bg-gray-700/30  p-3 rounded-lg">
                           <input
                             type="checkbox"
                             checked={subtask?.completed}
@@ -181,7 +202,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       <h4 className="text-sm font-medium text-gray-400 mb-3">댓글</h4>
                       <div className="space-y-3">
                         {task?.comments?.map((comment, index) => (
-                          <div key={index} className="bg-gray-700/30 hover:bg-gray-700/50 p-4 rounded-lg">
+                          <div key={index} className="bg-gray-700/30  p-4 rounded-lg">
                             <div className="flex items-center justify-between mb-2">
                               <span className="font-medium text-gray-200">{comment?.author_id}</span>
                               <span className="text-xs text-gray-400">

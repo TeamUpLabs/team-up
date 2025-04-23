@@ -24,4 +24,5 @@ export interface Task {
   comments: Comment[];
   createdAt: string;
   updatedAt: string;
+  milestone_id: number;
 }

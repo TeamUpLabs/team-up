@@ -1,16 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import MilestoneCard from '@/components/project/milestone/MilestoneCard'
 import { useProject } from '@/contexts/ProjectContext';
 import MilestoneCreateModal from '@/components/project/milestone/MilestoneCreateModal';
+import MilestoneModal from '@/components/project/milestone/MilestoneModal';
+import { MileStone } from '@/types/MileStone';
 
 export default function MilestonePage() {
   const { project } = useProject();
   const [filter, setFilter] = useState('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedMilestone, setSelectedMilestone] = useState<MileStone | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const filteredMilestones = project?.milestones.filter(milestone => {
     if (filter === 'all') return true;
@@ -18,6 +22,20 @@ export default function MilestonePage() {
     if (filter === 'done') return milestone.status === 'done';
     return true;
   }) ?? [];
+
+  useEffect(() => {
+    const selectedMilestoneId = localStorage.getItem('selectedMilestoneId');
+    if (selectedMilestoneId && project?.milestones) {
+      const milestone = project.milestones.find(
+        m => m.id === parseInt(selectedMilestoneId)
+      );
+      if (milestone) {
+        setSelectedMilestone(milestone);
+        setIsModalOpen(true);
+        localStorage.removeItem('selectedMilestoneId');
+      }
+    }
+  }, [project]);
 
   return (
     <div className="py-6 px-2 sm:px-4 md:px-6">
@@ -81,6 +99,16 @@ export default function MilestonePage() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
       />
+      {selectedMilestone && (
+        <MilestoneModal
+          milestone={selectedMilestone}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedMilestone(null);
+          }}
+        />
+      )}
     </div>
   )
 }
