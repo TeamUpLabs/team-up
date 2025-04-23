@@ -18,7 +18,8 @@ export default function MilestonePage() {
 
   const filteredMilestones = project?.milestones.filter(milestone => {
     if (filter === 'all') return true;
-    if (filter === 'active') return milestone.status === 'in-progress';
+    if (filter === 'not-started') return milestone.status === 'not-started';
+    if (filter === 'in-progress') return milestone.status === 'in-progress';
     if (filter === 'done') return milestone.status === 'done';
     return true;
   }) ?? [];
@@ -64,18 +65,30 @@ export default function MilestonePage() {
             <span>전체</span>
             <span>{project?.milestones.length}</span>
           </button>
+
           <button
             className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${
-              filter === 'active' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
+              filter === 'not-started' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
             }`}
-            onClick={() => setFilter('active')}
+            onClick={() => setFilter('not-started')}
+          >
+            <span>시작 전</span>
+            <span>{project?.milestones.filter(m => m.status === 'not-started').length}</span>
+          </button>
+
+          <button
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${
+              filter === 'in-progress' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
+            }`}
+            onClick={() => setFilter('in-progress')}
           >
             <span>진행중</span>
             <span>{project?.milestones.filter(m => m.status === 'in-progress').length}</span>
           </button>
+
           <button
             className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${
-              filter === 'completed' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
+              filter === 'done' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
             }`}
             onClick={() => setFilter('done')}
           >
