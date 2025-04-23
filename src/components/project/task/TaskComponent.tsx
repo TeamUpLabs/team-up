@@ -4,7 +4,7 @@ export default function TaskComponent({ task }: { task: Task }) {
   return (
     <div
       onDragStart={(e) => {
-        e.dataTransfer.setData('taskId', task?.id ?? '');
+        e.dataTransfer.setData('taskId', task?.id.toString() ?? '');
       }}
       className="p-3 mb-2 bg-gray-700/50 rounded-lg hover:bg-gray-700 cursor-move transition-colors"
       draggable
