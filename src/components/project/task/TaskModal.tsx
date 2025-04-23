@@ -12,6 +12,7 @@ import { useParams } from 'next/navigation';
 import { getStatusColor } from '@/utils/getStatusColor';
 import { useProject } from '@/contexts/ProjectContext';
 import { useAuthStore } from '@/auth/authStore';
+import { deleteTask } from '@/hooks/getTaskData';
 interface TaskModalProps {
   task: Task;
   isOpen: boolean;
@@ -68,8 +69,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const handleDelete = () => {
     useAuthStore.getState().setConfirm("작업을 삭제하시겠습니까?", async () => {
       try {
-        // await deleteTask(task.id);
+        await deleteTask(task.id);
+        useAuthStore.getState().setAlert("작업 삭제에 성공했습니다.", "success");
+        useAuthStore.getState().clearConfirm();
         onClose();
+        window.location.reload();
       } catch (error) {
         console.error("Error deleting task:", error);
         useAuthStore.getState().setAlert("작업 삭제에 실패했습니다.", "error");

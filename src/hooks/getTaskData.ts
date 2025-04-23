@@ -43,3 +43,17 @@ export const createTask = async (task: TaskFormData) => {
     throw error;
   }
 }
+
+export const deleteTask = async (taskId: number) => {
+  try {
+    const res = await server.delete(`/task/${taskId}`);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to delete task");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
