@@ -26,7 +26,7 @@ export default function TasksPage() {
       setTasks(project.tasks.map((task: Task) => ({
         ...task,
         id: String(task.id),
-        status: task.status as "todo" | "in-progress" | "done",
+        status: task.status as "not-started" | "in-progress" | "done",
         priority: task.priority as "high" | "medium" | "low"
       })));
     } catch (error) {
@@ -51,8 +51,8 @@ export default function TasksPage() {
 
   const getStatusText = (status: Task['status']) => {
     switch (status) {
-      case 'todo':
-        return '할 일';
+      case 'not-started':
+        return '준비';
       case 'in-progress':
         return '진행 중';
       case 'done':
@@ -61,9 +61,9 @@ export default function TasksPage() {
   };
 
   const groupedTasks = {
-    todo: tasks.filter(task => task.status === 'todo'),
+    'not-started': tasks.filter(task => task.status === 'not-started'),
     'in-progress': tasks.filter(task => task.status === 'in-progress'),
-    done: tasks.filter(task => task.status === 'done'),
+    'done': tasks.filter(task => task.status === 'done'),
   };
 
   const moveTask = (taskId: string, newStatus: Task['status']) => {

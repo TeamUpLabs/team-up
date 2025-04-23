@@ -15,7 +15,7 @@ export interface Task {
   id: string;
   title: string;
   description: string;
-  status: 'todo' | 'in-progress' | 'done';
+  status: 'not-started' | 'in-progress' | 'done';
   priority: 'low' | 'medium' | 'high';
   assignee?: Member[];
   dueDate?: string;
