@@ -27,6 +27,8 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
   const [tagsInput, setTagsInput] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [dateError, setDateError] = useState(false);
+  const [statusError, setStatusError] = useState(false);
+  const [priorityError, setPriorityError] = useState(false);
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
@@ -38,12 +40,39 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    let hasError = false;
+    
     if (dateError) {
+      hasError = true;
+    }
+    
+    if (formData.status === "") {
+      setStatusError(true);
+      hasError = true;
+    } else {
+      setStatusError(false);
+    }
+    
+    if (formData.priority === "") {
+      setPriorityError(true);
+      hasError = true;
+    } else {
+      setPriorityError(false);
+    }
+    
+    if (hasError) {
       return;
     }
+    
     if (project?.id) {
       try {
-        await createMilestone({...formData, project_id: project.id});
+        const formattedData = {
+          ...formData,
+          project_id: project.id,
+        };
+        
+        await createMilestone(formattedData);
         useAuthStore.getState().setAlert('마일스톤이 성공적으로 생성되었습니다.', 'success');
         window.location.reload();
       } catch (error) {
@@ -56,6 +85,14 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    // Reset errors when user changes values
+    if (name === "status") {
+      setStatusError(false);
+    }
+    if (name === "priority") {
+      setPriorityError(false);
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -97,7 +134,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
 
   return (
     <Transition show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-40" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -213,13 +250,19 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+                        className={`w-full px-4 py-3 rounded-lg bg-gray-700 border ${
+                          statusError ? 'border-red-500' : 'border-gray-600'
+                        } text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
                         required
                       >
+                        <option value="">선택</option>
                         <option value="not-started">준비</option>
                         <option value="in-progress">진행중</option>
                         <option value="done">완료</option>
                       </select>
+                      {statusError && (
+                        <p className="text-red-500 text-sm mt-2">상태를 선택해주세요.</p>
+                      )}
                     </div>
 
                     <div className="col-span-1">
@@ -231,13 +274,19 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                         name="priority"
                         value={formData.priority}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+                        className={`w-full px-4 py-3 rounded-lg bg-gray-700 border ${
+                          priorityError ? 'border-red-500' : 'border-gray-600'
+                        } text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
                         required
                       >
+                        <option value="">선택</option>
                         <option value="low">낮음</option>
                         <option value="medium">중간</option>
                         <option value="high">높음</option>
                       </select>
+                      {priorityError && (
+                        <p className="text-red-500 text-sm mt-2">우선순위를 선택해주세요.</p>
+                      )}
                     </div>
 
                     <div className="col-span-2">
