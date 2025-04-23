@@ -27,7 +27,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     teamSize: '',
     endDate: '',
   });
-  
+
   // Add state for role and tech stack inputs
   const [roleInput, setRoleInput] = useState('');
   const [techStackInput, setTechStackInput] = useState('');
@@ -37,7 +37,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+
     if (name === "teamSize") {
       const onlyNums = value.replace(/\D/g, "");
       setFormData({ ...formData, [name]: onlyNums });
@@ -58,7 +58,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   const handleKeyDown = (type: "role" | "techStack", e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !isComposing) {
       e.preventDefault();
-      
+
       if (type === "role") {
         const trimmedInput = roleInput.trim();
         if (trimmedInput && !formData.roles.includes(trimmedInput)) {
@@ -92,7 +92,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     setSubmitStatus('submitting');
 
     if (user?.id) {
-      const projectId = await createProject({...formData, leader_id: user.id});
+      const projectId = await createProject({ ...formData, leader_id: user.id });
       await updateProjectMember(projectId, user.id);
       setSubmitStatus('success');
       useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
@@ -153,7 +153,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto mt-4 pl-2 pr-2">
                   <div className="space-y-6">
                     <div>
-                      <label htmlFor="title" className="block text-sm font-medium mb-1">프로젝트 이름</label>
+                      <label htmlFor="title" className="block text-sm font-medium mb-1">
+                        프로젝트 이름 <span className="text-purple-400 ml-1">*</span>
+                      </label>
                       <input
                         type="text"
                         id="title"
@@ -167,7 +169,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                     </div>
 
                     <div>
-                      <label htmlFor="description" className="block text-sm font-medium mb-1">프로젝트 설명</label>
+                      <label htmlFor="description" className="block text-sm font-medium mb-1">
+                        프로젝트 설명 <span className="text-purple-400 ml-1">*</span>
+                      </label>
                       <textarea
                         id="description"
                         name="description"
@@ -182,7 +186,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                       <div>
-                        <label htmlFor="projectType" className="block text-sm font-medium mb-1">프로젝트 카테고리</label>
+                        <label htmlFor="projectType" className="block text-sm font-medium mb-1">
+                          프로젝트 카테고리 <span className="text-purple-400 ml-1">*</span>
+                        </label>
                         <select
                           id="projectType"
                           name="projectType"
@@ -202,7 +208,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                       </div>
 
                       <div>
-                        <label htmlFor="endDate" className="block text-sm font-medium mb-1">프로젝트 종료일</label>
+                        <label htmlFor="endDate" className="block text-sm font-medium mb-1">
+                          프로젝트 종료일 <span className="text-purple-400 ml-1">*</span>
+                        </label>
                         <input
                           type="date"
                           id="endDate"
@@ -219,7 +227,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                       <h4 className="text-white font-medium border-b border-gray-700/50 pb-2">팀 구성 정보</h4>
 
                       <div>
-                        <label htmlFor="roles" className="block text-sm font-medium mb-1">필요한 역할</label>
+                        <label htmlFor="roles" className="block text-sm font-medium mb-1">
+                          필요한 역할 <span className="text-purple-400 ml-1">*</span>
+                        </label>
                         <input
                           type="text"
                           id="roles"
@@ -252,7 +262,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                       </div>
 
                       <div>
-                        <label htmlFor="techStack" className="block text-sm font-medium mb-1">필요한 기술</label>
+                        <label htmlFor="techStack" className="block text-sm font-medium mb-1">
+                          필요한 기술 <span className="text-purple-400 ml-1">*</span>
+                        </label>
                         <input
                           type="text"
                           id="techStack"
@@ -286,7 +298,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                         <div>
-                          <label htmlFor="location" className="block text-sm font-medium mb-1">위치</label>
+                          <label htmlFor="location" className="block text-sm font-medium mb-1">
+                            위치 <span className="text-purple-400 ml-1">*</span>
+                          </label>
                           <input
                             type="text"
                             id="location"
@@ -300,7 +314,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                         </div>
 
                         <div>
-                          <label htmlFor="teamSize" className="block text-sm font-medium mb-1">팀 규모</label>
+                          <label htmlFor="teamSize" className="block text-sm font-medium mb-1">
+                            팀 규모 <span className="text-purple-400 ml-1">*</span>
+                          </label>
                           <input
                             type="text"
                             id="teamSize"
@@ -319,8 +335,8 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                       type="submit"
                       disabled={submitStatus !== 'idle'}
                       className={`group w-full py-3.5 px-4 bg-gradient-to-r ${submitStatus === 'success'
-                          ? 'from-green-600 to-green-700'
-                          : 'from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800'
+                        ? 'from-green-600 to-green-700'
+                        : 'from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800'
                         } text-white text-lg font-medium rounded-lg shadow-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 mt-8 flex items-center justify-center`}
                     >
                       {submitStatus === 'idle' && (
