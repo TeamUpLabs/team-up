@@ -201,9 +201,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   <div>
                     <h4 className="text-sm font-medium text-gray-400 mb-3">하위 작업</h4>
                     <div className="space-y-2">
-                      {subtasks?.map((subtask, index) => (
-                        <div key={index} className="flex items-center gap-2 bg-gray-700/30  p-3 rounded-lg">
-                          <input
+                      {subtasks?.length > 0 ? (
+                        subtasks?.map((subtask, index) => (
+                          <div key={index} className="flex items-center gap-2 bg-gray-700/30  p-3 rounded-lg">
+                            <input
                             type="checkbox"
                             checked={subtask?.completed}
                             onChange={() => handleSubtaskToggle(index)}
@@ -213,7 +214,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                             {subtask?.title}
                           </span>
                         </div>
-                      ))}
+                        ))
+                      ) : (
+                        <span className="text-gray-500">하위 작업이 없습니다.</span>
+                      )}
                     </div>
                   </div>
 
