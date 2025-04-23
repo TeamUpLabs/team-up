@@ -3,14 +3,16 @@ import { Dialog, Transition } from '@headlessui/react';
 import { MileStone } from '@/types/MileStone';
 import { getPriorityColor } from '@/utils/getPriorityColor';
 import { useParams, useRouter } from 'next/navigation';
-
+import { useAuthStore } from '@/auth/authStore';
 interface MilestoneModalProps {
   milestone: MileStone;
   isOpen: boolean;
   onClose: () => void;
+  onDelete?: () => void;
 }
 
-export default function MilestoneModal({ milestone, isOpen, onClose }: MilestoneModalProps) {
+export default function MilestoneModal({ milestone, isOpen, onClose, onDelete }: MilestoneModalProps) {
+  const user = useAuthStore.getState().user;
   const params = useParams();
   const router = useRouter();
 
@@ -20,6 +22,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const completedTasks = milestone?.subtasks.filter(task => task.status === 'done').length ?? 0;
 
   const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  
+  const isUserAssignee = milestone.assignee.some(assi => assi.id === user?.id);
 
   const handleAssigneeClick = (assiId: number) => {
     localStorage.setItem('selectedAssiId', assiId.toString());
@@ -39,9 +43,24 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     onClose();
   };
 
+  const handleDelete = () => {
+    if (onDelete) {
+      useAuthStore.getState().setConfirm("마일스톤을 삭제하시겠습니까?", async () => {
+        try {
+          // await deleteMilestone(milestone.id);
+          onDelete();
+          onClose();
+        } catch (error) {
+          console.error("Error deleting milestone:", error);
+          useAuthStore.getState().setAlert("마일스톤 삭제에 실패했습니다.", "error");
+        }
+      });
+    }
+  };
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-40" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -70,7 +89,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                   <h2 className="text-2xl font-bold text-white">{milestone.title}</h2>
                   <button
                     onClick={onClose}
-                    className="text-gray-400 hover:text-white"
+                    className="text-gray-400 hover:text-white transition-colors duration-200"
                   >
                     ✕
                   </button>
@@ -184,6 +203,22 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                       ))}
                     </div>
                   </div>
+
+                  {/* Bottom section with delete button */}
+                  {isUserAssignee && onDelete && (
+                    <div className="border-t border-gray-700 pt-4 mt-8 flex justify-end">
+                      <button
+                        onClick={handleDelete}
+                        className="flex items-center gap-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 px-4 py-2 rounded-md transition-all duration-200 font-medium"
+                        aria-label="마일스톤 삭제"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        마일스톤 삭제
+                      </button>
+                    </div>
+                  )}
                 </div>
               </Dialog.Panel>
             </Transition.Child>
