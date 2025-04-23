@@ -66,7 +66,15 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   };
 
   const handleDelete = () => {
-    console.log('삭제');
+    useAuthStore.getState().setConfirm("작업을 삭제하시겠습니까?", async () => {
+      try {
+        // await deleteTask(task.id);
+        onClose();
+      } catch (error) {
+        console.error("Error deleting task:", error);
+        useAuthStore.getState().setAlert("작업 삭제에 실패했습니다.", "error");
+      }
+    });
   };
 
   useEffect(() => {
@@ -80,7 +88,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-40" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
