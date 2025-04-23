@@ -124,11 +124,15 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                   <div className='bg-gray-700/30 p-4 rounded-lg'>
                     <h3 className="text-gray-400 mb-2">태그</h3>
                     <div className="flex flex-wrap gap-2">
-                      {milestone.tags.map((tag, index) => (
-                        <span key={index} className="bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full text-sm">
-                          {tag}
-                        </span>
-                      ))}
+                      {milestone.tags.length > 0 ? (
+                        milestone.tags.map((tag, index) => (
+                          <span key={index} className="bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full text-sm">
+                            {tag}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-gray-500">태그가 없습니다.</span>
+                      )}
                     </div>
                   </div>
 
@@ -171,10 +175,11 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                   <div className='bg-gray-700/30 p-4 rounded-lg'>
                     <h3 className="text-gray-400 mb-2">하위 작업</h3>
                     <div className="space-y-2">
-                      {milestone.subtasks.map((subtask) => (
-                        <div key={subtask.id} className="flex flex-col">
-                          <div className="flex gap-2">
-                            <input
+                      {milestone.subtasks.length > 0 ? (
+                        milestone.subtasks.map((subtask) => (
+                          <div key={subtask.id} className="flex flex-col">
+                            <div className="flex gap-2">
+                              <input
                               type="checkbox"
                               readOnly
                               checked={
@@ -206,8 +211,11 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                               ))
                             }
                           </div>
-                        </div>
-                      ))}
+                          </div>
+                        ))
+                      ) : (
+                        <span className="text-gray-500">하위 작업이 없습니다.</span>
+                      )}
                     </div>
                   </div>
 

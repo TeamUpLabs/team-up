@@ -55,11 +55,13 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
           </div>
         </div>
       </div>
-      <MilestoneModal
-        milestone={milestone}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      {isModalOpen && (
+        <MilestoneModal
+          milestone={milestone}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </>
   );
 }
