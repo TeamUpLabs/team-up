@@ -3,10 +3,11 @@
 import { Fragment, useState, KeyboardEvent } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faSpinner, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { createProject } from '@/hooks/getProjectData';
 import { updateProjectMember } from '@/hooks/getMemberData';
 import { useAuthStore } from '@/auth/authStore';
+import SubmitBtn from '@/components/SubmitBtn';
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -92,16 +93,21 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     setSubmitStatus('submitting');
 
     if (user?.id) {
-      const projectId = await createProject({ ...formData, leader_id: user.id });
-      await updateProjectMember(projectId, user.id);
-      setSubmitStatus('success');
-      useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
+      try {
+        const projectId = await createProject({ ...formData, leader_id: user.id });
+        await updateProjectMember(projectId, user.id);
+        setSubmitStatus('success');
+        useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
 
       setTimeout(() => {
         setSubmitStatus('idle');
         onClose();
-        window.location.reload();
-      }, 1000);
+          window.location.reload();
+        }, 1000);
+      } catch (error) {
+        console.error(error);
+        useAuthStore.getState().setAlert("프로젝트 생성에 실패했습니다. 관리자에게 문의해주세요.", "error");
+      }
     }
   };
 
@@ -331,37 +337,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                       </div>
                     </div>
 
-                    <button
-                      type="submit"
-                      disabled={submitStatus !== 'idle'}
-                      className={`group w-full py-3.5 px-4 bg-gradient-to-r ${submitStatus === 'success'
-                        ? 'from-green-600 to-green-700'
-                        : 'from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800'
-                        } text-white text-lg font-medium rounded-lg shadow-lg transition duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500 mt-8 flex items-center justify-center`}
-                    >
-                      {submitStatus === 'idle' && (
-                        <>
-                          프로젝트 생성
-                          <span
-                            className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1"
-                          >
-                            →
-                          </span>
-                        </>
-                      )}
-                      {submitStatus === 'submitting' && (
-                        <>
-                          전송 중
-                          <FontAwesomeIcon icon={faSpinner} className="ml-2 animate-spin" />
-                        </>
-                      )}
-                      {submitStatus === 'success' && (
-                        <>
-                          완료
-                          <FontAwesomeIcon icon={faCheck} className="ml-2" />
-                        </>
-                      )}
-                    </button>
+                    <SubmitBtn submitStatus={submitStatus} />
                   </div>
                 </form>
               </Dialog.Panel>

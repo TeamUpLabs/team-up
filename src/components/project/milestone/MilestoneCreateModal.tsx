@@ -5,6 +5,7 @@ import { faXmark, faCheck, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useProject } from "@/contexts/ProjectContext";
 import { createMilestone } from "@/hooks/getMilestoneData";
 import { useAuthStore } from "@/auth/authStore";
+import SubmitBtn from "@/components/SubmitBtn";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
   const [dateError, setDateError] = useState(false);
   const [statusError, setStatusError] = useState(false);
   const [priorityError, setPriorityError] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
@@ -40,6 +42,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitStatus('submitting');
     
     let hasError = false;
     
@@ -73,8 +76,14 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
         };
         
         await createMilestone(formattedData);
+        setSubmitStatus('success');
         useAuthStore.getState().setAlert('마일스톤이 성공적으로 생성되었습니다.', 'success');
-        window.location.reload();
+
+        setTimeout(() => {
+          setSubmitStatus('idle');
+          onClose();
+          window.location.reload();
+        }, 1000);
       } catch (error) {
         console.error(error);
         useAuthStore.getState().setAlert('마일스톤 생성에 실패했습니다. 관리자에게 문의해주세요.', 'error');
@@ -377,14 +386,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                     </div>
                   </div>
 
-                  <div className="w-full pt-5 border-t border-gray-700">
-                    <button
-                      type="submit"
-                      className="w-full px-4 py-3 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all duration-200"
-                    >
-                      마일스톤 생성
-                    </button>
-                  </div>
+                  <SubmitBtn submitStatus={submitStatus} />
                 </form>
               </Dialog.Panel>
             </Transition.Child>

@@ -5,7 +5,7 @@ import { faXmark, faCheck, faUser } from '@fortawesome/free-solid-svg-icons';
 import { useProject } from '@/contexts/ProjectContext';
 import { createTask } from '@/hooks/getTaskData';
 import { useAuthStore } from '@/auth/authStore';
-
+import SubmitBtn from '@/components/SubmitBtn';
 interface TaskCreateModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,6 +29,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
   const [tagsInput, setTagsInput] = useState('');
   const [subtasksInput, setSubtasksInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -37,18 +38,24 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO: Add task creation logic
+    setSubmitStatus('submitting');
+ 
     if (project?.id) {
       try {
         await createTask({...formData, project_id: project.id, milestone_id: milestone_id ?? 0});
+        setSubmitStatus('success');
         useAuthStore.getState().setAlert('작업이 성공적으로 생성되었습니다.', 'success');
-        window.location.reload();
+
+        setTimeout(() => {
+          setSubmitStatus('idle');
+          onClose();
+          window.location.reload();
+        }, 1000);
       } catch (error) {
         console.error(error);
         useAuthStore.getState().setAlert('작업 생성에 실패했습니다. 관리자에게 문의해주세요.', 'error');
       }
     }
-    onClose();
   }
 
   const handleKeyDown = (type: "tags" | "subtasks", e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -344,14 +351,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                     </div>
                   </div>
 
-                  <div className="w-full pt-5 border-t border-gray-700">
-                    <button
-                      type="submit"
-                      className="w-full px-4 py-3 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all duration-200"
-                    >
-                      작업 생성
-                    </button>
-                  </div>
+                  <SubmitBtn submitStatus={submitStatus} />
                 </form>
               </Dialog.Panel>
             </Transition.Child>
