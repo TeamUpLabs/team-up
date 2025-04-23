@@ -59,7 +59,6 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
         milestone={milestone}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onDelete={() => {}}
       />
     </>
   );

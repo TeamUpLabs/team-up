@@ -4,14 +4,15 @@ import { MileStone } from '@/types/MileStone';
 import { getPriorityColor } from '@/utils/getPriorityColor';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/auth/authStore';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPencil } from '@fortawesome/free-solid-svg-icons';
 interface MilestoneModalProps {
   milestone: MileStone;
   isOpen: boolean;
   onClose: () => void;
-  onDelete?: () => void;
 }
 
-export default function MilestoneModal({ milestone, isOpen, onClose, onDelete }: MilestoneModalProps) {
+export default function MilestoneModal({ milestone, isOpen, onClose }: MilestoneModalProps) {
   const user = useAuthStore.getState().user;
   const params = useParams();
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose, onDelete }:
   const completedTasks = milestone?.subtasks.filter(task => task.status === 'done').length ?? 0;
 
   const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-  
+
   const isUserAssignee = milestone.assignee.some(assi => assi.id === user?.id);
 
   const handleAssigneeClick = (assiId: number) => {
@@ -30,7 +31,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose, onDelete }:
 
     const projectId = params?.projectId ? String(params.projectId) : 'default';
     router.push(`/platform/${projectId}/members`);
-    
+
     onClose();
   };
 
@@ -43,19 +44,20 @@ export default function MilestoneModal({ milestone, isOpen, onClose, onDelete }:
     onClose();
   };
 
+  const handleEdit = () => {
+    console.log('수정');
+  };
+
   const handleDelete = () => {
-    if (onDelete) {
-      useAuthStore.getState().setConfirm("마일스톤을 삭제하시겠습니까?", async () => {
-        try {
-          // await deleteMilestone(milestone.id);
-          onDelete();
-          onClose();
-        } catch (error) {
-          console.error("Error deleting milestone:", error);
-          useAuthStore.getState().setAlert("마일스톤 삭제에 실패했습니다.", "error");
-        }
-      });
-    }
+    useAuthStore.getState().setConfirm("마일스톤을 삭제하시겠습니까?", async () => {
+      try {
+        // await deleteMilestone(milestone.id);
+        onClose();
+      } catch (error) {
+        console.error("Error deleting milestone:", error);
+        useAuthStore.getState().setAlert("마일스톤 삭제에 실패했습니다.", "error");
+      }
+    });
   };
 
   return (
@@ -151,13 +153,13 @@ export default function MilestoneModal({ milestone, isOpen, onClose, onDelete }:
                       <div className="flex flex-wrap gap-2">
                         {
                           milestone.assignee.map((assi) => (
-                            <p 
-                            key={assi.id} 
-                            className="text-gray-200 hover:text-blue-400 cursor-pointer transition-colors"
-                            onClick={() => handleAssigneeClick(assi.id)}
-                          >{assi.name}</p>
-                        ))
-                      }
+                            <p
+                              key={assi.id}
+                              className="text-gray-200 hover:text-blue-400 cursor-pointer transition-colors"
+                              onClick={() => handleAssigneeClick(assi.id)}
+                            >{assi.name}</p>
+                          ))
+                        }
                       </div>
                     </div>
                   </div>
@@ -177,10 +179,9 @@ export default function MilestoneModal({ milestone, isOpen, onClose, onDelete }:
                               }
                               className='rounded bg-gray-700 border-gray-600'
                             />
-                            <span className={`text-sm cursor-pointer hover:text-blue-400 ${
-                              subtask.subtasks.length > 0 && subtask.subtasks.every(st => st.completed) ?
-                              'text-gray-400 line-through' : 'text-white'
-                            }`}
+                            <span className={`text-sm cursor-pointer hover:text-blue-400 ${subtask.subtasks.length > 0 && subtask.subtasks.every(st => st.completed) ?
+                                'text-gray-400 line-through' : 'text-white'
+                              }`}
                               onClick={() => handleTaskClick(subtask.id)}
                             >
                               {subtask.title}
@@ -207,8 +208,15 @@ export default function MilestoneModal({ milestone, isOpen, onClose, onDelete }:
                   </div>
 
                   {/* Bottom section with delete button */}
-                  {isUserAssignee && onDelete && (
-                    <div className="border-t border-gray-700 pt-4 mt-8 flex justify-end">
+                  {isUserAssignee && (
+                    <div className="border-t border-gray-700 pt-4 mt-8 flex gap-2 justify-end">
+                      <button
+                        onClick={handleEdit}
+                        className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-4 py-2 rounded-md transition-all duration-200 font-medium"
+                      >
+                        <FontAwesomeIcon icon={faPencil} className="w-4 h-4" />
+                        마일스톤 수정
+                      </button>
                       <button
                         onClick={handleDelete}
                         className="flex items-center gap-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 px-4 py-2 rounded-md transition-all duration-200 font-medium"
