@@ -25,7 +25,7 @@ export default function TasksPage() {
     try {
       setTasks(project.tasks.map((task: Task) => ({
         ...task,
-        id: String(task.id),
+        id: task.id,
         status: task.status as "not-started" | "in-progress" | "done",
         priority: task.priority as "high" | "medium" | "low"
       })));
@@ -38,7 +38,7 @@ export default function TasksPage() {
     const selectedTaskId = localStorage.getItem('selectedTaskId');
     
     if (selectedTaskId && tasks.length > 0) {
-      const taskToOpen = tasks.find(task => task.id === selectedTaskId);
+      const taskToOpen = tasks.find(task => task.id === parseInt(selectedTaskId));
       
       if (taskToOpen) {
         setSelectedTask(taskToOpen);
@@ -66,7 +66,7 @@ export default function TasksPage() {
     'done': tasks.filter(task => task.status === 'done'),
   };
 
-  const moveTask = (taskId: string, newStatus: Task['status']) => {
+  const moveTask = (taskId: number, newStatus: Task['status']) => {
     setTasks(tasks.map(task =>
       task.id === taskId ? { ...task, status: newStatus } : task
     ));
@@ -113,7 +113,7 @@ export default function TasksPage() {
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 const taskId = e.dataTransfer.getData('taskId');
-                moveTask(taskId, status as Task['status']);
+                moveTask(parseInt(taskId), status as Task['status']);
               }}
             >
               <div className="px-4 py-3 border-b border-gray-700">
