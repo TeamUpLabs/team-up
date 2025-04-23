@@ -67,7 +67,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800/95 backdrop-blur-sm p-6 text-left align-middle shadow-xl transition-all border border-gray-700 flex flex-col max-h-[90vh]">
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800 backdrop-blur-sm p-6 text-left align-middle shadow-xl transition-all border border-gray-700 flex flex-col max-h-[90vh]">
                 {/* 헤더 섹션 */}
                 <div className="flex justify-between items-start border-b border-gray-700/50 pb-6">
                   <div className="flex items-center space-x-4">

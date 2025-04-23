@@ -116,7 +116,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800/95 backdrop-blur-sm p-8 text-left align-middle shadow-xl transition-all border border-gray-700">
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800 backdrop-blur-sm p-6 text-left align-middle shadow-xl transition-all border border-gray-700 flex flex-col max-h-[90vh]">
                 <div className="flex items-center justify-between pb-6 border-b border-gray-700">
                   <div>
                     <h3 className="text-2xl font-semibold text-gray-100">{task?.title}</h3>
@@ -136,7 +136,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   </button>
                 </div>
 
-                <div className="mt-6 space-y-6">
+                <div className="mt-6 space-y-6 overflow-y-auto">
                   <div className="bg-gray-700/30  p-4 rounded-lg">
                     <h4 className="text-sm font-medium text-gray-400 mb-2">상세 설명</h4>
                     <p className="text-gray-200">{task?.description}</p>

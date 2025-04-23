@@ -90,9 +90,24 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
-                <div className="flex justify-between items-start mb-6">
-                  <h2 className="text-2xl font-bold text-white">{milestone.title}</h2>
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800 backdrop-blur-sm p-6 text-left align-middle shadow-xl transition-all border border-gray-700 flex flex-col max-h-[90vh]">
+                <div className="flex justify-between items-start border-b border-gray-700/50 pb-6">
+                  <div className="flex flex-col gap-2">
+                    <h2 className="text-2xl font-bold text-white">{milestone.title}</h2>
+                    <div className="flex gap-2">
+                      <span className={`inline-block px-3 py-1 rounded-full text-sm ${milestone.status === 'done' ? 'bg-green-500/20 text-green-400' :
+                        milestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
+                          'bg-gray-500/20 text-gray-400'
+                        }`}>
+                        {milestone.status === 'done' ? '완료' :
+                          milestone.status === 'in-progress' ? '진행중' : '시작 전'}
+                      </span>
+                      <span className={`inline-block px-3 py-1 rounded-full text-sm ${getPriorityColor(milestone.priority)}`}>
+                        {milestone.priority === 'high' ? '높음' :
+                          milestone.priority === 'medium' ? '중간' : '낮음'}
+                      </span>
+                    </div>
+                  </div>
                   <button
                     onClick={onClose}
                     className="text-gray-400 hover:text-white transition-colors duration-200"
@@ -101,20 +116,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                   </button>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="flex gap-2">
-                    <span className={`inline-block px-3 py-1 rounded-full text-sm ${milestone.status === 'done' ? 'bg-green-500/20 text-green-400' :
-                      milestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
-                        'bg-gray-500/20 text-gray-400'
-                      }`}>
-                      {milestone.status === 'done' ? '완료' :
-                        milestone.status === 'in-progress' ? '진행중' : '시작 전'}
-                    </span>
-                    <span className={`inline-block px-3 py-1 rounded-full text-sm ${getPriorityColor(milestone.priority)}`}>
-                      {milestone.priority === 'high' ? '높음' :
-                        milestone.priority === 'medium' ? '중간' : '낮음'}
-                    </span>
-                  </div>
+                <div className="mt-6 space-y-6 overflow-y-auto">
 
                   <div className='bg-gray-700/30 p-4 rounded-lg'>
                     <h3 className="text-gray-400 mb-2">설명</h3>
@@ -180,37 +182,37 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                           <div key={subtask.id} className="flex flex-col">
                             <div className="flex gap-2">
                               <input
-                              type="checkbox"
-                              readOnly
-                              checked={
-                                subtask.subtasks.length > 0 &&
-                                subtask.subtasks.every((st) => st.completed)
-                              }
-                              className='rounded bg-gray-700 border-gray-600'
-                            />
-                            <span className={`text-sm cursor-pointer hover:text-blue-400 ${subtask.subtasks.length > 0 && subtask.subtasks.every(st => st.completed) ?
+                                type="checkbox"
+                                readOnly
+                                checked={
+                                  subtask.subtasks.length > 0 &&
+                                  subtask.subtasks.every((st) => st.completed)
+                                }
+                                className='rounded bg-gray-700 border-gray-600'
+                              />
+                              <span className={`text-sm cursor-pointer hover:text-blue-400 ${subtask.subtasks.length > 0 && subtask.subtasks.every(st => st.completed) ?
                                 'text-gray-400 line-through' : 'text-white'
-                              }`}
-                              onClick={() => handleTaskClick(subtask.id)}
-                            >
-                              {subtask.title}
-                            </span>
-                          </div>
-                          <div className="ml-8 mt-2">
-                            {
-                              subtask.subtasks.map((sub, idx) => (
-                                <div key={idx} className='space-x-2'>
-                                  <input
-                                    type="checkbox"
-                                    readOnly
-                                    checked={sub.completed}
-                                    className='rounded bg-gray-700 border-gray-600'
-                                  />
-                                  <span className={`text-sm`}>{sub.title}</span>
-                                </div>
-                              ))
-                            }
-                          </div>
+                                }`}
+                                onClick={() => handleTaskClick(subtask.id)}
+                              >
+                                {subtask.title}
+                              </span>
+                            </div>
+                            <div className="ml-8 mt-2">
+                              {
+                                subtask.subtasks.map((sub, idx) => (
+                                  <div key={idx} className='space-x-2'>
+                                    <input
+                                      type="checkbox"
+                                      readOnly
+                                      checked={sub.completed}
+                                      className='rounded bg-gray-700 border-gray-600'
+                                    />
+                                    <span className={`text-sm`}>{sub.title}</span>
+                                  </div>
+                                ))
+                              }
+                            </div>
                           </div>
                         ))
                       ) : (
@@ -221,7 +223,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
                   {/* Bottom section with delete button */}
                   {isUserAssignee && (
-                    <div className="border-t border-gray-700 pt-4 mt-8 flex gap-2 justify-end">
+                    <div className="border-t border-gray-700 pt-4 mt-2 flex gap-2 justify-end">
                       <button
                         onClick={handleEdit}
                         className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-4 py-2 rounded-md transition-all duration-200 font-medium"
