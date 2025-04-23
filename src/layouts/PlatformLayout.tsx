@@ -83,7 +83,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
                 onClick={() => setIsModalOpen(true)}
               >
                 <span className="text-purple-400 group-hover:text-purple-300">+</span>
-                <span>새 프로젝트</span>
+                <span className="text-purple-400 group-hover:text-purple-300">새 프로젝트</span>
               </button>
               <UserDropdown />
             </div>
