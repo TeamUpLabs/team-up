@@ -12,7 +12,7 @@ interface Comment {
 }
 
 export interface Task {
-  id: string;
+  id: number;
   title: string;
   description: string;
   status: 'not-started' | 'in-progress' | 'done';
