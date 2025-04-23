@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestion, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCircleQuestion, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 export default function ConfirmProvider() {
   const confirm = useAuthStore((state) => state.confirm);
@@ -43,13 +43,6 @@ export default function ConfirmProvider() {
     }
   }, [confirm, clearConfirm]);
 
-  const confirmStyle = {
-    icon: faQuestion,
-    bgColor: "bg-slate-900/85",
-    borderColor: "border-indigo-400/10",
-    textColor: "text-indigo-300"
-  };
-
   const handleConfirmClose = () => {
     setConfirmVisible(false);
     setTimeout(() => {
@@ -61,46 +54,46 @@ export default function ConfirmProvider() {
     <>
       {confirm && (
         <div
-          className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${confirmVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+          className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
+            confirmVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
             }`}
         >
-          <div className="max-w-screen-md mx-auto px-4 py-2 mt-2">
+          <div className="max-w-md mx-auto px-4 py-3 mt-4">
             <div
-              className={`${confirmStyle.bgColor} ${confirmStyle.borderColor} backdrop-blur-sm text-white px-4 py-3 rounded-md shadow-md border transition-all relative overflow-hidden`}
+              className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg shadow-lg backdrop-blur-xl transition-all relative overflow-hidden"
             >
-              <div className="flex items-center space-x-2 mb-3">
-                <FontAwesomeIcon icon={confirmStyle.icon} className={`w-3 h-3 ${confirmStyle.textColor}`} />
-                <span className="text-gray-50 text-sm font-medium">확인</span>
-              </div>
-              <p className="text-gray-200 mb-3.5 text-sm">{confirm.message}</p>
-              <div className="flex justify-end space-x-2">
+              <div className="p-5">
+                <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3 flex items-center">
+                  <FontAwesomeIcon icon={faCircleQuestion} className="w-4 h-4 mr-2 text-blue-600" />
+                  확인
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300 text-sm mb-5">{confirm.message}</p>
+                
+                <div className="flex justify-end space-x-3">
                 <button
                   onClick={handleConfirmClose}
-                  className="px-3 py-1 bg-gray-800/60 hover:bg-gray-700/80 rounded text-xs font-medium text-gray-300 transition-colors duration-150"
-                >
-                  <span className="flex items-center space-x-1">
-                    <FontAwesomeIcon icon={faTimes} className="w-2.5 h-2.5" />
-                    <span>취소</span>
-                  </span>
+                    className="px-4 py-2 text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors duration-150 flex items-center"
+                  >
+                    <FontAwesomeIcon icon={faTimes} className="w-3 h-3 mr-1.5" />
+                    취소
                 </button>
                 <button
                   onClick={() => {
                     if (confirm.onConfirm) confirm.onConfirm();
                     handleConfirmClose();
                   }}
-                  className="px-3 py-1 bg-indigo-500/90 hover:bg-indigo-500 rounded text-xs font-medium text-white transition-colors duration-150"
-                >
-                  <span className="flex items-center space-x-1">
-                    <FontAwesomeIcon icon={faCheck} className="w-2.5 h-2.5" />
-                    <span>확인</span>
-                  </span>
+                    className="px-4 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-150 flex items-center"
+                  >
+                    <FontAwesomeIcon icon={faCheck} className="w-3 h-3 mr-1.5" />
+                    확인
                 </button>
+                </div>
               </div>
 
               {/* Progress bar */}
-              <div className="absolute bottom-0 left-0 h-0.5 w-full">
+              <div className="absolute bottom-0 left-0 h-1 w-full bg-gray-100 dark:bg-gray-800">
                 <div
-                  className="h-full bg-indigo-300/20 transition-all duration-100 ease-linear"
+                  className="h-full bg-blue-600 transition-all duration-100 ease-linear"
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>
