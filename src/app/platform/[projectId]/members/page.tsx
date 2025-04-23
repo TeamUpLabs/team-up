@@ -28,6 +28,7 @@ export default function MembersPage() {
       
       if (memberToOpen) {
         setSelectedMember(memberToOpen);
+        setIsModalOpen(true);
       }
     
       localStorage.removeItem('selectedAssiId');

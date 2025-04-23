@@ -9,7 +9,7 @@ import { getPriorityColor } from '@/utils/getPriorityColor';
 import { SubTask } from '@/types/Task';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
-
+import { getStatusColor } from '@/utils/getStatusColor';
 interface TaskModalProps {
   task: Task;
   isOpen: boolean;
@@ -19,15 +19,6 @@ interface TaskModalProps {
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const router = useRouter();
   const params = useParams();
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'todo': return 'bg-yellow-500/20 text-yellow-500';
-      case 'in-progress': return 'bg-blue-500/20 text-blue-500';
-      case 'done': return 'bg-green-500/20 text-green-500';
-      default: return '';
-    }
-  };
 
   const calculateProgress = (subtasksList: SubTask[]) => {
     if (subtasksList.length === 0) return 0;
