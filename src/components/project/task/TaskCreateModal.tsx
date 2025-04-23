@@ -286,7 +286,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                         {formData.tags.map((tag, index) => (
                           <div
                             key={index}
-                            className="flex items-center gap-1 bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm"
+                            className="flex items-center gap-1 bg-purple-900/50 text-white px-3 py-1 rounded-md text-sm"
                           >
                             {tag}
                             <button
@@ -330,14 +330,14 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                                 readOnly
                                 className="rounded"
                               />
-                              <span className="text-purple-300">
+                              <span className="text-white">
                                 {subtask}
                               </span>
                             </div>
                             <button
                               type="button"
                               onClick={() => handleRemoveSubtask(subtask)}
-                              className="text-purple-300 hover:text-white"
+                              className="text-purple-300 hover:text-white ml-1 focus:outline-none"
                             >
                               <FontAwesomeIcon icon={faCircleXmark} />
                             </button>
