@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { MileStone } from '@/types/MileStone';
 import { getPriorityColor } from '@/utils/getPriorityColor';
+import { useParams, useRouter } from 'next/navigation';
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -10,12 +11,24 @@ interface MilestoneModalProps {
 }
 
 export default function MilestoneModal({ milestone, isOpen, onClose }: MilestoneModalProps) {
+  const params = useParams();
+  const router = useRouter();
+  
   if (!isOpen) return null;
 
   const totalTasks = milestone?.subtasks.length ?? 0;
   const completedTasks = milestone?.subtasks.filter(task => task.status === 'done').length ?? 0;
 
   const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  const handleAssigneeClick = (assiId: number) => {
+    localStorage.setItem('selectedAssiId', assiId.toString());
+
+    const projectId = params?.projectId ? String(params.projectId) : 'default';
+    router.push(`/platform/${projectId}/members`);
+    
+    onClose();
+  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -109,7 +122,11 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                       <h3 className="text-gray-400 mb-2">담당자</h3>
                       {
                         milestone.assignee.map((assi) => (
-                          <p key={assi.id} className="text-indigo-400">{assi.name}</p>
+                          <p 
+                            key={assi.id} 
+                            className="text-gray-200 hover:text-blue-400 cursor-pointer transition-colors"
+                            onClick={() => handleAssigneeClick(assi.id)}
+                          >{assi.name}</p>
                         ))
                       }
                     </div>
