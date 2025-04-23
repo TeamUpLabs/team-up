@@ -179,3 +179,46 @@ export const deleteProject = async (project_id: string) => {
     throw error;
   }
 };
+
+interface UpdateProjectFormData {
+  title: string;
+  description: string;
+  roles: string[];
+  techStack: string[];
+  location: string;
+  teamSize: number;
+  projectType: string;
+  startDate: string;
+  endDate: string;
+}
+
+
+
+export const updateProject = async (project_id: string, formData: UpdateProjectFormData) => {
+  try {
+    const res = await server.put(`/project/${project_id}`, {
+      title: formData.title,
+      description: formData.description,
+      roles: formData.roles,
+      techStack: formData.techStack,
+      location: formData.location,
+      teamSize: Number(formData.teamSize),
+      projectType: formData.projectType,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+    }, {
+      headers: {
+        'Content-Type': 'application/json', 
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to update project");
+    }
+  } catch (error) {
+    console.error("Error updating project:", error);
+    throw error;
+  }
+};
