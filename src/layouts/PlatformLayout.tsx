@@ -79,10 +79,11 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">
               <button 
-                className="px-3 py-1.5 md:px-4 md:py-2 bg-purple-600 text-white text-sm md:text-base rounded-lg hover:bg-purple-700"
+                className="group flex items-center gap-1.5 px-3.5 py-2 bg-white/5 border border-purple-500/20 text-sm font-medium rounded-md transition-all hover:bg-purple-500/10 hover:border-purple-500/40 hover:shadow-sm"
                 onClick={() => setIsModalOpen(true)}
               >
-                + 새 프로젝트
+                <span className="text-purple-400 group-hover:text-purple-300">+</span>
+                <span>새 프로젝트</span>
               </button>
               <UserDropdown />
             </div>
