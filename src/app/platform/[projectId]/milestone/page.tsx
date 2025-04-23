@@ -41,6 +41,7 @@ export default function MilestonePage() {
   return (
     <div className="py-6 px-2 sm:px-4 md:px-6">
       <div className="rounded-xl shadow-lg">
+        {/* Header Section */}
         <div className="flex justify-between items-center mb-6 bg-gray-800 p-6 rounded-lg">
           <div>
             <h1 className="text-2xl font-bold text-gray-100">마일스톤</h1>
@@ -55,6 +56,7 @@ export default function MilestonePage() {
           </button>
         </div>
 
+        {/* Filter Section */}
         <div className="flex gap-4 mb-6">
           <button
             className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${
