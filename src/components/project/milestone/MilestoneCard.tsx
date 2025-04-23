@@ -45,7 +45,7 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
             <p>시작일: {milestone.startDate}</p>
             <p>종료일: {milestone.endDate}</p>
           </div>
-          <div className="text-gray-400">
+          <div className="text-gray-400 flex flex-wrap gap-1 items-end">
             <p>담당자:</p>
             {
               milestone.assignee.map((assi) => (
