@@ -160,3 +160,22 @@ export const createProject = async (formData: ProjectFormData) => {
     throw error;
   }
 };
+
+export const deleteProject = async (project_id: string) => {
+  try {
+    const res = await server.delete(`/project/${project_id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to delete project");
+    }
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    throw error;
+  }
+};
