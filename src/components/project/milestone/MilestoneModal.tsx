@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/auth/authStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil } from '@fortawesome/free-solid-svg-icons';
+import { deleteMilestone } from '@/hooks/getMilestoneData';
 interface MilestoneModalProps {
   milestone: MileStone;
   isOpen: boolean;
@@ -51,8 +52,11 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const handleDelete = () => {
     useAuthStore.getState().setConfirm("마일스톤을 삭제하시겠습니까?", async () => {
       try {
-        // await deleteMilestone(milestone.id);
+        await deleteMilestone(milestone.id);
+        useAuthStore.getState().setAlert("마일스톤 삭제에 성공했습니다.", "success");
+        useAuthStore.getState().clearConfirm();
         onClose();
+        window.location.reload();
       } catch (error) {
         console.error("Error deleting milestone:", error);
         useAuthStore.getState().setAlert("마일스톤 삭제에 실패했습니다.", "error");

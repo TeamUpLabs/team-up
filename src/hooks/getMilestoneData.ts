@@ -25,3 +25,17 @@ export const createMilestone = async (milestone: MilestoneFormData) => {
     throw error;
   }
 };
+
+export const deleteMilestone = async (milestoneId: number) => {
+  try {
+    const res = await server.delete(`/milestone/${milestoneId}`);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to delete milestone");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
