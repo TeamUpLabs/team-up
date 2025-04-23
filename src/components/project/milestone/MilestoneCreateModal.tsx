@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark, faCheck, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faXmark, faCircleXmark, faCheck, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useProject } from "@/contexts/ProjectContext";
 import { createMilestone } from "@/hooks/getMilestoneData";
 import { useAuthStore } from "@/auth/authStore";
@@ -43,38 +43,38 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitStatus('submitting');
-    
+
     let hasError = false;
-    
+
     if (dateError) {
       hasError = true;
     }
-    
+
     if (formData.status === "") {
       setStatusError(true);
       hasError = true;
     } else {
       setStatusError(false);
     }
-    
+
     if (formData.priority === "") {
       setPriorityError(true);
       hasError = true;
     } else {
       setPriorityError(false);
     }
-    
+
     if (hasError) {
       return;
     }
-    
+
     if (project?.id) {
       try {
         const formattedData = {
           ...formData,
           project_id: project.id,
         };
-        
+
         await createMilestone(formattedData);
         setSubmitStatus('success');
         useAuthStore.getState().setAlert('마일스톤이 성공적으로 생성되었습니다.', 'success');
@@ -94,7 +94,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
+
     // Reset errors when user changes values
     if (name === "status") {
       setStatusError(false);
@@ -259,9 +259,8 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-lg bg-gray-700 border ${
-                          statusError ? 'border-red-500' : 'border-gray-600'
-                        } text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
+                        className={`w-full px-4 py-3 rounded-lg bg-gray-700 border ${statusError ? 'border-red-500' : 'border-gray-600'
+                          } text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
                         required
                       >
                         <option value="">선택</option>
@@ -283,9 +282,8 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                         name="priority"
                         value={formData.priority}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-lg bg-gray-700 border ${
-                          priorityError ? 'border-red-500' : 'border-gray-600'
-                        } text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
+                        className={`w-full px-4 py-3 rounded-lg bg-gray-700 border ${priorityError ? 'border-red-500' : 'border-gray-600'
+                          } text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
                         required
                       >
                         <option value="">선택</option>
@@ -312,28 +310,26 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                               key={member.id}
                               onClick={() => toggleAssignee(member.id)}
                               className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${isAssigned(member.id)
-                                  ? 'bg-purple-500/20 border border-purple-500/50'
-                                  : 'bg-gray-600/40 border border-transparent hover:bg-gray-600/60'
+                                ? 'bg-purple-500/20 border border-purple-500/50'
+                                : 'bg-gray-600/40 border border-transparent hover:bg-gray-600/60'
                                 }`}
                             >
                               <div className="relative flex-shrink-0">
                                 <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
                                   <div className="relative w-full h-full flex items-center justify-center">
-                                    <FontAwesomeIcon 
-                                      icon={faUser} 
-                                      className={`absolute text-gray-300 transform transition-all duration-300 ${
-                                        isAssigned(member.id) 
-                                          ? 'opacity-0 rotate-90 scale-0' 
+                                    <FontAwesomeIcon
+                                      icon={faUser}
+                                      className={`absolute text-gray-300 transform transition-all duration-300 ${isAssigned(member.id)
+                                          ? 'opacity-0 rotate-90 scale-0'
                                           : 'opacity-100 rotate-0 scale-100'
-                                      }`} 
+                                        }`}
                                     />
-                                    <FontAwesomeIcon 
-                                      icon={faCheck} 
-                                      className={`absolute text-white transform transition-all duration-300 ${
-                                        isAssigned(member.id) 
-                                          ? 'opacity-100 rotate-0 scale-100' 
+                                    <FontAwesomeIcon
+                                      icon={faCheck}
+                                      className={`absolute text-white transform transition-all duration-300 ${isAssigned(member.id)
+                                          ? 'opacity-100 rotate-0 scale-100'
                                           : 'opacity-0 -rotate-90 scale-0'
-                                      }`} 
+                                        }`}
                                     />
                                   </div>
                                 </div>
@@ -368,17 +364,15 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                         {formData.tags.map((tag, index) => (
                           <div
                             key={index}
-                            className="flex items-center gap-1 bg-purple-900/30 text-white px-3 py-1 rounded-md text-sm"
+                            className="flex items-center gap-1 bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm"
                           >
-                            <span className="text-gray-200">
-                              {tag}
-                            </span>
+                            {tag}
                             <button
                               type="button"
                               onClick={() => handleRemoveTag(tag)}
-                              className="text-gray-400 hover:text-white"
+                              className="text-purple-300 hover:text-white ml-1 focus:outline-none"
                             >
-                              ×
+                              <FontAwesomeIcon icon={faCircleXmark} />
                             </button>
                           </div>
                         ))}
