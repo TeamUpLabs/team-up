@@ -137,7 +137,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-gray-800 p-6 text-left align-middle shadow-2xl transition-all border border-purple-500/20 flex flex-col max-h-[90vh]">
+              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-gray-800 p-6 text-left align-middle shadow-2xl transition-all border border-gray-700 flex flex-col max-h-[90vh]">
                 {/* 헤더 섹션 */}
                 <div className="flex justify-between items-center border-b border-gray-700/50 pb-4">
                   <div className="flex items-center space-x-4">
@@ -148,10 +148,10 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   </div>
                   <button
                     type="button"
-                    className="p-1 text-gray-400 hover:text-white transition-all"
+                    className="text-gray-400 hover:text-white transition-all"
                     onClick={onClose}
                   >
-                    <FontAwesomeIcon icon={faXmark} className="h-5 w-5" />
+                    <FontAwesomeIcon icon={faXmark} />
                   </button>
                 </div>
 

@@ -5,7 +5,7 @@ import { getPriorityColor } from '@/utils/getPriorityColor';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/auth/authStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencil } from '@fortawesome/free-solid-svg-icons';
+import { faPencil, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { deleteMilestone } from '@/hooks/getMilestoneData';
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -112,7 +112,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                     onClick={onClose}
                     className="text-gray-400 hover:text-white transition-colors duration-200"
                   >
-                    ✕
+                    <FontAwesomeIcon icon={faXmark} />
                   </button>
                 </div>
 

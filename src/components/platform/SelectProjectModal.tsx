@@ -4,6 +4,8 @@ import { useAuthStore } from "@/auth/authStore";
 import { Project } from "@/types/Project";
 import { getProjectByMemberId } from "@/hooks/getProjectData";
 import { updateProjectMember } from "@/hooks/getMemberData";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 interface SelectProjectModalProps {
   isOpen: boolean;
@@ -95,12 +97,10 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
                   </div>
                   <button
                     type="button"
-                    className="p-1 text-gray-400 hover:text-white transition-all"
+                    className="text-gray-400 hover:text-white transition-all"
                     onClick={onClose}
                   >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <FontAwesomeIcon icon={faXmark} />
                   </button>
                 </div>
                 <div className="mt-6 flex-1 overflow-y-auto">

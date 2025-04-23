@@ -130,9 +130,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   </div>
                   <button
                     onClick={onClose}
-                    className="transition-all duration-200 hover:rotate-90"
+                    className="transition-all duration-200 text-gray-400 hover:text-white"
                   >
-                    <FontAwesomeIcon icon={faXmark} className="w-5 h-5 text-gray-400" />
+                    <FontAwesomeIcon icon={faXmark} />
                   </button>
                 </div>
 
