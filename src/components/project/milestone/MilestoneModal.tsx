@@ -30,6 +30,15 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     onClose();
   };
 
+  const handleTaskClick = (taskId: string) => {
+    localStorage.setItem('selectedTaskId', taskId);
+
+    const projectId = params?.projectId ? String(params.projectId) : 'default';
+    router.push(`/platform/${projectId}/tasks`);
+
+    onClose();
+  };
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -147,10 +156,12 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                               }
                               className='rounded bg-gray-700 border-gray-600'
                             />
-                            <span className={`text-sm ${
+                            <span className={`text-sm cursor-pointer hover:text-blue-400 ${
                               subtask.subtasks.length > 0 && subtask.subtasks.every(st => st.completed) ?
                               'text-gray-400 line-through' : 'text-white'
-                            }`}>
+                            }`}
+                              onClick={() => handleTaskClick(subtask.id)}
+                            >
                               {subtask.title}
                             </span>
                           </div>
