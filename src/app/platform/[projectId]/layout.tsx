@@ -1,8 +1,7 @@
 "use client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faMessage, faTasks, faCalendar, faUsers, faFlag, faGear } from "@fortawesome/free-solid-svg-icons";
-import { faBell } from "@fortawesome/free-regular-svg-icons";
+import { faHouse, faMessage, faTasks, faCalendar, faUsers, faFlag, faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "@/components/platform/sidebar";
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
@@ -10,6 +9,7 @@ import { Project } from "@/types/Project";
 import { usePathname } from "next/navigation";
 import { getProjectById } from "@/hooks/getProjectData";
 import { ProjectProvider } from "@/contexts/ProjectContext";
+import UserDropdown from "@/components/platform/UserDropdown";
 
 export default function ProjectLayout({
   children,
@@ -112,8 +112,12 @@ export default function ProjectLayout({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <FontAwesomeIcon icon={faBell} className="w-4 h-4 sm:w-5 sm:h-5 p-2 border border-gray-700 rounded" />
-                <Link href={`/platform`} className="p-2 text-sm font-bold bg-red-500 rounded">
+                <UserDropdown />
+                <Link 
+                  href={`/platform`} 
+                  className="px-3 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-red-500/20"
+                >
+                  <FontAwesomeIcon icon={faRightFromBracket} className="w-3.5 h-3.5" />
                   <span>나가기</span>
                 </Link>
               </div>
