@@ -3,7 +3,7 @@
 import { Fragment, useState, KeyboardEvent } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { createProject } from '@/hooks/getProjectData';
 import { updateProjectMember } from '@/hooks/getMemberData';
 import { useAuthStore } from '@/auth/authStore';
@@ -246,15 +246,15 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                           {formData.roles.map((role, index) => (
                             <div
                               key={index}
-                              className="flex items-center gap-1 bg-purple-900/30 text-white px-3 py-1 rounded-md text-sm"
+                              className="flex items-center gap-1 bg-purple-900/50 text-white px-3 py-1 rounded-md text-sm"
                             >
                               {role}
                               <button
                                 type="button"
                                 onClick={() => handleRemoveRole(role)}
-                                className="text-gray-400 hover:text-white"
+                                className="text-purple-300 hover:text-white ml-1 focus:outline-none"
                               >
-                                ×
+                                <FontAwesomeIcon icon={faCircleXmark} />
                               </button>
                             </div>
                           ))}
@@ -281,15 +281,15 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                           {formData.techStack.map((tech, index) => (
                             <div
                               key={index}
-                              className="flex items-center gap-1 bg-purple-900/30 text-white px-3 py-1 rounded-md text-sm"
+                              className="flex items-center gap-1 bg-purple-900/50 text-white px-3 py-1 rounded-md text-sm"
                             >
                               {tech}
                               <button
                                 type="button"
                                 onClick={() => handleRemoveTechStack(tech)}
-                                className="text-gray-400 hover:text-white"
+                                className="text-purple-300 hover:text-white ml-1 focus:outline-none"
                               >
-                                ×
+                                <FontAwesomeIcon icon={faCircleXmark} />
                               </button>
                             </div>
                           ))}
