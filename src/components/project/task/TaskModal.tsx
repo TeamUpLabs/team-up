@@ -4,13 +4,14 @@ import { Fragment, useState, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Task } from '@/types/Task';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faPencil, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { getPriorityColor } from '@/utils/getPriorityColor';
 import { SubTask } from '@/types/Task';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { getStatusColor } from '@/utils/getStatusColor';
 import { useProject } from '@/contexts/ProjectContext';
+import { useAuthStore } from '@/auth/authStore';
 interface TaskModalProps {
   task: Task;
   isOpen: boolean;
@@ -19,6 +20,7 @@ interface TaskModalProps {
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const { project } = useProject();
+  const user = useAuthStore.getState().user;
   const router = useRouter();
   const params = useParams();
 
@@ -29,6 +31,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   };
 
   const [subtasks, setSubtasks] = useState<SubTask[]>([]);
+
+  const isUserAssignee = task?.assignee?.some(assi => assi.id === user?.id);
 
   const handleSubtaskToggle = async (index: number) => {
     const updated = subtasks.map((subtask, i) =>
@@ -44,7 +48,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
     const projectId = params?.projectId ? String(params.projectId) : 'default';
     router.push(`/platform/${projectId}/members`);
-    
+
     onClose();
   };
 
@@ -55,6 +59,14 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     router.push(`/platform/${projectId}/milestone`);
 
     onClose();
+  };
+
+  const handleEdit = () => {
+    console.log('수정');
+  };
+
+  const handleDelete = () => {
+    console.log('삭제');
   };
 
   useEffect(() => {
@@ -139,12 +151,12 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       <div className="flex flex-wrap gap-2">
                         {
                           task?.assignee?.map((assi) => (
-                            <p 
-                              key={assi?.id} 
+                            <p
+                              key={assi?.id}
                               className="text-gray-200 hover:text-blue-400 cursor-pointer transition-colors"
                               onClick={() => handleAssigneeClick(assi?.id ?? 0)}
                             >{
-                              assi?.name}
+                                assi?.name}
                             </p>
                           ))
                         }
@@ -159,7 +171,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
                   <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg ">
                     <h4 className="text-sm font-medium text-gray-400 mb-2">마일스톤</h4>
-                    <p 
+                    <p
                       className="text-gray-200 cursor-pointer hover:text-blue-400 transition-colors"
                       onClick={() => handleMilestoneClick(task?.milestone_id ?? 0)}
                     >
@@ -213,6 +225,29 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                           </div>
                         ))}
                       </div>
+                    </div>
+                  )}
+
+                  {/* Bottom section with delete button */}
+                  {isUserAssignee && (
+                    <div className="border-t border-gray-700 pt-4 mt-8 flex gap-2 justify-end">
+                      <button
+                        onClick={handleEdit}
+                        className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-4 py-2 rounded-md transition-all duration-200 font-medium"
+                      >
+                        <FontAwesomeIcon icon={faPencil} className="w-4 h-4" />
+                        작업 수정
+                      </button>
+                      <button
+                        onClick={handleDelete}
+                        className="flex items-center gap-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 px-4 py-2 rounded-md transition-all duration-200 font-medium"
+                        aria-label="작업 삭제"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        작업 삭제
+                      </button>
                     </div>
                   )}
                 </div>
