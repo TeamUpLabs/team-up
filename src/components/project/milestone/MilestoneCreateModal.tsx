@@ -364,7 +364,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                         {formData.tags.map((tag, index) => (
                           <div
                             key={index}
-                            className="flex items-center gap-1 bg-purple-900/50 text-white px-3 py-1 rounded-md text-sm"
+                            className="flex items-center gap-1 bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm"
                           >
                             {tag}
                             <button

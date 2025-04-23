@@ -246,7 +246,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                           {formData.roles.map((role, index) => (
                             <div
                               key={index}
-                              className="flex items-center gap-1 bg-purple-900/50 text-white px-3 py-1 rounded-md text-sm"
+                              className="flex items-center gap-1 bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm"
                             >
                               {role}
                               <button
@@ -281,7 +281,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                           {formData.techStack.map((tech, index) => (
                             <div
                               key={index}
-                              className="flex items-center gap-1 bg-purple-900/50 text-white px-3 py-1 rounded-md text-sm"
+                              className="flex items-center gap-1 bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm"
                             >
                               {tech}
                               <button
