@@ -19,8 +19,8 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
   const router = useRouter();
   const params = useParams();
 
-  const handleTaskClick = (taskId: string) => {
-    localStorage.setItem('selectedTaskId', taskId);
+  const handleTaskClick = (taskId: number) => {
+    localStorage.setItem('selectedTaskId', taskId.toString());
 
     const projectId = params?.projectId ? String(params.projectId) : 'default';
     router.push(`/platform/${projectId}/tasks`);
