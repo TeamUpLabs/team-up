@@ -1,3 +1,6 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+
 interface SubmitBtnProps {
   submitStatus: 'idle' | 'submitting' | 'success';
 }
@@ -12,7 +15,7 @@ export default function SubmitBtn({ submitStatus }: SubmitBtnProps) {
         w-full py-3 px-6 rounded-md text-base font-medium
         flex items-center justify-center gap-2
         transition-all duration-300 ease-in-out
-        focus:outline-none
+        focus:outline-none group
         ${submitStatus === 'success' 
           ? 'bg-green-500 hover:bg-green-600' 
           : 'bg-indigo-600 hover:bg-indigo-700'}
@@ -22,21 +25,12 @@ export default function SubmitBtn({ submitStatus }: SubmitBtnProps) {
       {submitStatus === 'idle' && (
         <>
           제출
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="16" 
-            height="16" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="transition-transform duration-300 group-hover:translate-x-1"
-          >
-            <path d="M5 12h14"></path>
-            <path d="m12 5 7 7-7 7"></path>
-          </svg>
+          <span className="overflow-hidden w-4">
+            <FontAwesomeIcon 
+              icon={faArrowRight} 
+              className="transform -translate-x-4 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" 
+            />
+          </span>
         </>
       )}
       {submitStatus === 'submitting' && (
