@@ -105,7 +105,7 @@ interface ProjectFormData {
   roles: string[];
   techStack: string[];
   location: string;
-  teamSize: string;
+  teamSize: number;
   endDate: string;
 }
 

@@ -25,7 +25,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     roles: [] as string[],
     techStack: [] as string[],
     location: '',
-    teamSize: '',
+    teamSize: 1,
     endDate: '',
   });
 
@@ -41,7 +41,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
     if (name === "teamSize") {
       const onlyNums = value.replace(/\D/g, "");
-      setFormData({ ...formData, [name]: onlyNums });
+      setFormData({ ...formData, [name]: parseInt(onlyNums, 10) });
     } else {
       setFormData({ ...formData, [name]: value });
     }
