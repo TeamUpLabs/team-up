@@ -46,6 +46,10 @@ export default function MembersPage() {
       (statusFilter === 'offline' && member.status === '오프라인');
 
     return matchesSearch && matchesStatus;
+  }).sort((a, b) => {
+    if (a.id === project?.leader.id) return -1;
+    if (b.id === project?.leader.id) return 1;
+    return 0;
   });
 
   const handleMemberClick = (member: Member) => {
