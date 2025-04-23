@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faCheck, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faXmark, faCheck, faUser, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { useProject } from '@/contexts/ProjectContext';
 import { createTask } from '@/hooks/getTaskData';
 import { useAuthStore } from '@/auth/authStore';
@@ -39,10 +39,10 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitStatus('submitting');
- 
+
     if (project?.id) {
       try {
-        await createTask({...formData, project_id: project.id, milestone_id: milestone_id ?? 0});
+        await createTask({ ...formData, project_id: project.id, milestone_id: milestone_id ?? 0 });
         setSubmitStatus('success');
         useAuthStore.getState().setAlert('작업이 성공적으로 생성되었습니다.', 'success');
 
@@ -232,28 +232,26 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                               key={member.id}
                               onClick={() => toggleAssignee(member.id)}
                               className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${isAssigned(member.id)
-                                  ? 'bg-purple-500/20 border border-purple-500/50'
-                                  : 'bg-gray-600/40 border border-transparent hover:bg-gray-600/60'
+                                ? 'bg-purple-500/20 border border-purple-500/50'
+                                : 'bg-gray-600/40 border border-transparent hover:bg-gray-600/60'
                                 }`}
                             >
                               <div className="relative flex-shrink-0">
                                 <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
                                   <div className="relative w-full h-full flex items-center justify-center">
-                                    <FontAwesomeIcon 
-                                      icon={faUser} 
-                                      className={`absolute text-gray-300 transform transition-all duration-300 ${
-                                        isAssigned(member.id) 
-                                          ? 'opacity-0 rotate-90 scale-0' 
-                                          : 'opacity-100 rotate-0 scale-100'
-                                      }`} 
+                                    <FontAwesomeIcon
+                                      icon={faUser}
+                                      className={`absolute text-gray-300 transform transition-all duration-300 ${isAssigned(member.id)
+                                        ? 'opacity-0 rotate-90 scale-0'
+                                        : 'opacity-100 rotate-0 scale-100'
+                                        }`}
                                     />
-                                    <FontAwesomeIcon 
-                                      icon={faCheck} 
-                                      className={`absolute text-white transform transition-all duration-300 ${
-                                        isAssigned(member.id) 
-                                          ? 'opacity-100 rotate-0 scale-100' 
-                                          : 'opacity-0 -rotate-90 scale-0'
-                                      }`} 
+                                    <FontAwesomeIcon
+                                      icon={faCheck}
+                                      className={`absolute text-white transform transition-all duration-300 ${isAssigned(member.id)
+                                        ? 'opacity-100 rotate-0 scale-100'
+                                        : 'opacity-0 -rotate-90 scale-0'
+                                        }`}
                                     />
                                   </div>
                                 </div>
@@ -288,17 +286,15 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                         {formData.tags.map((tag, index) => (
                           <div
                             key={index}
-                            className="flex items-center gap-1 bg-purple-900/30 text-white px-3 py-1 rounded-md text-sm"
+                            className="flex items-center gap-1 bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm"
                           >
-                            <span className="text-gray-200">
-                              {tag}
-                            </span>
+                            {tag}
                             <button
                               type="button"
                               onClick={() => handleRemoveTag(tag)}
-                              className="text-gray-400 hover:text-white"
+                              className="text-purple-300 hover:text-white ml-1 focus:outline-none"
                             >
-                              ×
+                              <FontAwesomeIcon icon={faCircleXmark} />
                             </button>
                           </div>
                         ))}
@@ -332,18 +328,18 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                                 type="checkbox"
                                 checked={false}
                                 readOnly
-                                className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-500"
+                                className="rounded"
                               />
-                              <span className={`text-sm text-gray-200`}>
+                              <span className="text-purple-300">
                                 {subtask}
                               </span>
                             </div>
                             <button
                               type="button"
                               onClick={() => handleRemoveSubtask(subtask)}
-                              className="text-gray-400 hover:text-white"
+                              className="text-purple-300 hover:text-white"
                             >
-                              ×
+                              <FontAwesomeIcon icon={faCircleXmark} />
                             </button>
                           </div>
                         ))}
