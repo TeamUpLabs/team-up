@@ -38,13 +38,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
-    if (name === "teamSize") {
-      const onlyNums = value.replace(/\D/g, "");
-      setFormData({ ...formData, [name]: parseInt(onlyNums, 10) });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData({ ...formData, [name]: value });
   };
 
   // New functions to handle role and tech stack inputs
@@ -324,12 +318,12 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                             팀 규모 <span className="text-purple-400 ml-1">*</span>
                           </label>
                           <input
-                            type="text"
+                            type="number"
                             id="teamSize"
                             name="teamSize"
                             value={formData.teamSize}
                             onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+                            className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             placeholder="5"
                             required
                           />
