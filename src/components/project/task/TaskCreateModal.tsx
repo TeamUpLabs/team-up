@@ -18,7 +18,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
     project_id: project?.id,
     title: '',
     description: '',
-    status: 'todo',
+    status: 'not-started',
     dueDate: '',
     assignee_id: [] as number[],
     tags: [] as string[],
@@ -40,7 +40,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
     // TODO: Add task creation logic
     if (project?.id) {
       try {
-        await createTask({...formData, project_id: project.id});
+        await createTask({...formData, project_id: project.id, milestone_id: milestone_id ?? 0});
         useAuthStore.getState().setAlert('작업이 성공적으로 생성되었습니다.', 'success');
         window.location.reload();
       } catch (error) {
