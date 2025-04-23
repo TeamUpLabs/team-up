@@ -148,15 +148,17 @@ export default function MilestoneModal({ milestone, isOpen, onClose, onDelete }:
                     </div>
                     <div className='bg-gray-700/30 p-4 rounded-lg'>
                       <h3 className="text-gray-400 mb-2">담당자</h3>
-                      {
-                        milestone.assignee.map((assi) => (
-                          <p 
+                      <div className="flex flex-wrap gap-2">
+                        {
+                          milestone.assignee.map((assi) => (
+                            <p 
                             key={assi.id} 
                             className="text-gray-200 hover:text-blue-400 cursor-pointer transition-colors"
                             onClick={() => handleAssigneeClick(assi.id)}
                           >{assi.name}</p>
                         ))
                       }
+                      </div>
                     </div>
                   </div>
 
