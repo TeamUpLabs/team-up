@@ -128,7 +128,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                     <div className="flex flex-wrap gap-2">
                       {milestone.tags.length > 0 ? (
                         milestone.tags.map((tag, index) => (
-                          <span key={index} className="bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full text-sm">
+                          <span key={index} className="bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm">
                             {tag}
                           </span>
                         ))
