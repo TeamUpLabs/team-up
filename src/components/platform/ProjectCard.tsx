@@ -2,7 +2,7 @@ import { Project } from "@/types/Project";
 import Link from "next/link";
 import { useAuthStore } from "@/auth/authStore";
 import { updateProjectMember } from "@/hooks/getMemberData";
-
+import Badge from "@/components/Badge";
 interface ProjectCardProps {
   project: Project;
   isExplore?: boolean;
@@ -24,7 +24,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
       <p className="text-gray-400 mb-4 line-clamp-2 min-h-[3rem]">{project.description}</p>
       <div className="flex items-center space-x-2 mb-4">
         {project.roles.map((role, index) => (
-          <span key={index} className="text-sm bg-purple-900/50 text-purple-300 px-2 py-1 rounded">{role}</span>
+          <Badge key={index} content={role} color="purple" />
         ))}
       </div>
       <div className="flex items-center justify-between">
