@@ -43,7 +43,7 @@ export default function Badge({ content, color = "gray", isEditable = false, onR
       {content}
       {isEditable && (
         <button
-          className={`${badgeXmarkColors[color]} ml-1 focus:outline-none`}
+          className={`${badgeXmarkColors[color]} ml-2 focus:outline-none`}
           onClick={onRemove}
           type="button"
         >
