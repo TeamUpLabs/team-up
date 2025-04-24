@@ -13,6 +13,7 @@ import { useProject } from '@/contexts/ProjectContext';
 import { useAuthStore } from '@/auth/authStore';
 import { deleteTask } from '@/hooks/getTaskData';
 import ModalTemplete from '@/components/ModalTemplete';
+import Badge from '@/components/Badge';
 
 interface TaskModalProps {
   task: Task;
@@ -97,9 +98,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       <h3 className="text-2xl font-semibold text-gray-100">{task?.title}</h3>
       <div className="flex gap-2 mt-2">
         {task?.tags.map((tag, index) => (
-          <span key={index} className="px-2 py-1 text-xs rounded-md bg-gray-700/50 text-gray-300">
-            {tag}
-          </span>
+          <Badge key={index} content={tag} color="pink" />
         ))}
       </div>
     </div>
