@@ -44,6 +44,12 @@ export default function AlertProvider() {
           bgColor: "bg-gray-800/95 border-red-500/50",
           textColor: "text-red-400"
         };
+      case "warning":
+        return {
+          icon: faExclamationTriangle,
+          bgColor: "bg-gray-800/95 border-yellow-500/50",
+          textColor: "text-yellow-400"
+        };
       default:
         return {
           icon: faCheckCircle,
