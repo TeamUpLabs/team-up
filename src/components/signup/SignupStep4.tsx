@@ -1,6 +1,5 @@
 // components/signup/SignupStep4.tsx
 import { useRef, useState } from "react";
-import moment from "moment-timezone";
 
 interface SignupStep4Props {
   role: string;
@@ -59,9 +58,7 @@ export default function SignupStep4({
   const [filteredSpecialtySuggestions, setFilteredSpecialtySuggestions] = useState<string[]>([]);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const specialtySuggestionsRef = useRef<HTMLDivElement>(null);
-  
-  const timezones = moment.tz.names();
-  
+
   const BIRTHDAY_YEAR_LIST = Array.from(
     { length: new Date().getFullYear() - 1900 + 1 },
     (_, i) => `${i + 1900}년`,
@@ -88,11 +85,11 @@ export default function SignupStep4({
   const handleLanguageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     onLanguageInput(e);
-    
+
     if (value) {
       const filtered = languageSuggestions.filter(
         suggestion => suggestion.toLowerCase().includes(value.toLowerCase()) &&
-        !languages.includes(suggestion)
+          !languages.includes(suggestion)
       );
       setFilteredSuggestions(filtered);
       setShowSuggestions(filtered.length > 0);
@@ -104,11 +101,11 @@ export default function SignupStep4({
   const handleSpecialtyInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     onSpecialtyInput(e);
-    
+
     if (value) {
       const filtered = specialtySuggestions[role as keyof typeof specialtySuggestions].filter(
         suggestion => suggestion.toLowerCase().includes(value.toLowerCase()) &&
-        !specialties.includes(suggestion)
+          !specialties.includes(suggestion)
       );
       setFilteredSpecialtySuggestions(filtered);
       setShowSpecialtySuggestions(filtered.length > 0);
@@ -119,7 +116,7 @@ export default function SignupStep4({
 
   const handleSuggestionClick = (suggestion: string) => {
     onAddSuggestion("language", suggestion);
-    
+
     if (languageInputRef.current) {
       languageInputRef.current.value = '';
       languageInputRef.current.blur();
@@ -129,7 +126,7 @@ export default function SignupStep4({
 
   const handleSpecialtySuggestionClick = (suggestion: string) => {
     onAddSuggestion("specialty", suggestion);
-    
+
     if (specialtyInputRef.current) {
       specialtyInputRef.current.value = '';
       specialtyInputRef.current.blur();
@@ -206,9 +203,10 @@ export default function SignupStep4({
             required
           >
             <option value="">지역</option>
-            {timezones.map(tz => (
-              <option key={tz} value={tz}>{tz}</option>
-            ))}
+            <option value="Asia/Seoul">한국 표준시 (KST)</option>
+            <option value="UTC">세계 표준시 (UTC)</option>
+            <option value="America/New_York">동부 표준시 (EST)</option>
+            <option value="America/Los_Angeles">태평양 표준시 (PST)</option>
           </select>
 
           <select
