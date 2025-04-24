@@ -4,6 +4,7 @@ import { updateProject } from "@/hooks/getProjectData";
 import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
+import Badge from "@/components/Badge";
 
 interface GeneralSettingTabProps {
   project: Project;
@@ -364,19 +365,13 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   <div className="flex flex-wrap gap-2">
                     {formData.techStack.length > 0 ? (
                       formData.techStack.map((tech, index) => (
-                        <div key={index} className="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-md text-sm flex items-center gap-1">
-                          {tech}
-                          {isEditing && (
-                            <button
-                              onClick={() => handleRemoveTechItem(index)}
-                              className="text-blue-300 hover:text-white ml-1 focus:outline-none"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                              </svg>
-                            </button>
-                          )}
-                        </div>
+                        <Badge 
+                          key={index}
+                          content={tech}
+                          color="blue"
+                          isEditable={isEditing}
+                          onRemove={() => handleRemoveTechItem(index)}
+                        />
                       ))
                     ) : (
                       <span className="text-gray-400 text-sm italic">기술 스택이 없습니다.</span>
@@ -421,19 +416,13 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   <div className="flex flex-wrap gap-2">
                     {formData.roles.length > 0 ? (
                       formData.roles.map((role, index) => (
-                        <div key={index} className="px-3 py-1 bg-purple-900/50 text-purple-300 rounded-md text-sm flex items-center gap-1">
-                          {role}
-                          {isEditing && (
-                            <button
-                              onClick={() => handleRemoveRoleItem(index)}
-                              className="text-purple-300 hover:text-white ml-1 focus:outline-none"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                              </svg>
-                            </button>
-                          )}
-                        </div>
+                        <Badge 
+                          key={index}
+                          content={role}
+                          color="purple"
+                          isEditable={isEditing}
+                          onRemove={() => handleRemoveRoleItem(index)}
+                        />
                       ))
                     ) : (
                       <span className="text-gray-400 text-sm italic">필요 역할이 없습니다.</span>
