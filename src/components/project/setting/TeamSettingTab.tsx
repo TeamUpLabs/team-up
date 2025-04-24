@@ -1,5 +1,5 @@
 import { Project } from "@/types/Project";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faTrash, faSearch, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Member } from "@/types/Member";
@@ -18,6 +18,17 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [selectedRole, setSelectedRole] = useState<string>("");
+  const [isCurrentUserLeaderOrManager, setIsCurrentUserLeaderOrManager] = useState(false);
+  const { user } = useAuthStore();
+
+  // Check if current user is leader or manager
+  useEffect(() => {
+    if (user && project) {
+      const isLeader = project.leader.id === user.id;
+      const isManager = Array.isArray(project.manager) && project.manager.some(manager => manager.id === user.id);
+      setIsCurrentUserLeaderOrManager(isLeader || isManager);
+    }
+  }, [user, project]);
 
   // Mock data for pending invites (would come from backend)
   const pendingInvites = [
@@ -64,6 +75,18 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
     // Close modal and reset state
     setShowRoleModal(false);
     setSelectedMember(null);
+  };
+
+  const handleDeleteMember = async (member: Member) => {
+    try {
+      useAuthStore.getState().setConfirm("정말로 이 팀원을 퇴출하시겠습니까?", () => {
+        useAuthStore.getState().setAlert(`${member.name}님이 퇴출되었습니다.`, "success");
+        useAuthStore.getState().clearConfirm();
+      });
+    } catch (error) {
+      useAuthStore.getState().setAlert("팀원 퇴출에 실패했습니다.", "error");
+      console.error("Error deleting project member:", error);
+    }
   };
 
   return (
@@ -167,25 +190,22 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                   <p className="text-gray-400 text-sm">{member.email}</p>
                 </div>
               </div>
-
-              <div className="flex items-center gap-3">
-
-                {/* Only show role change button if not the leader */}
-                {member.id !== project.leader.id && (
+              {isCurrentUserLeaderOrManager && member.id !== project.leader.id && (
+                <div className="flex items-center gap-3">
                   <button
                     className="bg-gray-600 hover:bg-gray-500 text-gray-200 rounded px-3 py-1 text-xs transition-colors"
                     onClick={() => openRoleModal(member)}
                   >
                     권한 변경
                   </button>
-                )}
-
-                {member.id !== project.leader.id && (
-                  <button className="text-red-400 hover:text-red-300 p-1 rounded">
+                  <button
+                    className="text-red-400 hover:text-red-300 p-1 rounded"
+                    onClick={() => handleDeleteMember(member)}
+                  >
                     <FontAwesomeIcon icon={faTrash} />
                   </button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
