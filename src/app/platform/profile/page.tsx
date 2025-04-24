@@ -58,7 +58,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("intro");
   const [isLoading, setIsLoading] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
-  const [newSocialLink, setNewSocialLink] = useState<{ name: string; url: string }>({ name: "github", url: "" });
+  const [newSocialLink, setNewSocialLink] = useState<{ name: string; url: string }>({ name: "", url: "" });
   const [profileData, setProfileData] = useState<ProfileData>({
     name: "",
     email: "",
@@ -95,7 +95,7 @@ export default function ProfilePage() {
           end: "",
           timezone: "",
         },
-        socialLinks: user.socialLinks ? Object.entries(user.socialLinks[0] || {}).map(([name, url]) => ({ name, url: url || '' })) : [],
+        socialLinks: user.socialLinks || [],
       });
     }
   }, [user]);
@@ -169,11 +169,25 @@ export default function ProfilePage() {
 
   const addSocialLink = () => {
     if (newSocialLink.name && newSocialLink.url) {
+      // URL 형식이 없으면 https:// 추가
+      let url = newSocialLink.url;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+      
+      const newLink = {
+        name: newSocialLink.name,
+        url: url
+      };
+      
       setProfileData(prev => ({
         ...prev,
-        socialLinks: [...prev.socialLinks, { ...newSocialLink }]
+        socialLinks: [...prev.socialLinks, newLink]
       }));
-      setNewSocialLink({ name: "github", url: "" });
+      
+      setNewSocialLink({ name: "", url: "" });
+    } else {
+      console.log("Cannot add link: missing name or url", newSocialLink);
     }
   };
 
@@ -186,7 +200,6 @@ export default function ProfilePage() {
 
   const handleSaveProfile = async () => {
     try {
-      console.log(profileData);
       setIsLoading(true);
       const response = await updateUserProfile(user?.id || 0, profileData);
       
@@ -197,12 +210,10 @@ export default function ProfilePage() {
       
       setIsEditing(false);
       useAuthStore.getState().setAlert("프로필이 성공적으로 업데이트되었습니다.", "success");
-      
-      // The page refresh is no longer necessary since we're updating the state directly
-      // but we'll keep it to ensure everything is synced properly
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 500);
     } catch (error) {
       console.error("Error updating profile:", error);
       useAuthStore.getState().setAlert("프로필 업데이트 중 오류가 발생했습니다.", "error");
@@ -428,13 +439,14 @@ export default function ProfilePage() {
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">소셜 링크</label>
                   <div className="space-y-3">
                     {isEditing && (
-                      <div className="flex gap-2 items-center">
+                      <div className="flex gap-2 items-center mb-2">
                         <select
                           name="newSocialLink.name"
                           value={newSocialLink.name}
                           onChange={handleChange}
                           className="w-1/4 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                         >
+                          <option value="">소셜 선택</option>
                           <option value="github">GitHub</option>
                           <option value="linkedin">LinkedIn</option>
                           <option value="twitter">Twitter</option>
@@ -447,12 +459,13 @@ export default function ProfilePage() {
                           name="newSocialLink.url"
                           value={newSocialLink.url}
                           onChange={handleChange}
-                          placeholder="URL 입력"
+                          placeholder="URL 입력 (https://...)"
                           className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                         />
                         <button
                           onClick={addSocialLink}
-                          className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                          disabled={!newSocialLink.url}
+                          className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
                         >
                           추가
                         </button>
@@ -501,7 +514,16 @@ export default function ProfilePage() {
                                 rel="noopener noreferrer"
                                 className="text-blue-600 dark:text-blue-400 hover:underline"
                               >
-                                {link.url || "링크 없음"}
+                                {(() => {
+                                  try {
+                                    // URL에서 도메인만 표시
+                                    const url = new URL(link.url);
+                                    return url.hostname;
+                                  } catch {
+                                    // URL 파싱 실패 시 원래 URL 그대로 표시
+                                    return link.url || "링크 없음";
+                                  }
+                                })()}
                               </a>
                             )}
                           </div>

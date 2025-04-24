@@ -23,8 +23,8 @@ export interface Member {
     timezone: string;
   };
   languages: string[];
-  socialLinks: [{
+  socialLinks: {
     name: string;
     url: string;
-  }];
+  }[];
 }
