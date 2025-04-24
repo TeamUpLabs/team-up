@@ -112,7 +112,7 @@ export default function TasksPage() {
               <div className="px-4 py-3 border-b border-gray-700">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium mr-2 ${getStatusColor(status as Task['status'])}`}>
+                    <span className={`inline-flex px-2 py-1 rounded-md text-xs font-medium mr-2 ${getStatusColor(status as Task['status'])}`}>
                       {getStatusText(status as Task['status'])}
                     </span>
                     <span className="text-gray-400 text-sm">{tasksList.length}</span>
