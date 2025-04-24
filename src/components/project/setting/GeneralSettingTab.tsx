@@ -2,12 +2,15 @@ import { Project } from "@/types/Project";
 import { useEffect, useState } from "react";
 import { updateProject } from "@/hooks/getProjectData";
 import { useAuthStore } from "@/auth/authStore";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCopy } from "@fortawesome/free-solid-svg-icons";
 
 interface GeneralSettingTabProps {
   project: Project;
 }
 
 export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
+  const user = useAuthStore(state => state.user);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -22,6 +25,9 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
     projectType: "",
     visibility: "public"
   });
+
+  // Add state for copy feedback
+  const [copied, setCopied] = useState(false);
 
   // For new item inputs
   const [newTechItem, setNewTechItem] = useState("");
@@ -44,6 +50,20 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
       });
     }
   }, [project, isEditing]);
+
+  // Add copy to clipboard function
+  const handleCopyCode = () => {
+    if (project.id) {
+      navigator.clipboard.writeText(project.id)
+        .then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        })
+        .catch(err => {
+          console.error('Failed to copy: ', err);
+        });
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -150,8 +170,14 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
           </h2>
           {!isEditing ? (
             <button
-              onClick={() => setIsEditing(true)}
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-full transition-all shadow-md backdrop-blur-sm flex items-center gap-2"
+              onClick={() => {
+                if (project.leader.id === user?.id) {
+                  setIsEditing(true);
+                } else {
+                  useAuthStore.getState().setAlert("프로젝트 리더만 편집할 수 있습니다.", "warning");
+                }
+              }}
+              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-md transition-all shadow-md backdrop-blur-sm flex items-center gap-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -191,6 +217,27 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                 <h3 className="text-lg font-semibold text-white">기본 정보</h3>
               </div>
               <div className="p-6 space-y-5">
+                <div>
+                  <label htmlFor="code" className="inline-block text-gray-300 mb-2 font-medium">참여 코드</label>
+                  <div className="flex items-center w-full border bg-gray-900/70 border-gray-700 rounded-lg px-4 py-3">
+                    <input
+                      type="text"
+                      name="code"
+                      value={project.id}
+                      onChange={handleChange}
+                      readOnly
+                      className="text-white outline-none transition-all cursor-not-allowed flex-grow"
+                    />
+                    <button
+                      onClick={handleCopyCode}
+                      className="text-gray-300 hover:text-white transition-colors focus:outline-none ml-2"
+                      title="코드 복사"
+                    >
+                      <FontAwesomeIcon icon={faCopy} />
+                      {copied && <span className="absolute -mt-8 -ml-3 bg-gray-800 text-xs text-white px-2 py-1 rounded">복사됨!</span>}
+                    </button>
+                  </div>
+                </div>
                 <div>
                   <label className="inline-block text-gray-300 mb-2 font-medium">프로젝트 이름</label>
                   <input
