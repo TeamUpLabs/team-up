@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleXmark, faCheck, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useProject } from "@/contexts/ProjectContext";
 import { createMilestone } from "@/hooks/getMilestoneData";
 import { useAuthStore } from "@/auth/authStore";
 import SubmitBtn from "@/components/SubmitBtn";
 import ModalTemplete from "@/components/ModalTemplete";
+import Badge from "@/components/Badge";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -329,19 +330,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
           />
           <div className="mt-2 flex flex-wrap gap-2">
             {formData.tags.map((tag, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-1 bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm"
-              >
-                {tag}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTag(tag)}
-                  className="text-purple-300 hover:text-white ml-1 focus:outline-none"
-                >
-                  <FontAwesomeIcon icon={faCircleXmark} />
-                </button>
-              </div>
+              <Badge key={index} content={tag} color="teal" isEditable={true} onRemove={() => handleRemoveTag(tag)} />
             ))}
           </div>
         </div>
