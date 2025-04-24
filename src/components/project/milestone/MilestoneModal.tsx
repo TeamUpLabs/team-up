@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil } from '@fortawesome/free-solid-svg-icons';
 import { deleteMilestone } from '@/hooks/getMilestoneData';
 import ModalTemplete from '@/components/ModalTemplete';
+import Badge from '@/components/Badge';
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -69,14 +70,9 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     <div className="flex flex-col gap-2">
       <h2 className="text-2xl font-bold text-white">{milestone.title}</h2>
       <div className="flex gap-2">
-        <span className={`inline-block px-3 py-1 rounded-full text-sm ${milestone.status === 'done' ? 'bg-green-500/20 text-green-400' :
-          milestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
-            'bg-gray-500/20 text-gray-400'
-          }`}>
-          {milestone.status === 'done' ? '완료' :
-            milestone.status === 'in-progress' ? '진행중' : '시작 전'}
-        </span>
-        <span className={`inline-block px-3 py-1 rounded-full text-sm ${getPriorityColor(milestone.priority)}`}>
+        <Badge content={milestone.status === 'done' ? '완료' :
+          milestone.status === 'in-progress' ? '진행중' : '시작 전'} color="gray" />
+        <span className={`inline-block px-3 py-1 rounded-md text-sm ${getPriorityColor(milestone.priority)}`}>
           {milestone.priority === 'high' ? '높음' :
             milestone.priority === 'medium' ? '중간' : '낮음'}
         </span>
@@ -120,9 +116,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
         <div className="flex flex-wrap gap-2">
           {milestone.tags.length > 0 ? (
             milestone.tags.map((tag, index) => (
-              <span key={index} className="bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm">
-                {tag}
-              </span>
+              <Badge key={index} content={tag} color="purple" />
             ))
           ) : (
             <span className="text-gray-500">태그가 없습니다.</span>
