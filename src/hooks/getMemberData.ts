@@ -60,3 +60,39 @@ export const updateProjectMember = async (projectId: string, memberId: number) =
     throw error;
   }
 }
+
+interface UpdateMemberData {
+  name?: string;
+  email?: string;
+  role?: string;
+  contactNumber?: string;
+  birthDate?: string;
+  introduction?: string;
+  skills?: string[];
+  languages?: string[];
+  workingHours?: {
+    start: string;
+    end: string;
+    timezone: string;
+  };
+  socialLinks?: {
+    name: string;
+    url: string;
+  }[];
+}
+
+
+
+export const updateUserProfile = async (memberId: number, memberData: UpdateMemberData) => {
+  try {
+    const res = await server.put(`/member/${memberId}`, memberData);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to update member");
+    }
+  } catch (error) {
+    console.error("Error updating member:", error);
+    throw error;
+  }
+}
