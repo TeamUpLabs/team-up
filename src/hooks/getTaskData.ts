@@ -57,3 +57,19 @@ export const deleteTask = async (taskId: number) => {
     throw error;
   }
 }
+
+export const updateTaskStatus = async (project_id: string, task_id: number, status: string) => {
+  try {
+    const res = await server.put(`/project/${project_id}/task/${task_id}/status`, {
+      status: status,
+    });
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to update task status");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

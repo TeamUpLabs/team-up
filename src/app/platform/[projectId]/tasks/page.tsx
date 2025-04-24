@@ -11,6 +11,7 @@ import TaskModal from '@/components/project/task/TaskModal';
 import { getStatusColor } from "@/utils/getStatusColor";
 import { useProject } from '@/contexts/ProjectContext';
 import SelectMilestoneModal from '@/components/project/task/SelectMilestoneModal';
+import { updateTaskStatus } from '@/hooks/getTaskData';
 
 export default function TasksPage() {
   const { project } = useProject();
@@ -66,10 +67,11 @@ export default function TasksPage() {
     'done': tasks.filter(task => task.status === 'done'),
   };
 
-  const moveTask = (taskId: number, newStatus: Task['status']) => {
+  const moveTask = async (taskId: number, newStatus: Task['status']) => {
     setTasks(tasks.map(task =>
       task.id === taskId ? { ...task, status: newStatus } : task
     ));
+    await updateTaskStatus(project?.id ?? '', taskId, newStatus);
   };
 
   const handleTaskClick = (task: Task) => {
