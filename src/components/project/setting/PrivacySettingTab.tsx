@@ -1,0 +1,56 @@
+export default function PrivacySettingTab() {
+  return (
+    <div className="bg-gray-800 rounded-lg p-6">
+      <h2 className="text-xl font-semibold text-gray-100 mb-6">개인정보 보호 설정</h2>
+
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-gray-200 font-medium">활동 로그</h3>
+            <p className="text-gray-400 text-sm">다른 사용자가 내 활동 로그를 볼 수 있습니다.</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" value="" className="sr-only peer" defaultChecked />
+            <div className="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-gray-200 font-medium">프로필 표시</h3>
+            <p className="text-gray-400 text-sm">다른 사용자에게 내 프로필이 표시됩니다.</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" value="" className="sr-only peer" defaultChecked />
+            <div className="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-gray-200 font-medium">데이터 공유</h3>
+            <p className="text-gray-400 text-sm">프로젝트 통계 및 데이터가 다른 멤버들과 공유됩니다.</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" value="" className="sr-only peer" />
+            <div className="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-blue-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+          </label>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-gray-200 font-medium">이중 인증 (2FA)</h3>
+            <p className="text-gray-400 text-sm">계정 보안을 위한 이중 인증을 설정합니다.</p>
+          </div>
+          <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm">
+            설정하기
+          </button>
+        </div>
+      </div>
+
+      <button className="mt-6 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+        변경사항 저장
+      </button>
+    </div>
+  );
+}
