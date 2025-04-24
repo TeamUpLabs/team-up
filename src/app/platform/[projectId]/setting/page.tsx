@@ -2,8 +2,6 @@
 
 import { useAuthStore } from "@/auth/authStore";
 import { useProject } from "@/contexts/ProjectContext";
-import { deleteProject } from "@/hooks/getProjectData";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import GeneralSettingTab from "@/components/project/setting/GeneralSettingTab";
 import TeamSettingTab from "@/components/project/setting/TeamSettingTab";
@@ -15,23 +13,11 @@ import DangerSettingTab from "@/components/project/setting/DangerSettingTab";
 export default function SettingsPage() {
   const { project } = useProject();
   const user = useAuthStore((state) => state.user);
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState("general");
 
   const isLeader = Array.isArray(project?.leader)
     ? project.leader.some((leader: { id: number | string }) => leader.id === user?.id)
     : project?.leader?.id === user?.id;
-
-  const handleDeleteProject = async () => {
-    if (project) {
-      useAuthStore.getState().setConfirm("정말로 이 프로젝트를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.", async () => {
-        await deleteProject(project.id);
-        useAuthStore.getState().setConfirm("");
-        useAuthStore.getState().setAlert("프로젝트가 삭제되었습니다.", "success");
-        router.push('/platform');
-      })
-    }
-  }
 
   return (
     <div className="py-6 px-2 sm:px-4 md:px-6">
@@ -116,7 +102,7 @@ export default function SettingsPage() {
       )}
 
       {activeTab === "danger" && isLeader && (
-        <DangerSettingTab handleDeleteProject={handleDeleteProject} />
+        <DangerSettingTab />
       )}
     </div>
   )
