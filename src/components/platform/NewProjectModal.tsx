@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, KeyboardEvent } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { createProject } from '@/hooks/getProjectData';
 import { updateProjectMember } from '@/hooks/getMemberData';
 import { useAuthStore } from '@/auth/authStore';
 import SubmitBtn from '@/components/SubmitBtn';
 import ModalTemplete from '@/components/ModalTemplete';
+import Badge from '@/components/Badge';
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -207,19 +206,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             />
             <div className="mt-2 flex flex-wrap gap-2">
               {formData.roles.map((role, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-1 bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm"
-                >
-                  {role}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveRole(role)}
-                    className="text-purple-300 hover:text-white ml-1 focus:outline-none"
-                  >
-                    <FontAwesomeIcon icon={faCircleXmark} />
-                  </button>
-                </div>
+                <Badge key={index} content={role} color="purple" isEditable={true} onRemove={() => handleRemoveRole(role)} />
               ))}
             </div>
           </div>
@@ -242,19 +229,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             />
             <div className="mt-2 flex flex-wrap gap-2">
               {formData.techStack.map((tech, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-1 bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm"
-                >
-                  {tech}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTechStack(tech)}
-                    className="text-purple-300 hover:text-white ml-1 focus:outline-none"
-                  >
-                    <FontAwesomeIcon icon={faCircleXmark} />
-                  </button>
-                </div>
+                <Badge key={index} content={tech} color="orange" isEditable={true} onRemove={() => handleRemoveTechStack(tech)} />
               ))}
             </div>
           </div>
