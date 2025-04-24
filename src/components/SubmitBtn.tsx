@@ -7,7 +7,7 @@ interface SubmitBtnProps {
 
 export default function SubmitBtn({ submitStatus }: SubmitBtnProps) {
   return (
-    <div className="w-full pt-5 border-t border-gray-700">
+    <div className="w-full">
       <button
         type="submit"
         disabled={submitStatus === 'submitting'}
