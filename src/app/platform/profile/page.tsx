@@ -57,6 +57,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("intro");
   const [isLoading, setIsLoading] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(true);
   const [isComposing, setIsComposing] = useState(false);
   const [newSocialLink, setNewSocialLink] = useState<{ name: string; url: string }>({ name: "", url: "" });
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -80,24 +81,32 @@ export default function ProfilePage() {
   const [newLanguage, setNewLanguage] = useState("");
 
   useEffect(() => {
-    if (user) {
-      setProfileData({
-        name: user.name || "",
-        email: user.email || "",
-        role: user.role || "",
-        contactNumber: user.contactNumber || "",
-        birthDate: user.birthDate || "",
-        introduction: user.introduction || "",
-        skills: user.skills || [],
-        languages: user.languages || [],
-        workingHours: user.workingHours || {
-          start: "",
-          end: "",
-          timezone: "",
-        },
-        socialLinks: user.socialLinks || [],
-      });
-    }
+    setIsDataLoading(true);
+
+    const fetchProfileData = async () => {
+      if (user) {
+        setProfileData({
+          name: user.name || "",
+          email: user.email || "",
+          role: user.role || "",
+          contactNumber: user.contactNumber || "",
+          birthDate: user.birthDate || "",
+          introduction: user.introduction || "",
+          skills: user.skills || [],
+          languages: user.languages || [],
+          workingHours: user.workingHours || {
+            start: "",
+            end: "",
+            timezone: "",
+          },
+          socialLinks: user.socialLinks || [],
+        });
+      }
+    };
+    
+    fetchProfileData().then(() => {
+      setIsDataLoading(false);
+    });
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -210,10 +219,6 @@ export default function ProfilePage() {
       
       setIsEditing(false);
       useAuthStore.getState().setAlert("프로필이 성공적으로 업데이트되었습니다.", "success");
-
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 500);
     } catch (error) {
       console.error("Error updating profile:", error);
       useAuthStore.getState().setAlert("프로필 업데이트 중 오류가 발생했습니다.", "error");
@@ -221,6 +226,27 @@ export default function ProfilePage() {
       setIsLoading(false);
     }
   };
+
+  // Skeleton component for text fields
+  const SkeletonField = () => (
+    <div className="animate-pulse flex items-center gap-2">
+      <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+    </div>
+  );
+
+  // Skeleton for social links
+  const SkeletonSocialLink = () => (
+    <div className="animate-pulse flex items-center gap-2">
+      <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-40"></div>
+    </div>
+  );
+
+  // Skeleton for skill/language tags
+  const SkeletonTag = () => (
+    <div className="animate-pulse h-6 bg-gray-300 dark:bg-gray-600 rounded-full w-20"></div>
+  );
 
   return (
     <div className="max-w-5xl mx-auto p-6">
@@ -238,7 +264,7 @@ export default function ProfilePage() {
         <button
           onClick={() => isEditing ? handleSaveProfile() : setIsEditing(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm transition-colors duration-200"
-          disabled={isLoading}
+          disabled={isLoading || isDataLoading}
         >
           <FontAwesomeIcon icon={isEditing ? faSave : faEdit} className="w-4 h-4" />
           {isEditing ? (isLoading ? "저장 중..." : "저장") : "수정"}
@@ -248,18 +274,20 @@ export default function ProfilePage() {
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
         <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 h-32">
           <div className="absolute -bottom-12 left-8">
-            {profileData && (
-              <div className="relative">
-                <div className="h-24 w-24 rounded-full border-4 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+            <div className="relative">
+              <div className="h-24 w-24 rounded-full border-4 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                {isDataLoading ? (
+                  <div className="animate-pulse w-full h-full bg-gray-300 dark:bg-gray-600"></div>
+                ) : (
                   <FontAwesomeIcon icon={faUser} className="text-gray-400 text-3xl" />
-                </div>
-                {isEditing && (
-                  <button className="absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-1.5 shadow-md hover:bg-blue-700 transition-colors">
-                    <FontAwesomeIcon icon={faCamera} className="w-3 h-3" />
-                  </button>
                 )}
               </div>
-            )}
+              {isEditing && (
+                <button className="absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-1.5 shadow-md hover:bg-blue-700 transition-colors">
+                  <FontAwesomeIcon icon={faCamera} className="w-3 h-3" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -270,7 +298,9 @@ export default function ProfilePage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">이름</label>
-                  {isEditing ? (
+                  {isDataLoading ? (
+                    <SkeletonField />
+                  ) : isEditing ? (
                     <input
                       type="text"
                       name="name"
@@ -288,7 +318,9 @@ export default function ProfilePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">이메일</label>
-                  {isEditing ? (
+                  {isDataLoading ? (
+                    <SkeletonField />
+                  ) : isEditing ? (
                     <input
                       type="email"
                       name="email"
@@ -307,7 +339,9 @@ export default function ProfilePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">역할</label>
-                  {isEditing ? (
+                  {isDataLoading ? (
+                    <SkeletonField />
+                  ) : isEditing ? (
                     <select
                       name="role"
                       value={profileData.role}
@@ -330,7 +364,9 @@ export default function ProfilePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">연락처</label>
-                  {isEditing ? (
+                  {isDataLoading ? (
+                    <SkeletonField />
+                  ) : isEditing ? (
                     <input
                       type="tel"
                       name="contactNumber"
@@ -348,7 +384,9 @@ export default function ProfilePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">생년월일</label>
-                  {isEditing ? (
+                  {isDataLoading ? (
+                    <SkeletonField />
+                  ) : isEditing ? (
                     <input
                       type="date"
                       name="birthDate"
@@ -372,7 +410,9 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">시작 시간</label>
-                    {isEditing ? (
+                    {isDataLoading ? (
+                      <SkeletonField />
+                    ) : isEditing ? (
                       <input
                         type="time"
                         name="workingHours.start"
@@ -390,7 +430,9 @@ export default function ProfilePage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">종료 시간</label>
-                    {isEditing ? (
+                    {isDataLoading ? (
+                      <SkeletonField />
+                    ) : isEditing ? (
                       <input
                         type="time"
                         name="workingHours.end"
@@ -409,7 +451,9 @@ export default function ProfilePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">시간대</label>
-                  {isEditing ? (
+                  {isDataLoading ? (
+                    <SkeletonField />
+                  ) : isEditing ? (
                     <select
                       name="workingHours.timezone"
                       value={profileData.workingHours.timezone}
@@ -472,7 +516,12 @@ export default function ProfilePage() {
                       </div>
                     )}
 
-                    {profileData.socialLinks.length > 0 ? (
+                    {isDataLoading ? (
+                      <div className="space-y-2">
+                        <SkeletonSocialLink />
+                        <SkeletonSocialLink />
+                      </div>
+                    ) : profileData.socialLinks.length > 0 ? (
                       <div className="space-y-2">
                         {profileData.socialLinks.map((link, index) => (
                           <div key={index} className="flex items-center gap-2">
@@ -597,7 +646,13 @@ export default function ProfilePage() {
           {activeTab === "intro" && (
             <div>
               <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">자기소개</h2>
-              {isEditing ? (
+              {isDataLoading ? (
+                <div className="animate-pulse space-y-2">
+                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full"></div>
+                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6"></div>
+                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-4/6"></div>
+                </div>
+              ) : isEditing ? (
                 <textarea
                   name="introduction"
                   value={profileData.introduction}
@@ -635,7 +690,15 @@ export default function ProfilePage() {
                 )}
 
                 <div className="flex flex-wrap gap-2">
-                  {profileData.skills.length > 0 ? (
+                  {isDataLoading ? (
+                    <>
+                      <SkeletonTag />
+                      <SkeletonTag />
+                      <SkeletonTag />
+                      <SkeletonTag />
+                      <SkeletonTag />
+                    </>
+                  ) : profileData.skills.length > 0 ? (
                     profileData.skills.map((skill, index) => (
                       <div
                         key={index}
@@ -678,7 +741,13 @@ export default function ProfilePage() {
                 )}
 
                 <div className="flex flex-wrap gap-2">
-                  {profileData.languages.length > 0 ? (
+                  {isDataLoading ? (
+                    <>
+                      <SkeletonTag />
+                      <SkeletonTag />
+                      <SkeletonTag />
+                    </>
+                  ) : profileData.languages.length > 0 ? (
                     profileData.languages.map((language, index) => (
                       <div
                         key={index}
