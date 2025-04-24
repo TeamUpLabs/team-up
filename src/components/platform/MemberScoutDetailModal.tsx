@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Member } from '@/types/Member';
 import SelectProjectModal from './SelectProjectModal';
 import ModalTemplete from '@/components/ModalTemplete';
+import Badge from '@/components/Badge';
 
 interface MemberScoutDetailModalProps {
   member: Member;
@@ -146,9 +147,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
         </h3>
         <div className="flex flex-wrap gap-2 ">
           {member.skills?.map((skill, index) => (
-            <span key={index} className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">
-              {skill}
-            </span>
+            <Badge key={index} content={skill} color="blue" />
           )) || "등록된 전문 분야가 없습니다."}
         </div>
       </div>
@@ -206,9 +205,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
         <div className="flex flex-wrap gap-2">
           {member.languages?.length > 0 ? (
             member.languages.map((language, index) => (
-              <span key={index} className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm">
-                {language}
-              </span>
+              <Badge key={index} content={language} color="purple" />
             ))
           ) : (
             <p className="text-gray-500">등록된 언어가 없습니다.</p>
