@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faTrash, faSearch, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Member } from "@/types/Member";
 import PermissionChangeModal from "./PermissionChangeModal";
+import { updateProjectMemberPermission } from "@/hooks/getProjectData";
+import { useAuthStore } from "@/auth/authStore";
 
 interface TeamSettingTabProps {
   project: Project;
@@ -44,9 +46,21 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
     setShowRoleModal(true);
   };
 
-  const handleRoleChange = () => {
-    // Here you would update the role in the backend
-    console.log(`Changing ${selectedMember?.name}'s role to ${selectedRole}`);
+  const handlePermissionChange = async () => {
+    // Here you would update the role in the backen
+    if (selectedMember) {
+      try {
+        await updateProjectMemberPermission(project.id, selectedMember.id, selectedRole);
+        useAuthStore.getState().setAlert(`${selectedMember.name}님의 권한이 ${selectedRole === "manager" ? "관리자" : "멤버"}로 변경되었습니다.`, "success");
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      } catch (error) {
+        console.error("Error updating project member permission:", error);
+        useAuthStore.getState().setAlert("권한 변경에 실패했습니다.", "error");
+      }
+    }
     // Close modal and reset state
     setShowRoleModal(false);
     setSelectedMember(null);
@@ -205,7 +219,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
           selectedRole={selectedRole}
           setSelectedRole={setSelectedRole}
           setShowRoleModal={setShowRoleModal}
-          handleRoleChange={handleRoleChange}
+          handlePermissionChange={handlePermissionChange}
           roleDescriptions={roleDescriptions}
           project={project}
         />

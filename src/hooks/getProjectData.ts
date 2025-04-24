@@ -222,3 +222,24 @@ export const updateProject = async (project_id: string, formData: UpdateProjectF
     throw error;
   }
 };
+
+export const updateProjectMemberPermission = async (project_id: string, member_id: number, permission: string) => {
+  try {
+    const res = await server.put(`/project/${project_id}/member/${member_id}/permission`, {
+      permission: permission,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to update project member permission");
+    }
+  } catch (error) {
+    console.error("Error updating project member permission:", error);
+    throw error;
+  }
+}
