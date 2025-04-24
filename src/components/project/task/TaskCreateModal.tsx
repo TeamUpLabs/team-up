@@ -6,6 +6,7 @@ import { createTask } from '@/hooks/getTaskData';
 import { useAuthStore } from '@/auth/authStore';
 import SubmitBtn from '@/components/SubmitBtn';
 import ModalTemplete from '@/components/ModalTemplete';
+import Badge from '@/components/Badge';
 
 interface TaskCreateModalProps {
   isOpen: boolean;
@@ -250,19 +251,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
           />
           <div className="mt-2 flex flex-wrap gap-2">
             {formData.tags.map((tag, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-1 bg-purple-900/50 text-purple-300 px-3 py-1 rounded-md text-sm"
-              >
-                {tag}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTag(tag)}
-                  className="text-purple-300 hover:text-white ml-1 focus:outline-none"
-                >
-                  <FontAwesomeIcon icon={faCircleXmark} />
-                </button>
-              </div>
+              <Badge key={index} content={tag} color="pink" isEditable={true} onRemove={() => handleRemoveTag(tag)} />
             ))}
           </div>
         </div>
@@ -287,7 +276,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             {formData.subtasks.map((subtask, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between gap-2 bg-purple-900/30 hover:bg-purple-900/50 p-3 rounded-lg"
+                className="flex items-center justify-between gap-2 bg-purple-500/20 p-3 rounded-lg"
               >
                 <div className="flex items-center gap-2">
                   <input
@@ -296,14 +285,14 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                     readOnly
                     className="rounded"
                   />
-                  <span className="text-purple-300">
+                  <span className="text-purple-400">
                     {subtask}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleRemoveSubtask(subtask)}
-                  className="text-purple-300 hover:text-white ml-1 focus:outline-none"
+                  className="text-purple-400 hover:text-purple-300 ml-1 focus:outline-none"
                 >
                   <FontAwesomeIcon icon={faCircleXmark} />
                 </button>
