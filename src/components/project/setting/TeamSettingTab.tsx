@@ -36,10 +36,26 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
     { email: "waiting@example.com", sentAt: "2023-07-16" },
   ];
 
-  const filteredMembers = project?.members.filter(member =>
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredMembers = project?.members
+    .filter(member =>
+      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Leader has highest priority
+      if (a.id === project.leader.id) return -1;
+      if (b.id === project.leader.id) return 1;
+      
+      // Managers have second priority
+      const aIsManager = Array.isArray(project.manager) && project.manager.some(manager => manager.id === a.id);
+      const bIsManager = Array.isArray(project.manager) && project.manager.some(manager => manager.id === b.id);
+      
+      if (aIsManager && !bIsManager) return -1;
+      if (!aIsManager && bIsManager) return 1;
+      
+      // Otherwise sort by name
+      return a.name.localeCompare(b.name);
+    });
 
   // Role descriptions for tooltip
   const roleDescriptions = {
