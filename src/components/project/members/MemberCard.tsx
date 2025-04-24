@@ -39,7 +39,7 @@ export default function MemberCard({ member, isLeader, onClick }: MemberCardProp
       </div>
 
       <div className="flex items-center space-x-2">
-        <span className="px-3 py-1 bg-gray-700/50 rounded-full text-sm text-gray-300">
+        <span className="px-3 py-1 bg-gray-700/50 rounded-md text-sm text-gray-300">
           {member.role}
         </span>
       </div>
