@@ -51,7 +51,7 @@ export default function ModalTemplete({ header, children, footer, isOpen, onClos
                   </div>
 
                   {/* 내용 섹션 */}
-                  <div className="mt-6 space-y-6 overflow-y-auto">
+                  <div className="mt-6 space-y-6 overflow-y-auto px-1">
                     {children}
                     {footer && (
                       <div className="border-t border-gray-700/50 pt-6 mt-auto">
