@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faTrash, faSearch, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Member } from "@/types/Member";
-import PermissionChangeModal from "./PermissionChangeModal";
+import PermissionChangeModal from "@/components/project/setting/PermissionChangeModal";
 import { updateProjectMemberPermission } from "@/hooks/getProjectData";
 import { useAuthStore } from "@/auth/authStore";
 
