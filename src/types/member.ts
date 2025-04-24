@@ -24,7 +24,7 @@ export interface Member {
   };
   languages: string[];
   socialLinks: [{
-    github: string;
-    linkedin: string;
+    name: string;
+    url: string;
   }];
 }
