@@ -95,7 +95,7 @@ export default function ProfilePage() {
           end: "",
           timezone: "",
         },
-        socialLinks: user.socialLinks || [],
+        socialLinks: user.socialLinks ? Object.entries(user.socialLinks[0] || {}).map(([name, url]) => ({ name, url: url || '' })) : [],
       });
     }
   }, [user]);
@@ -188,7 +188,7 @@ export default function ProfilePage() {
     try {
       console.log(profileData);
       setIsLoading(true);
-      const response = await updateUserProfile(user.id, profileData);
+      const response = await updateUserProfile(user?.id || 0, profileData);
       
       // Update the user data in the auth store with the response from the server
       if (response) {
