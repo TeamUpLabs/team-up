@@ -19,13 +19,14 @@ import {
   faCamera,
   faArrowLeft,
   faInfo,
-  faToolbox,
+  faShieldHalved,
   faLanguage,
   faCakeCandles,
   faLink
 } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faLinkedin, faTwitter, faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { updateUserProfile } from "@/hooks/getMemberData";
+import Badge from "@/components/Badge";
 
 interface WorkingHours {
   start: string;
@@ -616,8 +617,8 @@ export default function ProfilePage() {
                 }`}
             >
               <div className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faToolbox} className="w-4 h-4" />
-                <span>기술 스택</span>
+                <FontAwesomeIcon icon={faShieldHalved} className="w-4 h-4" />
+                <span>전문 분야</span>
               </div>
               {activeTab === "skills" && (
                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400"></span>
@@ -672,7 +673,7 @@ export default function ProfilePage() {
           {/* Skills Tab */}
           {activeTab === "skills" && (
             <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">기술 스택</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">전문 분야</h2>
               <div className="space-y-4">
                 {isEditing && (
                   <div className="flex gap-2">
@@ -683,7 +684,7 @@ export default function ProfilePage() {
                       onKeyDown={(e) => handleKeyDown("skills", e)}
                       onCompositionStart={() => setIsComposing(true)}
                       onCompositionEnd={() => setIsComposing(false)}
-                      placeholder="기술을 입력하고 Enter 키를 누르세요"
+                      placeholder="전문 분야를 입력하고 Enter 키를 누르세요"
                       className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                     />
                   </div>
@@ -700,17 +701,17 @@ export default function ProfilePage() {
                     </>
                   ) : profileData.skills.length > 0 ? (
                     profileData.skills.map((skill, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 text-sm"
-                      >
-                        {skill}
-                        {isEditing && (
-                          <button onClick={() => removeSkill(skill)} className="text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-400 ml-1">
-                            <FontAwesomeIcon icon={faCircleXmark} className="w-3 h-3" />
-                          </button>
-                        )}
-                      </div>
+                      isEditing ? (
+                        <Badge 
+                          key={index} 
+                          content={skill} 
+                          color="blue" 
+                          isEditable 
+                          onRemove={() => removeSkill(skill)} 
+                        />
+                      ) : (
+                        <Badge key={index} content={skill} color="blue" />
+                      )
                     ))
                   ) : (
                     <p className="text-gray-500 dark:text-gray-400 italic">등록된 기술이 없습니다.</p>
@@ -731,7 +732,7 @@ export default function ProfilePage() {
                       type="text"
                       value={newLanguage}
                       onChange={(e) => setNewLanguage(e.target.value)}
-                      placeholder="언어 추가..."
+                      placeholder="언어를 입력하고 Enter 키를 누르세요"
                       className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                       onKeyDown={(e) => handleKeyDown("languages", e)}
                       onCompositionStart={() => setIsComposing(true)}
@@ -749,17 +750,17 @@ export default function ProfilePage() {
                     </>
                   ) : profileData.languages.length > 0 ? (
                     profileData.languages.map((language, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 text-sm"
-                      >
-                        {language}
-                        {isEditing && (
-                          <button onClick={() => removeLanguage(language)} className="text-green-700 dark:text-green-300 hover:text-green-800 dark:hover:text-green-400 ml-1">
-                            <FontAwesomeIcon icon={faCircleXmark} className="w-3 h-3" />
-                          </button>
-                        )}
-                      </div>
+                      isEditing ? (
+                        <Badge 
+                          key={index} 
+                          content={language} 
+                          color="green" 
+                          isEditable 
+                          onRemove={() => removeLanguage(language)} 
+                        />
+                      ) : (
+                        <Badge key={index} content={language} color="green" />
+                      )
                     ))
                   ) : (
                     <p className="text-gray-500 dark:text-gray-400 italic">등록된 언어가 없습니다.</p>
