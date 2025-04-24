@@ -197,7 +197,13 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
                             <>
                               <span className="font-medium">{member.workingHours.start} - {member.workingHours.end}</span>
                               {member.workingHours.timezone && (
-                                <span className="ml-2 text-gray-400 text-sm">({member.workingHours.timezone})</span>
+                                <span className="ml-2 text-gray-400 text-sm">
+                                  {member.workingHours.timezone === "Asia/Seoul" ? "한국 표준시 (KST)" :
+                                    member.workingHours.timezone === "UTC" ? "세계 표준시 (UTC)" :
+                                      member.workingHours.timezone === "America/New_York" ? "동부 표준시 (EST)" :
+                                        member.workingHours.timezone === "America/Los_Angeles" ? "태평양 표준시 (PST)" :
+                                          member.workingHours.timezone}
+                                </span>
                               )}
                             </>
                           ) : (
@@ -294,7 +300,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
           </div>
         </Dialog>
       </Transition>
-      
+
       {isModalOpen && (
         <SelectProjectModal
           isOpen={isModalOpen}
