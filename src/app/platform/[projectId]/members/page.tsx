@@ -87,6 +87,7 @@ export default function MembersPage() {
             key={member.id}
             member={member}
             isLeader={member.id === project?.leader.id}
+            isManager={(project?.manager.some(manager => manager.id === member.id)) || false}
             onClick={() => handleMemberClick(member)}
           />
         ))}
