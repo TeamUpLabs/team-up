@@ -174,7 +174,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                 if (project.leader.id === user?.id) {
                   setIsEditing(true);
                 } else {
-                  useAuthStore.getState().setAlert("프로젝트 리더만 편집할 수 있습니다.", "warning");
+                  useAuthStore.getState().setAlert("프로젝트 리더와 관리자만 편집할 수 있습니다.", "warning");
                 }
               }}
               className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-md transition-all shadow-md backdrop-blur-sm flex items-center gap-2"
