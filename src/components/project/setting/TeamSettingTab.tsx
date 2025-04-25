@@ -38,14 +38,14 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
       // Leader has highest priority
       if (a.id === project.leader.id) return -1;
       if (b.id === project.leader.id) return 1;
-      
+
       // Managers have second priority
       const aIsManager = Array.isArray(project.manager) && project.manager.some(manager => manager.id === a.id);
       const bIsManager = Array.isArray(project.manager) && project.manager.some(manager => manager.id === b.id);
-      
+
       if (aIsManager && !bIsManager) return -1;
       if (!aIsManager && bIsManager) return 1;
-      
+
       // Otherwise sort by name
       return a.name.localeCompare(b.name);
     });
@@ -96,6 +96,10 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   };
 
   const handleApproveRequest = async (user_id: number, name: string) => {
+    if (!isCurrentUserLeaderOrManager) {
+      useAuthStore.getState().setAlert("권한이 없습니다.", "error");
+      return;
+    }
     try {
       useAuthStore.getState().setConfirm(`${name}님의 참여 요청을 승인하시겠습니까?`, async () => {
         await allowParticipationRequest(project.id, user_id);
@@ -112,6 +116,10 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   };
 
   const handleRejectRequest = async (user_id: number, name: string) => {
+    if (!isCurrentUserLeaderOrManager) {
+      useAuthStore.getState().setAlert("권한이 없습니다.", "error");
+      return;
+    }
     try {
       useAuthStore.getState().setConfirm(`${name}님의 참여 요청을 거절하시겠습니까?`, async () => {
         await rejectParticipationRequest(project.id, user_id);
@@ -164,18 +172,18 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                           <p className="text-gray-200 font-medium">{request.name}</p>
                           <span className="bg-orange-500/20 text-orange-400 text-xs px-2 py-0.5 rounded-md">{request.role}</span>
                         </div>
-                          <p className="text-gray-400 text-xs">{request.email}</p>
+                        <p className="text-gray-400 text-xs">{request.email}</p>
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button 
+                      <button
                         className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm transition-colors"
                         onClick={() => handleApproveRequest(request.id, request.name)}
                       >
                         <FontAwesomeIcon icon={faCheck} className="mr-1.5" />
                         승인
                       </button>
-                      <button 
+                      <button
                         className="bg-gray-700 hover:bg-gray-600 text-gray-200 px-3 py-1.5 rounded text-sm transition-colors"
                         onClick={() => handleRejectRequest(request.id, request.name)}
                       >
