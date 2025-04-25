@@ -163,7 +163,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
             placeholder="마일스톤 이름을 입력하세요"
             required
           />
@@ -179,7 +179,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             value={formData.description}
             onChange={handleChange}
             rows={3}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500 resize-none"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500 resize-none"
             placeholder="마일스톤에 대한 설명을 입력하세요"
           />
         </div>
@@ -194,7 +194,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             name="startDate"
             value={formData.startDate}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
             required
           />
         </div>
@@ -209,7 +209,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             name="endDate"
             value={formData.endDate}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
             required
           />
           {dateError && (
@@ -228,7 +228,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             value={formData.status}
             onChange={handleChange}
             className={`w-full px-4 py-3 rounded-lg bg-gray-800/50 border ${statusError ? 'border-red-500' : 'border-gray-700/50'
-              } text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
+              } text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
             required
           >
             <option value="">선택</option>
@@ -251,7 +251,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             value={formData.priority}
             onChange={handleChange}
             className={`w-full px-4 py-3 rounded-lg bg-gray-800/50 border ${priorityError ? 'border-red-500' : 'border-gray-700/50'
-              } text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
+              } text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
             required
           >
             <option value="">선택</option>
@@ -325,7 +325,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             onKeyDown={handleKeyDown}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
             placeholder="태그을 입력하고 Enter 키를 누르세요"
           />
           <div className="mt-2 flex flex-wrap gap-2">
