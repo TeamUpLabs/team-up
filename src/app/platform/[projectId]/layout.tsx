@@ -113,8 +113,8 @@ export default function ProjectLayout({
               </div>
               <div className="flex items-center gap-3">
                 <UserDropdown />
-                <Link 
-                  href={`/platform`} 
+                <Link
+                  href={`/platform`}
                   className="px-3 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-red-500/20"
                 >
                   <FontAwesomeIcon icon={faRightFromBracket} className="w-3.5 h-3.5" />
