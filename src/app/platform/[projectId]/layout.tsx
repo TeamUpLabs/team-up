@@ -102,7 +102,7 @@ export default function ProjectLayout({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                   <p className="text-sm md:text-base text-gray-400 line-clamp-2 pr-2">
                     {project.description}
                   </p>
