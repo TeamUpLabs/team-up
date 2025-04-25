@@ -104,6 +104,12 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     }
   };
 
+  const handleButtonClick = () => {
+    // Create a synthetic form event
+    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent<HTMLFormElement>;
+    handleSubmit(syntheticEvent);
+  };
+
   const modalHeader = (
     <div>
       <h3 className="text-xl font-bold text-white">새로운 프로젝트 생성</h3>
@@ -273,7 +279,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   );
 
   const modalFooter = (
-    <SubmitBtn submitStatus={submitStatus} />
+    <SubmitBtn submitStatus={submitStatus} onClick={handleButtonClick} />
   );
 
   return (

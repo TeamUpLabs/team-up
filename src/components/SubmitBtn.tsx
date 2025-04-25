@@ -3,9 +3,10 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 interface SubmitBtnProps {
   submitStatus: 'idle' | 'submitting' | 'success';
+  onClick?: () => void;
 }
 
-export default function SubmitBtn({ submitStatus }: SubmitBtnProps) {
+export default function SubmitBtn({ submitStatus, onClick }: SubmitBtnProps) {
   return (
     <div className="w-full">
       <button
@@ -21,9 +22,10 @@ export default function SubmitBtn({ submitStatus }: SubmitBtnProps) {
           : 'bg-indigo-600 hover:bg-indigo-700'}
         text-white shadow-sm
       `}
-    >
-      {submitStatus === 'idle' && (
-        <>
+        onClick={onClick}
+      >
+        {submitStatus === 'idle' && (
+          <>
           제출
           <span className="overflow-hidden w-4">
             <FontAwesomeIcon 
