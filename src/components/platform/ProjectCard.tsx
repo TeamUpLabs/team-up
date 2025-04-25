@@ -11,7 +11,7 @@ interface ProjectCardProps {
 export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
   const user = useAuthStore((state) => state.user);
 
-
+  console.log(project.participationRequestMembers);
   return (
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 hover:border-purple-500 transition-colors duration-200">
       <div className="flex items-center justify-between mb-4">
@@ -38,7 +38,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
           }
         </div>
         {isExplore ? (
-          project.participationRequest && project.participationRequest.includes(user?.id ?? 0) ? (
+          project.participationRequestMembers && project.participationRequestMembers.some(member => member.id === user?.id) ? (
             <button
               onClick={() => {
                 if (!user) {
