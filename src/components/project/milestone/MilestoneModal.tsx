@@ -106,12 +106,12 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   // Main content
   const mainContent = (
     <>
-      <div className='bg-gray-700/30 p-4 rounded-lg'>
+      <div className='bg-gray-800/50 p-4 rounded-lg'>
         <h3 className="text-gray-400 mb-2">설명</h3>
         <p className="text-white">{milestone.description}</p>
       </div>
 
-      <div className='bg-gray-700/30 p-4 rounded-lg'>
+      <div className='bg-gray-800/50 p-4 rounded-lg'>
         <h3 className="text-gray-400 mb-2">태그</h3>
         <div className="flex flex-wrap gap-2">
           {milestone.tags.length > 0 ? (
@@ -139,12 +139,12 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className='bg-gray-700/30 p-4 rounded-lg'>
+        <div className='bg-gray-800/50 p-4 rounded-lg'>
           <h3 className="text-gray-400 mb-2">기간</h3>
           <p className="text-white">시작일: {milestone.startDate}</p>
           <p className="text-white">종료일: {milestone.endDate}</p>
         </div>
-        <div className='bg-gray-700/30 p-4 rounded-lg'>
+        <div className='bg-gray-800/50 p-4 rounded-lg'>
           <h3 className="text-gray-400 mb-2">담당자</h3>
           <div className="flex flex-wrap gap-2">
             {
@@ -160,7 +160,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
         </div>
       </div>
 
-      <div className='bg-gray-700/30 p-4 rounded-lg'>
+      <div className='bg-gray-800/50 p-4 rounded-lg'>
         <h3 className="text-gray-400 mb-2">하위 작업</h3>
         <div className="space-y-2">
           {milestone.subtasks.length > 0 ? (

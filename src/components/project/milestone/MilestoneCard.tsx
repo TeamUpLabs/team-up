@@ -14,7 +14,7 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
     <>
       <div
         onClick={() => setIsModalOpen(true)}
-        className="bg-gray-800/90 rounded-lg p-6 transition-colors duration-300 border border-gray-700 hover:border-purple-500 cursor-pointer"
+        className="bg-component-background rounded-lg p-6 transition-colors duration-300 border border-gray-700/50 hover:border-purple-500 cursor-pointer"
       >
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-xl font-semibold text-white">{milestone.title}</h3>
