@@ -91,7 +91,7 @@ export default function ProjectLayout({
         />
 
         <div className="w-full lg:ml-64 flex-1">
-          <header className="h-auto min-h-16 border-b border-gray-800 backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-10 content-center">
+          <header className="h-auto bg-(--color-background)/70 min-h-16 border-b border-gray-800 backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-10 content-center">
             <div className="h-full px-3 py-2 sm:px-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <button

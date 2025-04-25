@@ -5,20 +5,15 @@ import Sidebar from "@/components/platform/sidebar";
 import Logo from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
 import { usePathname } from "next/navigation";
-import { faHouse, faFolder, faPeopleGroup, faGear } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faFolder, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import UserDropdown from "@/components/platform/UserDropdown";
 import NewProjectModal from "@/components/platform/NewProjectModal";
-import { Project } from "@/types/Project";
-import { getProjectByMemberId } from "@/hooks/getProjectData";
 
 export default function PlatformLayout({ children, HeaderTitle }: { children: React.ReactNode, HeaderTitle: string }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [hasParticipationRequests, setHasParticipationRequests] = useState(false);
-  
-  const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   
   // 인증 상태 확인
@@ -30,28 +25,6 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
     }
     setIsLoading(false);
   }, [isAuthenticated]);
-
-  // 프로젝트 데이터 가져오기
-  useEffect(() => {
-    const fetchProjects = async (member_id: number) => {
-      try {
-        const data = await getProjectByMemberId(member_id);
-        
-        // 참여 요청이 있는지 확인
-        const hasRequests = data.some(
-          (project: Project) => project.participationRequestMembers && 
-          project.participationRequestMembers.length > 0
-        );
-        setHasParticipationRequests(hasRequests);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
-    
-    if (user) {
-      fetchProjects(user.id);
-    }
-  }, [user]);
 
   useEffect(() => {
     setIsSidebarOpen(false);
@@ -70,7 +43,6 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
       { icon: faHouse, label: "홈", href: "/platform", isActive: pathname === "/platform" },
       { icon: faFolder, label: "프로젝트 찾기", href: "/platform/projects", isActive: pathname === "/platform/projects" },
       { icon: faPeopleGroup, label: "팀원 찾기", href: "/platform/members", isActive: pathname === "/platform/members" },
-      { icon: faGear, label: "설정", href: "/platform/settings", isActive: pathname === "/platform/settings", hasNotification: hasParticipationRequests }
     ];
   return (
     <div className="flex min-h-screen bg-(--color-background)">
@@ -92,7 +64,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
         {/* 메인 컨텐츠 영역 */}
       <div className="w-full lg:ml-64 flex-1">
         {/* 헤더 */}
-        <header className="h-16 border-b border-gray-800 backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-10">
+        <header className="h-16 bg-(--color-background)/70 border-b border-gray-800 backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-10">
           <div className="h-full px-4 md:px-6 flex items-center justify-between">
             <div className="flex items-center">
               <button 
