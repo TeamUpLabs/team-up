@@ -130,7 +130,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
             placeholder="프로젝트 이름을 입력하세요"
             required
           />
@@ -146,7 +146,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             rows={3}
             value={formData.description}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none placeholder:text-gray-400"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none placeholder:text-gray-400"
             placeholder="프로젝트에 대한 간략한 설명을 입력하세요"
             required
           />
@@ -162,7 +162,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               name="projectType"
               value={formData.projectType}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 appearance-none"
+              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 appearance-none"
               required
             >
               <option value="">카테고리 선택</option>
@@ -185,7 +185,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               name="endDate"
               value={formData.endDate}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
               required
             />
           </div>
@@ -207,7 +207,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               onKeyDown={(e) => handleKeyDown("role", e)}
               onCompositionStart={() => setIsComposing(true)}
               onCompositionEnd={() => setIsComposing(false)}
-              className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
               placeholder="역할을 입력하고 Enter 키를 누르세요"
             />
             <div className="mt-2 flex flex-wrap gap-2">
@@ -230,7 +230,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               onKeyDown={(e) => handleKeyDown("techStack", e)}
               onCompositionStart={() => setIsComposing(true)}
               onCompositionEnd={() => setIsComposing(false)}
-              className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
               placeholder="기술을 입력하고 Enter 키를 누르세요"
             />
             <div className="mt-2 flex flex-wrap gap-2">
@@ -251,7 +251,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+                className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
                 placeholder="원격, 서울"
                 required
               />
@@ -267,7 +267,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 name="teamSize"
                 value={formData.teamSize}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-gray-700/50 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="5"
                 required
               />
