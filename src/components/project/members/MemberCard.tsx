@@ -10,9 +10,9 @@ interface MemberCardProps {
 export default function MemberCard({ member, isLeader, isManager, onClick }: MemberCardProps) {
   return (
     <div
-      className="group bg-gray-800/90 backdrop-blur p-6 rounded-xl shadow-lg 
-                transition-all duration-300 border border-gray-700 
-                hover:border-purple-500 cursor-pointer space-y-3"
+      className="group bg-component-background backdrop-blur p-6 rounded-xl shadow-lg 
+                transition-all duration-300 border border-gray-700/50 
+                hover:border-purple-500/70 cursor-pointer space-y-3"
       onClick={onClick}
     >
       <div className="flex justify-between items-start">
@@ -35,7 +35,7 @@ export default function MemberCard({ member, isLeader, isManager, onClick }: Mem
               <span className="text-sm">관리자</span>
             </div>
           )}
-          <div className="flex items-center bg-gray-700/50 px-3 py-1 rounded-full">
+          <div className="flex items-center bg-gray-800/50 px-3 py-1 rounded-full">
             <span className={`w-3 h-3 rounded-full ${member.status === "활성" ? "bg-emerald-500" :
               member.status === "자리비움" ? "bg-amber-500" : "bg-gray-500"
               } animate-pulse`} />
@@ -45,7 +45,7 @@ export default function MemberCard({ member, isLeader, isManager, onClick }: Mem
       </div>
 
       <div className="flex items-center space-x-2">
-        <span className="px-3 py-1 bg-gray-700/50 rounded-md text-sm text-gray-300">
+        <span className="px-3 py-1 bg-gray-800/50 rounded-md text-sm text-gray-300">
           {member.role}
         </span>
       </div>
@@ -53,7 +53,7 @@ export default function MemberCard({ member, isLeader, isManager, onClick }: Mem
       <div className="border-t border-gray-700 pt-3 mt-3">
         <div className="text-sm">
           <span className="text-gray-400 font-medium">전문 분야</span>
-          <div className="mt-2 p-3 bg-gray-700/30 rounded-lg text-gray-300 flex gap-2">
+          <div className="mt-2 p-3 bg-gray-800/50 rounded-lg text-gray-300 flex gap-2">
             <p>{member.skills.length === 0 && "전문 분야가 없습니다."}</p>
             {member.skills.map((skill, idx) => (
               <p key={idx}>{skill}</p>

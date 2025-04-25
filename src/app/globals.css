@@ -3,12 +3,14 @@
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
+  --component-background: #0D1119;
   --section-spacing: 6rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-component-background: var(--component-background);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

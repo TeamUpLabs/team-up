@@ -38,7 +38,7 @@ export default function ModalTemplete({ header, children, footer, isOpen, onClos
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-gray-800/95 backdrop-blur-sm p-6 text-left align-middle shadow-xl transition-all border border-gray-700 flex flex-col max-h-[90vh]">
+                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-component-background backdrop-blur-sm p-6 text-left align-middle shadow-xl transition-all border border-gray-700/50 flex flex-col max-h-[90vh]">
                   {/* 헤더 섹션 */}
                   <div className="flex justify-between items-start border-b border-gray-700/50 pb-6">
                     {header}
