@@ -172,11 +172,12 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                     readOnly
                     checked={
                       subtask.subtasks.length > 0 &&
-                      subtask.subtasks.every((st) => st.completed)
+                      subtask.subtasks.every((st) => st.completed) ||
+                      subtask.status === 'done'
                     }
                     className='rounded bg-gray-700 border-gray-600'
                   />
-                  <span className={`text-sm cursor-pointer hover:text-blue-400 ${subtask.subtasks.length > 0 && subtask.subtasks.every(st => st.completed) ?
+                  <span className={`text-sm cursor-pointer hover:text-blue-400 ${subtask.subtasks.length > 0 && subtask.subtasks.every(st => st.completed) || subtask.status === 'done' ?
                     'text-gray-400 line-through' : 'text-white'
                     }`}
                     onClick={() => handleTaskClick(subtask.id)}
