@@ -135,20 +135,20 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       onClose={onClose}
     >
       <div className="space-y-6">
-        <div className="bg-gray-700/30 p-4 rounded-lg">
+        <div className="bg-gray-800/50 p-4 rounded-lg">
           <h4 className="text-sm font-medium text-gray-400 mb-2">상세 설명</h4>
           <p className="text-gray-200">{task?.description}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg">
+          <div className="space-y-1 bg-gray-800/50 p-4 rounded-lg">
             <h4 className="text-sm font-medium text-gray-400">상태</h4>
             <span className={`inline-block px-3 py-1 rounded-md text-sm font-medium ${getStatusColor(task?.status)}`}>
               {task?.status === 'not-started' ? '준비' : task?.status === 'in-progress' ? '진행 중' : '완료'}
             </span>
           </div>
 
-          <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg">
+          <div className="space-y-1 bg-gray-800/50 p-4 rounded-lg">
             <h4 className="text-sm font-medium text-gray-400">우선순위</h4>
             <span className={`inline-block px-3 py-1 rounded-md text-sm font-medium
               ${getPriorityColor(task?.priority)}`}>
@@ -156,7 +156,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             </span>
           </div>
 
-          <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg">
+          <div className="space-y-1 bg-gray-800/50 p-4 rounded-lg">
             <h4 className="text-sm font-medium text-gray-400">담당자</h4>
             <div className="flex flex-wrap gap-2">
               {
@@ -173,13 +173,13 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             </div>
           </div>
 
-          <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg">
+          <div className="space-y-1 bg-gray-800/50 p-4 rounded-lg">
             <h4 className="text-sm font-medium text-gray-400">마감일</h4>
             <p className="text-gray-200">{task?.dueDate}</p>
           </div>
         </div>
 
-        <div className="space-y-1 bg-gray-700/30 p-4 rounded-lg">
+        <div className="space-y-1 bg-gray-800/50 p-4 rounded-lg">
           <h4 className="text-sm font-medium text-gray-400 mb-2">마일스톤</h4>
           <p
             className="text-gray-200 cursor-pointer hover:text-blue-400 transition-colors"
@@ -191,9 +191,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
         <div>
           <h4 className="text-sm font-medium text-gray-400 mb-2">진행률</h4>
-          <div className="w-full bg-gray-700/30 hover:bg-gray-700/50 rounded-full h-2.5">
+          <div className="w-full bg-gray-800/50 hover:bg-gray-700/50 rounded-full h-2.5">
             <div
-              className="bg-blue-500 h-2.5 rounded-full"
+              className="bg-blue-600 h-2.5 rounded-full"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -205,7 +205,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           <div className="space-y-2">
             {subtasks?.length > 0 ? (
               subtasks?.map((subtask, index) => (
-                <div key={index} className="flex items-center gap-2 bg-gray-700/30 p-3 rounded-lg">
+                <div key={index} className="flex items-center gap-2 bg-gray-800/50 p-3 rounded-lg">
                   <input
                     type="checkbox"
                     checked={subtask?.completed}
@@ -228,7 +228,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             <h4 className="text-sm font-medium text-gray-400 mb-3">댓글</h4>
             <div className="space-y-3">
               {task?.comments?.map((comment, index) => (
-                <div key={index} className="bg-gray-700/30 p-4 rounded-lg">
+                <div key={index} className="bg-gray-800/50 p-4 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-gray-200">{comment?.author_id}</span>
                     <span className="text-xs text-gray-400">

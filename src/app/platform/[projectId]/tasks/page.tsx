@@ -102,14 +102,14 @@ export default function TasksPage() {
           {Object.entries(groupedTasks).map(([status, tasksList]) => (
             <div
               key={status}
-              className="bg-gray-800 rounded-lg border border-gray-700"
+              className="bg-component-background rounded-lg border border-gray-700/50"
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 const taskId = e.dataTransfer.getData('taskId');
                 moveTask(parseInt(taskId), status as Task['status']);
               }}
             >
-              <div className="px-4 py-3 border-b border-gray-700">
+              <div className="px-4 py-3 border-b border-gray-700/50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <span className={`inline-flex px-2 py-1 rounded-md text-xs font-medium mr-2 ${getStatusColor(status as Task['status'])}`}>
