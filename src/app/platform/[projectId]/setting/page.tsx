@@ -18,6 +18,9 @@ export default function SettingsPage() {
   const isLeader = Array.isArray(project?.leader)
     ? project.leader.some((leader: { id: number | string }) => leader.id === user?.id)
     : project?.leader?.id === user?.id;
+    
+  // 참여 요청이 있는지 확인
+  const hasParticipationRequests = project?.participationRequestMembers && project.participationRequestMembers.length > 0;
 
   return (
     <div className="py-6 px-2 sm:px-4 md:px-6">
@@ -39,11 +42,19 @@ export default function SettingsPage() {
         </button>
         <button
           onClick={() => setActiveTab("team")}
-          className={`px-4 py-2 font-medium ${
+          className={`px-4 py-2 font-medium relative ${
             activeTab === "team" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-400"
           }`}
         >
           팀 관리
+          {hasParticipationRequests && (
+            <span className="absolute -top-1 -right-1 flex h-5 w-5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-100"></span>
+              <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
+                {project.participationRequestMembers.length}
+              </span>
+            </span>
+          )}
         </button>
         <button
           onClick={() => setActiveTab("notifications")}

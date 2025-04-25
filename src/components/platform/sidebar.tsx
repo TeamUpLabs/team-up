@@ -4,12 +4,14 @@ import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { useState } from "react";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
+import { useProject } from "@/contexts/ProjectContext";
 
 interface NavItem {
   icon: IconDefinition;
   label: string;
   href: string;
   isActive?: boolean;
+  hasNotification?: boolean;
 }
 
 interface Channel {
@@ -26,6 +28,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: SidebarProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const { project } = useProject();
   
   // 임시 채널 데이터
   const channels: Channel[] = [
@@ -33,6 +36,9 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
     { id: 'announcement', name: '공지사항' },
     { id: 'free-chat', name: '자유채팅' },
   ];
+
+  // 참여 요청이 있는지 확인 (프로젝트 컨텍스트가 있는 경우)
+  const hasParticipationRequests = project?.participationRequestMembers && project.participationRequestMembers.length > 0;
 
   return (
     <div className={`w-64 fixed h-full border-r border-gray-800 bg-(--color-background) z-30 transition-transform duration-300 lg:translate-x-0 ${
@@ -78,6 +84,31 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
                 </div>
               );
             }
+            
+            // 프로젝트 레이아웃에서 설정 메뉴에 알림 표시 추가
+            if (item.label === "설정" && (hasParticipationRequests || item.hasNotification)) {
+              const notificationCount = project?.participationRequestMembers?.length || '';
+              
+              return (
+                <Link 
+                  key={index} 
+                  href={item.href} 
+                  className={`flex items-center pl-6 pr-6 border-l-3 ${
+                    item.isActive ? 'text-white border-purple-500' : 'text-gray-300 border-transparent'
+                  } hover:text-white relative`}
+                >
+                  <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
+                  {item.label}
+                  <span className="absolute right-4 flex h-5 w-5">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-100"></span>
+                    <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
+                      {notificationCount}
+                    </span>
+                  </span>
+                </Link>
+              );
+            }
+            
             return (
               <Link 
                 key={index} 
