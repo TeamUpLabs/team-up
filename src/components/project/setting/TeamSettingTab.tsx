@@ -170,7 +170,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="text-gray-200 font-medium">{request.name}</p>
-                          <span className="bg-orange-500/20 text-orange-400 text-xs px-2 py-0.5 rounded-md">{request.role}</span>
+                          <span className="bg-gray-500/20 text-gray-400 text-xs px-2 py-0.5 rounded-md">{request.role}</span>
                         </div>
                         <p className="text-gray-400 text-xs">{request.email}</p>
                       </div>
@@ -236,7 +236,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                       ) : (
                         <span className="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-md">멤버</span>
                       )}
-                      <span className="bg-orange-500/20 text-orange-400 text-xs px-2 py-0.5 rounded-md">{member.role}</span>
+                      <span className="bg-gray-500/20 text-gray-400 text-xs px-2 py-0.5 rounded-md">{member.role}</span>
                     </div>
                     <p className="text-gray-400 text-xs">{member.email}</p>
                   </div>
