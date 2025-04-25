@@ -27,4 +27,5 @@ export interface Member {
     name: string;
     url: string;
   }[];
+  participationRequests: number[];
 }

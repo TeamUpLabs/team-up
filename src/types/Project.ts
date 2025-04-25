@@ -19,4 +19,5 @@ export interface Project {
   members: Member[];
   tasks: Task[] | [];
   milestones: MileStone[];
+  participationRequest: number[];
 }

@@ -61,6 +61,34 @@ export const updateProjectMember = async (projectId: string, memberId: number) =
   }
 }
 
+export const sendParticipationRequest = async (project_id: string, member_id: number) => {
+  try {
+    const res = await server.put(`/project/${project_id}/participationRequest/${member_id}/send`);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to send participation request");
+    }
+  } catch (error) {
+    console.error("Error sending participation request:", error);
+    throw error;
+  }
+}
+
+export const cancelParticipationRequest = async (project_id: string, member_id: number) => {
+  try {
+    const res = await server.put(`/project/${project_id}/participationRequest/${member_id}/reject`);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to cancel participation request");
+    }
+  } catch (error) {
+    console.error("Error canceling participation request:", error);
+    throw error;
+  }
+}
+
 interface UpdateMemberData {
   name?: string;
   email?: string;

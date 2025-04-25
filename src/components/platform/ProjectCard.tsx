@@ -1,7 +1,7 @@
 import { Project } from "@/types/Project";
 import Link from "next/link";
 import { useAuthStore } from "@/auth/authStore";
-import { updateProjectMember } from "@/hooks/getMemberData";
+import { sendParticipationRequest, cancelParticipationRequest } from "@/hooks/getMemberData";
 import Badge from "@/components/Badge";
 interface ProjectCardProps {
   project: Project;
@@ -38,28 +38,51 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
           }
         </div>
         {isExplore ? (
-          <button 
-            onClick={() => {
-              if (!user) {
-                useAuthStore.getState().setAlert("로그인이 필요합니다.", "error");
-                return;
-              }
-              useAuthStore.getState().setConfirm("참여 요청하시겠습니까?", async () => {
-                try {
-                  await updateProjectMember(project.id, user.id);
-                  useAuthStore.getState().setAlert("참여 요청이 완료되었습니다.", "success");
-                  useAuthStore.getState().clearConfirm();
-                  window.location.href = `/platform`;
-                } catch (error) {
-                  console.error("Error updating project member:", error);
-                  useAuthStore.getState().setAlert("참여 요청에 실패했습니다.", "error");
+          project.participationRequest && project.participationRequest.includes(user?.id ?? 0) ? (
+            <button
+              onClick={() => {
+                if (!user) {
+                  useAuthStore.getState().setAlert("로그인이 필요합니다.", "error");
+                  return;
                 }
-              });
-            }}
-            className="text-sm text-purple-400 hover:text-purple-300"
-          >
-            참여 요청하기
-          </button>
+                useAuthStore.getState().setConfirm("참여 요청을 취소하시겠습니까?", async () => {
+                  try {
+                    await cancelParticipationRequest(project.id, user.id);
+                    useAuthStore.getState().setAlert("참여 요청이 취소되었습니다.", "success");
+                    useAuthStore.getState().clearConfirm();
+                    window.location.reload();
+                  } catch (error) {
+                    console.error("Error updating project member:", error);
+                    useAuthStore.getState().setAlert("참여 요청 취소에 실패했습니다.", "error");
+                  }
+                });
+              }}
+              className="text-sm text-purple-400 hover:text-purple-300"
+            > 참여 요청 취소 </button>
+          ) : (
+            <button
+              onClick={() => {
+                if (!user) {
+                  useAuthStore.getState().setAlert("로그인이 필요합니다.", "error");
+                  return;
+                }
+                useAuthStore.getState().setConfirm("참여 요청하시겠습니까?", async () => {
+                  try {
+                    await sendParticipationRequest(project.id, user.id);
+                    useAuthStore.getState().setAlert("참여 요청이 완료되었습니다.", "success");
+                    useAuthStore.getState().clearConfirm();
+                    window.location.reload();
+                  } catch (error) {
+                    console.error("Error updating project member:", error);
+                    useAuthStore.getState().setAlert("참여 요청에 실패했습니다.", "error");
+                  }
+                });
+              }}
+              className="text-sm text-purple-400 hover:text-purple-300"
+            >
+              참여 요청하기
+            </button>
+          )
         ) : (
           <Link href={`/platform/${project.id}`} className="text-sm text-purple-400 hover:text-purple-300">
             참여하기
