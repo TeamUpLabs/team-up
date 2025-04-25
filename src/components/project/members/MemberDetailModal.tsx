@@ -109,7 +109,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
             </svg>
             역할
           </h3>
-          <div className="px-4 py-3 bg-gray-700/30 rounded-lg text-gray-300 font-medium">
+          <div className="px-4 py-3 bg-gray-800/50 rounded-lg text-gray-300 font-medium">
             {member.role}
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
             </svg>
             이메일
           </h3>
-          <div className="px-4 py-3 bg-gray-700/30 rounded-lg text-gray-300">
+          <div className="px-4 py-3 bg-gray-800/50 rounded-lg text-gray-300">
             {member.email}
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
             </svg>
             연락처
           </h3>
-          <div className="px-4 py-3 bg-gray-700/30 rounded-lg text-gray-300">
+          <div className="px-4 py-3 bg-gray-800/50 rounded-lg text-gray-300">
             {member.contactNumber}
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
             </svg>
             생년월일
           </h3>
-          <div className="px-4 py-3 bg-gray-700/30 rounded-lg text-gray-300">
+          <div className="px-4 py-3 bg-gray-800/50 rounded-lg text-gray-300">
             {member.birthDate || "정보 없음"}
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
           </svg>
           현재 작업
         </h3>
-        <div className="px-4 py-3 bg-gray-700/30 rounded-lg">
+        <div className="px-4 py-3 bg-gray-800/50 rounded-lg">
           {
             member.currentTask.length > 0 ? (
               member.currentTask.map((task, idx) => (
@@ -204,7 +204,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
           </svg>
           소개
         </h3>
-        <div className="px-4 py-3 bg-gray-700/30 rounded-lg text-gray-300">
+        <div className="px-4 py-3 bg-gray-800/50 rounded-lg text-gray-300">
           {member.introduction || "소개 정보가 없습니다."}
         </div>
       </div>
@@ -216,7 +216,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
           </svg>
           연락 가능 시간
         </h3>
-        <div className="px-4 py-3 bg-gray-700/30 rounded-lg text-gray-300">
+        <div className="px-4 py-3 bg-gray-800/50 rounded-lg text-gray-300">
           <div className="flex items-center">
             {member.workingHours ? (
               <>
@@ -305,7 +305,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
           </svg>
           마지막 로그인
         </h3>
-        <div className="px-4 py-3 bg-gray-700/30 rounded-lg text-gray-300">
+        <div className="px-4 py-3 bg-gray-800/50 rounded-lg text-gray-300">
           {`${member.lastLogin.split('T')[0]} ${formatTimestamp(member.lastLogin)}` || "정보 없음"}
         </div>
       </div>
