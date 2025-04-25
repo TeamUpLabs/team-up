@@ -374,7 +374,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                         />
                       ))
                     ) : (
-                      <span className="text-gray-400 text-sm italic">기술 스택이 없습니다.</span>
+                      <span className="text-gray-400 text-sm">기술 스택이 없습니다.</span>
                     )}
                   </div>
                 </div>
@@ -425,7 +425,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                         />
                       ))
                     ) : (
-                      <span className="text-gray-400 text-sm italic">필요 역할이 없습니다.</span>
+                      <span className="text-gray-400 text-sm">필요 역할이 없습니다.</span>
                     )}
                   </div>
                 </div>
