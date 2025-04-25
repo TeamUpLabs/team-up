@@ -83,7 +83,7 @@ export default function TasksPage() {
     <DndProvider backend={HTML5Backend}>
       <div className="px-2 sm:px-4 md:px-6 mx-auto py-6">
         {/* Header Section */}
-        <div className="flex items-center justify-between mb-8 bg-gray-800 p-6 rounded-lg">
+        <div className="flex items-center justify-between mb-8 bg-gray-900/90 border border-gray-700/50 p-6 rounded-lg">
           <div>
             <h1 className="text-2xl font-bold text-gray-100">작업</h1>
             <p className="text-gray-400 mt-2">프로젝트의 작업을 관리하세요</p>

@@ -24,7 +24,7 @@ export default function SettingsPage() {
 
   return (
     <div className="py-6 px-2 sm:px-4 md:px-6">
-      <div className="flex items-center justify-between mb-8 bg-gray-900/90 p-6 rounded-lg">
+      <div className="flex items-center justify-between mb-8 bg-gray-900/90 border border-gray-700/50 p-6 rounded-lg">
         <div>
           <h1 className="text-2xl font-bold text-gray-100">설정</h1>
           <p className="text-gray-400 mt-2">프로젝트의 설정을 관리하세요.</p>
