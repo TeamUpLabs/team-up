@@ -1,9 +1,14 @@
 export default function PrivacySettingTab() {
   return (
-    <div className="bg-gray-800 rounded-lg p-6">
-      <h2 className="text-xl font-semibold text-gray-100 mb-6">개인정보 보호 설정</h2>
+    <div className="bg-gray-900/50 border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
+      <h2 className="text-xl font-semibold text-gray-100 border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+        개인정보 보호 설정
+      </h2>
 
-      <div className="space-y-4">
+      <div className="p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-gray-200 font-medium">활동 로그</h3>
@@ -46,11 +51,11 @@ export default function PrivacySettingTab() {
             설정하기
           </button>
         </div>
+        <button className="mt-6 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+          변경사항 저장
+        </button>
       </div>
 
-      <button className="mt-6 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-        변경사항 저장
-      </button>
     </div>
   );
 }
