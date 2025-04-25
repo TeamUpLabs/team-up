@@ -22,7 +22,7 @@ export default function AppearanceSettingTab() {
             <div className="w-10 h-10 rounded-full bg-gray-800 relative flex items-center justify-center">
               {selectedTheme === "dark" && (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
                 </svg>
               )}
             </div>
@@ -38,7 +38,7 @@ export default function AppearanceSettingTab() {
             <div className="w-10 h-10 rounded-full bg-gray-200 relative flex items-center justify-center">
               {selectedTheme === "light" && (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
                 </svg>
               )}
             </div>
