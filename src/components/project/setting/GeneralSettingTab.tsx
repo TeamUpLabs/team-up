@@ -160,13 +160,13 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
   };
 
   return (
-    <div className="bg-gray-900/50 rounded-xl shadow-2xl overflow-hidden">
+    <div className="bg-gray-900/50 border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
       {/* Header with background gradient */}
       <div className="relative">
         <div className="absolute inset-0 border-b border-gray-700/50" />
-        <div className="relative px-8 py-6 flex justify-between items-center">
+        <div className="relative px-6 py-4 flex justify-between items-center">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -197,7 +197,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
       </div>
 
       {/* Main content */}
-      <div className="p-8">
+      <div className="p-6">
         {isEditing && (
           <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-lg p-4 mb-8 text-indigo-200 flex items-start gap-3">
             <svg className="h-6 w-6 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
