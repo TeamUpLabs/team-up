@@ -136,7 +136,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 space-y-8">
+    <div className="bg-gray-900/50 rounded-lg p-6 space-y-8">
       <h2 className="text-xl font-semibold text-gray-100 border-b border-gray-700 pb-4">팀 관리</h2>
 
       {/* Join Requests Section */}
@@ -161,7 +161,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
           {showJoinRequests && (
             <div className="divide-y divide-gray-700">
               {project.participationRequestMembers.map((request) => (
-                <div key={request.id} className="px-4 py-3 bg-gray-800 hover:bg-gray-750 transition-colors">
+                <div key={request.id} className="px-4 py-3 bg-gray-800/50 hover:bg-gray-800 transition-colors">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 bg-gray-700 rounded-full flex items-center justify-center text-gray-300">
@@ -220,7 +220,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
 
         <div className="divide-y divide-gray-700">
           {filteredMembers?.map((member) => (
-            <div key={member.id} className="px-4 py-3 bg-gray-800 hover:bg-gray-750 transition-colors">
+            <div key={member.id} className="px-4 py-3 bg-gray-800/50 hover:bg-gray-800 transition-colors">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-gray-300">
@@ -264,7 +264,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
       </div>
 
       {/* Role Explanation */}
-      <div className="bg-gray-750 rounded-lg p-4 border border-gray-700 mt-6">
+      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 mt-6">
         <h4 className="text-gray-200 font-medium mb-3 pb-2 border-b border-gray-700">역할 및 권한 설명</h4>
         <div className="space-y-3 text-sm">
           <div className="flex items-center">
