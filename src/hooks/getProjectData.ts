@@ -243,3 +243,41 @@ export const updateProjectMemberPermission = async (project_id: string, member_i
     throw error;
   }
 }
+
+export const allowParticipationRequest = async (project_id: string, member_id: number) => {
+  try {
+    const res = await server.put(`/project/${project_id}/participationRequest/${member_id}/allow`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to allow participation request");
+    }
+  } catch (error) {
+    console.error("Error allowing participation request:", error);
+    throw error;
+  }
+}
+
+export const rejectParticipationRequest = async (project_id: string, member_id: number) => {
+  try {
+    const res = await server.put(`/project/${project_id}/participationRequest/${member_id}/reject`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to reject participation request");
+    }
+  } catch (error) {
+    console.error("Error rejecting participation request:", error);
+    throw error;
+  }
+}
