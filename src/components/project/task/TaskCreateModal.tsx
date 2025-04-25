@@ -131,7 +131,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
             placeholder="작업 이름을 입력하세요"
             required
           />
@@ -147,7 +147,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             value={formData.description}
             onChange={handleChange}
             rows={3}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 resize-none hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 resize-none hover:border-gray-500"
             placeholder="작업 설명을 입력하세요"
           />
         </div>
@@ -162,7 +162,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             name="dueDate"
             value={formData.dueDate}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
             required
           />
         </div>
@@ -176,7 +176,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             name="priority"
             value={formData.priority}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
             required
           >
             <option value="low">낮음</option>
@@ -189,7 +189,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
           <label className="flex items-center text-sm font-medium mb-2 text-gray-300">
             담당자 <span className="text-purple-400 ml-1">*</span>
           </label>
-          <div className="border border-gray-600 rounded-lg p-3 bg-gray-700 hover:border-gray-500 transition-all">
+          <div className="border border-gray-700/50 rounded-lg p-3 bg-gray-800/50 hover:border-gray-500 transition-all">
             <div className="mb-3">
               <p className="text-sm text-gray-400">선택된 담당자: {formData.assignee_id.length > 0 ? `${formData.assignee_id.length}명` : '없음'}</p>
             </div>
@@ -246,7 +246,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             onKeyDown={(e) => handleKeyDown("tags", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
             placeholder="태그을 입력하고 Enter 키를 누르세요"
           />
           <div className="mt-2 flex flex-wrap gap-2">
@@ -269,7 +269,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             onKeyDown={(e) => handleKeyDown("subtasks", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
             placeholder="하위 작업을 입력하고 Enter 키를 누르세요"
           />
           <div className="mt-2 flex flex-col gap-2">
