@@ -32,7 +32,7 @@ export default function ProjectProgressCard() {
 
   if (isLoading) {
     return (
-      <div className="col-span-1 sm:col-span-2 bg-gray-900/50 p-4 sm:p-6 rounded-lg">
+      <div className="col-span-1 sm:col-span-2 bg-gray-900/50 p-4 sm:p-6 rounded-lg border border-gray-700/50">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-300">프로젝트 진행률</h1>
           <div className="flex items-center text-gray-400">
@@ -47,7 +47,7 @@ export default function ProjectProgressCard() {
         <div className="space-y-3 sm:space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-gray-400">전체 진행률</span>
-            <div className="h-5 bg-gray-800 rounded w-12"></div>
+            <div className="h-5 bg-gray-800 rounded w-12 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
           </div>
           <div className="relative w-full bg-gray-800 rounded-full h-2.5 overflow-hidden">
             <div className="bg-gray-700 h-2.5 rounded-full w-3/5 animate-progressBar"></div>
@@ -56,7 +56,7 @@ export default function ProjectProgressCard() {
             {TaskLabelRender.map((taskLabel, index) => (
               <div key={index} className="bg-gray-800/50 p-4 rounded-lg text-center border border-gray-700/50">
                 <p className="text-gray-400">{taskLabel.label}</p>
-                <div className="h-7 bg-gray-800 rounded w-10 mx-auto mt-2"></div>
+                <div className="h-7 bg-gray-800 rounded w-10 mx-auto mt-2 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
               </div>
             ))}
           </div>
