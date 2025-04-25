@@ -113,7 +113,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
   const modalContent = (
     <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto mt-4 pl-2 pr-2">
-      <div className="space-y-6">
+      <div className="space-y-6 mb-1">
         <div>
           <label htmlFor="title" className="block text-sm font-medium mb-1">
             프로젝트 이름 <span className="text-purple-400 ml-1">*</span>
