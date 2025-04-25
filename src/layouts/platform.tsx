@@ -57,7 +57,7 @@ export default function Platform() {
             placeholder="프로젝트 검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-300 placeholder-gray-400 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors"
+            className="w-full bg-gray-900 border border-gray-700/50 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-300 placeholder-gray-400 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors"
           />
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,7 +75,7 @@ export default function Platform() {
         ))}
 
         {/* 빈 프로젝트 카드 */}
-        <div className="bg-gray-800/50 rounded-lg p-6 border border-dashed border-gray-700 flex flex-col">
+        <div className="bg-component-background rounded-lg p-6 border border-dashed border-gray-700/50 flex flex-col">
           <div className="flex-1 flex items-center justify-center min-h-[12rem]">
             <div className="text-center">
               <p className="text-gray-400 mb-2">새로운 프로젝트를 시작해보세요</p>

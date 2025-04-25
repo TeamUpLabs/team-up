@@ -70,7 +70,7 @@ export default function ExploreProject() {
       <div className="mb-6 flex flex-col md:flex-row gap-4 md:items-center md:space-x-3">
         <div className="relative">
           <select 
-            className="appearance-none bg-gray-800 border border-gray-700 rounded-lg pl-4 pr-10 py-2.5 text-sm w-full md:w-48 text-gray-300 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors"
+            className="appearance-none bg-gray-900 border border-gray-700/50 rounded-lg pl-4 pr-10 py-2.5 text-sm w-full md:w-48 text-gray-300 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors"
             onChange={(e) => setSelectedOption(e.target.value)}
             value={selectedOption}
           >
@@ -93,7 +93,7 @@ export default function ExploreProject() {
             placeholder={placeholderMap[selectedOption] || "프로젝트 검색"}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-300 placeholder-gray-400 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors"
+            className="w-full bg-gray-900 border border-gray-700/50 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-300 placeholder-gray-400 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors"
           />
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,7 +104,7 @@ export default function ExploreProject() {
       </div>
 
       {filteredProjects.length === 0 && (
-        <div className="text-center text-gray-400 mt-8 p-8 bg-gray-800/50 rounded-lg">
+        <div className="text-center text-gray-400 mt-8 p-8 bg-gray-900/50 border border-gray-700/50 rounded-lg">
           검색 결과가 없습니다.
         </div>
       )}
