@@ -17,9 +17,10 @@ export default function SubmitBtn({ submitStatus, onClick }: SubmitBtnProps) {
         flex items-center justify-center gap-2
         transition-all duration-300 ease-in-out
         focus:outline-none group
+        active:scale-95
         ${submitStatus === 'success' 
           ? 'bg-green-500 hover:bg-green-600' 
-          : 'bg-indigo-600 hover:bg-indigo-700'}
+          : 'bg-indigo-700 hover:bg-indigo-800'}
         text-white shadow-sm
       `}
         onClick={onClick}
