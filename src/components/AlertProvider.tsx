@@ -18,7 +18,7 @@ export default function AlertProvider() {
         setTimeout(() => {
           clearAlert();
         }, 300); // After fade out animation
-      }, 5000);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [alert, clearAlert]);
