@@ -1,5 +1,6 @@
 // components/signup/SignupStep4.tsx
 import { useRef, useState } from "react";
+import Badge from "@/components/Badge";
 
 interface SignupStep4Props {
   role: string;
@@ -137,7 +138,10 @@ export default function SignupStep4({
   return (
     <div className="space-y-6">
       <div>
-        <label htmlFor="contactNumber" className="block text-sm font-medium text-gray-300 mb-1">연락처</label>
+        <label htmlFor="contactNumber" className="block text-sm font-medium text-gray-300 mb-1">
+          연락처
+          <span className="text-purple-400 ml-1">*</span>
+        </label>
         <input
           type="tel"
           id="contactNumber"
@@ -145,17 +149,20 @@ export default function SignupStep4({
           value={contactNumber}
           onChange={onChange}
           pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}"
-          className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
           placeholder="전화번호를 입력하세요"
           required
         />
       </div>
 
       <div>
-        <label htmlFor="birthDate" className="block text-sm font-medium text-gray-300 mb-1">생년월일</label>
+        <label htmlFor="birthDate" className="block text-sm font-medium text-gray-300 mb-1">
+          생년월일
+          <span className="text-purple-400 ml-1">*</span>
+        </label>
         <div className="w-full flex justify-between gap-3">
           <select
-            className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
             value={birthYear}
             onChange={(e) => onBirthDateChange("year", e.target.value)}
             required
@@ -167,7 +174,7 @@ export default function SignupStep4({
           </select>
 
           <select
-            className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
             value={birthMonth}
             onChange={(e) => onBirthDateChange("month", e.target.value)}
             required
@@ -179,7 +186,7 @@ export default function SignupStep4({
           </select>
 
           <select
-            className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
             value={birthDay}
             onChange={(e) => onBirthDateChange("day", e.target.value)}
             required
@@ -193,11 +200,14 @@ export default function SignupStep4({
       </div>
 
       <div>
-        <label htmlFor="workingHours" className="block text-sm font-medium text-gray-300 mb-1">활동시간</label>
+        <label htmlFor="workingHours" className="block text-sm font-medium text-gray-300 mb-1">
+          활동시간
+          <span className="text-purple-400 ml-1">*</span>
+        </label>
         <div className="w-full flex justify-between gap-3">
           <select
             name="timezone"
-            className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
             value={selectedTimeZone}
             onChange={(e) => onWorkingHourChange("timezone", e.target.value)}
             required
@@ -211,7 +221,7 @@ export default function SignupStep4({
 
           <select
             name="workingStartHour"
-            className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
             value={workingStartHour}
             onChange={(e) => onWorkingHourChange("workingStartHour", e.target.value)}
             required
@@ -224,7 +234,7 @@ export default function SignupStep4({
 
           <select
             name="workingEndHour"
-            className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
             value={workingEndHour}
             onChange={(e) => onWorkingHourChange("workingEndHour", e.target.value)}
             required
@@ -249,7 +259,7 @@ export default function SignupStep4({
             onKeyDown={(e) => onKeyDown("language", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
             placeholder="선호하는 언어를 입력하세요 예) 한국어, 영어"
           />
           {showSuggestions && filteredSuggestions.length > 0 && (
@@ -271,19 +281,7 @@ export default function SignupStep4({
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
           {languages.map((language, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-1 bg-purple-900/30 text-white px-3 py-1 rounded-md text-sm"
-            >
-              {language}
-              <button
-                type="button"
-                onClick={() => onRemoveLanguage(language)}
-                className="text-gray-400 hover:text-white"
-              >
-                ×
-              </button>
-            </div>
+            <Badge key={index} color="purple" content={language} isEditable={true} onRemove={() => onRemoveLanguage(language)} />
           ))}
         </div>
       </div>
@@ -301,7 +299,7 @@ export default function SignupStep4({
             onKeyDown={(e) => onKeyDown("specialty", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
             placeholder="전문 분야를 입력하세요 예) 웹 개발, 앱 개발"
           />
           {showSpecialtySuggestions && filteredSpecialtySuggestions.length > 0 && (
@@ -323,19 +321,7 @@ export default function SignupStep4({
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
           {specialties.map((specialty, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-1 bg-purple-900/30 text-white px-3 py-1 rounded-md text-sm"
-            >
-              {specialty}
-              <button
-                type="button"
-                onClick={() => onRemoveSpecialty(specialty)}
-                className="text-gray-400 hover:text-white"
-              >
-                ×
-              </button>
-            </div>
+            <Badge key={index} color="purple" content={specialty} isEditable={true} onRemove={() => onRemoveSpecialty(specialty)} />
           ))}
         </div>
       </div>

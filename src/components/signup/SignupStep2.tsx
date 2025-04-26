@@ -32,7 +32,7 @@ export default function SignupStep2({
             name="password"
             value={password}
             onChange={onChange}
-            className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 pr-12"
+            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 pr-12"
             placeholder="비밀번호를 입력하세요"
             required
           />
@@ -64,7 +64,7 @@ export default function SignupStep2({
             name="confirmPassword"
             value={confirmPassword}
             onChange={onConfirmChange}
-            className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 pr-12"
+            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 pr-12"
             placeholder="비밀번호를 다시 입력하세요"
             required
           />

@@ -55,10 +55,10 @@ export default function SignupStep3({ selectedRole, onSelectRole }: Step3Props) 
             key={role.value}
             type="button"
             onClick={() => onSelectRole(role.value)}
-            className={`p-6 rounded-lg border ${
+            className={`p-6 rounded-lg border border-gray-700/50 ${
               selectedRole === role.value
                 ? "border-purple-500 bg-purple-900/30"
-                : "border-gray-600 bg-gray-700 hover:bg-gray-600"
+                : "border-gray-600 bg-gray-800/50 hover:bg-gray-800/60"
             } transition-all duration-200 flex flex-col items-center`}
           >
             {role.icon}

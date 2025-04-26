@@ -17,7 +17,7 @@ export default function SignupStep1({ name, email, onChange }: Step1Props) {
           name="name"
           value={name}
           onChange={onChange}
-          className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
           placeholder="이름을 입력하세요"
           required
         />
@@ -31,7 +31,7 @@ export default function SignupStep1({ name, email, onChange }: Step1Props) {
           name="email"
           value={email}
           onChange={onChange}
-          className="w-full px-4 py-3 rounded-md bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
           placeholder="이메일 주소를 입력하세요"
           required
         />
