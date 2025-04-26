@@ -1,68 +1,67 @@
 @import "tailwindcss";
 
 :root {
+  --background: #f8f9fc;
+  --foreground: #1a1a2e;
+  
+  --component-background: #ffffff;
+  --component-secondary-background: #f4f6fa;
+  --component-tertiary-background: #ebeef5;
+  --component-skeleton-background: #e6eaf2;
+  --component-border: #dce0eb;
+  --component-secondary-border: #c0c7d9;
+  
+  --project-page-title-background: #f0f4fc;
+  --project-page-title-border: #d8dfec;
+  
+  --text-primary-color: #2d3748;
+  --text-secondary-color: #5a6986;
+  
+  --input-background: #f8faff;
+  --input-secondary-background: #eff3fa;
+  --input-border: #dae0ec;
+  --input-secondary-border: #b9c2d2;
+  --input-border-hover: #5b42e0;
+  
+  --point-color-purple: #7e22ce;
+  --point-color-purple-hover: #6b21a8;
+  --point-color-green: #059669;
+  --point-color-green-hover: #047857;
+  --point-color-indigo: #4f46e5;
+  --point-color-indigo-hover: #4338ca;
+}
+
+.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
-
+  
   --component-background: #0D1119;
   --component-secondary-background: #161C29;
   --component-tertiary-background: #1E2938;
   --component-skeleton-background: #1E2938;
   --component-border: #222936;
   --component-secondary-border: #364152;
-
+  
   --project-page-title-background: #101625;
   --project-page-title-border: #222936;
   
   --text-primary-color: #D1D5DC;
   --text-secondary-color: #98A1AE;
-
+  
   --input-background: #161C29;
   --input-secondary-background: #1B2534;
   --input-border: #222936;
   --input-secondary-border: #4A5565;
   --input-border-hover: #432DD7;
-
+  
   --point-color-purple: #AD47FF;
   --point-color-purple-hover: #9856D6;
   --point-color-green: #06DF73;
   --point-color-green-hover: #05C462;
   --point-color-indigo: #432DD7;
   --point-color-indigo-hover: #3122A8;
-
+  
   --section-spacing: 6rem;
-}
-
-.light {
-    /* Light Mode Colors */
-    --background: #f5f5f7;
-    --foreground: #262626;
-  
-    --component-background: #ffffff;
-    --component-secondary-background: #f2f4f8;
-    --component-tertiary-background: #e4e8ef;
-    --component-skeleton-background: #e4e8ef;
-    --component-border: #dde1e8;
-    --component-secondary-border: #c5cad3;
-  
-    --project-page-title-background: #f7f9fc;
-    --project-page-title-border: #dde1e8;
-    
-    --text-primary-color: #333b47;
-    --text-secondary-color: #616b79;
-  
-    --input-background: #f9fafc;
-    --input-secondary-background: #f0f2f7;
-    --input-border: #dde1e8;
-    --input-secondary-border: #bbc1cc;
-    --input-border-hover: #6b4ee1;
-  
-    --point-color-purple: #8c20ff;
-    --point-color-purple-hover: #7915e0;
-    --point-color-green: #05c462;
-    --point-color-green-hover: #049e4f;
-    --point-color-indigo: #5c3de0;
-    --point-color-indigo-hover: #4930b3;
 }
 
 @theme inline {

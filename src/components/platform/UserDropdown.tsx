@@ -6,15 +6,19 @@ import {
   faBell,
   faGear,
   faRightFromBracket,
+  faMoon,
+  faSun,
 } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const user = useAuthStore((state) => state.user);
+  const { isDark, toggleDarkMode } = useTheme();
   const logout = async () => {
-    try { 
+    try {
       await useAuthStore.getState().logout();
       useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");
       window.location.href = '/';
@@ -50,34 +54,41 @@ export default function UserDropdown() {
             <p className="text-sm font-medium text-text-primary">{user ? user.name : "로그인을 해주세요."}</p>
             {user?.email && <p className="text-xs text-text-secondary">{user.email}</p>}
           </div>
-          
-          <div className="py-1">
-            <MenuItem 
+
+          <div>
+            <MenuItem
               icon={faUser}
               text="내 프로필"
               onClick={() => { setIsOpen(false); window.location.href = "/platform/profile"; }}
             />
-            <MenuItem 
+            <MenuItem
               icon={faBell}
               text="알림"
               onClick={() => { setIsOpen(false); window.location.href = "/platform/notifications"; }}
             />
-          </div>
-          
-          <div className="border-t border-component-secondary-border"></div>
-          
-          <div className="py-1">
-            <MenuItem 
+
+            <div className="border-t border-component-secondary-border"></div>
+
+            <MenuItem
               icon={faGear}
               text="설정"
               onClick={() => { setIsOpen(false); window.location.href = "/platform/settings"; }}
             />
-          </div>
-          
-          <div className="border-t border-component-secondary-border"></div>
-          
-          <div className="py-1">
-            <MenuItem 
+
+            <div className="border-t border-component-secondary-border"></div>
+
+            <MenuItem
+              icon={isDark ? faSun : faMoon}
+              text={isDark ? "라이트 모드" : "다크 모드"}
+              onClick={() => { 
+                toggleDarkMode();
+                setIsOpen(false);
+              }}
+            />
+
+            <div className="border-t border-component-secondary-border"></div>
+
+            <MenuItem
               icon={faRightFromBracket}
               text="로그아웃"
               onClick={logout}
@@ -101,7 +112,7 @@ function MenuItem({ icon, text, onClick, className = "" }: MenuItemProps) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-4 py-2 flex items-center gap-2 text-sm text-gray-300 hover:bg-gray-700 ${className}`}
+      className={`w-full text-left px-4 py-2 flex items-center gap-2 text-sm text-text-secondary hover:bg-component-secondary-background ${className}`}
     >
       <FontAwesomeIcon icon={icon} className="w-4 h-4" />
       {text}
