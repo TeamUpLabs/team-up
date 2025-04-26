@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { useAuthStore } from "@/auth/authStore";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -61,6 +62,8 @@ export default function ProfilePage() {
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [isComposing, setIsComposing] = useState(false);
   const [newSocialLink, setNewSocialLink] = useState<{ name: string; url: string }>({ name: "", url: "" });
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [profileData, setProfileData] = useState<ProfileData>({
     name: "",
     email: "",
@@ -104,7 +107,7 @@ export default function ProfilePage() {
         });
       }
     };
-    
+
     fetchProfileData().then(() => {
       setIsDataLoading(false);
     });
@@ -184,17 +187,17 @@ export default function ProfilePage() {
       if (!url.startsWith('http://') && !url.startsWith('https://')) {
         url = 'https://' + url;
       }
-      
+
       const newLink = {
         name: newSocialLink.name,
         url: url
       };
-      
+
       setProfileData(prev => ({
         ...prev,
         socialLinks: [...prev.socialLinks, newLink]
       }));
-      
+
       setNewSocialLink({ name: "", url: "" });
     } else {
       console.log("Cannot add link: missing name or url", newSocialLink);
@@ -212,12 +215,12 @@ export default function ProfilePage() {
     try {
       setIsLoading(true);
       const response = await updateUserProfile(user?.id || 0, profileData);
-      
+
       // Update the user data in the auth store with the response from the server
       if (response) {
         useAuthStore.getState().setUser(response);
       }
-      
+
       setIsEditing(false);
       useAuthStore.getState().setAlert("프로필이 성공적으로 업데이트되었습니다.", "success");
     } catch (error) {
@@ -228,25 +231,52 @@ export default function ProfilePage() {
     }
   };
 
+  const handleProfilePictureClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      // Create a URL for the selected image
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewImage(imageUrl);
+      
+      console.log("Selected file:", file);
+      // You might want to add the image upload logic to the profile save function
+    }
+  };
+
+  // Clean up object URL when component unmounts
+  useEffect(() => {
+    return () => {
+      if (previewImage) {
+        URL.revokeObjectURL(previewImage);
+      }
+    };
+  }, [previewImage]);
+
   // Skeleton component for text fields
   const SkeletonField = () => (
     <div className="animate-pulse flex items-center gap-2">
-      <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4"></div>
+      <div className="w-4 h-4 bg-gray-600 rounded-full"></div>
+      <div className="h-4 bg-gray-600 rounded w-3/4"></div>
     </div>
   );
 
   // Skeleton for social links
   const SkeletonSocialLink = () => (
     <div className="animate-pulse flex items-center gap-2">
-      <div className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-      <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-40"></div>
+      <div className="w-4 h-4 bg-gray-600 rounded-full"></div>
+      <div className="h-4 bg-gray-600 rounded w-40"></div>
     </div>
   );
 
   // Skeleton for skill/language tags
   const SkeletonTag = () => (
-    <div className="animate-pulse h-6 bg-gray-300 dark:bg-gray-600 rounded-full w-20"></div>
+    <div className="animate-pulse h-6 bg-gray-600 rounded-full w-20"></div>
   );
 
   return (
@@ -255,12 +285,12 @@ export default function ProfilePage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 text-gray-200 transition-colors"
             aria-label="뒤로 가기"
           >
             <FontAwesomeIcon icon={faArrowLeft} className="w-4 h-4" />
           </button>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">내 프로필</h1>
+          <h1 className="text-2xl font-bold text-gray-200">내 프로필</h1>
         </div>
         <button
           onClick={() => isEditing ? handleSaveProfile() : setIsEditing(true)}
@@ -272,21 +302,41 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
+      <div className="bg-component-background border border-gray-700/50 rounded-xl shadow-sm overflow-hidden mb-8">
         <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 h-32">
           <div className="absolute -bottom-12 left-8">
             <div className="relative">
-              <div className="h-24 w-24 rounded-full border-4 border-white dark:border-gray-800 bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+              <div className="h-24 w-24 rounded-full border-4 border-gray-800 bg-gray-700 flex items-center justify-center overflow-hidden">
                 {isDataLoading ? (
-                  <div className="animate-pulse w-full h-full bg-gray-300 dark:bg-gray-600"></div>
+                  <div className="animate-pulse w-full h-full bg-gray-600"></div>
+                ) : previewImage ? (
+                  <Image 
+                    src={previewImage} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover rounded-full"
+                    width={96}
+                    height={96}
+                  />
                 ) : (
                   <FontAwesomeIcon icon={faUser} className="text-gray-400 text-3xl" />
                 )}
               </div>
               {isEditing && (
-                <button className="absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-1.5 shadow-md hover:bg-blue-700 transition-colors">
-                  <FontAwesomeIcon icon={faCamera} className="w-3 h-3" />
-                </button>
+                <>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef}
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleProfilePictureChange}
+                  />
+                  <div 
+                    className="absolute bottom-0 right-0 bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer hover:bg-opacity-90 transition-all"
+                    onClick={handleProfilePictureClick}
+                  >
+                    <FontAwesomeIcon icon={faCamera} className="text-white w-4 h-4" />
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -295,10 +345,10 @@ export default function ProfilePage() {
         <div className="pt-16 pb-6 px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">기본 정보</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-100">기본 정보</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">이름</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">이름</label>
                   {isDataLoading ? (
                     <SkeletonField />
                   ) : isEditing ? (
@@ -307,18 +357,18 @@ export default function ProfilePage() {
                       name="name"
                       value={profileData.name}
                       onChange={handleChange}
-                      className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      className="w-full rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                     />
                   ) : (
                     <div className="flex items-center gap-2">
                       <FontAwesomeIcon icon={faUser} className="text-gray-500 w-4 h-4" />
-                      <span className="text-gray-800 dark:text-gray-200">{profileData.name}</span>
+                      <span className="text-gray-200">{profileData.name}</span>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">이메일</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">이메일</label>
                   {isDataLoading ? (
                     <SkeletonField />
                   ) : isEditing ? (
@@ -328,18 +378,18 @@ export default function ProfilePage() {
                       value={profileData.email}
                       onChange={handleChange}
                       readOnly
-                      className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      className="w-full rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                     />
                   ) : (
                     <div className="flex items-center gap-2">
                       <FontAwesomeIcon icon={faEnvelope} className="text-gray-500 w-4 h-4" />
-                      <span className="text-gray-800 dark:text-gray-200">{profileData.email}</span>
+                      <span className="text-gray-200">{profileData.email}</span>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">역할</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">역할</label>
                   {isDataLoading ? (
                     <SkeletonField />
                   ) : isEditing ? (
@@ -347,7 +397,7 @@ export default function ProfilePage() {
                       name="role"
                       value={profileData.role}
                       onChange={handleChange}
-                      className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      className="w-full rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                     >
                       <option value="개발자">개발자</option>
                       <option value="디자이너">디자이너</option>
@@ -358,13 +408,13 @@ export default function ProfilePage() {
                       {profileData.role === "개발자" && <FontAwesomeIcon icon={faCode} className="text-gray-500 w-4 h-4" />}
                       {profileData.role === "디자이너" && <FontAwesomeIcon icon={faPalette} className="text-gray-500 w-4 h-4" />}
                       {profileData.role === "기획자" && <FontAwesomeIcon icon={faFile} className="text-gray-500 w-4 h-4" />}
-                      <span className="text-gray-800 dark:text-gray-200">{profileData.role}</span>
+                      <span className="text-gray-200">{profileData.role}</span>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">연락처</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">연락처</label>
                   {isDataLoading ? (
                     <SkeletonField />
                   ) : isEditing ? (
@@ -373,18 +423,18 @@ export default function ProfilePage() {
                       name="contactNumber"
                       value={profileData.contactNumber}
                       onChange={handleChange}
-                      className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      className="w-full rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                     />
                   ) : (
                     <div className="flex items-center gap-2">
                       <FontAwesomeIcon icon={faPhone} className="text-gray-500 w-4 h-4" />
-                      <span className="text-gray-800 dark:text-gray-200">{profileData.contactNumber}</span>
+                      <span className="text-gray-200">{profileData.contactNumber}</span>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">생년월일</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">생년월일</label>
                   {isDataLoading ? (
                     <SkeletonField />
                   ) : isEditing ? (
@@ -393,12 +443,12 @@ export default function ProfilePage() {
                       name="birthDate"
                       value={profileData.birthDate}
                       onChange={handleChange}
-                      className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      className="w-full rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                     />
                   ) : (
                     <div className="flex items-center gap-2">
                       <FontAwesomeIcon icon={faCakeCandles} className="text-gray-500 w-4 h-4" />
-                      <span className="text-gray-800 dark:text-gray-200">{profileData.birthDate}</span>
+                      <span className="text-gray-200">{profileData.birthDate}</span>
                     </div>
                   )}
                 </div>
@@ -406,11 +456,11 @@ export default function ProfilePage() {
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">근무 시간</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-100">근무 시간</h2>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">시작 시간</label>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">시작 시간</label>
                     {isDataLoading ? (
                       <SkeletonField />
                     ) : isEditing ? (
@@ -419,18 +469,18 @@ export default function ProfilePage() {
                         name="workingHours.start"
                         value={profileData.workingHours.start}
                         onChange={handleChange}
-                        className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                        className="w-full rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                       />
                     ) : (
                       <div className="flex items-center gap-2">
                         <FontAwesomeIcon icon={faClock} className="text-gray-500 w-4 h-4" />
-                        <span className="text-gray-800 dark:text-gray-200">{profileData.workingHours.start}</span>
+                        <span className="text-gray-200">{profileData.workingHours.start}</span>
                       </div>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">종료 시간</label>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">종료 시간</label>
                     {isDataLoading ? (
                       <SkeletonField />
                     ) : isEditing ? (
@@ -439,19 +489,19 @@ export default function ProfilePage() {
                         name="workingHours.end"
                         value={profileData.workingHours.end}
                         onChange={handleChange}
-                        className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                        className="w-full rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                       />
                     ) : (
                       <div className="flex items-center gap-2">
                         <FontAwesomeIcon icon={faClock} className="text-gray-500 w-4 h-4" />
-                        <span className="text-gray-800 dark:text-gray-200">{profileData.workingHours.end}</span>
+                        <span className="text-gray-200">{profileData.workingHours.end}</span>
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">시간대</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">시간대</label>
                   {isDataLoading ? (
                     <SkeletonField />
                   ) : isEditing ? (
@@ -459,7 +509,7 @@ export default function ProfilePage() {
                       name="workingHours.timezone"
                       value={profileData.workingHours.timezone}
                       onChange={handleChange}
-                      className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      className="w-full rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                     >
                       <option value="Asia/Seoul">한국 표준시 (KST)</option>
                       <option value="UTC">세계 표준시 (UTC)</option>
@@ -469,7 +519,7 @@ export default function ProfilePage() {
                   ) : (
                     <div className="flex items-center gap-2">
                       <FontAwesomeIcon icon={faGlobe} className="text-gray-500 w-4 h-4" />
-                      <span className="text-gray-800 dark:text-gray-200">
+                      <span className="text-gray-200">
                         {profileData.workingHours.timezone === "Asia/Seoul" ? "한국 표준시 (KST)" :
                           profileData.workingHours.timezone === "UTC" ? "세계 표준시 (UTC)" :
                             profileData.workingHours.timezone === "America/New_York" ? "동부 표준시 (EST)" :
@@ -481,7 +531,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">소셜 링크</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">소셜 링크</label>
                   <div className="space-y-3">
                     {isEditing && (
                       <div className="flex gap-2 items-center mb-2">
@@ -489,7 +539,7 @@ export default function ProfilePage() {
                           name="newSocialLink.name"
                           value={newSocialLink.name}
                           onChange={handleChange}
-                          className="w-1/4 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                          className="w-1/4 rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                         >
                           <option value="">소셜 선택</option>
                           <option value="github">GitHub</option>
@@ -505,7 +555,7 @@ export default function ProfilePage() {
                           value={newSocialLink.url}
                           onChange={handleChange}
                           placeholder="URL 입력 (https://...)"
-                          className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                          className="flex-1 rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                         />
                         <button
                           onClick={addSocialLink}
@@ -526,17 +576,17 @@ export default function ProfilePage() {
                       <div className="space-y-2">
                         {profileData.socialLinks.map((link, index) => (
                           <div key={index} className="flex items-center gap-2">
-                            <FontAwesomeIcon 
+                            <FontAwesomeIcon
                               icon={
                                 link.name === "github" ? faGithub :
-                                link.name === "linkedin" ? faLinkedin :
-                                link.name === "twitter" ? faTwitter :
-                                link.name === "facebook" ? faFacebook :
-                                link.name === "instagram" ? faInstagram :
-                                link.name === "website" ? faGlobe :
-                                faLink
-                              } 
-                              className="text-gray-500 w-4 h-4" 
+                                  link.name === "linkedin" ? faLinkedin :
+                                    link.name === "twitter" ? faTwitter :
+                                      link.name === "facebook" ? faFacebook :
+                                        link.name === "instagram" ? faInstagram :
+                                          link.name === "website" ? faGlobe :
+                                            faLink
+                              }
+                              className="text-gray-500 w-4 h-4"
                             />
                             {isEditing ? (
                               <>
@@ -546,12 +596,12 @@ export default function ProfilePage() {
                                   onChange={(e) => {
                                     const newLinks = [...profileData.socialLinks];
                                     newLinks[index].url = e.target.value;
-                                    setProfileData({...profileData, socialLinks: newLinks});
+                                    setProfileData({ ...profileData, socialLinks: newLinks });
                                   }}
-                                  className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                                  className="flex-1 rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                                 />
-                                <button 
-                                  onClick={() => removeSocialLink(index)} 
+                                <button
+                                  onClick={() => removeSocialLink(index)}
                                   className="text-red-500 hover:text-red-700"
                                 >
                                   <FontAwesomeIcon icon={faCircleXmark} className="w-4 h-4" />
@@ -562,7 +612,7 @@ export default function ProfilePage() {
                                 href={link.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 dark:text-blue-400 hover:underline"
+                                className="text-blue-400 hover:underline"
                               >
                                 {(() => {
                                   try {
@@ -580,7 +630,7 @@ export default function ProfilePage() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-gray-500 dark:text-gray-400">등록된 소셜 링크가 없습니다.</p>
+                      <p className="text-gray-400">등록된 소셜 링크가 없습니다.</p>
                     )}
                   </div>
                 </div>
@@ -591,14 +641,14 @@ export default function ProfilePage() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
-        <div className="border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-component-background border border-gray-700/50 rounded-xl shadow-sm overflow-hidden mb-8">
+        <div className="border-b border-gray-700">
           <div className="flex space-x-4 px-4">
             <button
               onClick={() => setActiveTab("intro")}
               className={`py-4 px-2 relative ${activeTab === "intro"
-                  ? "text-blue-600 dark:text-blue-400 font-medium"
-                  : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                ? "text-blue-400 font-medium"
+                : "text-gray-400 hover:text-gray-200"
                 }`}
             >
               <div className="flex items-center gap-2">
@@ -606,14 +656,14 @@ export default function ProfilePage() {
                 <span>자기소개</span>
               </div>
               {activeTab === "intro" && (
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400"></span>
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400"></span>
               )}
             </button>
             <button
               onClick={() => setActiveTab("skills")}
               className={`py-4 px-2 relative ${activeTab === "skills"
-                  ? "text-blue-600 dark:text-blue-400 font-medium"
-                  : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                ? "text-blue-400 font-medium"
+                : "text-gray-400 hover:text-gray-200"
                 }`}
             >
               <div className="flex items-center gap-2">
@@ -621,14 +671,14 @@ export default function ProfilePage() {
                 <span>전문 분야</span>
               </div>
               {activeTab === "skills" && (
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400"></span>
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400"></span>
               )}
             </button>
             <button
               onClick={() => setActiveTab("languages")}
               className={`py-4 px-2 relative ${activeTab === "languages"
-                  ? "text-blue-600 dark:text-blue-400 font-medium"
-                  : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                ? "text-blue-400 font-medium"
+                : "text-gray-400 hover:text-gray-200"
                 }`}
             >
               <div className="flex items-center gap-2">
@@ -636,7 +686,7 @@ export default function ProfilePage() {
                 <span>사용 언어</span>
               </div>
               {activeTab === "languages" && (
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600 dark:bg-blue-400"></span>
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400"></span>
               )}
             </button>
           </div>
@@ -646,12 +696,12 @@ export default function ProfilePage() {
           {/* Introduction Tab */}
           {activeTab === "intro" && (
             <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">자기소개</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-100">자기소개</h2>
               {isDataLoading ? (
                 <div className="animate-pulse space-y-2">
-                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-full"></div>
-                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-5/6"></div>
-                  <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-4/6"></div>
+                  <div className="h-4 bg-gray-600 rounded w-full"></div>
+                  <div className="h-4 bg-gray-600 rounded w-5/6"></div>
+                  <div className="h-4 bg-gray-600 rounded w-4/6"></div>
                 </div>
               ) : isEditing ? (
                 <textarea
@@ -659,11 +709,11 @@ export default function ProfilePage() {
                   value={profileData.introduction}
                   onChange={handleChange}
                   rows={4}
-                  className="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 resize-none"
+                  className="w-full rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200 resize-none"
                   placeholder="자신에 대해 간략하게 소개해주세요."
                 />
               ) : (
-                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                <p className="text-gray-300 whitespace-pre-wrap">
                   {profileData.introduction || "자기소개가 없습니다."}
                 </p>
               )}
@@ -673,7 +723,7 @@ export default function ProfilePage() {
           {/* Skills Tab */}
           {activeTab === "skills" && (
             <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">전문 분야</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-100">전문 분야</h2>
               <div className="space-y-4">
                 {isEditing && (
                   <div className="flex gap-2">
@@ -685,7 +735,7 @@ export default function ProfilePage() {
                       onCompositionStart={() => setIsComposing(true)}
                       onCompositionEnd={() => setIsComposing(false)}
                       placeholder="전문 분야를 입력하고 Enter 키를 누르세요"
-                      className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      className="flex-1 rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                     />
                   </div>
                 )}
@@ -702,19 +752,19 @@ export default function ProfilePage() {
                   ) : profileData.skills.length > 0 ? (
                     profileData.skills.map((skill, index) => (
                       isEditing ? (
-                        <Badge 
-                          key={index} 
-                          content={skill} 
-                          color="blue" 
-                          isEditable 
-                          onRemove={() => removeSkill(skill)} 
+                        <Badge
+                          key={index}
+                          content={skill}
+                          color="blue"
+                          isEditable
+                          onRemove={() => removeSkill(skill)}
                         />
                       ) : (
                         <Badge key={index} content={skill} color="blue" />
                       )
                     ))
                   ) : (
-                    <p className="text-gray-500 dark:text-gray-400 italic">등록된 기술이 없습니다.</p>
+                    <p className="text-gray-400 italic">등록된 기술이 없습니다.</p>
                   )}
                 </div>
               </div>
@@ -724,7 +774,7 @@ export default function ProfilePage() {
           {/* Languages Tab */}
           {activeTab === "languages" && (
             <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">사용 언어</h2>
+              <h2 className="text-xl font-semibold mb-4 text-gray-100">사용 언어</h2>
               <div className="space-y-4">
                 {isEditing && (
                   <div className="flex gap-2">
@@ -733,7 +783,7 @@ export default function ProfilePage() {
                       value={newLanguage}
                       onChange={(e) => setNewLanguage(e.target.value)}
                       placeholder="언어를 입력하고 Enter 키를 누르세요"
-                      className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+                      className="flex-1 rounded-md border border-gray-700/50 px-3 py-2 bg-gray-800/50 text-gray-200"
                       onKeyDown={(e) => handleKeyDown("languages", e)}
                       onCompositionStart={() => setIsComposing(true)}
                       onCompositionEnd={() => setIsComposing(false)}
@@ -751,19 +801,19 @@ export default function ProfilePage() {
                   ) : profileData.languages.length > 0 ? (
                     profileData.languages.map((language, index) => (
                       isEditing ? (
-                        <Badge 
-                          key={index} 
-                          content={language} 
-                          color="green" 
-                          isEditable 
-                          onRemove={() => removeLanguage(language)} 
+                        <Badge
+                          key={index}
+                          content={language}
+                          color="green"
+                          isEditable
+                          onRemove={() => removeLanguage(language)}
                         />
                       ) : (
                         <Badge key={index} content={language} color="green" />
                       )
                     ))
                   ) : (
-                    <p className="text-gray-500 dark:text-gray-400 italic">등록된 언어가 없습니다.</p>
+                    <p className="text-gray-400 italic">등록된 언어가 없습니다.</p>
                   )}
                 </div>
               </div>
@@ -776,7 +826,7 @@ export default function ProfilePage() {
         <div className="flex justify-end mt-8 gap-4">
           <button
             onClick={() => setIsEditing(false)}
-            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition-colors"
             disabled={isLoading}
           >
             취소
