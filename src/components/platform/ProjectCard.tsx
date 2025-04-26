@@ -66,6 +66,10 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
                   useAuthStore.getState().setAlert("로그인이 필요합니다.", "error");
                   return;
                 }
+                if (project.members.length >= project.teamSize) {
+                  useAuthStore.getState().setAlert("모집 인원이 다 찼습니다. 다른 프로젝트를 찾아보세요.", "error");
+                  return;
+                }
                 useAuthStore.getState().setConfirm("참여 요청하시겠습니까?", async () => {
                   try {
                     await sendParticipationRequest(project.id, user.id);
