@@ -256,19 +256,19 @@ export default function SignUpLayout() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-xl bg-component-background rounded-lg shadow-xl p-8 border border-gray-700/50">
+      <div className="w-full max-w-xl bg-component-background rounded-lg shadow-xl p-8 border border-component-border">
         <div className="text-center mb-8 relative">
           {step > 1 && (
             <div
               className="absolute left-0 top-0 cursor-pointer transition-all duration-300 hover:translate-x-[-3px]"
               onClick={() => setStep(prev => Math.max(1, prev - 1))}
             >
-              <FontAwesomeIcon icon={faArrowLeft} className="text-white text-xl" />
+              <FontAwesomeIcon icon={faArrowLeft} className="text-text-secondary text-xl" />
             </div>
           )}
           <div>
-            <h1 className="text-3xl font-bold text-white">회원가입</h1>
-            <p className="text-gray-400 mt-2">Team-Up에서 당신의 역량을 발휘할 준비를 해보세요</p>
+            <h1 className="text-3xl font-bold text-text-primary">회원가입</h1>
+            <p className="text-text-secondary mt-2">Team-Up에서 당신의 역량을 발휘할 준비를 해보세요</p>
           </div>
         </div>
 
@@ -349,7 +349,7 @@ export default function SignUpLayout() {
 
           <button
             type="submit"
-            className="group w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 mt-8 flex items-center justify-center"
+            className="group w-full py-3 px-4 bg-point-color-indigo hover:bg-point-color-indigo-hover text-text-primary font-medium rounded-md shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-point-color-indigo mt-8 flex items-center justify-center"
           >
             {step === 5 ? "회원가입" : "계속"}
             <span
@@ -361,9 +361,9 @@ export default function SignUpLayout() {
         </form>
 
         <div className="mt-6 text-center text-sm">
-          <p className="text-gray-400">
+          <p className="text-text-secondary">
             이미 계정이 있으신가요?
-            <Link href="/signin" className="text-purple-400 hover:text-purple-300 ml-1">로그인</Link>
+            <Link href="/signin" className="text-point-color-purple hover:text-point-color-purple-hover ml-1">로그인</Link>
           </p>
         </div>
       </div>

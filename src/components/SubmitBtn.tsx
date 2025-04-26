@@ -19,8 +19,8 @@ export default function SubmitBtn({ submitStatus, onClick }: SubmitBtnProps) {
         focus:outline-none group
         active:scale-95
         ${submitStatus === 'success' 
-          ? 'bg-green-500 hover:bg-green-600' 
-          : 'bg-indigo-700 hover:bg-indigo-800'}
+          ? 'bg-point-color-green hover:bg-point-color-green-hover' 
+          : 'bg-point-color-indigo hover:bg-point-color-indigo-hover'}
         text-white shadow-sm
       `}
         onClick={onClick}

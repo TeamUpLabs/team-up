@@ -10,28 +10,28 @@ export default function SignupStep1({ name, email, onChange }: Step1Props) {
   return (
     <>
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">이름</label>
+        <label htmlFor="name" className="block text-sm font-medium text-text-secondary mb-1">이름</label>
         <input
           type="text"
           id="name"
           name="name"
           value={name}
           onChange={onChange}
-          className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+          className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
           placeholder="이름을 입력하세요"
           required
         />
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">이메일</label>
+        <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-1">이메일</label>
         <input
           type="email"
           id="email"
           name="email"
           value={email}
           onChange={onChange}
-          className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+          className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
           placeholder="이메일 주소를 입력하세요"
           required
         />

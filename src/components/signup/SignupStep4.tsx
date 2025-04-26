@@ -138,9 +138,9 @@ export default function SignupStep4({
   return (
     <div className="space-y-6">
       <div>
-        <label htmlFor="contactNumber" className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="contactNumber" className="block text-sm font-medium text-text-secondary mb-1">
           연락처
-          <span className="text-purple-400 ml-1">*</span>
+          <span className="text-point-color-purple ml-1">*</span>
         </label>
         <input
           type="tel"
@@ -149,7 +149,7 @@ export default function SignupStep4({
           value={contactNumber}
           onChange={onChange}
           pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}"
-          className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+          className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
           placeholder="전화번호를 입력하세요"
           required
         />
@@ -158,11 +158,11 @@ export default function SignupStep4({
       <div>
         <label htmlFor="birthDate" className="block text-sm font-medium text-gray-300 mb-1">
           생년월일
-          <span className="text-purple-400 ml-1">*</span>
+          <span className="text-point-color-purple ml-1">*</span>
         </label>
         <div className="w-full flex justify-between gap-3">
           <select
-            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             value={birthYear}
             onChange={(e) => onBirthDateChange("year", e.target.value)}
             required
@@ -174,7 +174,7 @@ export default function SignupStep4({
           </select>
 
           <select
-            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             value={birthMonth}
             onChange={(e) => onBirthDateChange("month", e.target.value)}
             required
@@ -186,7 +186,7 @@ export default function SignupStep4({
           </select>
 
           <select
-            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             value={birthDay}
             onChange={(e) => onBirthDateChange("day", e.target.value)}
             required
@@ -202,12 +202,12 @@ export default function SignupStep4({
       <div>
         <label htmlFor="workingHours" className="block text-sm font-medium text-gray-300 mb-1">
           활동시간
-          <span className="text-purple-400 ml-1">*</span>
+          <span className="text-point-color-purple ml-1">*</span>
         </label>
         <div className="w-full flex justify-between gap-3">
           <select
             name="timezone"
-            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             value={selectedTimeZone}
             onChange={(e) => onWorkingHourChange("timezone", e.target.value)}
             required
@@ -221,7 +221,7 @@ export default function SignupStep4({
 
           <select
             name="workingStartHour"
-            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             value={workingStartHour}
             onChange={(e) => onWorkingHourChange("workingStartHour", e.target.value)}
             required
@@ -234,7 +234,7 @@ export default function SignupStep4({
 
           <select
             name="workingEndHour"
-            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             value={workingEndHour}
             onChange={(e) => onWorkingHourChange("workingEndHour", e.target.value)}
             required
@@ -248,7 +248,7 @@ export default function SignupStep4({
       </div>
 
       <div>
-        <label htmlFor="language" className="block text-sm font-medium text-gray-300 mb-1">선호 언어</label>
+        <label htmlFor="language" className="block text-sm font-medium text-text-secondary mb-1">선호 언어</label>
         <div className="relative">
           <input
             ref={languageInputRef}
@@ -259,18 +259,18 @@ export default function SignupStep4({
             onKeyDown={(e) => onKeyDown("language", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             placeholder="선호하는 언어를 입력하세요 예) 한국어, 영어"
           />
           {showSuggestions && filteredSuggestions.length > 0 && (
             <div
               ref={suggestionsRef}
-              className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto"
+              className="absolute z-10 w-full mt-1 bg-input-background border border-input-border rounded-md shadow-lg max-h-60 overflow-auto"
             >
               {filteredSuggestions.map((suggestion, index) => (
                 <div
                   key={index}
-                  className="px-4 py-2 hover:bg-gray-700 cursor-pointer text-white"
+                  className="px-4 py-2 hover:bg-input-background cursor-pointer text-text-secondary"
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
                   {suggestion}
@@ -287,7 +287,7 @@ export default function SignupStep4({
       </div>
 
       <div>
-        <label htmlFor="specialty" className="block text-sm font-medium text-gray-300 mb-1">전문 분야</label>
+        <label htmlFor="specialty" className="block text-sm font-medium text-text-secondary mb-1">전문 분야</label>
         <div className="relative">
           <input
             ref={specialtyInputRef}
@@ -299,18 +299,18 @@ export default function SignupStep4({
             onKeyDown={(e) => onKeyDown("specialty", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+            className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             placeholder="전문 분야를 입력하세요 예) 웹 개발, 앱 개발"
           />
           {showSpecialtySuggestions && filteredSpecialtySuggestions.length > 0 && (
             <div
               ref={specialtySuggestionsRef}
-              className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto"
+              className="absolute z-10 w-full mt-1 bg-input-background border border-input-border rounded-md shadow-lg max-h-60 overflow-auto"
             >
               {filteredSpecialtySuggestions.map((suggestion, index) => (
                 <div
                   key={index}
-                  className="px-4 py-2 hover:bg-gray-700 cursor-pointer text-white"
+                  className="px-4 py-2 hover:bg-input-background cursor-pointer text-text-secondary"
                   onClick={() => handleSpecialtySuggestionClick(suggestion)}
                 >
                   {suggestion}

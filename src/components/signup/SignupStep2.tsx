@@ -24,7 +24,7 @@ export default function SignupStep2({
   return (
     <>
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">비밀번호</label>
+        <label htmlFor="password" className="block text-sm font-medium text-text-secondary mb-1">비밀번호</label>
         <div className="relative">
           <input
             type={showPassword ? "text" : "password"}
@@ -32,14 +32,14 @@ export default function SignupStep2({
             name="password"
             value={password}
             onChange={onChange}
-            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 pr-12"
+            className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo pr-12"
             placeholder="비밀번호를 입력하세요"
             required
           />
           <button
             type="button"
             onClick={toggleShowPassword}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary"
           >
             {showPassword ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +56,7 @@ export default function SignupStep2({
       </div>
 
       <div>
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-1">비밀번호 확인</label>
+        <label htmlFor="confirmPassword" className="block text-sm font-medium text-text-secondary mb-1">비밀번호 확인</label>
         <div className="relative">
           <input
             type={showConfirmPassword ? "text" : "password"}
@@ -64,14 +64,14 @@ export default function SignupStep2({
             name="confirmPassword"
             value={confirmPassword}
             onChange={onConfirmChange}
-            className="w-full px-4 py-3 rounded-md bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 pr-12"
+            className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo pr-12"
             placeholder="비밀번호를 다시 입력하세요"
             required
           />
           <button
             type="button"
             onClick={toggleShowConfirmPassword}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary"
           >
             {showPassword ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

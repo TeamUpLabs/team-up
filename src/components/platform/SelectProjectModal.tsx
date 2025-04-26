@@ -64,7 +64,7 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
 
   const header = (
     <div className="flex items-center space-x-4">
-      <h2 className="text-xl font-bold text-white">프로젝트 선택</h2>
+      <h2 className="text-xl font-bold text-text-primary">프로젝트 선택</h2>
     </div>
   );
 
@@ -76,10 +76,10 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <span className="text-gray-300">프로젝트를 불러오는 중...</span>
+          <span className="text-text-secondary">프로젝트를 불러오는 중...</span>
         </div>
       ) : projects.length === 0 ? (
-        <div className="py-8 text-center text-gray-400">
+        <div className="py-8 text-center text-text-secondary">
           <p>참여 중인 프로젝트가 없습니다.</p>
           <p className="mt-2 text-sm">프로젝트를 생성하거나 참여한 후 다시 시도해주세요.</p>
         </div>
@@ -92,11 +92,11 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
               className={`p-4 rounded-lg border ${
                 selectedProject === project.id
                   ? "border-blue-500 bg-blue-500/10"
-                  : "border-gray-700 hover:border-gray-600 hover:bg-gray-700/30"
+                  : "border-component-border hover:border-component-border-hover hover:bg-component-secondary-background"
               } cursor-pointer transition-all`}
             >
               <div className="flex justify-between items-center">
-                <h3 className={`font-medium ${selectedProject === project.id ? "text-blue-400" : "text-white"}`}>
+                <h3 className={`font-medium ${selectedProject === project.id ? "text-blue-400" : "text-text-primary"}`}>
                   {project.title}
                 </h3>
                 {selectedProject === project.id && (
@@ -107,15 +107,15 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
                   </div>
                 )}
               </div>
-              <div className="mt-2 text-sm text-gray-400">{project.description}</div>
+              <div className="mt-2 text-sm text-text-secondary">{project.description}</div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {project.techStack?.slice(0, 3).map((tech, idx) => (
-                  <span key={idx} className="px-2 py-1 rounded-md text-xs bg-gray-700/50 text-gray-300">
+                  <span key={idx} className="px-2 py-1 rounded-md text-xs bg-component-secondary-background text-text-secondary">
                     {tech}
                   </span>
                 ))}
                 {project.techStack?.length > 3 && (
-                  <span className="px-2 py-1 rounded-md text-xs bg-gray-700/50 text-gray-300">
+                  <span className="px-2 py-1 rounded-md text-xs bg-component-secondary-background text-text-secondary">
                     +{project.techStack.length - 3}
                   </span>
                 )}
@@ -132,7 +132,7 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
       <button
         type="button"
         onClick={onClose}
-        className="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition-colors"
+        className="px-4 py-2 rounded-lg border border-component-border text-text-secondary hover:bg-component-secondary-background transition-colors"
       >
         취소
       </button>
@@ -143,12 +143,12 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
         className={`px-4 py-2 rounded-lg ${
           !selectedProject
             ? "bg-blue-500/30 text-blue-300/70 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700 text-white"
+            : "bg-blue-600 hover:bg-blue-700 text-text-primary"
         } transition-colors flex items-center`}
       >
         {isSubmitting ? (
           <>
-            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>

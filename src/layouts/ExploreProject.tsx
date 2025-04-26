@@ -70,7 +70,7 @@ export default function ExploreProject() {
       <div className="mb-6 flex flex-col md:flex-row gap-4 md:items-center md:space-x-3">
         <div className="relative">
           <select 
-            className="appearance-none bg-gray-900 border border-gray-700/50 rounded-lg pl-4 pr-10 py-2.5 text-sm w-full md:w-48 text-gray-300 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors"
+            className="appearance-none bg-project-page-title-background border border-component-border rounded-lg pl-4 pr-10 py-2.5 text-sm w-full md:w-48 text-text-secondary hover:border-component-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
             onChange={(e) => setSelectedOption(e.target.value)}
             value={selectedOption}
           >
@@ -81,7 +81,7 @@ export default function ExploreProject() {
             <option value="techstack">기술</option>
             <option value="location">위치</option>
           </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-secondary">
             <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a 1 1 0 01-1.414 0l-4-4a 1 1 0 010-1.414z" />
             </svg>
@@ -93,9 +93,9 @@ export default function ExploreProject() {
             placeholder={placeholderMap[selectedOption] || "프로젝트 검색"}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-gray-900 border border-gray-700/50 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-300 placeholder-gray-400 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors"
+            className="w-full bg-project-page-title-background border border-component-border rounded-lg pl-10 pr-4 py-2.5 text-text-secondary placeholder-text-secondary hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
           />
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-secondary">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -104,7 +104,7 @@ export default function ExploreProject() {
       </div>
 
       {filteredProjects.length === 0 && (
-        <div className="text-center text-gray-400 mt-8 p-8 bg-component-background border border-gray-700/50 rounded-lg">
+        <div className="text-center text-text-secondary mt-8 p-8 bg-component-background border border-component-border rounded-lg">
           검색 결과가 없습니다.
         </div>
       )}

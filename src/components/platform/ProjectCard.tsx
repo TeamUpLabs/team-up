@@ -13,15 +13,15 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
 
   console.log(project.participationRequestMembers);
   return (
-    <div className="bg-component-background rounded-lg p-6 border border-gray-700/50 hover:border-purple-500 transition-colors duration-200">
+    <div className="bg-component-background rounded-lg p-6 border border-component-border hover:border-point-color-indigo transition-colors duration-200">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-semibold">{project.title}</h3>
         <div className="space-x-3">
-          <span className="text-sm text-gray-400">{project.members.length}/{project.teamSize}명</span>
-          <span className="text-sm text-green-400">{project.status}</span>
+          <span className="text-sm text-text-secondary">{project.members.length}/{project.teamSize}명</span>
+          <span className="text-sm text-point-color-green">{project.status}</span>
         </div>
       </div>
-      <p className="text-gray-400 mb-4 line-clamp-2 min-h-[3rem]">{project.description}</p>
+      <p className="text-text-secondary mb-4 line-clamp-2 min-h-[3rem]">{project.description}</p>
       <div className="flex items-center space-x-2 mb-4">
         {project.roles.map((role, index) => (
           <Badge key={index} content={role} color="purple" />
@@ -31,7 +31,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
         <div className="flex -space-x-2">
           {
             project.members.map((member => (
-              <div key={member.id} className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-800 text-sm flex align-center justify-center place-items-center">
+              <div key={member.id} className="w-8 h-8 rounded-full bg-component-secondary-background border-2 border-component-border text-sm flex align-center justify-center place-items-center">
                 {member.name.charAt(0)}
               </div>
             )))
@@ -57,7 +57,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
                   }
                 });
               }}
-              className="text-sm text-purple-400 hover:text-purple-300"
+              className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover"
             > 참여 요청 취소 </button>
           ) : (
             <button
@@ -82,13 +82,13 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
                   }
                 });
               }}
-              className="text-sm text-purple-400 hover:text-purple-300"
+              className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover"
             >
               참여 요청하기
             </button>
           )
         ) : (
-          <Link href={`/platform/${project.id}`} className="text-sm text-purple-400 hover:text-purple-300">
+          <Link href={`/platform/${project.id}`} className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover">
             참여하기
           </Link>
         )}

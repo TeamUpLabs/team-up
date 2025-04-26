@@ -64,7 +64,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
         {/* 메인 컨텐츠 영역 */}
       <div className="w-full lg:ml-64 flex-1">
         {/* 헤더 */}
-        <header className="h-16 bg-background/70 border-b border-gray-800 backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-10">
+        <header className="h-16 bg-background/70 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-10">
           <div className="h-full px-4 md:px-6 flex items-center justify-between">
             <div className="flex items-center">
               <button 
@@ -79,11 +79,11 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">
               <button 
-                className="group flex items-center gap-1.5 px-3.5 py-2 bg-white/5 border border-purple-500/20 text-sm font-medium rounded-md transition-all hover:bg-purple-500/10 hover:border-purple-500/40 hover:shadow-sm"
+                className="group flex items-center gap-1.5 px-3.5 py-2 bg-component-background border border-point-color-indigo/20 text-sm font-medium rounded-md transition-all hover:bg-point-color-indigo/10 hover:border-point-color-indigo/40 hover:shadow-sm"
                 onClick={() => setIsModalOpen(true)}
               >
-                <span className="text-purple-400 group-hover:text-purple-300">+</span>
-                <span className="text-purple-400 group-hover:text-purple-300">새 프로젝트</span>
+                <span className="text-point-color-indigo group-hover:text-point-color-indigo-hover">+</span>
+                <span className="text-point-color-indigo group-hover:text-point-color-indigo-hover">새 프로젝트</span>
               </button>
               <UserDropdown />
             </div>

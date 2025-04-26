@@ -9,6 +9,7 @@
   --component-tertiary-background: #1E2938;
   --component-skeleton-background: #1E2938;
   --component-border: #222936;
+  --component-secondary-border: #364152;
 
   --project-page-title-background: #101625;
   --project-page-title-border: #222936;
@@ -20,7 +21,7 @@
   --input-secondary-background: #1B2534;
   --input-border: #222936;
   --input-secondary-border: #4A5565;
-  --input-border-hover: #7175b5;
+  --input-border-hover: #432DD7;
 
   --point-color-purple: #AD47FF;
   --point-color-purple-hover: #9856D6;
@@ -41,7 +42,8 @@
   --color-component-tertiary-background: var(--component-tertiary-background);
   --color-component-skeleton-background: var(--component-skeleton-background);
   --color-component-border: var(--component-border);
-
+  --color-component-secondary-border: var(--component-secondary-border);
+  
   --color-project-page-title-background: var(--project-page-title-background);
   --color-project-page-title-border: var(--project-page-title-border);
 

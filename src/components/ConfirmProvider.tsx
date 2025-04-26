@@ -60,19 +60,19 @@ export default function ConfirmProvider() {
         >
           <div className="max-w-2xl mx-auto px-4 py-3 mt-4">
             <div
-              className="bg-white dark:bg-slate-900 border-0 rounded-xl shadow-lg backdrop-blur-xl transition-all relative overflow-hidden"
+              className="bg-component-background border-0 rounded-xl shadow-lg backdrop-blur-xl transition-all relative overflow-hidden"
             >
               <div className="p-5">
-                <h3 className="text-sm font-medium text-slate-800 dark:text-slate-100 mb-3 flex items-center">
-                  <FontAwesomeIcon icon={faCircleQuestion} className="w-4 h-4 mr-2 text-emerald-500 dark:text-emerald-400" />
+                <h3 className="text-sm font-medium text-text-primary mb-3 flex items-center">
+                  <FontAwesomeIcon icon={faCircleQuestion} className="w-4 h-4 mr-2 text-emerald-400" />
                   확인
                 </h3>
-                <p className="text-slate-600 dark:text-slate-300 text-sm mb-5">{confirm.message}</p>
+                <p className="text-slate-300 text-sm mb-5">{confirm.message}</p>
                 
                 <div className="flex justify-end space-x-3">
                 <button
                   onClick={handleConfirmClose}
-                    className="px-4 py-2 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors duration-150 flex items-center"
+                    className="px-4 py-2 text-xs font-medium text-slate-300 bg-slate-100 bg-slate-800 hover:bg-slate-200 hover:bg-slate-700 rounded-lg transition-colors duration-150 flex items-center"
                   >
                     <FontAwesomeIcon icon={faTimes} className="w-3 h-3 mr-1.5" />
                     취소
@@ -82,7 +82,7 @@ export default function ConfirmProvider() {
                     if (confirm.onConfirm) confirm.onConfirm();
                     handleConfirmClose();
                   }}
-                    className="px-4 py-2 text-xs font-medium text-white bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 rounded-lg transition-colors duration-150 flex items-center"
+                    className="px-4 py-2 text-xs font-medium text-text-primary bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors duration-150 flex items-center"
                   >
                     <FontAwesomeIcon icon={faCheck} className="w-3 h-3 mr-1.5" />
                     확인
@@ -91,9 +91,9 @@ export default function ConfirmProvider() {
               </div>
 
               {/* Progress bar */}
-              <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-100 dark:bg-slate-800">
+              <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-800">
                 <div
-                  className="h-full bg-emerald-500 dark:bg-emerald-400 transition-all duration-100 ease-linear"
+                  className="h-full bg-emerald-400 transition-all duration-100 ease-linear"
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>

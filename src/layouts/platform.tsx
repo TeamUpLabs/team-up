@@ -57,9 +57,9 @@ export default function Platform() {
             placeholder="프로젝트 검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-gray-900 border border-gray-700/50 rounded-lg pl-10 pr-4 py-2.5 text-sm text-gray-300 placeholder-gray-400 hover:border-gray-600 focus:border-purple-500 focus:outline-none transition-colors"
+            className="w-full bg-project-page-title-background border border-component-border rounded-lg pl-10 pr-4 py-2.5 text-text-secondary placeholder-text-secondary hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
           />
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-secondary">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -78,10 +78,10 @@ export default function Platform() {
         <div className="bg-component-background rounded-lg p-6 border border-dashed border-gray-700/50 flex flex-col">
           <div className="flex-1 flex items-center justify-center min-h-[12rem]">
             <div className="text-center">
-              <p className="text-gray-400 mb-2">새로운 프로젝트를 시작해보세요</p>
+              <p className="text-text-secondary mb-2">새로운 프로젝트를 시작해보세요</p>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="text-purple-400 hover:text-purple-300"
+                className="text-point-color-indigo hover:text-point-color-indigo-hover"
               >+ 프로젝트 생성</button>
             </div>
           </div>

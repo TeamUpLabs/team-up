@@ -38,13 +38,13 @@ export default function ModalTemplete({ header, children, footer, isOpen, onClos
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-component-background backdrop-blur-sm p-6 text-left align-middle shadow-xl transition-all border border-gray-700/50 flex flex-col max-h-[90vh]">
+                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-component-background backdrop-blur-sm p-6 text-left align-middle shadow-xl transition-all border border-component-secondary-border flex flex-col max-h-[90vh]">
                   {/* 헤더 섹션 */}
-                  <div className="flex justify-between items-start border-b border-gray-700/50 pb-6">
+                  <div className="flex justify-between items-start border-b border-component-secondary-border pb-6">
                     {header}
                     <button
                       onClick={onClose}
-                      className="text-gray-400 hover:text-white transition-all"
+                      className="text-text-secondary hover:text-text-primary transition-all"
                     >
                       <FontAwesomeIcon icon={faXmark} />
                     </button>
@@ -54,7 +54,7 @@ export default function ModalTemplete({ header, children, footer, isOpen, onClos
                   <div className="mt-6 space-y-6 overflow-y-auto px-1">
                     {children}
                     {footer && (
-                      <div className="border-t border-gray-700/50 pt-6 mt-auto">
+                      <div className="border-t border-component-secondary-border pt-6 mt-auto">
                         {footer}
                       </div>
                     )}

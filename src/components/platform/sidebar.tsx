@@ -41,12 +41,12 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
   const hasParticipationRequests = project?.participationRequestMembers && project.participationRequestMembers.length > 0;
 
   return (
-    <div className={`w-64 fixed h-full border-r border-gray-800 bg-(--color-background) z-30 transition-transform duration-300 lg:translate-x-0 ${
+    <div className={`w-64 fixed h-full border-r border-component-border bg-background z-30 transition-transform duration-300 lg:translate-x-0 ${
       isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
     }`}>
       <div>
         <Link href={titleHref} className="block pt-6 pl-6 pr-6">
-          <h1 className="text-xl font-bold text-white mb-8 text-center">{title}</h1>
+          <h1 className="text-xl font-bold text-text-primary mb-8 text-center">{title}</h1>
         </Link>
         <nav className="space-y-4">
           {navItems.map((item, index) => {
@@ -56,8 +56,8 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
                   <button 
                     onClick={() => setIsChatOpen(!isChatOpen)}
                     className={`w-full flex items-center justify-between ${
-                      item.isActive ? 'text-white font-semibold' : 'text-gray-300'
-                    } hover:text-white`}
+                      item.isActive ? 'text-text-primary font-semibold' : 'text-text-secondary'
+                    } hover:text-text-primary`}
                   >
                     <div className="flex items-center">
                       <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
@@ -94,8 +94,8 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
                   key={index} 
                   href={item.href} 
                   className={`flex items-center pl-6 pr-6 border-l-3 ${
-                    item.isActive ? 'text-white border-purple-500' : 'text-gray-300 border-transparent'
-                  } hover:text-white relative`}
+                    item.isActive ? 'text-text-primary border-point-color-indigo' : 'text-text-secondary border-transparent'
+                  } hover:text-text-primary relative`}
                 >
                   <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
                   {item.label}
@@ -114,8 +114,8 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
                 key={index} 
                 href={item.href} 
                 className={`flex items-center pl-6 pr-6 border-l-3 ${
-                  item.isActive ? 'text-white border-purple-500' : 'text-gray-300 border-transparent'
-                } hover:text-white`}
+                  item.isActive ? 'text-text-primary border-point-color-indigo' : 'text-text-secondary border-transparent'
+                } hover:text-text-primary`}
               >
                 <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
                 {item.label}

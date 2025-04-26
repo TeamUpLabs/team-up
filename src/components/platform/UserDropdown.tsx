@@ -38,17 +38,17 @@ export default function UserDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center h-9 w-9 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200 focus:outline-none"
+        className="flex items-center justify-center h-9 w-9 rounded-full bg-component-tertiary-background text-text-primary transition-colors duration-200 focus:outline-none"
         aria-label="User menu"
       >
         {user ? user.name.charAt(0) : "?"}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-md bg-white dark:bg-gray-800 shadow-md z-50 border border-gray-200 dark:border-gray-700">
-          <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{user ? user.name : "로그인"}</p>
-            {user?.email && <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>}
+        <div className="absolute right-0 mt-2 w-56 rounded-md bg-component-tertiary-background shadow-md z-50 border border-component-border">
+          <div className="px-4 py-2 border-b border-component-secondary-border">
+            <p className="text-sm font-medium text-text-primary">{user ? user.name : "로그인을 해주세요."}</p>
+            {user?.email && <p className="text-xs text-text-secondary">{user.email}</p>}
           </div>
           
           <div className="py-1">
@@ -64,7 +64,7 @@ export default function UserDropdown() {
             />
           </div>
           
-          <div className="border-t border-gray-200 dark:border-gray-700"></div>
+          <div className="border-t border-component-secondary-border"></div>
           
           <div className="py-1">
             <MenuItem 
@@ -74,14 +74,14 @@ export default function UserDropdown() {
             />
           </div>
           
-          <div className="border-t border-gray-200 dark:border-gray-700"></div>
+          <div className="border-t border-component-secondary-border"></div>
           
           <div className="py-1">
             <MenuItem 
               icon={faRightFromBracket}
               text="로그아웃"
               onClick={logout}
-              className="text-red-600 dark:text-red-400"
+              className="text-red-400"
             />
           </div>
         </div>
@@ -101,7 +101,7 @@ function MenuItem({ icon, text, onClick, className = "" }: MenuItemProps) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-4 py-2 flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 ${className}`}
+      className={`w-full text-left px-4 py-2 flex items-center gap-2 text-sm text-gray-300 hover:bg-gray-700 ${className}`}
     >
       <FontAwesomeIcon icon={icon} className="w-4 h-4" />
       {text}

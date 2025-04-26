@@ -112,8 +112,8 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
   const modalHeader = (
     <div>
-      <h3 className="text-xl font-bold text-white">새로운 프로젝트 생성</h3>
-      <p className="text-purple-400 text-sm mt-1">팀원들과 함께할 새로운 프로젝트를 만들어보세요</p>
+      <h3 className="text-xl font-bold text-text-primary">새로운 프로젝트 생성</h3>
+      <p className="text-point-color-purple text-sm mt-1">팀원들과 함께할 새로운 프로젝트를 만들어보세요</p>
     </div>
   );
 
@@ -122,7 +122,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
       <div className="space-y-6 mb-1">
         <div>
           <label htmlFor="title" className="block text-sm font-medium mb-1">
-            프로젝트 이름 <span className="text-purple-400 ml-1">*</span>
+            프로젝트 이름 <span className="text-point-color-purple ml-1">*</span>
           </label>
           <input
             type="text"
@@ -130,7 +130,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
             placeholder="프로젝트 이름을 입력하세요"
             required
           />
@@ -138,7 +138,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
         <div>
           <label htmlFor="description" className="block text-sm font-medium mb-1">
-            프로젝트 설명 <span className="text-purple-400 ml-1">*</span>
+            프로젝트 설명 <span className="text-point-color-purple ml-1">*</span>
           </label>
           <textarea
             id="description"
@@ -146,7 +146,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             rows={3}
             value={formData.description}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 resize-none placeholder:text-gray-400"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors resize-none"
             placeholder="프로젝트에 대한 간략한 설명을 입력하세요"
             required
           />
@@ -155,14 +155,14 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <div>
             <label htmlFor="projectType" className="block text-sm font-medium mb-1">
-              프로젝트 카테고리 <span className="text-purple-400 ml-1">*</span>
+              프로젝트 카테고리 <span className="text-point-color-purple ml-1">*</span>
             </label>
             <select
               id="projectType"
               name="projectType"
               value={formData.projectType}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 appearance-none"
+              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors appearance-none"
               required
             >
               <option value="">카테고리 선택</option>
@@ -177,7 +177,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
           <div>
             <label htmlFor="endDate" className="block text-sm font-medium mb-1">
-              프로젝트 종료일 <span className="text-purple-400 ml-1">*</span>
+              프로젝트 종료일 <span className="text-point-color-purple ml-1">*</span>
             </label>
             <input
               type="date"
@@ -185,7 +185,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               name="endDate"
               value={formData.endDate}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
               required
             />
           </div>
@@ -196,7 +196,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
           <div>
             <label htmlFor="roles" className="block text-sm font-medium mb-1">
-              필요한 역할 <span className="text-purple-400 ml-1">*</span>
+              필요한 역할 <span className="text-point-color-purple ml-1">*</span>
             </label>
             <input
               type="text"
@@ -207,7 +207,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               onKeyDown={(e) => handleKeyDown("role", e)}
               onCompositionStart={() => setIsComposing(true)}
               onCompositionEnd={() => setIsComposing(false)}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
               placeholder="역할을 입력하고 Enter 키를 누르세요"
             />
             <div className="mt-2 flex flex-wrap gap-2">
@@ -219,7 +219,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
           <div>
             <label htmlFor="techStack" className="block text-sm font-medium mb-1">
-              필요한 기술 <span className="text-purple-400 ml-1">*</span>
+              필요한 기술 <span className="text-point-color-purple ml-1">*</span>
             </label>
             <input
               type="text"
@@ -230,7 +230,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               onKeyDown={(e) => handleKeyDown("techStack", e)}
               onCompositionStart={() => setIsComposing(true)}
               onCompositionEnd={() => setIsComposing(false)}
-              className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
               placeholder="기술을 입력하고 Enter 키를 누르세요"
             />
             <div className="mt-2 flex flex-wrap gap-2">
@@ -243,7 +243,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <div>
               <label htmlFor="location" className="block text-sm font-medium mb-1">
-                위치 <span className="text-purple-400 ml-1">*</span>
+                위치 <span className="text-point-color-purple ml-1">*</span>
               </label>
               <input
                 type="text"
@@ -251,7 +251,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400"
+                className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
                 placeholder="원격, 서울"
                 required
               />
@@ -259,7 +259,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
             <div>
               <label htmlFor="teamSize" className="block text-sm font-medium mb-1">
-                팀 규모 <span className="text-purple-400 ml-1">*</span>
+                팀 규모 <span className="text-point-color-purple ml-1">*</span>
               </label>
               <input
                 type="number"
@@ -267,7 +267,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 name="teamSize"
                 value={formData.teamSize}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors placeholder:text-text-secondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="5"
                 required
               />

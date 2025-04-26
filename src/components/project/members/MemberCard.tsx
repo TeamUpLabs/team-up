@@ -4,10 +4,11 @@ interface MemberCardProps {
   member: Member;
   isLeader: boolean;
   isManager: boolean;
+  isExplore?: boolean;
   onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-export default function MemberCard({ member, isLeader, isManager, onClick }: MemberCardProps) {
+export default function MemberCard({ member, isLeader, isManager, isExplore, onClick }: MemberCardProps) {
   return (
     <div
       className="bg-component-background backdrop-blur p-6 rounded-lg shadow-lg 
@@ -25,9 +26,11 @@ export default function MemberCard({ member, isLeader, isManager, onClick }: Mem
           </h2>
         </div>
         <div className="flex flex-row gap-2 items-end">
-          {isLeader ? (
-            <div className="flex items-center bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
-              <span className="text-sm">프로젝트 리더</span>
+          {!isExplore && (
+            <>
+              {isLeader ? (
+                <div className="flex items-center bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                  <span className="text-sm">프로젝트 리더</span>
             </div>
           ) : isManager ? (
             <div className="flex items-center bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full">
@@ -36,7 +39,9 @@ export default function MemberCard({ member, isLeader, isManager, onClick }: Mem
           ) : (
             <div className="flex items-center bg-green-500/20 text-green-400 px-3 py-1 rounded-full">
               <span className="text-sm">멤버</span>
-            </div>
+              </div>
+            )}
+          </>
           )}
           <div className="flex items-center bg-component-secondary-background px-3 py-1 rounded-full">
             <span className={`w-3 h-3 rounded-full ${member.status === "활성" ? "bg-emerald-500" :
