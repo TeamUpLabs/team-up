@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faXmark, faTrash, faSearch, faUserGroup, faShield } from '@fortawesome/free-solid-svg-icons';
 import { Member } from "@/types/Member";
 import PermissionChangeModal from "@/components/project/setting/PermissionChangeModal";
-import { updateProjectMemberPermission, allowParticipationRequest, rejectParticipationRequest } from "@/hooks/getProjectData";
+import { updateProjectMemberPermission, allowParticipationRequest, rejectParticipationRequest, kickOutMemberFromProject } from "@/hooks/getProjectData";
 import { useAuthStore } from "@/auth/authStore";
 
 interface TeamSettingTabProps {
@@ -83,11 +83,13 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
     setSelectedMember(null);
   };
 
-  const handleDeleteMember = async (member: Member) => {
+  const handleKickOutMember = (member: Member) => {
     try {
-      useAuthStore.getState().setConfirm("정말로 이 팀원을 퇴출하시겠습니까?", () => {
+      useAuthStore.getState().setConfirm("정말로 이 팀원을 퇴출하시겠습니까?", async () => {
+        await kickOutMemberFromProject(project.id, member.id);
         useAuthStore.getState().setAlert(`${member.name}님이 퇴출되었습니다.`, "success");
         useAuthStore.getState().clearConfirm();
+        window.location.reload();
       });
     } catch (error) {
       useAuthStore.getState().setAlert("팀원 퇴출에 실패했습니다.", "error");
@@ -260,7 +262,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                       </button>
                       <button
                         className="text-gray-400 hover:text-red-400 p-2 rounded transition-colors"
-                        onClick={() => handleDeleteMember(member)}
+                        onClick={() => handleKickOutMember(member)}
                       >
                         <FontAwesomeIcon icon={faTrash} />
                       </button>

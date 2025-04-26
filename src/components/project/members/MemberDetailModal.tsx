@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 import { useAuthStore } from '@/auth/authStore';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/Badge';
-
+import { kickOutMemberFromProject } from '@/hooks/getProjectData';
 interface MemberDetailModalProps {
   member: Member;
   isOpen: boolean;
@@ -40,6 +40,21 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
     const displayHours = hours <= 12 ? hours : hours - 12;
 
     return `${period} ${displayHours}:${minutes}`;
+  };
+
+  const handleKickOutMember = () => {
+    useAuthStore.getState().setConfirm("팀원을 퇴출하시겠습니까?", async () => {
+      try {
+        await kickOutMemberFromProject(params?.projectId as string, member.id);
+        useAuthStore.getState().setAlert("팀원이 퇴출되었습니다.", "success");
+        useAuthStore.getState().clearConfirm();
+        onClose();
+        window.location.reload();
+      } catch (error) {
+        console.error("Error kicking out member from project:", error);
+        useAuthStore.getState().setAlert("팀원 퇴출에 실패했습니다.", "error");
+      }
+    });
   };
 
   // Header content for ModalTemplete
@@ -75,12 +90,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
   // Footer content for ModalTemplete
   const footerContent = user?.id === leader_id && member.id != user?.id ? (
     <button
-      onClick={() => {
-        useAuthStore.getState().setConfirm("정말로 이 팀원을 퇴출하시겠습니까?", () => {
-          console.log('팀원 퇴출:', member.name);
-          onClose();
-        });
-      }}
+      onClick={handleKickOutMember}
       className="w-full px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400 
             rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2
             hover:text-red-300"

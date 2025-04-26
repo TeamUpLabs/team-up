@@ -283,3 +283,22 @@ export const rejectParticipationRequest = async (project_id: string, member_id: 
     throw error;
   }
 }
+
+export const kickOutMemberFromProject = async (project_id: string, member_id: number) => {
+  try {
+    const res = await server.put(`/project/${project_id}/member/${member_id}/kick`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to kick out member from project");
+    }
+  } catch (error) {
+    console.error("Error kicking out member from project:", error);
+    throw error;
+  }
+}
