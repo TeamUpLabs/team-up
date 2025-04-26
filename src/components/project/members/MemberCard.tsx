@@ -25,14 +25,17 @@ export default function MemberCard({ member, isLeader, isManager, onClick }: Mem
           </h2>
         </div>
         <div className="flex flex-row gap-2 items-end">
-          {isLeader && (
+          {isLeader ? (
             <div className="flex items-center bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
               <span className="text-sm">프로젝트 리더</span>
             </div>
-          )}
-          {isManager && (
+          ) : isManager ? (
             <div className="flex items-center bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full">
               <span className="text-sm">관리자</span>
+            </div>
+          ) : (
+            <div className="flex items-center bg-green-500/20 text-green-400 px-3 py-1 rounded-full">
+              <span className="text-sm">멤버</span>
             </div>
           )}
           <div className="flex items-center bg-gray-800/50 px-3 py-1 rounded-full">

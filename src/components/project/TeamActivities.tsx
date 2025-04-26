@@ -5,7 +5,7 @@ import { useProject } from "@/contexts/ProjectContext";
 
 export default function TeamActivities() {
   const bgColors = [
-    'bg-blue-500', 'bg-red-500', 'bg-green-500', 
+    'bg-blue-500', 'bg-red-500', 'bg-green-500',
     'bg-yellow-500', 'bg-purple-500', 'bg-pink-500',
     'bg-indigo-500', 'bg-teal-500'
   ];
@@ -71,7 +71,22 @@ export default function TeamActivities() {
                   {member.name.charAt(0)}
                 </div>
                 <div className="ml-3">
-                  <p className="text-white">{member.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-white">{member.name}</p>
+                    {member.id === project?.leader.id ? (
+                      <div className="flex items-center bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                        <span className="text-xs">프로젝트 리더</span>
+                      </div>
+                    ) : project?.manager.some((manager) => manager.id === member.id) ? (
+                      <div className="flex items-center bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full">
+                        <span className="text-xs">관리자</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center bg-green-500/20 text-green-400 px-3 py-1 rounded-full">
+                        <span className="text-xs">멤버</span>
+                      </div>
+                    )}
+                  </div>
                   <p className="text-sm text-gray-400">{member.role}</p>
                   <div className="flex gap-1 align-center">
                     <p className="text-xs text-gray-500">현재 작업: </p>
@@ -89,10 +104,10 @@ export default function TeamActivities() {
               <div className="flex flex-col items-end">
                 <div className="flex items-center">
                   <span className={`w-3 h-3 bg-${member.status === "활성"
-                      ? "green"
-                      : member.status === "자리비움"
-                        ? "yellow"
-                        : "gray"
+                    ? "green"
+                    : member.status === "자리비움"
+                      ? "yellow"
+                      : "gray"
                     }-500 rounded-full`}></span>
                   <span className="ml-2 text-gray-300">{member.status}</span>
                 </div>
