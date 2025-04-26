@@ -23,8 +23,8 @@ export default function Calendar({
 }: CalendarProps) {
 
   return (
-    <div className="flex-1 bg-gray-800 rounded-xl shadow-lg border border-gray-700 flex flex-col overflow-hidden">
-      <div className="px-4 sm:px-6 py-4 border-b border-gray-700">
+    <div className="flex-1 bg-component-background rounded-xl shadow-lg border border-gray-700/50 flex flex-col overflow-hidden">
+      <div className="px-4 sm:px-6 py-4 border-b border-gray-700/50">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-100">일정 관리</h1>
           <div className="flex items-center space-x-3 sm:space-x-4">
@@ -49,31 +49,34 @@ export default function Calendar({
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-px bg-gray-900">
+      <div className="grid grid-cols-7 border-b border-gray-700/50">
         {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
           <div 
             key={day} 
-            className={`bg-gray-800 py-2 text-center font-medium text-sm sm:text-base ${index === 0 ? 'text-red-300' : index === 6 ? 'text-blue-300' : 'text-gray-300'}`}
+            className={`py-2 text-center font-medium text-sm sm:text-base border-r last:border-r-0 border-gray-700/50 ${index === 0 ? 'text-red-300' : index === 6 ? 'text-blue-300' : 'text-gray-300'}`}
           >
             {day}
           </div>
         ))}
       </div>
 
-      <div className="flex-1 grid grid-cols-7 gap-px bg-gray-900 overflow-y-auto">
+      <div className="flex-1 grid grid-cols-7 overflow-y-auto">
         {days.map((day, index) => {
           const dayTasks = tasks?.filter(task => task?.dueDate === format(day, 'yyyy-MM-dd'));
           const isWeekend = index % 7 === 0 || index % 7 === 6;
           const isSameMonthDay = isSameMonth(day, currentDate);
           const isTodayDay = isToday(day);
+          const isLastInRow = (index + 1) % 7 === 0;
+          const isLastRow = index >= days.length - 7;
 
           return (
             <div
               key={day.toString()}
               className={`relative min-h-[80px] sm:min-h-[100px] p-1 sm:p-2 transition-colors
+                border-r border-b ${isLastInRow ? 'border-r-0' : ''} ${isLastRow ? 'border-b-0' : ''} border-gray-700/50
                 ${!isSameMonthDay
-                  ? 'bg-gray-850'
-                  : 'bg-gray-800 hover:bg-gray-700'}
+                  ? 'bg-gray-800'
+                  : 'bg-component-background hover:bg-gray-800/50'}
                 ${isTodayDay ? 'ring-2 ring-blue-500 ring-inset' : ''}
                 ${isWeekend && isSameMonthDay ? 'bg-gray-780' : ''}`}
             >
