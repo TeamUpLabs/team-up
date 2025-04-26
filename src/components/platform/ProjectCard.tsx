@@ -13,7 +13,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
 
   console.log(project.participationRequestMembers);
   return (
-    <div className="bg-component-background rounded-lg p-6 border border-component-border hover:border-point-color-indigo transition-colors duration-200">
+    <div className="bg-component-background rounded-lg shadow-md p-6 border border-component-border hover:border-point-color-indigo transition-colors duration-200">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-semibold">{project.title}</h3>
         <div className="space-x-3">

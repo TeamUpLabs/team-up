@@ -256,7 +256,7 @@ export default function SignUpLayout() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-xl bg-component-background rounded-lg shadow-xl p-8 border border-component-border">
+      <div className="w-full max-w-xl bg-component-background rounded-lg shadow-md p-8 border border-component-border">
         <div className="text-center mb-8 relative">
           {step > 1 && (
             <div
@@ -349,7 +349,7 @@ export default function SignUpLayout() {
 
           <button
             type="submit"
-            className="group w-full py-3 px-4 bg-point-color-indigo hover:bg-point-color-indigo-hover text-text-primary font-medium rounded-md shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-point-color-indigo mt-8 flex items-center justify-center"
+            className="group w-full py-3 px-4 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white font-medium rounded-md shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-point-color-indigo mt-8 flex items-center justify-center"
           >
             {step === 5 ? "회원가입" : "계속"}
             <span

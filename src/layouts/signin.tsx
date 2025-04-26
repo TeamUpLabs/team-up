@@ -23,7 +23,7 @@ export default function SignIn() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
-            <div className="w-full max-w-md bg-component-background rounded-lg shadow-xl p-8 border border-component-border">
+            <div className="w-full max-w-md bg-component-background rounded-lg shadow-md p-8 border border-component-border">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-text-primary">로그인</h1>
                     <p className="text-text-secondary mt-2">계정에 접속하여 팀원을 찾아보세요</p>
@@ -64,7 +64,7 @@ export default function SignIn() {
                                 <input 
                                     id="remember" 
                                     type="checkbox" 
-                                    className="appearance-none h-5 w-5 border border-input-border rounded bg-input-background checked:bg-point-color-indigo checked:border-point-color-indigo focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:ring-offset-1 focus:ring-offset-input-background transition-colors duration-200 cursor-pointer peer"
+                                    className="appearance-none h-5 w-5 border border-input-border rounded bg-input-background checked:border-point-color-indigo focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:ring-offset-1 focus:ring-offset-input-background transition-colors duration-200 cursor-pointer peer"
                                 />
                                 <svg 
                                     className="absolute w-3 h-3 text-text-secondary left-1 top-1 opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity duration-200"
@@ -83,7 +83,7 @@ export default function SignIn() {
                     
                     <button 
                         type="submit" 
-                        className="w-full py-3 px-4 bg-point-color-indigo hover:bg-point-color-indigo-hover text-text-primary font-medium rounded-md shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-point-color-indigo"
+                        className="w-full py-3 px-4 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white font-medium rounded-md shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-point-color-indigo"
                         onClick={handleSubmit}
                     >
                         로그인

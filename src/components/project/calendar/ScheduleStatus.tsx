@@ -7,7 +7,7 @@ interface ScheduleStatusProps {
 
 export default function ScheduleStatus({ tasks }: ScheduleStatusProps) {
   return (
-    <div className="mt-4 bg-component-background rounded-xl shadow-lg border border-component-border p-4">
+    <div className="mt-4 bg-component-background rounded-lg border border-component-border p-4">
       <h3 className="text-lg font-semibold text-text-primary mb-4">일정 현황</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {['not-started', 'in-progress', 'done'].map((status) => (

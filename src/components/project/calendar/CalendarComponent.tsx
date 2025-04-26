@@ -23,14 +23,14 @@ export default function Calendar({
 }: CalendarProps) {
 
   return (
-    <div className="flex-1 bg-component-background rounded-xl shadow-lg border border-component-border flex flex-col overflow-hidden">
+    <div className="flex-1 bg-component-background rounded-lg border border-component-border flex flex-col overflow-hidden">
       <div className="px-4 sm:px-6 py-4 border-b border-component-border">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h1 className="text-xl sm:text-2xl font-bold text-text-primary">일정 관리</h1>
           <div className="flex items-center space-x-3 sm:space-x-4">
             <button 
               onClick={onPreviousMonth} 
-              className="p-2 hover:bg-gray-700 active:bg-gray-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              className="p-2 hover:bg-component-secondary-background active:bg-component-secondary-background rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               aria-label="이전 달"
             >
               <FontAwesomeIcon icon={faChevronLeft} className="w-4 h-4 sm:w-5 sm:h-5 text-text-secondary" />
@@ -40,7 +40,7 @@ export default function Calendar({
             </h2>
             <button 
               onClick={onNextMonth} 
-              className="p-2 hover:bg-gray-700 active:bg-gray-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              className="p-2 hover:bg-component-secondary-background active:bg-component-secondary-background rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               aria-label="다음 달"
             >
               <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4 sm:w-5 sm:h-5 text-text-secondary" />
@@ -77,7 +77,7 @@ export default function Calendar({
                 ${!isSameMonthDay
                   ? 'bg-component-secondary-background'
                   : 'bg-component-background hover:bg-component-background/80'}
-                ${isTodayDay ? 'ring-2 ring-blue-500 ring-inset' : ''}
+                ${isTodayDay ? 'ring-2 ring-blue-500 ring-inset rounded-lg' : ''}
                 ${isWeekend && isSameMonthDay ? 'bg-component-background' : ''}`}
             >
               <p className={`text-xs sm:text-sm font-medium
@@ -85,7 +85,7 @@ export default function Calendar({
                 ${isTodayDay ? 'text-point-color-purple font-bold' : ''}
                 ${index % 7 === 0 && isSameMonthDay ? 'text-red-300' : ''}
                 ${index % 7 === 6 && isSameMonthDay ? 'text-blue-300' : ''}
-                ${isSameMonthDay && !isWeekend && !isTodayDay ? 'text-gray-200' : ''}`}>
+                ${isSameMonthDay && !isWeekend && !isTodayDay ? 'text-text-secondary' : ''}`}>
                 {format(day, 'd')}
               </p>
               <div className="mt-1 space-y-1 max-h-[60px] sm:max-h-[80px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">

@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
   faBell,
-  faGear,
   faRightFromBracket,
   faMoon,
   faSun,
@@ -60,19 +59,13 @@ export default function UserDropdown() {
               icon={faUser}
               text="내 프로필"
               onClick={() => { setIsOpen(false); window.location.href = "/platform/profile"; }}
+              className="text-text-secondary"
             />
             <MenuItem
               icon={faBell}
               text="알림"
               onClick={() => { setIsOpen(false); window.location.href = "/platform/notifications"; }}
-            />
-
-            <div className="border-t border-component-secondary-border"></div>
-
-            <MenuItem
-              icon={faGear}
-              text="설정"
-              onClick={() => { setIsOpen(false); window.location.href = "/platform/settings"; }}
+              className="text-text-secondary"
             />
 
             <div className="border-t border-component-secondary-border"></div>
@@ -80,10 +73,11 @@ export default function UserDropdown() {
             <MenuItem
               icon={isDark ? faSun : faMoon}
               text={isDark ? "라이트 모드" : "다크 모드"}
-              onClick={() => { 
+              onClick={() => {
                 toggleDarkMode();
                 setIsOpen(false);
               }}
+              className="text-text-secondary"
             />
 
             <div className="border-t border-component-secondary-border"></div>
@@ -112,7 +106,7 @@ function MenuItem({ icon, text, onClick, className = "" }: MenuItemProps) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-4 py-2 flex items-center gap-2 text-sm text-text-secondary hover:bg-component-secondary-background ${className}`}
+      className={`w-full text-left px-4 py-2 flex items-center gap-2 text-sm hover:bg-component-secondary-background ${className}`}
     >
       <FontAwesomeIcon icon={icon} className="w-4 h-4" />
       {text}

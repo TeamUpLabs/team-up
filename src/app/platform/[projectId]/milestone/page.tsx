@@ -40,7 +40,7 @@ export default function MilestonePage() {
 
   return (
     <div className="py-6 px-2 sm:px-4 md:px-6">
-      <div className="shadow-lg">
+      <div>
         {/* Header Section */}
         <div className="flex justify-between items-center mb-6 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
           <div>
@@ -59,7 +59,7 @@ export default function MilestonePage() {
         {/* Filter Section */}
         <div className="flex gap-4 mb-6">
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'all' ? 'bg-point-color-indigo text-text-primary' : 'text-text-secondary hover:bg-point-color-indigo/20'
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'all' ? 'bg-point-color-indigo text-white' : 'text-text-secondary hover:bg-point-color-indigo/20'
               }`}
             onClick={() => setFilter('all')}
           >
@@ -68,7 +68,7 @@ export default function MilestonePage() {
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'not-started' ? 'bg-point-color-indigo text-text-primary' : 'text-text-secondary hover:bg-point-color-indigo/20'
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'not-started' ? 'bg-point-color-indigo text-white' : 'text-text-secondary hover:bg-point-color-indigo/20'
               }`}
             onClick={() => setFilter('not-started')}
           >
@@ -77,7 +77,7 @@ export default function MilestonePage() {
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'in-progress' ? 'bg-point-color-indigo text-text-primary' : 'text-text-secondary hover:bg-point-color-indigo/20'
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'in-progress' ? 'bg-point-color-indigo text-white' : 'text-text-secondary hover:bg-point-color-indigo/20'
               }`}
             onClick={() => setFilter('in-progress')}
           >
@@ -86,7 +86,7 @@ export default function MilestonePage() {
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'done' ? 'bg-point-color-indigo text-text-primary' : 'text-text-secondary hover:bg-point-color-indigo/20'
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'done' ? 'bg-point-color-indigo text-white' : 'text-text-secondary hover:bg-point-color-indigo/20'
               }`}
             onClick={() => setFilter('done')}
           >

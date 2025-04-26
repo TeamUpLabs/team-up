@@ -14,7 +14,7 @@ export default function Header() {
             <Link href="#" className="hover:text-point-color-purple transition-colors duration-200">멘토링</Link>
             <Link href="#" className="hover:text-point-color-purple transition-colors duration-200">이벤트</Link>
           </nav>
-          <Link href="/signin" className="bg-point-color-purple hover:bg-point-color-purple-hover px-5 py-2 rounded-md text-sm font-medium transition-colors duration-200 shadow-md shadow-point-color-purple/30">
+          <Link href="/signin" className="text-white bg-point-color-purple hover:bg-point-color-purple-hover px-5 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
             시작하기
           </Link>
         </div>

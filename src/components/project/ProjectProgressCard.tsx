@@ -23,7 +23,7 @@ export default function ProjectProgressCard() {
   const inProgressTasks = project?.tasks.filter(task => task.status === 'in-progress').length ?? 0;
 
   const TaskLabelRender: TaskLabelRenderType[] = [
-    { label: '총 작업', color: 'text-white', value: totalTasks },
+    { label: '총 작업', color: 'text-text-primary', value: totalTasks },
     { label: '진행중', color: 'text-blue-500', value: inProgressTasks },
     { label: '완료', color: 'text-green-500', value: completedTasks }
   ]
@@ -32,7 +32,7 @@ export default function ProjectProgressCard() {
 
   if (isLoading) {
     return (
-      <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg border border-component-border">
+      <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl sm:text-2xl font-bold text-text-primary">프로젝트 진행률</h1>
           <div className="flex items-center text-text-secondary">
@@ -66,7 +66,7 @@ export default function ProjectProgressCard() {
   }
 
   return (
-    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg border border-component-border">
+    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl sm:text-2xl font-bold text-text-primary">프로젝트 진행률</h1>
         <Link href={`/platform/${project?.id}/tasks`} className="flex items-center text-text-secondary hover:text-text-primary">

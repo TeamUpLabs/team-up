@@ -11,7 +11,7 @@ interface MemberCardProps {
 export default function MemberCard({ member, isLeader, isManager, isExplore, onClick }: MemberCardProps) {
   return (
     <div
-      className="bg-component-background backdrop-blur p-6 rounded-lg shadow-lg 
+      className="bg-component-background backdrop-blur p-6 rounded-lg shadow-md
                 transition-all duration-300 border border-component-border  
                 hover:border-point-color-indigo-hover cursor-pointer space-y-3"
       onClick={onClick}

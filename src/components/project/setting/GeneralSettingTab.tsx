@@ -160,7 +160,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
   };
 
   return (
-    <div className="bg-component-background border border-component-border rounded-xl shadow-2xl overflow-hidden">
+    <div className="bg-component-background border border-component-border rounded-lg overflow-hidden">
       <div className="relative">
         <div className="absolute inset-0 border-b border-component-border" />
         <div className="relative px-6 py-4 flex justify-between items-center">
@@ -180,7 +180,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   useAuthStore.getState().setAlert("프로젝트 리더와 관리자만 편집할 수 있습니다.", "warning");
                 }
               }}
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-md transition-all shadow-md backdrop-blur-sm flex items-center gap-2"
+              className="px-4 py-2 bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-primary border border-component-border font-medium rounded-md transition-all backdrop-blur-sm flex items-center gap-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -188,7 +188,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               편집하기
             </button>
           ) : (
-            <div className="px-4 py-2 bg-amber-400/20 text-amber-400 rounded-md font-medium shadow-md backdrop-blur-sm">
+            <div className="px-4 py-2 bg-amber-400/20 text-amber-400 border border-amber-400/20 rounded-md font-medium backdrop-blur-sm">
               편집 모드
             </div>
           )}
@@ -198,7 +198,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
       {/* Main content */}
       <div className="p-6">
         {isEditing && (
-          <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-lg p-4 mb-8 text-indigo-200 flex items-start gap-3">
+          <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-lg p-4 mb-8 text-indigo-400 flex items-start gap-3">
             <svg className="h-6 w-6 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -212,7 +212,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column: Basic info */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden  border border-component-border">
               <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
@@ -267,7 +267,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               </div>
             </div>
 
-            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden  border border-component-border">
               <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-400" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
@@ -310,18 +310,18 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                     value={formData.location}
                     onChange={handleChange}
                     readOnly={!isEditing}
-                    className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                    className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
-              <div className="border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden  border border-component-border">
+              <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                 </svg>
-                <h3 className="text-lg font-semibold text-primary">일정 정보</h3>
+                <h3 className="text-lg font-semibold text-text-primary">일정 정보</h3>
               </div>
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -333,7 +333,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                       value={formData.startDate}
                       onChange={handleChange}
                       readOnly={!isEditing}
-                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                     />
                   </div>
 
@@ -345,7 +345,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                       value={formData.endDate}
                       onChange={handleChange}
                       readOnly={!isEditing}
-                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                     />
                   </div>
                 </div>
@@ -355,7 +355,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
 
           {/* Right column: Skills, roles, access */}
           <div className="space-y-6">
-            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden  border border-component-border">
               <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -394,7 +394,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                       />
                       <button
                         onClick={handleAddTechItem}
-                        className="bg-blue-600 hover:bg-blue-700 text-primary px-4 rounded-r-lg flex items-center"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 rounded-r-lg flex items-center"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -406,7 +406,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               </div>
             </div>
 
-            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden  border border-component-border">
               <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-400" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
@@ -457,7 +457,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               </div>
             </div>
 
-            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden  border border-component-border">
               <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
@@ -486,7 +486,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               </div>
             </div>
 
-            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden  border border-component-border">
               <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
@@ -521,7 +521,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
             <button
               onClick={handleCancel}
               disabled={isLoading}
-              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-2 shadow-lg"
+              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-2 "
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -531,7 +531,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
             <button
               onClick={handleSave}
               disabled={isLoading}
-              className={`px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-all flex items-center gap-2 shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={`px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-all flex items-center gap-2  ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {isLoading ? (
                 <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

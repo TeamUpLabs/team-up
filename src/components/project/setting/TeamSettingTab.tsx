@@ -138,7 +138,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   };
 
   return (
-    <div className="bg-component-background border border-component-border rounded-xl shadow-2xl overflow-hidden">
+    <div className="bg-component-background border border-component-border rounded-xl overflow-hidden">
       <h2 className="text-lg font-semibold text-text-primary border-b border-component-border px-6 py-4 flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -229,7 +229,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
             </div>
           </div>
 
-          <div className="divide-y divide-gray-700">
+          <div className="divide-y divide-component-border">
             {filteredMembers?.map((member) => (
               <div key={member.id} className="px-4 py-3 bg-component-secondary-background hover:bg-component-secondary-background/60 transition-colors">
                 <div className="flex justify-between items-center">
@@ -255,7 +255,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                   {isCurrentUserLeaderOrManager && member.id !== project.leader.id && (
                     <div className="flex items-center gap-2">
                       <button
-                        className="bg-gray-700 hover:bg-gray-600 text-gray-200 rounded px-3 py-1.5 text-sm transition-colors"
+                        className="bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-primary rounded px-3 py-1.5 text-sm transition-colors border border-component-border"
                         onClick={() => openRoleModal(member)}
                       >
                         권한 변경

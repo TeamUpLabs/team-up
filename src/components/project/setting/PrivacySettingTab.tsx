@@ -1,6 +1,6 @@
 export default function PrivacySettingTab() {
   return (
-    <div className="bg-component-background border border-component-border rounded-xl shadow-2xl overflow-hidden">
+    <div className="bg-component-background border border-component-border rounded-xl overflow-hidden">
       <h2 className="text-xl font-semibold text-text-primary border-b border-component-border px-6 py-4 flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />

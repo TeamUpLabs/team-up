@@ -37,7 +37,7 @@ export default function DeleteProjectConfirmModal({ isOpen, onClose }: DeletePro
   const footer = (
     <div className="flex justify-end gap-2">
       <button 
-        className="px-4 py-2 bg-component-tertiary-background hover:bg-component-tertiary-background/60 text-text-primary rounded-lg transition-colors"
+        className="px-4 py-2 bg-component-tertiary-background hover:bg-component-tertiary-background/60 text-text-primary rounded-lg transition-colors border border-component-border"
         onClick={onClose}
       >
         취소
