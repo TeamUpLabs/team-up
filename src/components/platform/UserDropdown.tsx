@@ -6,7 +6,6 @@ import {
   faBell,
   faGear,
   faRightFromBracket,
-  faMoon,
 } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
@@ -72,14 +71,6 @@ export default function UserDropdown() {
               icon={faGear}
               text="설정"
               onClick={() => { setIsOpen(false); window.location.href = "/platform/settings"; }}
-            />
-            <MenuItem 
-              icon={faMoon}
-              text="다크모드"
-              onClick={() => {
-                setIsOpen(false);
-                // 여기에 다크모드 토글 핸들러 연결
-              }}
             />
           </div>
           
