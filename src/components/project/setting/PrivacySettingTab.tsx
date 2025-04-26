@@ -8,11 +8,11 @@ export default function PrivacySettingTab() {
         개인정보 보호 설정
       </h2>
 
-      <div className="p-6 space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="p-6 space-y-5">
+        <div className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-gray-700/30 transition-all hover:border-gray-600/50">
           <div>
             <h3 className="text-gray-200 font-medium">활동 로그</h3>
-            <p className="text-gray-400 text-sm">다른 사용자가 내 활동 로그를 볼 수 있습니다.</p>
+            <p className="text-gray-400 text-sm mt-1">다른 사용자가 내 활동 로그를 볼 수 있습니다.</p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" value="" className="sr-only peer" defaultChecked />
@@ -20,10 +20,10 @@ export default function PrivacySettingTab() {
           </label>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-gray-700/30 transition-all hover:border-gray-600/50">
           <div>
             <h3 className="text-gray-200 font-medium">프로필 표시</h3>
-            <p className="text-gray-400 text-sm">다른 사용자에게 내 프로필이 표시됩니다.</p>
+            <p className="text-gray-400 text-sm mt-1">다른 사용자에게 내 프로필이 표시됩니다.</p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" value="" className="sr-only peer" defaultChecked />
@@ -31,10 +31,10 @@ export default function PrivacySettingTab() {
           </label>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-gray-700/30 transition-all hover:border-gray-600/50">
           <div>
             <h3 className="text-gray-200 font-medium">데이터 공유</h3>
-            <p className="text-gray-400 text-sm">프로젝트 통계 및 데이터가 다른 멤버들과 공유됩니다.</p>
+            <p className="text-gray-400 text-sm mt-1">프로젝트 통계 및 데이터가 다른 멤버들과 공유됩니다.</p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input type="checkbox" value="" className="sr-only peer" />
@@ -42,10 +42,10 @@ export default function PrivacySettingTab() {
           </label>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-gray-700/30 transition-all hover:border-gray-600/50">
           <div>
             <h3 className="text-gray-200 font-medium">이중 인증 (2FA)</h3>
-            <p className="text-gray-400 text-sm">계정 보안을 위한 이중 인증을 설정합니다.</p>
+            <p className="text-gray-400 text-sm mt-1">계정 보안을 위한 이중 인증을 설정합니다.</p>
           </div>
           <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm">
             설정하기
