@@ -160,7 +160,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
   };
 
   return (
-    <div className="bg-gray-900/50 border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
+    <div className="bg-component-background border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
       <div className="relative">
         <div className="absolute inset-0 border-b border-gray-700/50" />
         <div className="relative px-6 py-4 flex justify-between items-center">

@@ -10,7 +10,7 @@ export default function AppearanceSettingTab() {
   };
 
   return (
-    <div className="bg-gray-900/50 border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
+    <div className="bg-component-background border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
       <h2 className="text-xl font-semibold text-gray-100 border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="5" />

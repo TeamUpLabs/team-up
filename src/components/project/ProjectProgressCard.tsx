@@ -32,7 +32,7 @@ export default function ProjectProgressCard() {
 
   if (isLoading) {
     return (
-      <div className="col-span-1 sm:col-span-2 bg-gray-900/50 p-4 sm:p-6 rounded-lg border border-gray-700/50">
+      <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg border border-gray-700/50">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-300">프로젝트 진행률</h1>
           <div className="flex items-center text-gray-400">
@@ -66,7 +66,7 @@ export default function ProjectProgressCard() {
   }
 
   return (
-    <div className="col-span-1 sm:col-span-2 bg-gray-900/50 p-4 sm:p-6 rounded-lg border border-gray-700/50">
+    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg border border-gray-700/50">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-300">프로젝트 진행률</h1>
         <Link href={`/platform/${project?.id}/tasks`} className="flex items-center text-gray-400 hover:text-gray-300">

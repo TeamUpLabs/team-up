@@ -50,7 +50,7 @@ export default function TeamActivities() {
   );
 
   return (
-    <div className="col-span-1 sm:col-span-2 bg-gray-900/50 p-4 sm:p-6 rounded-lg border border-gray-700/50">
+    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg border border-gray-700/50">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-semibold text-white">팀원 활동</h2>
         <Link href={`/platform/${project?.id}/members`} className="flex items-center text-gray-400 hover:text-gray-300">

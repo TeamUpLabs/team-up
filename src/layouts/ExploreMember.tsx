@@ -67,7 +67,7 @@ export default function ExploreMember() {
       </div>
 
       {filteredMembers.length === 0 && (
-        <div className="text-center text-gray-400 mt-8 p-8 bg-gray-900/50 border border-gray-700/50 rounded-lg">
+        <div className="text-center text-gray-400 mt-8 p-8 bg-component-background border border-gray-700/50 rounded-lg">
           검색 결과가 없습니다.
         </div>
       )}

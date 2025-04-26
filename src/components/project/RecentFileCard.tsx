@@ -1,6 +1,6 @@
 export default function RecentFileCard() {
   return (
-    <div className="col-span-1 sm:col-span-2 bg-gray-900/50 p-4 sm:p-6 rounded-lg border border-gray-700/50">
+    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg border border-gray-700/50">
       <h2 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">최근 파일</h2>
       <div className="space-y-2 sm:space-y-3">
         <div className="flex flex-col sm:flex-row items-start sm:items-center p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700 transition-colors">
