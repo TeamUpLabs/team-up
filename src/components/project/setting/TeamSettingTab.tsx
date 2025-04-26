@@ -138,8 +138,8 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   };
 
   return (
-    <div className="bg-component-background border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
-      <h2 className="text-xl font-semibold text-gray-100 border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
+    <div className="bg-component-background border border-component-border rounded-xl shadow-2xl overflow-hidden">
+      <h2 className="text-lg font-semibold text-text-primary border-b border-component-border px-6 py-4 flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
           <circle cx="9" cy="7" r="4"></circle>
@@ -152,11 +152,11 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
       <div className="p-6 space-y-6">
         {/* Join Requests Section */}
         {project.participationRequestMembers.length > 0 && (
-          <div className="rounded-lg border border-gray-700 overflow-hidden">
-            <div className="bg-gray-700/50 px-4 py-3 flex justify-between items-center">
+          <div className="rounded-lg border border-component-border overflow-hidden">
+            <div className="bg-component-tertiary-background px-4 py-3 flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faUserGroup} className="text-blue-400" />
-                <h3 className="font-medium text-gray-200">참여 요청</h3>
+                <h3 className="font-medium text-text-primary">참여 요청</h3>
                 <span className="bg-blue-500/20 text-blue-300 text-xs px-2 py-0.5 rounded-full">
                   {project.participationRequestMembers.length}
                 </span>
@@ -170,20 +170,20 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
             </div>
 
             {showJoinRequests && (
-              <div className="divide-y divide-gray-700">
+              <div className="divide-y divide-component-border">
                 {project.participationRequestMembers.map((request) => (
-                  <div key={request.id} className="px-4 py-3 bg-gray-800/50 hover:bg-gray-800 transition-colors">
+                  <div key={request.id} className="px-4 py-3 bg-component-secondary-background hover:bg-component-secondary-background/60 transition-colors">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-gray-700 rounded-full flex items-center justify-center text-gray-300">
+                        <div className="w-9 h-9 bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
                           {request.name.charAt(0)}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="text-gray-200 font-medium">{request.name}</p>
-                            <span className="bg-gray-500/20 text-gray-400 text-xs px-2 py-0.5 rounded-md">{request.role}</span>
+                            <p className="text-text-primary font-medium">{request.name}</p>
+                            <span className="bg-component-tertiary-background text-text-secondary text-xs px-2 py-0.5 rounded-md">{request.role}</span>
                           </div>
-                          <p className="text-gray-400 text-xs">{request.email}</p>
+                          <p className="text-text-secondary text-xs">{request.email}</p>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -211,17 +211,17 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
         )}
 
         {/* Team Members Section */}
-        <div className="rounded-lg border border-gray-700 overflow-hidden">
-          <div className="bg-gray-700/50 px-4 py-3 flex justify-between items-center">
+        <div className="rounded-lg border border-component-border overflow-hidden">
+          <div className="bg-component-tertiary-background px-4 py-3 flex justify-between items-center">
             <div className="flex items-center gap-2">
               <FontAwesomeIcon icon={faShield} className="text-yellow-400" />
-              <h3 className="font-medium text-gray-200">팀원 관리</h3>
+              <h3 className="font-medium text-text-primary">팀원 관리</h3>
             </div>
             <div className="relative">
               <input
                 type="text"
                 placeholder="팀원 검색..."
-                className="bg-gray-700 border border-gray-600 rounded-lg pl-9 pr-3 py-1.5 text-gray-100 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                className="bg-input-secondary-background border border-input-secondary-border rounded-lg pl-9 pr-3 py-1.5 text-text-secondary text-sm focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -231,15 +231,15 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
 
           <div className="divide-y divide-gray-700">
             {filteredMembers?.map((member) => (
-              <div key={member.id} className="px-4 py-3 bg-gray-800/50 hover:bg-gray-800 transition-colors">
+              <div key={member.id} className="px-4 py-3 bg-component-secondary-background hover:bg-component-secondary-background/60 transition-colors">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-gray-300">
+                    <div className="w-10 h-10 bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
                       {member.name.charAt(0)}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="text-gray-100 font-medium">{member.name}</p>
+                        <p className="text-text-primary font-medium">{member.name}</p>
                         {member.id === project.leader.id ? (
                           <span className="bg-yellow-500/20 text-yellow-400 text-xs px-2 py-0.5 rounded-md">프로젝트 리더</span>
                         ) : Array.isArray(project.manager) && project.manager.some(manager => manager.id === member.id) ? (
@@ -247,9 +247,9 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                         ) : (
                           <span className="bg-green-500/20 text-green-400 text-xs px-2 py-0.5 rounded-md">멤버</span>
                         )}
-                        <span className="bg-gray-500/20 text-gray-400 text-xs px-2 py-0.5 rounded-md">{member.role}</span>
+                        <span className="bg-component-tertiary-background text-text-secondary text-xs px-2 py-0.5 rounded-md">{member.role}</span>
                       </div>
-                      <p className="text-gray-400 text-xs">{member.email}</p>
+                      <p className="text-text-secondary text-xs">{member.email}</p>
                     </div>
                   </div>
                   {isCurrentUserLeaderOrManager && member.id !== project.leader.id && (
@@ -275,20 +275,20 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
         </div>
 
         {/* Role Explanation */}
-        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 mt-6">
-          <h4 className="text-gray-200 font-medium mb-3 pb-2 border-b border-gray-700">역할 및 권한 설명</h4>
+        <div className="bg-component-secondary-background rounded-lg p-4 border border-component-border mt-6">
+          <h4 className="text-text-primary font-medium mb-3 pb-2 border-b border-component-border">역할 및 권한 설명</h4>
           <div className="space-y-3 text-sm">
             <div className="flex items-center">
               <span className="inline-block w-20 text-yellow-400 font-medium">리더:</span>
-              <span className="text-gray-300">{roleDescriptions.leader}</span>
+              <span className="text-text-secondary">{roleDescriptions.leader}</span>
             </div>
             <div className="flex items-center">
               <span className="inline-block w-20 text-blue-400 font-medium">관리자:</span>
-              <span className="text-gray-300">{roleDescriptions.manager}</span>
+              <span className="text-text-secondary">{roleDescriptions.manager}</span>
             </div>
             <div className="flex items-center">
               <span className="inline-block w-20 text-green-400 font-medium">멤버:</span>
-              <span className="text-gray-300">{roleDescriptions.member}</span>
+              <span className="text-text-secondary">{roleDescriptions.member}</span>
             </div>
           </div>
         </div>

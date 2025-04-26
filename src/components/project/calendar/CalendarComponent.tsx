@@ -23,19 +23,19 @@ export default function Calendar({
 }: CalendarProps) {
 
   return (
-    <div className="flex-1 bg-component-background rounded-xl shadow-lg border border-gray-700/50 flex flex-col overflow-hidden">
-      <div className="px-4 sm:px-6 py-4 border-b border-gray-700/50">
+    <div className="flex-1 bg-component-background rounded-xl shadow-lg border border-component-border flex flex-col overflow-hidden">
+      <div className="px-4 sm:px-6 py-4 border-b border-component-border">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-100">일정 관리</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-text-primary">일정 관리</h1>
           <div className="flex items-center space-x-3 sm:space-x-4">
             <button 
               onClick={onPreviousMonth} 
               className="p-2 hover:bg-gray-700 active:bg-gray-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               aria-label="이전 달"
             >
-              <FontAwesomeIcon icon={faChevronLeft} className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300" />
+              <FontAwesomeIcon icon={faChevronLeft} className="w-4 h-4 sm:w-5 sm:h-5 text-text-secondary" />
             </button>
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-100 min-w-[140px] text-center">
+            <h2 className="text-lg sm:text-xl font-semibold text-text-primary min-w-[140px] text-center">
               {format(currentDate, 'yyyy년 M월')}
             </h2>
             <button 
@@ -43,17 +43,17 @@ export default function Calendar({
               className="p-2 hover:bg-gray-700 active:bg-gray-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               aria-label="다음 달"
             >
-              <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300" />
+              <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4 sm:w-5 sm:h-5 text-text-secondary" />
             </button>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 border-b border-gray-700/50">
+      <div className="grid grid-cols-7 border-b border-component-border">
         {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
           <div 
             key={day} 
-            className={`py-2 text-center font-medium text-sm sm:text-base border-r last:border-r-0 border-gray-700/50 ${index === 0 ? 'text-red-300' : index === 6 ? 'text-blue-300' : 'text-gray-300'}`}
+            className={`py-2 text-center font-medium text-sm sm:text-base border-r last:border-r-0 border-component-border ${index === 0 ? 'text-red-300' : index === 6 ? 'text-blue-300' : 'text-text-secondary'}`}
           >
             {day}
           </div>
@@ -73,16 +73,16 @@ export default function Calendar({
             <div
               key={day.toString()}
               className={`relative min-h-[80px] sm:min-h-[100px] p-1 sm:p-2 transition-colors
-                border-r border-b ${isLastInRow ? 'border-r-0' : ''} ${isLastRow ? 'border-b-0' : ''} border-gray-700/50
+                border-r border-b ${isLastInRow ? 'border-r-0' : ''} ${isLastRow ? 'border-b-0' : ''} border-component-border
                 ${!isSameMonthDay
-                  ? 'bg-gray-800'
-                  : 'bg-component-background hover:bg-gray-800/50'}
+                  ? 'bg-component-secondary-background'
+                  : 'bg-component-background hover:bg-component-background/80'}
                 ${isTodayDay ? 'ring-2 ring-blue-500 ring-inset' : ''}
-                ${isWeekend && isSameMonthDay ? 'bg-gray-780' : ''}`}
+                ${isWeekend && isSameMonthDay ? 'bg-component-background' : ''}`}
             >
               <p className={`text-xs sm:text-sm font-medium
-                ${!isSameMonthDay ? 'text-gray-500' : ''}
-                ${isTodayDay ? 'text-blue-300 font-bold' : ''}
+                ${!isSameMonthDay ? 'text-text-secondary' : ''}
+                ${isTodayDay ? 'text-point-color-purple font-bold' : ''}
                 ${index % 7 === 0 && isSameMonthDay ? 'text-red-300' : ''}
                 ${index % 7 === 6 && isSameMonthDay ? 'text-blue-300' : ''}
                 ${isSameMonthDay && !isWeekend && !isTodayDay ? 'text-gray-200' : ''}`}>
@@ -107,7 +107,7 @@ export default function Calendar({
                 ))}
               </div>
               {dayTasks && dayTasks.length > 3 && (
-                <div className="absolute bottom-0 right-0 text-[10px] sm:text-xs text-gray-400 px-1 bg-gray-800/80 rounded-tl-md">
+                <div className="absolute bottom-0 right-0 text-[10px] sm:text-xs text-text-secondary px-1 bg-component-background/80 rounded-tl-md">
                   +{dayTasks.length - 3}
                 </div>
               )}

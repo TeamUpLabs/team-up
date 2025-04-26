@@ -31,13 +31,13 @@ export default function DeleteProjectConfirmModal({ isOpen, onClose }: DeletePro
   }
 
   const header = (
-    <h3 className="text-xl font-bold text-white">프로젝트 삭제</h3>
+    <h3 className="text-xl font-bold text-text-primary">프로젝트 삭제</h3>
   );
 
   const footer = (
     <div className="flex justify-end gap-2">
       <button 
-        className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+        className="px-4 py-2 bg-component-tertiary-background hover:bg-component-tertiary-background/60 text-text-primary rounded-lg transition-colors"
         onClick={onClose}
       >
         취소
@@ -60,11 +60,11 @@ export default function DeleteProjectConfirmModal({ isOpen, onClose }: DeletePro
       footer={footer}
     >
       <div>
-        <p className="text-gray-400 text-sm mb-3">정말로 삭제하시겠습니까?</p>
-        <p className="text-gray-400 text-sm mb-3">프로젝트와 모든 관련 데이터가 영구적으로 삭제됩니다.</p>
+        <p className="text-text-secondary text-sm mb-3">정말로 삭제하시겠습니까?</p>
+        <p className="text-text-secondary text-sm mb-3">프로젝트와 모든 관련 데이터가 영구적으로 삭제됩니다.</p>
         <input 
           type="text" 
-          className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-gray-100" 
+          className="w-full bg-input-background border border-input-border rounded-lg px-4 py-2 text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover" 
           placeholder="진행하기 위해 'Delete'를 입력해주세요." 
           value={confirmText}
           onChange={(e) => setConfirmText(e.target.value)}

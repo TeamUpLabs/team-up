@@ -3,14 +3,64 @@
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
+
   --component-background: #0D1119;
+  --component-secondary-background: #161C29;
+  --component-tertiary-background: #1E2938;
+  --component-skeleton-background: #1E2938;
+  --component-border: #222936;
+
+  --project-page-title-background: #101625;
+  --project-page-title-border: #222936;
+  
+  --text-primary-color: #D1D5DC;
+  --text-secondary-color: #98A1AE;
+
+  --input-background: #161C29;
+  --input-secondary-background: #1B2534;
+  --input-border: #222936;
+  --input-secondary-border: #4A5565;
+  --input-border-hover: #7175b5;
+
+  --point-color-purple: #AD47FF;
+  --point-color-purple-hover: #9856D6;
+  --point-color-green: #06DF73;
+  --point-color-green-hover: #05C462;
+  --point-color-indigo: #432DD7;
+  --point-color-indigo-hover: #3122A8;
+
   --section-spacing: 6rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --color-component-background: var(--component-background);
+  --color-component-secondary-background: var(--component-secondary-background);
+  --color-component-tertiary-background: var(--component-tertiary-background);
+  --color-component-skeleton-background: var(--component-skeleton-background);
+  --color-component-border: var(--component-border);
+
+  --color-project-page-title-background: var(--project-page-title-background);
+  --color-project-page-title-border: var(--project-page-title-border);
+
+  --color-text-primary: var(--text-primary-color);
+  --color-text-secondary: var(--text-secondary-color);
+
+  --color-input-background: var(--input-background);
+  --color-input-secondary-background: var(--input-secondary-background);
+  --color-input-border: var(--input-border);
+  --color-input-secondary-border: var(--input-secondary-border);
+  --color-input-border-hover: var(--input-border-hover);
+
+  --color-point-color-purple: var(--point-color-purple);
+  --color-point-color-purple-hover: var(--point-color-purple-hover);
+  --color-point-color-green: var(--point-color-green);
+  --color-point-color-green-hover: var(--point-color-green-hover);
+  --color-point-color-indigo: var(--point-color-indigo);
+  --color-point-color-indigo-hover: var(--point-color-indigo-hover);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

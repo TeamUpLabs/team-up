@@ -83,14 +83,14 @@ export default function TasksPage() {
     <DndProvider backend={HTML5Backend}>
       <div className="px-2 sm:px-4 md:px-6 mx-auto py-6">
         {/* Header Section */}
-        <div className="flex items-center justify-between mb-8 bg-gray-900/90 border border-gray-700/50 p-6 rounded-lg">
+        <div className="flex items-center justify-between mb-8 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
           <div>
-            <h1 className="text-2xl font-bold text-gray-100">작업</h1>
-            <p className="text-gray-400 mt-2">프로젝트의 작업을 관리하세요</p>
+            <h1 className="text-2xl font-bold text-text-primary">작업</h1>
+            <p className="text-text-secondary mt-2">프로젝트의 작업을 관리하세요</p>
           </div>
           <button 
             onClick={() => setIsSelectMilestoneModalOpen(true)}
-            className="flex items-center gap-2 bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-lg transition-colors"
           >
             <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
             <span>작업 추가</span>
@@ -102,20 +102,20 @@ export default function TasksPage() {
           {Object.entries(groupedTasks).map(([status, tasksList]) => (
             <div
               key={status}
-              className="bg-component-background rounded-lg border border-gray-700/50"
+              className="bg-component-background rounded-lg border border-component-border"
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 const taskId = e.dataTransfer.getData('taskId');
                 moveTask(parseInt(taskId), status as Task['status']);
               }}
             >
-              <div className="px-4 py-3 border-b border-gray-700/50">
+              <div className="px-4 py-3 border-b border-component-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <span className={`inline-flex px-2 py-1 rounded-md text-xs font-medium mr-2 ${getStatusColor(status as Task['status'])}`}>
                       {getStatusText(status as Task['status'])}
                     </span>
-                    <span className="text-gray-400 text-sm">{tasksList.length}</span>
+                    <span className="text-text-secondary text-sm">{tasksList.length}</span>
                   </div>
                 </div>
               </div>

@@ -160,11 +160,11 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
   };
 
   return (
-    <div className="bg-component-background border border-gray-700/50 rounded-xl shadow-2xl overflow-hidden">
+    <div className="bg-component-background border border-component-border rounded-xl shadow-2xl overflow-hidden">
       <div className="relative">
-        <div className="absolute inset-0 border-b border-gray-700/50" />
+        <div className="absolute inset-0 border-b border-component-border" />
         <div className="relative px-6 py-4 flex justify-between items-center">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+          <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -212,28 +212,28 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column: Basic info */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-gray-700/50">
-              <div className="border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+              <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
-                <h3 className="text-lg font-semibold text-white">기본 정보</h3>
+                <h3 className="text-lg font-semibold text-text-primary">기본 정보</h3>
               </div>
               <div className="p-6 space-y-5">
                 <div>
-                  <label htmlFor="code" className="inline-block text-gray-300 mb-2 font-medium">참여 코드</label>
-                  <div className="flex items-center w-full border bg-gray-900/70 border-gray-700 rounded-lg px-4 py-3">
+                  <label htmlFor="code" className="inline-block text-text-primary mb-2 font-medium">참여 코드</label>
+                  <div className="flex items-center w-full border bg-component-background/50 border-component-border rounded-lg px-4 py-3">
                     <input
                       type="text"
                       name="code"
                       value={project.id}
                       onChange={handleChange}
                       readOnly
-                      className="text-white outline-none transition-all cursor-not-allowed flex-grow"
+                      className="text-text-primary outline-none transition-all cursor-not-allowed flex-grow"
                     />
                     <button
                       onClick={handleCopyCode}
-                      className="text-gray-300 hover:text-white transition-colors focus:outline-none ml-2"
+                      className="text-text-secondary hover:text-text-primary transition-colors focus:outline-none ml-2"
                       title="코드 복사"
                     >
                       <FontAwesomeIcon icon={faCopy} />
@@ -242,54 +242,54 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   </div>
                 </div>
                 <div>
-                  <label className="inline-block text-gray-300 mb-2 font-medium">프로젝트 이름</label>
+                  <label className="inline-block text-text-primary mb-2 font-medium">프로젝트 이름</label>
                   <input
                     type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
                     readOnly={!isEditing}
-                    className={`w-full border ${isEditing ? 'bg-gray-800/70 border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500' : 'bg-gray-900/70 border-gray-700'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                    className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                   />
                 </div>
 
                 <div>
-                  <label className="inline-block text-gray-300 mb-2 font-medium">프로젝트 설명</label>
+                  <label className="inline-block text-text-primary mb-2 font-medium">프로젝트 설명</label>
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
                     readOnly={!isEditing}
                     rows={4}
-                    className={`w-full border ${isEditing ? 'bg-gray-800/70 border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500' : 'bg-gray-900/70 border-gray-700'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'} resize-none`}
+                    className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'} resize-none`}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-gray-700/50">
-              <div className="border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+              <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-400" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-white">팀 정보</h3>
+                <h3 className="text-lg font-semibold text-text-primary">팀 정보</h3>
               </div>
               <div className="p-6 space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="inline-block text-gray-300 mb-2 font-medium">프로젝트 유형</label>
+                    <label className="inline-block text-text-primary mb-2 font-medium">프로젝트 유형</label>
                     <input
                       type="text"
                       name="projectType"
                       value={formData.projectType}
                       onChange={handleChange}
                       readOnly={!isEditing}
-                      className={`w-full border ${isEditing ? 'bg-gray-800/70 border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500' : 'bg-gray-900/70 border-gray-700'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                     />
                   </div>
 
                   <div>
-                    <label className="inline-block text-gray-300 mb-2 font-medium">팀 규모</label>
+                    <label className="inline-block text-text-primary mb-2 font-medium">팀 규모</label>
                     <input
                       type="number"
                       name="teamSize"
@@ -297,55 +297,55 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                       onChange={handleChange}
                       readOnly={!isEditing}
                       min={1}
-                      className={`w-full border ${isEditing ? 'bg-gray-800/70 border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500' : 'bg-gray-900/70 border-gray-700'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="inline-block text-gray-300 mb-2 font-medium">위치</label>
+                  <label className="inline-block text-text-primary mb-2 font-medium">위치</label>
                   <input
                     type="text"
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
                     readOnly={!isEditing}
-                    className={`w-full border ${isEditing ? 'bg-gray-800/70 border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500' : 'bg-gray-900/70 border-gray-700'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                    className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-gray-700/50">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
               <div className="border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                 </svg>
-                <h3 className="text-lg font-semibold text-white">일정 정보</h3>
+                <h3 className="text-lg font-semibold text-primary">일정 정보</h3>
               </div>
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="inline-block text-gray-300 mb-2 font-medium">시작일</label>
+                    <label className="inline-block text-text-secondary mb-2 font-medium">시작일</label>
                     <input
                       type="date"
                       name="startDate"
                       value={formData.startDate}
                       onChange={handleChange}
                       readOnly={!isEditing}
-                      className={`w-full border ${isEditing ? 'bg-gray-800/70 border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500' : 'bg-gray-900/70 border-gray-700'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                     />
                   </div>
 
                   <div>
-                    <label className="inline-block text-gray-300 mb-2 font-medium">종료일</label>
+                    <label className="inline-block text-text-secondary mb-2 font-medium">종료일</label>
                     <input
                       type="date"
                       name="endDate"
                       value={formData.endDate}
                       onChange={handleChange}
                       readOnly={!isEditing}
-                      className={`w-full border ${isEditing ? 'bg-gray-800/70 border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500' : 'bg-gray-900/70 border-gray-700'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                     />
                   </div>
                 </div>
@@ -355,15 +355,15 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
 
           {/* Right column: Skills, roles, access */}
           <div className="space-y-6">
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-gray-700/50">
-              <div className="border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+              <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
-                <h3 className="text-lg font-semibold text-white">기술 스택</h3>
+                <h3 className="text-lg font-semibold text-text-primary">기술 스택</h3>
               </div>
               <div className="p-6">
-                <div className={`bg-gray-900/40 rounded-lg p-3 min-h-[120px] border ${isEditing ? 'border-blue-900/30' : 'border-gray-800'}`}>
+                <div className={`bg-component-background/50 rounded-lg p-3 min-h-[120px] border ${isEditing ? 'border-blue-900/30' : 'border-component-border'}`}>
                   <div className="flex flex-wrap gap-2">
                     {formData.techStack.length > 0 ? (
                       formData.techStack.map((tech, index) => (
@@ -376,7 +376,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                         />
                       ))
                     ) : (
-                      <span className="text-gray-400 text-sm">기술 스택이 없습니다.</span>
+                      <span className="text-text-secondary text-sm">기술 스택이 없습니다.</span>
                     )}
                   </div>
                 </div>
@@ -390,11 +390,11 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                         onChange={(e) => setNewTechItem(e.target.value)}
                         onKeyDown={(e) => handleKeyDown(e, handleAddTechItem)}
                         placeholder="기술 스택 추가"
-                        className="flex-grow bg-gray-800/70 border border-gray-700 rounded-l-lg px-4 py-2.5 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                        className="flex-grow bg-input-secondary-background border border-input-secondary-border rounded-l-lg px-4 py-2.5 text-text-primary focus:border-blue-600 focus:ring-1 focus:ring-point-color-indigo outline-none"
                       />
                       <button
                         onClick={handleAddTechItem}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 rounded-r-lg flex items-center"
+                        className="bg-blue-600 hover:bg-blue-700 text-primary px-4 rounded-r-lg flex items-center"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -406,15 +406,15 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               </div>
             </div>
 
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-gray-700/50">
-              <div className="border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+              <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-400" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-white">필요 역할</h3>
+                <h3 className="text-lg font-semibold text-text-primary">필요 역할</h3>
               </div>
               <div className="p-6">
-                <div className={`bg-gray-900/40 rounded-lg p-3 min-h-[120px] border ${isEditing ? 'border-purple-900/30' : 'border-gray-800'}`}>
+                <div className={`bg-component-background/50 rounded-lg p-3 min-h-[120px] border ${isEditing ? 'border-purple-900/30' : 'border-component-border'}`}>
                   <div className="flex flex-wrap gap-2">
                     {formData.roles.length > 0 ? (
                       formData.roles.map((role, index) => (
@@ -427,7 +427,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                         />
                       ))
                     ) : (
-                      <span className="text-gray-400 text-sm">필요 역할이 없습니다.</span>
+                      <span className="text-text-secondary text-sm">필요 역할이 없습니다.</span>
                     )}
                   </div>
                 </div>
@@ -441,7 +441,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                         onChange={(e) => setNewRoleItem(e.target.value)}
                         onKeyDown={(e) => handleKeyDown(e, handleAddRoleItem)}
                         placeholder="역할 추가"
-                        className="flex-grow bg-gray-800/70 border border-gray-700 rounded-l-lg px-4 py-2.5 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none"
+                        className="flex-grow bg-input-secondary-background border border-input-secondary-border rounded-l-lg px-4 py-2.5 text-text-primary focus:border-purple-600 focus:ring-1 focus:ring-point-color-indigo outline-none"
                       />
                       <button
                         onClick={handleAddRoleItem}
@@ -457,27 +457,27 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               </div>
             </div>
 
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-gray-700/50">
-              <div className="border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+              <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-white">프로젝트 상태</h3>
+                <h3 className="text-lg font-semibold text-text-primary">프로젝트 상태</h3>
               </div>
               <div className="p-6">
-                <label className="block text-gray-300 mb-2 font-medium">프로젝트 상태</label>
+                <label className="block text-text-secondary mb-2 font-medium">프로젝트 상태</label>
                 <select
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
                   disabled={!isEditing}
-                  className={`w-full border ${isEditing ? 'bg-gray-800/70 border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500' : 'bg-gray-900/70 border-gray-700'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                  className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                 >
                   <option value="모집중">모집중</option>
                   <option value="진행중">진행중</option>
                   <option value="완료">완료</option>
                 </select>
-                <div className="mt-3 flex items-start gap-2 text-gray-400">
+                <div className="mt-3 flex items-start gap-2 text-text-secondary">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                   </svg>
@@ -486,26 +486,26 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               </div>
             </div>
 
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-gray-700/50">
-              <div className="border-b border-gray-700/50 px-6 py-4 flex items-center gap-2">
+            <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden shadow-lg border border-component-border">
+              <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                 </svg>
-                <h3 className="text-lg font-semibold text-white">접근 설정</h3>
+                <h3 className="text-lg font-semibold text-text-primary">접근 설정</h3>
               </div>
               <div className="p-6">
-                <label className="block text-gray-300 mb-2 font-medium">공개 여부</label>
+                <label className="block text-text-secondary mb-2 font-medium">공개 여부</label>
                 <select
                   name="visibility"
                   value={formData.visibility}
                   onChange={handleChange}
                   disabled={!isEditing}
-                  className={`w-full border ${isEditing ? 'bg-gray-800/70 border-gray-600 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500' : 'bg-gray-900/70 border-gray-700'} rounded-lg px-4 py-3 text-white outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                  className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                 >
                   <option value="public">공개</option>
                   <option value="private">비공개</option>
                 </select>
-                <div className="mt-3 flex items-start gap-2 text-gray-400">
+                <div className="mt-3 flex items-start gap-2 text-text-secondary">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                   </svg>

@@ -20,14 +20,14 @@ export default function PermissionChangeModal({ selectedMember, isOpen, onClose,
 
   const header = (
     <div className="flex items-center space-x-4">
-      <h3 className="text-xl font-medium text-gray-100">권한 변경: {selectedMember.name}</h3>
+      <h3 className="text-xl font-medium text-text-primary">권한 변경: {selectedMember.name}</h3>
     </div>
   );
 
   const footer = (
     <div className="flex justify-end gap-3">
       <button
-        className="px-4 py-2 text-gray-300 hover:text-white rounded-lg transition-colors"
+        className="px-4 py-2 text-text-secondary hover:text-white rounded-lg transition-colors"
         onClick={() => setShowRoleModal(false)}
       >
         취소
@@ -48,8 +48,8 @@ export default function PermissionChangeModal({ selectedMember, isOpen, onClose,
       isOpen={isOpen}
       onClose={onClose}
     >
-      <div className="my-6">
-        <p className="text-gray-300 mb-4">
+      <div>
+        <p className="text-text-secondary mb-4">
           권한을 변경하면 팀원의 프로젝트 접근 권한이 변경됩니다.
         </p>
 
@@ -58,7 +58,7 @@ export default function PermissionChangeModal({ selectedMember, isOpen, onClose,
             className={`flex items-center p-3 rounded-lg cursor-pointer border 
           ${selectedRole === 'manager'
                 ? 'border-blue-500 bg-blue-500/10'
-                : 'border-gray-600 hover:bg-gray-700'}`}
+                : 'border-component-border hover:bg-component-secondary-background'}`}
             onClick={() => setSelectedRole('manager')}
           >
             <div className="flex items-center gap-3 flex-1">
@@ -66,8 +66,8 @@ export default function PermissionChangeModal({ selectedMember, isOpen, onClose,
                 <FontAwesomeIcon icon={faUserShield} />
               </div>
               <div>
-                <p className="font-medium text-gray-100">관리자</p>
-                <p className="text-gray-400 text-sm">{roleDescriptions.manager}</p>
+                <p className="font-medium text-text-primary">관리자</p>
+                <p className="text-text-secondary text-sm">{roleDescriptions.manager}</p>
               </div>
             </div>
             {selectedRole === 'manager' && (
@@ -79,7 +79,7 @@ export default function PermissionChangeModal({ selectedMember, isOpen, onClose,
             className={`flex items-center p-3 rounded-lg cursor-pointer border 
           ${selectedRole === 'member'
                 ? 'border-green-500 bg-green-500/10'
-                : 'border-gray-600 hover:bg-gray-700'}`}
+                : 'border-component-border hover:bg-component-secondary-background'}`}
             onClick={() => setSelectedRole('member')}
           >
             <div className="flex items-center gap-3 flex-1">
@@ -87,8 +87,8 @@ export default function PermissionChangeModal({ selectedMember, isOpen, onClose,
                 <FontAwesomeIcon icon={faUser} />
               </div>
               <div>
-                <p className="font-medium text-gray-100">멤버</p>
-                <p className="text-gray-400 text-sm">{roleDescriptions.member}</p>
+                <p className="font-medium text-text-primary">멤버</p>
+                <p className="text-text-secondary text-sm">{roleDescriptions.member}</p>
               </div>
             </div>
             {selectedRole === 'member' && (

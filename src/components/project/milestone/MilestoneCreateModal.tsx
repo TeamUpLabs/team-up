@@ -154,8 +154,8 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
     <form onSubmit={handleSubmit} className="space-y-7">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="col-span-2">
-          <label htmlFor="title" className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            마일스톤 이름 <span className="text-purple-400 ml-1">*</span>
+          <label htmlFor="title" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            마일스톤 이름 <span className="text-point-color-indigo ml-1">*</span>
           </label>
           <input
             type="text"
@@ -163,15 +163,15 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             placeholder="마일스톤 이름을 입력하세요"
             required
           />
         </div>
 
         <div className="col-span-2">
-          <label htmlFor="description" className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            설명 <span className="text-purple-400 ml-1">*</span>
+          <label htmlFor="description" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            설명 <span className="text-point-color-indigo ml-1">*</span>
           </label>
           <textarea
             id="description"
@@ -179,14 +179,14 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             value={formData.description}
             onChange={handleChange}
             rows={3}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500 resize-none"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover resize-none"
             placeholder="마일스톤에 대한 설명을 입력하세요"
           />
         </div>
 
         <div className="col-span-1">
-          <label htmlFor="startDate" className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            시작일 <span className="text-purple-400 ml-1">*</span>
+          <label htmlFor="startDate" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            시작일 <span className="text-point-color-indigo ml-1">*</span>
           </label>
           <input
             type="date"
@@ -194,14 +194,14 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             name="startDate"
             value={formData.startDate}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             required
           />
         </div>
 
         <div className="col-span-1">
-          <label htmlFor="endDate" className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            종료일 <span className="text-purple-400 ml-1">*</span>
+          <label htmlFor="endDate" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            종료일 <span className="text-point-color-indigo ml-1">*</span>
           </label>
           <input
             type="date"
@@ -209,7 +209,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             name="endDate"
             value={formData.endDate}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             required
           />
           {dateError && (
@@ -219,16 +219,16 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
 
 
         <div className="col-span-1">
-          <label htmlFor="status" className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            상태 <span className="text-purple-400 ml-1">*</span>
+          <label htmlFor="status" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            상태 <span className="text-point-color-indigo ml-1">*</span>
           </label>
           <select
             id="status"
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className={`w-full px-4 py-3 rounded-lg bg-gray-800/50 border ${statusError ? 'border-red-500' : 'border-gray-700/50'
-              } text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
+            className={`w-full px-4 py-3 rounded-lg bg-input-background border ${statusError ? 'border-red-500' : 'border-input-border'
+              } text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover`}
             required
           >
             <option value="">선택</option>
@@ -242,16 +242,16 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
         </div>
 
         <div className="col-span-1">
-          <label htmlFor="priority" className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            우선순위 <span className="text-purple-400 ml-1">*</span>
+          <label htmlFor="priority" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            우선순위 <span className="text-point-color-indigo ml-1">*</span>
           </label>
           <select
             id="priority"
             name="priority"
             value={formData.priority}
             onChange={handleChange}
-            className={`w-full px-4 py-3 rounded-lg bg-gray-800/50 border ${priorityError ? 'border-red-500' : 'border-gray-700/50'
-              } text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500`}
+            className={`w-full px-4 py-3 rounded-lg bg-input-background border ${priorityError ? 'border-red-500' : 'border-input-border'
+              } text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover`}
             required
           >
             <option value="">선택</option>
@@ -265,12 +265,12 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
         </div>
 
         <div className="col-span-2">
-          <label className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            담당자 <span className="text-purple-400 ml-1">*</span>
+          <label className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            담당자 <span className="text-point-color-indigo ml-1">*</span>
           </label>
-          <div className="border border-gray-700/50 rounded-lg p-3 bg-gray-800/50 hover:border-gray-500 transition-all">
+          <div className="border border-component-border rounded-lg p-3 bg-component-secondary-background hover:border-input-border-hover transition-all">
             <div className="mb-3">
-              <p className="text-sm text-gray-400">선택된 담당자: {formData.assignee_id.length > 0 ? `${formData.assignee_id.length}명` : '없음'}</p>
+              <p className="text-sm text-text-secondary">선택된 담당자: {formData.assignee_id.length > 0 ? `${formData.assignee_id.length}명` : '없음'}</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {project?.members.map((member) => (
@@ -279,7 +279,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                   onClick={() => toggleAssignee(member.id)}
                   className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${isAssigned(member.id)
                     ? 'bg-purple-500/20 border border-purple-500/50'
-                    : 'bg-gray-600/40 border border-transparent hover:bg-gray-600/60'
+                    : 'bg-component-tertiary-background border border-transparent hover:bg-component-tertiary-background/60'
                     }`}
                 >
                   <div className="relative flex-shrink-0">
@@ -303,8 +303,8 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                     </div>
                   </div>
                   <div className="flex flex-col">
-                    <p className="text-sm font-medium text-white">{member.name}</p>
-                    <p className="text-xs text-gray-400">{member.role}</p>
+                    <p className="text-sm font-medium text-text-primary">{member.name}</p>
+                    <p className="text-xs text-text-secondary">{member.role}</p>
                   </div>
                 </div>
               ))}
@@ -313,7 +313,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
         </div>
 
         <div className="col-span-2">
-          <label htmlFor="tags" className="flex items-center text-sm font-medium mb-2 text-gray-300">
+          <label htmlFor="tags" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
             태그
           </label>
           <input
@@ -325,7 +325,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
             onKeyDown={handleKeyDown}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             placeholder="태그을 입력하고 Enter 키를 누르세요"
           />
           <div className="mt-2 flex flex-wrap gap-2">

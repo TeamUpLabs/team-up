@@ -114,7 +114,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
 
   const modalHeader = (
     <div className="flex items-center space-x-4">
-      <h3 className="text-xl font-bold text-white">새로운 작업 생성</h3>
+      <h3 className="text-xl font-bold text-text-primary">새로운 작업 생성</h3>
     </div>
   );
 
@@ -122,8 +122,8 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
     <form onSubmit={handleSubmit} className="space-y-7">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="col-span-2">
-          <label htmlFor="title" className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            작업 이름 <span className="text-purple-400 ml-1">*</span>
+          <label htmlFor="title" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            작업 이름 <span className="text-point-color-purple ml-1">*</span>
           </label>
           <input
             type="text"
@@ -131,15 +131,15 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
             placeholder="작업 이름을 입력하세요"
             required
           />
         </div>
 
         <div className="col-span-2">
-          <label htmlFor="description" className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            설명 <span className="text-purple-400 ml-1">*</span>
+          <label htmlFor="description" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            설명 <span className="text-point-color-purple ml-1">*</span>
           </label>
           <textarea
             id="description"
@@ -147,14 +147,14 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             value={formData.description}
             onChange={handleChange}
             rows={3}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 resize-none hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 placeholder:text-text-secondary resize-none hover:border-input-border-hover"
             placeholder="작업 설명을 입력하세요"
           />
         </div>
 
         <div className="relative">
-          <label htmlFor="dueDate" className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            마감 일자 <span className="text-purple-400 ml-1">*</span>
+          <label htmlFor="dueDate" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            마감 일자 <span className="text-point-color-purple ml-1">*</span>
           </label>
           <input
             type="date"
@@ -162,21 +162,21 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             name="dueDate"
             value={formData.dueDate}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="priority" className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            우선순위 <span className="text-purple-400 ml-1">*</span>
+          <label htmlFor="priority" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            우선순위 <span className="text-point-color-purple ml-1">*</span>
           </label>
           <select
             id="priority"
             name="priority"
             value={formData.priority}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             required
           >
             <option value="low">낮음</option>
@@ -186,12 +186,12 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
         </div>
 
         <div className="col-span-2">
-          <label className="flex items-center text-sm font-medium mb-2 text-gray-300">
-            담당자 <span className="text-purple-400 ml-1">*</span>
+          <label className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            담당자 <span className="text-point-color-purple ml-1">*</span>
           </label>
-          <div className="border border-gray-700/50 rounded-lg p-3 bg-gray-800/50 hover:border-gray-500 transition-all">
+          <div className="border border-component-border rounded-lg p-3 bg-component-secondary-background hover:border-component-border-hover transition-all">
             <div className="mb-3">
-              <p className="text-sm text-gray-400">선택된 담당자: {formData.assignee_id.length > 0 ? `${formData.assignee_id.length}명` : '없음'}</p>
+              <p className="text-sm text-text-secondary">선택된 담당자: {formData.assignee_id.length > 0 ? `${formData.assignee_id.length}명` : '없음'}</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {project?.members.map((member) => (
@@ -200,15 +200,15 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                   onClick={() => toggleAssignee(member.id)}
                   className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${isAssigned(member.id)
                     ? 'bg-purple-500/20 border border-purple-500/50'
-                    : 'bg-gray-600/40 border border-transparent hover:bg-gray-600/60'
+                    : 'bg-component-tertiary-background border border-transparent hover:bg-component-tertiary-background/60'
                     }`}
                 >
                   <div className="relative flex-shrink-0">
-                    <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
                       <div className="relative w-full h-full flex items-center justify-center">
                         <FontAwesomeIcon
                           icon={faUser}
-                          className={`absolute text-gray-300 transform transition-all duration-300 ${isAssigned(member.id)
+                          className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
                             ? 'opacity-0 rotate-90 scale-0'
                             : 'opacity-100 rotate-0 scale-100'
                             }`}
@@ -224,8 +224,8 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                     </div>
                   </div>
                   <div className="flex flex-col">
-                    <p className="text-sm font-medium text-white">{member.name}</p>
-                    <p className="text-xs text-gray-400">{member.role}</p>
+                    <p className="text-sm font-medium text-text-primary">{member.name}</p>
+                    <p className="text-xs text-text-secondary">{member.role}</p>
                   </div>
                 </div>
               ))}
@@ -234,7 +234,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
         </div>
 
         <div className="col-span-2">
-          <label htmlFor="tags" className="flex items-center text-sm font-medium mb-2 text-gray-300">
+          <label htmlFor="tags" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
             태그
           </label>
           <input
@@ -246,7 +246,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             onKeyDown={(e) => handleKeyDown("tags", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             placeholder="태그을 입력하고 Enter 키를 누르세요"
           />
           <div className="mt-2 flex flex-wrap gap-2">
@@ -257,7 +257,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
         </div>
 
         <div className="col-span-2">
-          <label htmlFor="subtasks" className="flex items-center text-sm font-medium mb-2 text-gray-300">
+          <label htmlFor="subtasks" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
             하위 작업
           </label>
           <input
@@ -269,14 +269,14 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             onKeyDown={(e) => handleKeyDown("subtasks", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800/50 border border-gray-700/50 text-white focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder:text-gray-400 hover:border-gray-500"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
             placeholder="하위 작업을 입력하고 Enter 키를 누르세요"
           />
           <div className="mt-2 flex flex-col gap-2">
             {formData.subtasks.map((subtask, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between gap-2 bg-purple-500/20 p-3 rounded-lg"
+                className="flex items-center justify-between gap-2 bg-point-color-purple/20 p-3 rounded-lg"
               >
                 <div className="flex items-center gap-2">
                   <input
@@ -285,14 +285,14 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                     readOnly
                     className="rounded"
                   />
-                  <span className="text-purple-400">
+                  <span className="text-point-color-purple">
                     {subtask}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleRemoveSubtask(subtask)}
-                  className="text-purple-400 hover:text-purple-300 ml-1 focus:outline-none"
+                  className="text-point-color-purple hover:text-point-color-purple-hover ml-1 focus:outline-none"
                 >
                   <FontAwesomeIcon icon={faCircleXmark} />
                 </button>

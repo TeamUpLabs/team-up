@@ -23,18 +23,18 @@ export default function SettingsPage() {
 
   return (
     <div className="py-6 px-2 sm:px-4 md:px-6">
-      <div className="flex items-center justify-between mb-8 bg-gray-900/90 border border-gray-700/50 p-6 rounded-lg">
+      <div className="flex items-center justify-between mb-8 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
         <div>
-          <h1 className="text-2xl font-bold text-gray-100">설정</h1>
-          <p className="text-gray-400 mt-2">프로젝트의 설정을 관리하세요.</p>
+          <h1 className="text-2xl font-bold text-text-primary">설정</h1>
+          <p className="text-text-secondary mt-2">프로젝트의 설정을 관리하세요.</p>
         </div>
       </div>
 
-      <div className="flex border-b border-gray-700 mb-6">
+      <div className="flex border-b border-component-border mb-6">
         <button
           onClick={() => setActiveTab("general")}
           className={`px-4 py-2 font-medium ${
-            activeTab === "general" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-400"
+            activeTab === "general" ? "text-blue-500 border-b-2 border-blue-500" : "text-text-secondary"
           }`}
         >
           일반
@@ -42,7 +42,7 @@ export default function SettingsPage() {
         <button
           onClick={() => setActiveTab("team")}
           className={`px-4 py-2 font-medium relative ${
-            activeTab === "team" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-400"
+            activeTab === "team" ? "text-blue-500 border-b-2 border-blue-500" : "text-text-secondary"
           }`}
         >
           팀 관리
@@ -58,7 +58,7 @@ export default function SettingsPage() {
         <button
           onClick={() => setActiveTab("notifications")}
           className={`px-4 py-2 font-medium ${
-            activeTab === "notifications" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-400"
+            activeTab === "notifications" ? "text-blue-500 border-b-2 border-blue-500" : "text-text-secondary"
           }`}
         >
           알림
@@ -66,7 +66,7 @@ export default function SettingsPage() {
         <button
           onClick={() => setActiveTab("privacy")}
           className={`px-4 py-2 font-medium ${
-            activeTab === "privacy" ? "text-blue-500 border-b-2 border-blue-500" : "text-gray-400"
+            activeTab === "privacy" ? "text-blue-500 border-b-2 border-blue-500" : "text-text-secondary"
           }`}
         >
           개인정보 보호
@@ -75,7 +75,7 @@ export default function SettingsPage() {
           <button
             onClick={() => setActiveTab("danger")}
             className={`px-4 py-2 font-medium ${
-              activeTab === "danger" ? "text-red-500 border-b-2 border-red-500" : "text-gray-400"
+              activeTab === "danger" ? "text-red-500 border-b-2 border-red-500" : "text-text-secondary"
             }`}
           >
             위험 구역

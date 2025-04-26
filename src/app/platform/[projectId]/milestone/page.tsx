@@ -40,16 +40,16 @@ export default function MilestonePage() {
 
   return (
     <div className="py-6 px-2 sm:px-4 md:px-6">
-      <div className="rounded-xl shadow-lg">
+      <div className="shadow-lg">
         {/* Header Section */}
-        <div className="flex justify-between items-center mb-6 bg-gray-900/90 border border-gray-700/50 p-6 rounded-lg">
+        <div className="flex justify-between items-center mb-6 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
           <div>
-            <h1 className="text-2xl font-bold text-gray-100">마일스톤</h1>
-            <p className="text-gray-400 mt-2">프로젝트의 주요 이정표를 관리하세요</p>
+            <h1 className="text-2xl font-bold text-text-primary">마일스톤</h1>
+            <p className="text-text-secondary mt-2">프로젝트의 주요 이정표를 관리하세요</p>
           </div>
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-2 bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-lg transition-colors"
           >
             <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
             <span>마일스톤 추가</span>
@@ -59,7 +59,7 @@ export default function MilestonePage() {
         {/* Filter Section */}
         <div className="flex gap-4 mb-6">
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'all' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'all' ? 'bg-point-color-indigo text-text-primary' : 'text-text-secondary hover:bg-point-color-indigo/20'
               }`}
             onClick={() => setFilter('all')}
           >
@@ -68,7 +68,7 @@ export default function MilestonePage() {
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'not-started' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'not-started' ? 'bg-point-color-indigo text-text-primary' : 'text-text-secondary hover:bg-point-color-indigo/20'
               }`}
             onClick={() => setFilter('not-started')}
           >
@@ -77,7 +77,7 @@ export default function MilestonePage() {
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'in-progress' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'in-progress' ? 'bg-point-color-indigo text-text-primary' : 'text-text-secondary hover:bg-point-color-indigo/20'
               }`}
             onClick={() => setFilter('in-progress')}
           >
@@ -86,7 +86,7 @@ export default function MilestonePage() {
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'done' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-700/50'
+            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'done' ? 'bg-point-color-indigo text-text-primary' : 'text-text-secondary hover:bg-point-color-indigo/20'
               }`}
             onClick={() => setFilter('done')}
           >
@@ -100,7 +100,7 @@ export default function MilestonePage() {
             <MilestoneCard key={milestone.id} milestone={milestone} />
           ))}
           {filteredMilestones.length === 0 && (
-            <div className="col-span-full text-center text-gray-400">
+            <div className="col-span-full text-center text-text-secondary">
               마일스톤이 없습니다.
             </div>
           )}

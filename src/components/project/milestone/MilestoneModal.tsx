@@ -68,7 +68,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   // Header content
   const headerContent = (
     <div className="flex flex-col gap-2">
-      <h2 className="text-2xl font-bold text-white">{milestone.title}</h2>
+      <h2 className="text-2xl font-bold text-text-primary">{milestone.title}</h2>
       <div className="flex gap-2">
         <Badge content={milestone.status === 'done' ? '완료' :
           milestone.status === 'in-progress' ? '진행중' : '시작 전'} color="gray" />
@@ -106,52 +106,52 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   // Main content
   const mainContent = (
     <>
-      <div className='bg-gray-800/50 p-4 rounded-lg'>
-        <h3 className="text-gray-400 mb-2">설명</h3>
-        <p className="text-white">{milestone.description}</p>
+      <div className='bg-component-secondary-background p-4 rounded-lg'>
+        <h3 className="text-text-primary mb-2">설명</h3>
+        <p className="text-text-primary">{milestone.description}</p>
       </div>
 
-      <div className='bg-gray-800/50 p-4 rounded-lg'>
-        <h3 className="text-gray-400 mb-2">태그</h3>
+      <div className='bg-component-secondary-background p-4 rounded-lg'>
+        <h3 className="text-text-primary mb-2">태그</h3>
         <div className="flex flex-wrap gap-2">
           {milestone.tags.length > 0 ? (
             milestone.tags.map((tag, index) => (
               <Badge key={index} content={tag} color="purple" />
             ))
           ) : (
-            <span className="text-gray-500">태그가 없습니다.</span>
+            <span className="text-text-secondary">태그가 없습니다.</span>
           )}
         </div>
       </div>
 
       <div>
-        <h3 className="text-gray-400 mb-2">진행률</h3>
-        <div className="flex justify-between text-sm text-gray-400 mb-2">
+        <h3 className="text-text-primary mb-2">진행률</h3>
+        <div className="flex justify-between text-sm text-text-secondary mb-2">
           <span>진행도</span>
           <span>{progressPercentage}%</span>
         </div>
-        <div className="w-full bg-gray-600 rounded-full h-2">
+        <div className="w-full bg-component-secondary-background rounded-full h-2">
           <div
-            className="bg-indigo-500 h-2 rounded-full transition-all"
+            className="bg-point-color-indigo h-2 rounded-full transition-all"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className='bg-gray-800/50 p-4 rounded-lg'>
-          <h3 className="text-gray-400 mb-2">기간</h3>
-          <p className="text-white">시작일: {milestone.startDate}</p>
-          <p className="text-white">종료일: {milestone.endDate}</p>
+        <div className='bg-component-secondary-background p-4 rounded-lg'>
+          <h3 className="text-text-primary mb-2">기간</h3>
+          <p className="text-text-secondary">시작일: {milestone.startDate}</p>
+          <p className="text-text-secondary">종료일: {milestone.endDate}</p>
         </div>
-        <div className='bg-gray-800/50 p-4 rounded-lg'>
-          <h3 className="text-gray-400 mb-2">담당자</h3>
+        <div className='bg-component-secondary-background p-4 rounded-lg'>
+          <h3 className="text-text-primary mb-2">담당자</h3>
           <div className="flex flex-wrap gap-2">
             {
               milestone.assignee.map((assi) => (
                 <p
                   key={assi.id}
-                  className="text-gray-200 hover:text-blue-400 cursor-pointer transition-colors"
+                  className="text-text-secondary hover:text-blue-400 cursor-pointer transition-colors"
                   onClick={() => handleAssigneeClick(assi.id)}
                 >{assi.name}</p>
               ))
@@ -160,8 +160,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
         </div>
       </div>
 
-      <div className='bg-gray-800/50 p-4 rounded-lg'>
-        <h3 className="text-gray-400 mb-2">하위 작업</h3>
+      <div className='bg-component-secondary-background p-4 rounded-lg'>
+        <h3 className="text-text-primary mb-2">하위 작업</h3>
         <div className="space-y-2">
           {milestone.subtasks.length > 0 ? (
             milestone.subtasks.map((subtask) => (
@@ -203,7 +203,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               </div>
             ))
           ) : (
-            <span className="text-gray-500">하위 작업이 없습니다.</span>
+            <span className="text-text-secondary">하위 작업이 없습니다.</span>
           )}
         </div>
       </div>

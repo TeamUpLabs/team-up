@@ -39,7 +39,7 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
       <button
         type="button"
         onClick={onClose}
-        className="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition-colors"
+        className="px-4 py-2 rounded-lg border border-component-border text-text-secondary hover:bg-component-secondary-background transition-colors"
       >
         취소
       </button>
@@ -72,10 +72,10 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span className="text-gray-300">마일스톤을 불러오는 중...</span>
+            <span className="text-text-secondary">마일스톤을 불러오는 중...</span>
           </div>
         ) : project?.milestones.length === 0 ? (
-          <div className="py-8 text-center text-gray-400">
+          <div className="py-8 text-center text-text-secondary">
             <p>마일스톤이 없습니다.</p>
             <p className="mt-2 text-sm">마일스톤을 생성해주세요.</p>
           </div>
@@ -87,11 +87,11 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
                 onClick={() => setSelectedMilestone(milestone)}
                 className={`p-4 rounded-lg border ${selectedMilestone === milestone
                     ? "border-blue-500 bg-blue-500/10"
-                    : "border-gray-700 hover:border-gray-600 hover:bg-gray-700/30"
+                    : "border-component-border hover:border-component-border-hover hover:bg-component-secondary-background"
                   } cursor-pointer transition-all`}
               >
                 <div className="flex justify-between items-center">
-                  <h3 className={`font-medium ${selectedMilestone === milestone ? "text-blue-400" : "text-white"}`}>
+                  <h3 className={`font-medium ${selectedMilestone === milestone ? "text-blue-400" : "text-text-primary"}`}>
                     {milestone.title}
                   </h3>
                   {selectedMilestone === milestone && (
@@ -102,10 +102,10 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
                     </div>
                   )}
                 </div>
-                <div className="mt-2 text-sm text-gray-400">{milestone.description}</div>
+                <div className="mt-2 text-sm text-text-secondary">{milestone.description}</div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {milestone.tags.map((tag, idx) => (
-                    <span key={idx} className="px-2 py-1 rounded-md text-xs bg-gray-700/50 text-gray-300">
+                    <span key={idx} className="px-2 py-1 rounded-md text-xs bg-component-secondary-background text-text-secondary">
                       {tag}
                     </span>
                   ))}
