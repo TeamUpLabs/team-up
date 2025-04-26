@@ -75,10 +75,10 @@ export default function ProjectLayout({
 
   return (
     <ProjectProvider project={project}>
-      <div className="flex min-h-screen bg-(--color-background)">
+      <div className="flex min-h-screen bg-background">
         {isSidebarOpen && (
           <div
-            className="fixed inset-0 bg-(--color-background)/70 z-20 lg:hidden"
+            className="fixed inset-0 bg-background/70 z-20 lg:hidden"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
