@@ -246,18 +246,46 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           )}
         </div>
       </div>
-      <button
-        onClick={() => isEditing ? handleSave() : handleEdit()}
-        className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-3 py-2 rounded-md transition-all duration-200 font-medium"
-      >
-        <FontAwesomeIcon icon={isEditing ? faSave : faPencil} />
-        {isEditing ? '저장' : '수정'}
-      </button>
+      {isUserAssignee && (
+        <div className="flex items-center gap-2">
+        {isEditing && (
+          <button
+            onClick={() => {
+              setIsEditing(false);
+              setTaskData({
+                ...taskData,
+                title: task?.title ?? '',
+                description: task?.description ?? '',
+                status: task?.status ?? '',
+                priority: task?.priority ?? '',
+                dueDate: task?.dueDate ?? '',
+                assignee: task?.assignee ?? [],
+                assignee_id: task?.assignee?.map(assi => assi.id) ?? [],
+                tags: task?.tags ?? [],
+                milestone_id: task?.milestone_id ?? 0,
+                subtasks: task?.subtasks ?? [],
+                comments: task?.comments ?? []
+              });
+            }}
+            className="flex items-center gap-1.5 bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-secondary hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
+          >
+            취소
+          </button>
+        )}
+        <button
+          onClick={() => isEditing ? handleSave() : handleEdit()}
+          className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-3 py-2 rounded-md transition-all duration-200 font-medium"
+        >
+          <FontAwesomeIcon icon={isEditing ? faSave : faPencil} />
+            {isEditing ? '저장' : '수정'}
+          </button>
+        </div>
+      )}
     </div>
   );
 
   // Footer section for ModalTemplete (only if user is assignee)
-  const modalFooter = isUserAssignee ? (
+  const modalFooter = isEditing ? (
     <div className="flex gap-2 justify-end">
       <button
         onClick={handleDelete}
