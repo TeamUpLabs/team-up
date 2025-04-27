@@ -39,3 +39,18 @@ export const deleteMilestone = async (milestoneId: number) => {
     throw error;
   }
 };
+
+
+export const updateMilestone = async (project_id: string, milestone_id: number, milestone: MilestoneFormData) => {
+  try {
+    const res = await server.put(`/project/${project_id}/milestone/${milestone_id}`, milestone);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to update milestone");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

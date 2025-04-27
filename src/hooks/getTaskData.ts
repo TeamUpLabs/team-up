@@ -87,6 +87,8 @@ interface UpdateTaskFormData {
   subtasks: SubTask[];
   comments: Comment[];
   milestone_id: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const updateTask = async (project_id: string, task_id: number, task: UpdateTaskFormData) => {

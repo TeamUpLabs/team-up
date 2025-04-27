@@ -9,6 +9,7 @@ export interface MileStone {
   startDate: string;
   endDate: string;
   status: 'in-progress' | 'done' | 'not-started';
+  assignee_id: number[];
   assignee: Member[] | [];
   priority: 'low' | 'medium' | 'high';
   tags: string[];

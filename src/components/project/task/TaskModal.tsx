@@ -14,7 +14,6 @@ import { useAuthStore } from '@/auth/authStore';
 import { deleteTask, updateTask, addComment, updateSubtask } from '@/hooks/getTaskData';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/Badge';
-import { Member } from '@/types/Member';
 import { getCurrentKoreanTimeDate } from '@/utils/dateUtils';
 
 interface TaskModalProps {
@@ -23,39 +22,13 @@ interface TaskModalProps {
   onClose: () => void;
 }
 
-interface TaskModalData {
-  title: string;
-  description: string;
-  status: string;
-  priority: string;
-  dueDate: string;
-  assignee: Member[];
-  assignee_id: number[];
-  tags: string[];
-  milestone_id: number;
-  subtasks: SubTask[];
-  comments: Comment[];
-}
-
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const { project } = useProject();
   const user = useAuthStore.getState().user;
   const router = useRouter();
   const params = useParams();
   const [isEditing, setIsEditing] = useState(false);
-  const [taskData, setTaskData] = useState<TaskModalData>({
-    title: task?.title ?? '',
-    description: task?.description ?? '',
-    status: task?.status ?? '',
-    priority: task?.priority ?? '',
-    dueDate: task?.dueDate ?? '',
-    assignee: task?.assignee ?? [],
-    assignee_id: task?.assignee?.map(assi => assi.id) ?? [],
-    tags: task?.tags ?? [],
-    milestone_id: task?.milestone_id ?? 0,
-    subtasks: task?.subtasks ?? [],
-    comments: task?.comments ?? [],
-  });
+  const [taskData, setTaskData] = useState<Task>(task);
   const [newTag, setNewTag] = useState('');
   const [isComposing, setIsComposing] = useState(false);
 
@@ -116,7 +89,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         ...prev,
         subtasks: filteredSubtasks
       }));
-      console.log(taskData);
     }
     setIsEditing(!isEditing);
   };
@@ -124,16 +96,17 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const handleSave = async () => {
     try {
       await updateTask(project?.id ? String(project.id) : "0", task.id, {
-        title: taskData.title,
-        description: taskData.description,
-        status: taskData.status,
-        dueDate: taskData.dueDate,
-        assignee_id: taskData.assignee_id,
+        ...taskData,
+        assignee_id: taskData.assignee?.map(a => a.id) ?? [],
+        createdAt: taskData.createdAt,
+        updatedAt: getCurrentKoreanTimeDate(),
+        dueDate: taskData.dueDate ?? '',
+        subtasks: taskData.subtasks,
+        comments: taskData.comments,
+        milestone_id: taskData.milestone_id,
         tags: taskData.tags,
         priority: taskData.priority,
-        subtasks: taskData.subtasks,
-        milestone_id: taskData.milestone_id,
-        comments: taskData.comments
+        status: taskData.status,
       });
 
       useAuthStore.getState().setAlert("작업 수정에 성공했습니다.", "success");
@@ -177,6 +150,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         setNewTag('');
       }
     }
+  };
+
+  const handleCancelEdit = () => {
+    setTaskData(task);
+    setIsEditing(false);
   };
 
   const handleRemoveTag = (tagIndex: number) => {
@@ -260,7 +238,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         ) : (
           <h3 className="text-2xl font-semibold text-text-primary">{taskData?.title}</h3>
         )}
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="flex flex-wrap gap-2">
           {isEditing ? (
             <>
               {taskData.tags.map((tag, index) => (
@@ -290,23 +268,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         <div className="flex items-center gap-2">
         {isEditing && (
           <button
-            onClick={() => {
-              setIsEditing(false);
-              setTaskData({
-                ...taskData,
-                title: task?.title ?? '',
-                description: task?.description ?? '',
-                status: task?.status ?? '',
-                priority: task?.priority ?? '',
-                dueDate: task?.dueDate ?? '',
-                assignee: task?.assignee ?? [],
-                assignee_id: task?.assignee?.map(assi => assi.id) ?? [],
-                tags: task?.tags ?? [],
-                milestone_id: task?.milestone_id ?? 0,
-                subtasks: task?.subtasks ?? [],
-                comments: task?.comments ?? []
-              });
-            }}
+            onClick={handleCancelEdit}
             className="flex items-center gap-1.5 bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-secondary hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
           >
             취소
@@ -416,21 +378,20 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             {isEditing ? (
               <div className="border border-component-border rounded-lg p-3 bg-component-secondary-background hover:border-component-border-hover transition-all">
                 <div className="mb-3">
-                  <p className="text-sm text-text-secondary">선택된 담당자: {taskData.assignee.length > 0 ? `${taskData.assignee.length}명` : '없음'}</p>
+                  <p className="text-sm text-text-secondary">선택된 담당자: {taskData.assignee?.length ?? 0 > 0 ? `${taskData.assignee?.length}명` : '없음'}</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {project?.members.map((member) => {
-                    const isSelected = taskData.assignee.some(a => a.id === member.id);
+                    const isSelected = taskData.assignee?.some(a => a.id === member.id);
                     return (
                       <div
                         key={member.id}
                         onClick={() => {
                           if (isSelected) {
-                            if (taskData.assignee.length > 1) {
+                            if (taskData.assignee?.length && taskData.assignee?.length > 1) {
                               setTaskData({
                                 ...taskData,
-                                assignee: taskData.assignee.filter(a => a.id !== member.id),
-                                assignee_id: taskData.assignee.filter(a => a.id !== member.id).map(a => a.id)
+                                assignee: taskData.assignee?.filter(a => a.id !== member.id),
                               });
                             } else {
                               useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "warning");
@@ -438,8 +399,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                           } else {
                             setTaskData({
                               ...taskData,
-                              assignee: [...taskData.assignee, member],
-                              assignee_id: [...taskData.assignee_id, member.id]
+                              assignee: [...taskData.assignee ?? [], member],
                             });
                           }
                         }}
