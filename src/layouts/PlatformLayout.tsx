@@ -79,11 +79,14 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
             </div>
             <div className="flex items-center space-x-2 md:space-x-4">
               <button 
-                className="group flex items-center gap-1.5 px-3.5 py-2 bg-component-background border border-point-color-indigo/20 text-sm font-medium rounded-md transition-all hover:bg-point-color-indigo/10 hover:border-point-color-indigo/40 hover:shadow-sm"
+                className="group active:scale-95 flex items-center justify-center gap-2 px-4 py-2 bg-point-color-indigo text-white font-medium rounded-lg transition-all hover:bg-point-color-indigo-hover"
                 onClick={() => setIsModalOpen(true)}
               >
-                <span className="text-point-color-indigo group-hover:text-point-color-indigo-hover">+</span>
-                <span className="text-point-color-indigo group-hover:text-point-color-indigo-hover">새 프로젝트</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 3.33334V12.6667" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M3.33334 8H12.6667" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span>새 프로젝트</span>
               </button>
               <UserDropdown />
             </div>

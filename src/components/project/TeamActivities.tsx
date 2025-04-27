@@ -4,16 +4,6 @@ import { useProject } from "@/contexts/ProjectContext";
 
 
 export default function TeamActivities() {
-  const bgColors = [
-    'bg-blue-500', 'bg-red-500', 'bg-green-500',
-    'bg-yellow-500', 'bg-purple-500', 'bg-pink-500',
-    'bg-indigo-500', 'bg-teal-500'
-  ];
-
-  const getColorForMember = (memberId: number) => {
-    return bgColors[memberId % bgColors.length];
-  };
-
   const { project } = useProject();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -67,7 +57,7 @@ export default function TeamActivities() {
           project?.members.map((member) => (
             <div key={member.id} className="flex items-center justify-between p-2 hover:bg-component-secondary-background transition duration-200">
               <div className="flex items-center">
-                <div className={`w-10 h-10 ${getColorForMember(member.id)} rounded-full flex items-center justify-center text-text-primary font-bold`}>
+                <div className={`w-10 h-10 bg-component-secondary-background rounded-full flex items-center justify-center text-text-primary font-bold`}>
                   {member.name.charAt(0)}
                 </div>
                 <div className="ml-3">

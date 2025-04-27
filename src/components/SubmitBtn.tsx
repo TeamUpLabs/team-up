@@ -21,7 +21,7 @@ export default function SubmitBtn({ submitStatus, onClick }: SubmitBtnProps) {
         ${submitStatus === 'success' 
           ? 'bg-point-color-green hover:bg-point-color-green-hover' 
           : 'bg-point-color-indigo hover:bg-point-color-indigo-hover'}
-        text-white shadow-sm
+        text-white
       `}
         onClick={onClick}
       >

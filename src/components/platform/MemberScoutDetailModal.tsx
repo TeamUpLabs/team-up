@@ -19,7 +19,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
     <div className="flex items-center space-x-4">
       <div className="flex-shrink-0">
         <div className="w-12 h-12 rounded-full bg-component-secondary-background
-                    flex items-center justify-center text-xl font-bold text-white">
+                    flex items-center justify-center text-xl font-bold text-text-primary">
           {member.name.charAt(0)}
         </div>
       </div>
@@ -47,7 +47,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
       }}
       className="w-full px-4 py-3 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 
             rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2
-            hover:text-blue-300"
+            hover:text-blue-300 active:scale-95"
     >
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"

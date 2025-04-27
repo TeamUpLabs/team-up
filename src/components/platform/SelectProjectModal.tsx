@@ -132,7 +132,7 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
       <button
         type="button"
         onClick={onClose}
-        className="px-4 py-2 rounded-lg border border-component-border text-text-secondary hover:bg-component-secondary-background transition-colors"
+        className="px-4 py-2 rounded-lg border border-component-border text-text-secondary hover:bg-component-secondary-background transition-colors active:scale-95"
       >
         취소
       </button>
@@ -143,8 +143,8 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
         className={`px-4 py-2 rounded-lg ${
           !selectedProject
             ? "bg-blue-500/30 text-blue-300/70 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700 text-text-primary"
-        } transition-colors flex items-center`}
+            : "bg-blue-600 hover:bg-blue-700 text-white"
+        } transition-colors flex items-center active:scale-95`}
       >
         {isSubmitting ? (
           <>

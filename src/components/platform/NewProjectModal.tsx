@@ -83,6 +83,10 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (formData.title === '' || formData.description === '' || formData.projectType === '' || formData.endDate === '' || formData.roles.length === 0 || formData.techStack.length === 0 || formData.location === '' || formData.teamSize === 0) {
+      useAuthStore.getState().setAlert("모든 필드를 입력해주세요.", "error");
+      return;
+    }
     setSubmitStatus('submitting');
 
     if (user?.id) {
@@ -113,12 +117,12 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   const modalHeader = (
     <div>
       <h3 className="text-xl font-bold text-text-primary">새로운 프로젝트 생성</h3>
-      <p className="text-point-color-purple text-sm mt-1">팀원들과 함께할 새로운 프로젝트를 만들어보세요</p>
+      <p className="text-point-color-indigo text-sm mt-1">팀원들과 함께할 새로운 프로젝트를 만들어보세요</p>
     </div>
   );
 
   const modalContent = (
-    <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto mt-4 pl-2 pr-2">
+    <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto pl-2 pr-2">
       <div className="space-y-6 mb-1">
         <div>
           <label htmlFor="title" className="block text-sm font-medium mb-1">
@@ -192,7 +196,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
         </div>
 
         <div className="space-y-5">
-          <h4 className="text-white font-medium border-b border-gray-700/50 pb-2">팀 구성 정보</h4>
+          <h4 className="text-text-primary font-medium border-b border-component-border pb-2">팀 구성 정보</h4>
 
           <div>
             <label htmlFor="roles" className="block text-sm font-medium mb-1">
