@@ -131,7 +131,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
             placeholder="작업 이름을 입력하세요"
             required
           />
@@ -147,7 +147,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             value={formData.description}
             onChange={handleChange}
             rows={3}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 placeholder:text-text-secondary resize-none hover:border-input-border-hover"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary resize-none hover:border-input-border-hover"
             placeholder="작업 설명을 입력하세요"
           />
         </div>
@@ -162,7 +162,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             name="dueDate"
             value={formData.dueDate}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             required
           />
         </div>
@@ -176,7 +176,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             name="priority"
             value={formData.priority}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             required
           >
             <option value="low">낮음</option>
@@ -246,7 +246,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             onKeyDown={(e) => handleKeyDown("tags", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             placeholder="태그을 입력하고 Enter 키를 누르세요"
           />
           <div className="mt-2 flex flex-wrap gap-2">
@@ -269,14 +269,14 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
             onKeyDown={(e) => handleKeyDown("subtasks", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-purple focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
             placeholder="하위 작업을 입력하고 Enter 키를 누르세요"
           />
           <div className="mt-2 flex flex-col gap-2">
             {formData.subtasks.map((subtask, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between gap-2 bg-point-color-purple/20 p-3 rounded-lg"
+                className="flex items-center justify-between gap-2 bg-point-color-indigo/20 p-3 rounded-lg"
               >
                 <div className="flex items-center gap-2">
                   <input
@@ -285,14 +285,14 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                     readOnly
                     className="rounded"
                   />
-                  <span className="text-point-color-purple">
+                  <span className="text-text-secondary">
                     {subtask}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleRemoveSubtask(subtask)}
-                  className="text-point-color-purple hover:text-point-color-purple-hover ml-1 focus:outline-none"
+                  className="text-point-color-indigo hover:text-point-color-indigo-hover ml-1 focus:outline-none"
                 >
                   <FontAwesomeIcon icon={faCircleXmark} />
                 </button>
