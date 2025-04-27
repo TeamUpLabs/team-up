@@ -1,5 +1,6 @@
 import { server } from "@/auth/server";
 import { getCurrentKoreanTime } from "@/utils/dateUtils";
+import { Comment, SubTask } from "@/types/Task";
 
 interface TaskFormData {
   project_id: string;
@@ -67,6 +68,33 @@ export const updateTaskStatus = async (project_id: string, task_id: number, stat
       return res.data;
     } else {
       throw new Error("Failed to update task status");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+interface UpdateTaskFormData {
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  dueDate: string;
+  assignee_id: number[];
+  tags: string[];
+  subtasks: SubTask[];
+  comments: Comment[];
+  milestone_id: number;
+}
+
+export const updateTask = async (project_id: string, task_id: number, task: UpdateTaskFormData) => {
+  try {
+    const res = await server.put(`/project/${project_id}/task/${task_id}`, task);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to update task");
     }
   } catch (error) {
     console.error(error);

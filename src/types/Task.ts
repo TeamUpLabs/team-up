@@ -5,7 +5,7 @@ export interface SubTask {
   completed: boolean;
 }
 
-interface Comment {
+export interface Comment {
   author_id: number;
   content: string;
   createdAt: string;
