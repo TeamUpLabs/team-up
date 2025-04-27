@@ -30,12 +30,17 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
       <div className="flex items-center justify-between">
         <div className="flex -space-x-2">
           {
-            project.members.map((member => (
+            project.members.slice(0, 2).map((member => (
               <div key={member.id} className="w-8 h-8 rounded-full bg-component-secondary-background border-2 border-component-border text-sm flex align-center justify-center place-items-center">
                 {member.name.charAt(0)}
               </div>
             )))
           }
+          {project.members.length > 2 && (
+            <div className="w-8 h-8 rounded-full bg-component-secondary-background border-2 border-component-border text-sm flex align-center justify-center place-items-center">
+              +{project.members.length - 2}
+            </div>
+          )}
         </div>
         {isExplore ? (
           project.participationRequestMembers && project.participationRequestMembers.some(member => member.id === user?.id) ? (
