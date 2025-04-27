@@ -11,7 +11,7 @@ import { useParams } from 'next/navigation';
 import { getStatusColor } from '@/utils/getStatusColor';
 import { useProject } from '@/contexts/ProjectContext';
 import { useAuthStore } from '@/auth/authStore';
-import { deleteTask, updateTask, addComment } from '@/hooks/getTaskData';
+import { deleteTask, updateTask, addComment, updateSubtask } from '@/hooks/getTaskData';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/Badge';
 import { Member } from '@/types/Member';
@@ -73,7 +73,13 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     );
     setTaskData({ ...taskData, subtasks: updated });
 
-    // api 호출
+    try {
+      await updateSubtask(project?.id ? String(project.id) : "0", task.id, updated[index]);
+      useAuthStore.getState().setAlert("작업 상태가 변경되었습니다.", "success");
+    } catch (error) {
+      console.error("Error updating subtask:", error);
+      useAuthStore.getState().setAlert("작업 상태 변경에 실패했습니다.", "error");
+    }
   };
 
   const handleSubtaskChange = (index: number, value: string) => {
@@ -187,6 +193,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
   const handleAddSubtask = () => {
     const newSubtask: SubTask = {
+      id: Date.now() + Math.floor(Math.random() * 10000),
       title: '',
       completed: false
     };

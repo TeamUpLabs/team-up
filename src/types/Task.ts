@@ -1,6 +1,7 @@
 import { Member } from "@/types/Member";
 
 export interface SubTask {
+  id: number;
   title: string;
   completed: boolean;
 }

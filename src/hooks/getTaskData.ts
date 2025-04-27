@@ -28,6 +28,7 @@ export const createTask = async (task: TaskFormData) => {
       tags: task.tags,
       priority: task.priority,
       subtasks: task.subtasks.map((subtask) => ({
+        id: Date.now() + Math.floor(Math.random() * 10000),
         title: subtask,
         completed: false,
       })),
@@ -95,6 +96,22 @@ export const updateTask = async (project_id: string, task_id: number, task: Upda
       return res.data;
     } else {
       throw new Error("Failed to update task");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export const updateSubtask = async (project_id: string, task_id: number, subtask: SubTask) => {
+  try {
+    const res = await server.put(`/project/${project_id}/task/${task_id}/subtask/${subtask.id}/state`, {
+      completed: subtask.completed,
+    });
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to update subtask");
     }
   } catch (error) {
     console.error(error);
