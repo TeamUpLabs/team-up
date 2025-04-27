@@ -101,3 +101,21 @@ export const updateTask = async (project_id: string, task_id: number, task: Upda
     throw error;
   }
 }
+
+export const addComment = async (project_id: string, task_id: number, comment: Comment) => {
+  try {
+    const res = await server.post(`/project/${project_id}/task/${task_id}/comment`, comment, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to add comment");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

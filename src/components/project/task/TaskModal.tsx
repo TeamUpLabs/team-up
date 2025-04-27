@@ -11,10 +11,11 @@ import { useParams } from 'next/navigation';
 import { getStatusColor } from '@/utils/getStatusColor';
 import { useProject } from '@/contexts/ProjectContext';
 import { useAuthStore } from '@/auth/authStore';
-import { deleteTask, updateTask } from '@/hooks/getTaskData';
+import { deleteTask, updateTask, addComment } from '@/hooks/getTaskData';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/Badge';
 import { Member } from '@/types/Member';
+import { getCurrentKoreanTimeDate } from '@/utils/dateUtils';
 
 interface TaskModalProps {
   task: Task;
@@ -193,6 +194,37 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       ...taskData,
       subtasks: [...taskData.subtasks, newSubtask]
     });
+  };
+
+  const handleCommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const commentInput = form.elements.namedItem('comment') as HTMLTextAreaElement;
+    const commentContent = commentInput.value.trim();
+
+    if (commentContent === '') {
+      useAuthStore.getState().setAlert("댓글을 작성해주세요.", "warning");
+      return;
+    }
+    
+    const newComment: Comment = {
+      author_id: user?.id ?? 0,
+      content: commentContent,
+      createdAt: getCurrentKoreanTimeDate(),
+    };
+
+    try {
+      await addComment(project?.id ? String(project.id) : "0", task.id, newComment);
+      commentInput.value = '';
+      
+      setTaskData(prev => ({
+        ...prev,
+        comments: [...prev.comments, newComment]
+      }));
+    } catch (error) {
+      console.error("Error adding comment:", error);
+      useAuthStore.getState().setAlert("댓글 추가에 실패했습니다.", "error");
+    }
   };
 
   useEffect(() => {
@@ -576,55 +608,65 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           </button>
         )}
 
-        <div>
+        <div className="space-y-2">
           <h4 className="font-medium text-text-primary">댓글</h4>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {taskData?.comments && taskData?.comments.length > 0 ? (
               taskData?.comments?.map((comment, index) => (
-                <div key={index} className="bg-component-secondary-background p-4 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-text-secondary">{comment?.author_id}</span>
-                    <span className="text-xs text-text-secondary">
-                      {new Date(comment?.createdAt).toLocaleDateString()}
-                    </span>
+                <div key={index} className="bg-component-secondary-background p-4 rounded-lg border border-component-border hover:border-component-border-hover transition-all">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
+                      <FontAwesomeIcon icon={faUser} className="text-gray-400" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-text-primary">
+                          {project?.members.find(member => member.id === comment?.author_id)?.name}
+                          </span>
+                        <span className="text-xs text-text-secondary">
+                          {new Date(comment?.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-text-secondary text-sm">{comment?.content}</p>
+                  <p className="text-text-secondary pl-11">{comment?.content}</p>
                 </div>
               ))
             ) : (
-              <p className="text-text-secondary mb-3">댓글이 없습니다.</p>
+              <div className="flex flex-col items-center justify-center py-6 bg-component-secondary-background border border-dashed border-component-border rounded-lg">
+                <p className="text-text-secondary mb-1">아직 댓글이 없습니다</p>
+                <p className="text-xs text-text-tertiary">첫 댓글을 작성해보세요</p>
+              </div>
             )}
 
             {/* 댓글 입력 폼 */}
             <form
-              className="mt-3"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const form = e.target as HTMLFormElement;
-                const commentInput = form.elements.namedItem('comment') as HTMLTextAreaElement;
-
-                if (commentInput.value.trim()) {
-                  // TODO: API 호출로 댓글 추가 기능 구현
-                  console.log('댓글 추가:', commentInput.value);
-
-                  // 폼 초기화
-                  commentInput.value = '';
-                }
-              }}
+              className="mt-4"
+              onSubmit={handleCommentSubmit}
             >
-              <textarea
-                name="comment"
-                placeholder="댓글을 작성하세요..."
-                className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
-                rows={3}
-              />
-              <div className="flex justify-end mt-2">
-                <button
-                  type="submit"
-                  className="bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-md transition-all duration-200 font-medium"
-                >
-                  댓글 등록
-                </button>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 mt-2 rounded-full bg-gray-700 flex-shrink-0 flex items-center justify-center">
+                  <FontAwesomeIcon icon={faUser} className="text-gray-400" />
+                </div>
+                <div className="flex-1">
+                  <textarea
+                    name="comment"
+                    placeholder="댓글을 작성하세요..."
+                    className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
+                    rows={2}
+                  />
+                  <div className="flex justify-end mt-2">
+                    <button
+                      type="submit"
+                      className="bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-3 py-1.5 rounded-md transition-all duration-200 font-medium text-sm flex items-center gap-1.5"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+                      </svg>
+                      댓글 등록
+                    </button>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
