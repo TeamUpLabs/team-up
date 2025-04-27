@@ -9,19 +9,30 @@ export default function TaskComponent({ task }: { task: Task }) {
       className="p-3 mb-2 bg-component-secondary-background rounded-lg hover:bg-component-secondary-background/60 cursor-move transition-colors border border-component-border"
       draggable
     >
-      <div className="text-sm font-medium text-text-primary mb-2">
-        {task?.title}
+      <div className="flex flex-col gap-1 font-medium mb-2">
+        <span className="text-base text-text-primary">
+          {task?.title}
+        </span>
+        {task?.description && (
+          <span className="text-sm text-text-secondary">
+            {task?.description}
+          </span>
+        )}
       </div>
-      <div className="flex items-center gap-2 text-xs text-text-secondary">
-        {task?.assignee && (
-          task?.assignee.map((assi, idx) => (
-            <span key={assi?.id ?? idx} className="flex items-center">
-              <span className="w-4 h-4 bg-component-background rounded-full flex items-center justify-center mr-1 text-[10px]">
+      <div className="flex items-center justify-between gap-2 text-sm text-text-secondary">
+        {task?.assignee && task.assignee.length > 0 && (
+          <div className="flex -space-x-2.5">
+            {task.assignee.slice(0, 2).map((assi, idx) => (
+              <div key={assi?.id ?? idx} className="w-8 h-8 rounded-full bg-component-background border-2 border-component-border text-xs flex items-center justify-center">
                 {assi?.name.charAt(0)}
-              </span>
-              {assi?.name}
-            </span>
-          ))
+              </div>
+            ))}
+            {task.assignee.length > 2 && (
+              <div className="w-8 h-8 rounded-full bg-component-background border-2 border-component-border text-sm flex items-center justify-center">
+                +{task.assignee.length - 2}
+              </div>
+            )}
+          </div>
         )}
         {task?.dueDate && (
           <span>
