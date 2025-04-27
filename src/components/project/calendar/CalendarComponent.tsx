@@ -98,9 +98,12 @@ export default function Calendar({
                     <p className="font-medium truncate">{task?.title}</p>
                     {task?.assignee && task?.assignee.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-0.5">
-                        {task?.assignee.map(assi => (
+                        {task?.assignee.slice(0, 2).map(assi => (
                           <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
                         ))}
+                        {task?.assignee.length > 2 && (
+                          <span className="text-[10px] sm:text-xs opacity-75 truncate">+{task?.assignee.length - 2}명</span>
+                        )}
                       </div>
                     )}
                   </div>
