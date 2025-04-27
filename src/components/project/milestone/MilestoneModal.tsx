@@ -22,7 +22,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   if (!isOpen) return null;
 
   const totalTasks = milestone?.subtasks.length ?? 0;
-  const completedTasks = milestone?.subtasks.filter(task => task.status === 'done').length ?? 0;
+  const completedTasks = milestone?.subtasks.filter(task => task.status === 'done' || task.subtasks.every(st => st.completed)).length ?? 0;
 
   const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
@@ -195,7 +195,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                           checked={sub.completed}
                           className='rounded bg-gray-700 border-gray-600'
                         />
-                        <span className={`text-sm`}>{sub.title}</span>
+                        <span className={`text-sm ${sub.completed ? 'text-gray-400 line-through' : 'text-white'}`}>{sub.title}</span>
                       </div>
                     ))
                   }

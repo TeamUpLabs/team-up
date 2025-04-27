@@ -6,7 +6,7 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const totalTasks = milestone?.subtasks.length ?? 0;
-  const completedTasks = milestone?.subtasks.filter(task => task.status === 'done').length ?? 0;
+  const completedTasks = milestone?.subtasks.filter(task => task.status === 'done' || task.subtasks.every(st => st.completed)).length ?? 0;
 
   const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 

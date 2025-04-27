@@ -76,6 +76,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     try {
       await updateSubtask(project?.id ? String(project.id) : "0", task.id, updated[index]);
       useAuthStore.getState().setAlert("작업 상태가 변경되었습니다.", "success");
+      window.location.reload();
     } catch (error) {
       console.error("Error updating subtask:", error);
       useAuthStore.getState().setAlert("작업 상태 변경에 실패했습니다.", "error");
@@ -642,7 +643,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             ) : (
               <div className="flex flex-col items-center justify-center py-6 bg-component-secondary-background border border-dashed border-component-border rounded-lg">
                 <p className="text-text-secondary mb-1">아직 댓글이 없습니다</p>
-                <p className="text-xs text-text-tertiary">첫 댓글을 작성해보세요</p>
+                <p className="text-xs text-text-secondary">첫 댓글을 작성해보세요</p>
               </div>
             )}
 
