@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Task } from '@/types/Task';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencil, faUser, faCheck, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faPencil, faUser, faCheck, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { getPriorityColor } from '@/utils/getPriorityColor';
 import { SubTask, Comment } from '@/types/Task';
 import { useRouter } from 'next/navigation';
@@ -652,7 +652,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             {taskData?.comments && taskData?.comments.length > 0 ? (
               taskData?.comments?.map((comment, index) => (
                 <div key={index} className="bg-component-secondary-background p-4 rounded-lg border border-component-border hover:border-component-border-hover transition-all">
-                  <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
                       <FontAwesomeIcon icon={faUser} className="text-gray-400" />
                     </div>
@@ -661,9 +661,18 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                         <span className="font-medium text-text-primary">
                           {project?.members.find(member => member.id === comment?.author_id)?.name}
                         </span>
-                        <span className="text-xs text-text-secondary">
-                          {new Date(comment?.createdAt).toLocaleDateString()}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-text-secondary">
+                            {new Date(comment?.createdAt).toLocaleDateString()}
+                          </span>
+                          {comment?.author_id === user?.id && (
+                            <button
+                              className="text-text-secondary hover:text-red-400 p-2 rounded transition-colors"
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
