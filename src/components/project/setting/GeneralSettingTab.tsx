@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { updateProject } from "@/hooks/getProjectData";
 import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
+import { faCopy, faPencil } from "@fortawesome/free-solid-svg-icons";
 import Badge from "@/components/Badge";
 
 interface GeneralSettingTabProps {
@@ -12,7 +12,7 @@ interface GeneralSettingTabProps {
 
 export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
   const user = useAuthStore(state => state.user);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState<string>("none");
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -114,8 +114,22 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
     }
   };
 
+  const handleEdit = (name: string) => {
+    if (project.leader.id === user?.id || project.manager.some(m => m.id === user?.id)) {
+      setIsEditing(name);
+      if (name !== "none") {
+        useAuthStore.getState().setAlert("편집 모드로 전환되었습니다.", "info");
+      } else {
+        useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
+      }
+    } else {
+      useAuthStore.getState().setAlert("프로젝트 리더와 관리자만 편집할 수 있습니다.", "warning");
+    }
+  };
+
   const handleCancel = () => {
-    setIsEditing(false);
+    setIsEditing("none");
+    useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
     // Reset form to original values
     if (project) {
       setFormData({
@@ -171,33 +185,12 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
             </svg>
             프로젝트 설정
           </h2>
-          {!isEditing ? (
-            <button
-              onClick={() => {
-                if (project.leader.id === user?.id) {
-                  setIsEditing(true);
-                } else {
-                  useAuthStore.getState().setAlert("프로젝트 리더와 관리자만 편집할 수 있습니다.", "warning");
-                }
-              }}
-              className="px-4 py-2 bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-primary border border-component-border font-medium rounded-md transition-all backdrop-blur-sm flex items-center gap-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-              </svg>
-              편집하기
-            </button>
-          ) : (
-            <div className="px-4 py-2 bg-amber-400/20 text-amber-400 border border-amber-400/20 rounded-md font-medium backdrop-blur-sm">
-              편집 모드
-            </div>
-          )}
         </div>
       </div>
 
       {/* Main content */}
       <div className="p-6">
-        {isEditing && (
+        {isEditing !== "none" && (
           <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-lg p-4 mb-8 text-indigo-400 flex items-start gap-3">
             <svg className="h-6 w-6 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -220,6 +213,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                 <h3 className="text-lg font-semibold text-text-primary">기본 정보</h3>
               </div>
               <div className="p-6 space-y-5">
+
                 <div>
                   <label htmlFor="code" className="inline-block text-text-primary mb-2 font-medium">참여 코드</label>
                   <div className="flex items-center w-full border bg-component-background/50 border-component-border rounded-lg px-4 py-3">
@@ -241,27 +235,44 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                     </button>
                   </div>
                 </div>
-                <div>
-                  <label className="inline-block text-text-primary mb-2 font-medium">프로젝트 이름</label>
+
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 group relative">
+                    <label className="inline-block text-text-primary font-medium">프로젝트 이름</label>
+                    <FontAwesomeIcon
+                      size="xs"
+                      icon={faPencil}
+                      className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      onClick={() => isEditing === "title" ? handleEdit("none") : handleEdit("title")}
+                    />
+                  </div>
                   <input
                     type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
-                    readOnly={!isEditing}
-                    className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                    readOnly={isEditing !== "title"}
+                    className={`w-full border ${isEditing === "title" ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                   />
                 </div>
 
-                <div>
-                  <label className="inline-block text-text-primary mb-2 font-medium">프로젝트 설명</label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 group relative">
+                    <label className="inline-block text-text-primary font-medium">프로젝트 설명</label>
+                    <FontAwesomeIcon
+                      size="xs"
+                      icon={faPencil}
+                      className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      onClick={() => isEditing === "description" ? handleEdit("none") : handleEdit("description")}
+                    />
+                  </div>
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    readOnly={!isEditing}
+                    readOnly={isEditing !== "description"}
                     rows={4}
-                    className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'} resize-none`}
+                    className={`w-full border ${isEditing === "description" ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'} resize-none`}
                   />
                 </div>
               </div>
@@ -276,41 +287,65 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               </div>
               <div className="p-6 space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="inline-block text-text-primary mb-2 font-medium">프로젝트 유형</label>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 group relative">
+                      <label className="inline-block text-text-primary font-medium">프로젝트 유형</label>
+                      <FontAwesomeIcon
+                        size="xs"
+                        icon={faPencil}
+                        className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        onClick={() => isEditing === "projectType" ? handleEdit("none") : handleEdit("projectType")}
+                      />
+                    </div>
                     <input
                       type="text"
                       name="projectType"
                       value={formData.projectType}
                       onChange={handleChange}
-                      readOnly={!isEditing}
-                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                      readOnly={isEditing !== "projectType"}
+                      className={`w-full border ${isEditing === "projectType" ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                     />
                   </div>
 
-                  <div>
-                    <label className="inline-block text-text-primary mb-2 font-medium">팀 규모</label>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 group relative">
+                      <label className="inline-block text-text-primary font-medium">팀 규모</label>
+                      <FontAwesomeIcon
+                        size="xs"
+                        icon={faPencil}
+                        className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        onClick={() => isEditing === "teamSize" ? handleEdit("none") : handleEdit("teamSize")}
+                      />
+                    </div>
                     <input
                       type="number"
                       name="teamSize"
                       value={formData.teamSize}
                       onChange={handleChange}
-                      readOnly={!isEditing}
+                      readOnly={isEditing !== "teamSize"}
                       min={1}
-                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                      className={`w-full border ${isEditing === "teamSize" ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                     />
                   </div>
                 </div>
 
-                <div>
-                  <label className="inline-block text-text-primary mb-2 font-medium">위치</label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 group relative">
+                    <label className="inline-block text-text-primary font-medium">위치</label>
+                    <FontAwesomeIcon
+                      size="xs"
+                      icon={faPencil}
+                      className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      onClick={() => isEditing === "location" ? handleEdit("none") : handleEdit("location")}
+                    />
+                  </div>
                   <input
                     type="text"
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    readOnly={!isEditing}
-                    className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                    readOnly={isEditing !== "location"}
+                    className={`w-full border ${isEditing === "location" ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                   />
                 </div>
               </div>
@@ -325,27 +360,43 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               </div>
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="inline-block text-text-secondary mb-2 font-medium">시작일</label>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 group relative">
+                      <label className="inline-block text-text-secondary font-medium">시작일</label>
+                      <FontAwesomeIcon
+                        size="xs"
+                        icon={faPencil}
+                        className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        onClick={() => isEditing === "startDate" ? handleEdit("none") : handleEdit("startDate")}
+                      />
+                    </div>
                     <input
                       type="date"
                       name="startDate"
                       value={formData.startDate}
                       onChange={handleChange}
-                      readOnly={!isEditing}
-                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                      readOnly={isEditing !== "startDate"}
+                      className={`w-full border ${isEditing === "startDate" ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                     />
                   </div>
 
-                  <div>
-                    <label className="inline-block text-text-secondary mb-2 font-medium">종료일</label>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 group relative">
+                      <label className="inline-block text-text-secondary font-medium">종료일</label>
+                      <FontAwesomeIcon
+                        size="xs"
+                        icon={faPencil}
+                        className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        onClick={() => isEditing === "endDate" ? handleEdit("none") : handleEdit("endDate")}
+                      />
+                    </div>
                     <input
                       type="date"
                       name="endDate"
                       value={formData.endDate}
                       onChange={handleChange}
-                      readOnly={!isEditing}
-                      className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                      readOnly={isEditing !== "endDate"}
+                      className={`w-full border ${isEditing === "endDate" ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                     />
                   </div>
                 </div>
@@ -360,18 +411,26 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
-                <h3 className="text-lg font-semibold text-text-primary">기술 스택</h3>
+                <div className="flex items-center gap-2 group relative">
+                  <h3 className="text-lg font-semibold text-text-primary">기술 스택</h3>
+                  <FontAwesomeIcon
+                    size="xs"
+                    icon={faPencil}
+                    className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    onClick={() => isEditing === "techStack" ? handleEdit("none") : handleEdit("techStack")}
+                  />
+                </div>
               </div>
               <div className="p-6">
-                <div className={`bg-component-background/50 rounded-lg p-3 min-h-[120px] border ${isEditing ? 'border-blue-900/30' : 'border-component-border'}`}>
+                <div className={`bg-component-background/50 rounded-lg p-3 min-h-[120px] border ${isEditing === "techStack" ? 'border-blue-900/30' : 'border-component-border'}`}>
                   <div className="flex flex-wrap gap-2">
                     {formData.techStack.length > 0 ? (
                       formData.techStack.map((tech, index) => (
-                        <Badge 
+                        <Badge
                           key={index}
                           content={tech}
                           color="blue"
-                          isEditable={isEditing}
+                          isEditable={true}
                           onRemove={() => handleRemoveTechItem(index)}
                         />
                       ))
@@ -381,7 +440,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   </div>
                 </div>
 
-                {isEditing && (
+                {isEditing === "techStack" && (
                   <div className="mt-3">
                     <div className="flex">
                       <input
@@ -411,18 +470,26 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-400" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-text-primary">필요 역할</h3>
+                <div className="flex items-center gap-2 group relative">
+                  <h3 className="text-lg font-semibold text-text-primary">필요 역할</h3>
+                  <FontAwesomeIcon
+                    size="xs"
+                    icon={faPencil}
+                    className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    onClick={() => isEditing === "roles" ? handleEdit("none") : handleEdit("roles")}
+                  />
+                </div>
               </div>
               <div className="p-6">
-                <div className={`bg-component-background/50 rounded-lg p-3 min-h-[120px] border ${isEditing ? 'border-purple-900/30' : 'border-component-border'}`}>
+                <div className={`bg-component-background/50 rounded-lg p-3 min-h-[120px] border ${isEditing === "roles" ? 'border-purple-900/30' : 'border-component-border'}`}>
                   <div className="flex flex-wrap gap-2">
                     {formData.roles.length > 0 ? (
                       formData.roles.map((role, index) => (
-                        <Badge 
+                        <Badge
                           key={index}
                           content={role}
                           color="purple"
-                          isEditable={isEditing}
+                          isEditable={true}
                           onRemove={() => handleRemoveRoleItem(index)}
                         />
                       ))
@@ -432,7 +499,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   </div>
                 </div>
 
-                {isEditing && (
+                {isEditing === "roles" && (
                   <div className="mt-3">
                     <div className="flex">
                       <input
@@ -460,18 +527,25 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
             <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden  border border-component-border">
               <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                  <path fillRule="evenodd" d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
                 </svg>
-                <h3 className="text-lg font-semibold text-text-primary">프로젝트 상태</h3>
+                <div className="flex items-center gap-2 group relative">
+                  <h3 className="text-lg font-semibold text-text-primary">프로젝트 상태</h3>
+                  <FontAwesomeIcon
+                    size="xs"
+                    icon={faPencil}
+                    className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    onClick={() => isEditing === "status" ? handleEdit("none") : handleEdit("status")}
+                  />
+                </div>
               </div>
               <div className="p-6">
-                <label className="block text-text-secondary mb-2 font-medium">프로젝트 상태</label>
                 <select
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  disabled={!isEditing}
-                  className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                  disabled={isEditing !== "status"}
+                  className={`w-full border ${isEditing === "status" ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                 >
                   <option value="모집중">모집중</option>
                   <option value="진행중">진행중</option>
@@ -489,18 +563,26 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
             <div className="bg-component-secondary-background backdrop-blur-sm rounded-xl overflow-hidden  border border-component-border">
               <div className="border-b border-component-border px-6 py-4 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                 </svg>
-                <h3 className="text-lg font-semibold text-text-primary">접근 설정</h3>
+                <div className="flex items-center gap-2 group relative">
+                  <h3 className="text-lg font-semibold text-text-primary">접근 설정</h3>
+                  <FontAwesomeIcon
+                    size="xs"
+                    icon={faPencil}
+                    className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    onClick={() => isEditing === "visibility" ? handleEdit("none") : handleEdit("visibility")}
+                  />
+                </div>
               </div>
-              <div className="p-6">
-                <label className="block text-text-secondary mb-2 font-medium">공개 여부</label>
+              <div className="p-6 space-y-2">
+                <label className="block text-text-secondary font-medium">공개 여부</label>
                 <select
                   name="visibility"
                   value={formData.visibility}
                   onChange={handleChange}
-                  disabled={!isEditing}
-                  className={`w-full border ${isEditing ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
+                  disabled={isEditing !== "visibility"}
+                  className={`w-full border ${isEditing === "visibility" ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'}`}
                 >
                   <option value="public">공개</option>
                   <option value="private">비공개</option>
@@ -516,7 +598,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
           </div>
         </div>
 
-        {isEditing && (
+        {isEditing !== "none" && (
           <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-700/50">
             <button
               onClick={handleCancel}
