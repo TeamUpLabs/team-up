@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Task } from '@/types/Task';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencil, faUser, faCheck, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPencil, faUser, faCheck, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { getPriorityColor } from '@/utils/getPriorityColor';
 import { SubTask, Comment } from '@/types/Task';
 import { useRouter } from 'next/navigation';
@@ -296,16 +296,16 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             <>
               <button
                 onClick={handleCancelEdit}
-                className="flex items-center gap-1.5 bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-secondary hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
+                className="flex items-center gap-1.5 bg-cancel-button-background hover:bg-cancel-button-background-hover text-white hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
               >
                 취소
               </button>
 
               <button
                 onClick={handleSave}
-                className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-3 py-2 rounded-md transition-all duration-200 font-medium"
+                className="flex items-center gap-1.5 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
               >
-                <FontAwesomeIcon icon={faSave} />
+                <FontAwesomeIcon icon={faCheck} />
                 저장
               </button>
             </>
@@ -658,36 +658,37 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           <div className="space-y-4">
             {taskData?.comments && taskData?.comments.length > 0 ? (
               taskData?.comments?.map((comment, index) => (
-                <div key={index} className="bg-component-secondary-background p-4 rounded-lg border border-component-border hover:border-component-border-hover transition-all">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
-                      <FontAwesomeIcon icon={faUser} className="text-gray-400" />
+                <div key={index} className="bg-component-secondary-background p-4 rounded-lg border border-component-border hover:border-component-border-hover transition-all duration-200 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-component-tertiary-background flex items-center justify-center shadow-inner">
+                      <FontAwesomeIcon icon={faUser} className="text-text-secondary" />
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-text-primary">
-                          {project?.members.find(member => member.id === comment?.author_id)?.name}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-text-secondary">
-                            {new Date(comment?.createdAt).toLocaleDateString()}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-text-primary">
+                            {project?.members.find(member => member.id === comment?.author_id)?.name}
                           </span>
-                          {comment?.author_id === user?.id && (
-                            <button
-                              className="text-text-secondary hover:text-red-400 p-2 rounded transition-colors"
-                            >
-                              <FontAwesomeIcon icon={faTrash} />
-                            </button>
-                          )}
+                          <span className="text-xs text-text-secondary">
+                            {project?.members.find(member => member.id === comment?.author_id)?.role} • {new Date(comment?.createdAt).toLocaleDateString()}
+                          </span>
                         </div>
+                        {comment?.author_id === user?.id && (
+                          <button
+                            className="text-text-secondary hover:text-red-400 p-1.5 rounded-full hover:bg-red-500/10 transition-all"
+                            aria-label="댓글 삭제"
+                          >
+                            <FontAwesomeIcon icon={faTrash} size="sm" />
+                          </button>
+                        )}
                       </div>
+                      <p className="text-text-secondary leading-relaxed">{comment?.content}</p>
                     </div>
                   </div>
-                  <p className="text-text-secondary pl-11">{comment?.content}</p>
                 </div>
               ))
             ) : (
-              <div className="flex flex-col items-center justify-center py-6 bg-component-secondary-background border border-dashed border-component-border rounded-lg">
+              <div className="flex flex-col items-center justify-center py-8 bg-component-secondary-background border border-dashed border-component-border rounded-lg">
                 <p className="text-text-secondary mb-1">아직 댓글이 없습니다</p>
                 <p className="text-xs text-text-secondary">첫 댓글을 작성해보세요</p>
               </div>
@@ -699,20 +700,20 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               onSubmit={handleCommentSubmit}
             >
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 mt-2 rounded-full bg-gray-700 flex-shrink-0 flex items-center justify-center">
-                  <FontAwesomeIcon icon={faUser} className="text-gray-400" />
+                <div className="w-10 h-10 mt-2 rounded-full bg-component-tertiary-background flex-shrink-0 flex items-center justify-center shadow-inner">
+                  <FontAwesomeIcon icon={faUser} className="text-text-secondary" />
                 </div>
                 <div className="flex-1">
                   <textarea
                     name="comment"
                     placeholder="댓글을 작성하세요..."
-                    className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
-                    rows={2}
+                    className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
+                    rows={3}
                   />
                   <div className="flex justify-end mt-2">
                     <button
                       type="submit"
-                      className="bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-3 py-1.5 rounded-md transition-all duration-200 font-medium text-sm flex items-center gap-1.5"
+                      className="bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-md transition-all duration-200 font-medium text-sm flex items-center gap-1.5"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />

@@ -430,7 +430,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                           key={index}
                           content={tech}
                           color="blue"
-                          isEditable={true}
+                          isEditable={isEditing === "techStack" ? true : false}
                           onRemove={() => handleRemoveTechItem(index)}
                         />
                       ))
@@ -489,7 +489,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                           key={index}
                           content={role}
                           color="purple"
-                          isEditable={true}
+                          isEditable={isEditing === "roles" ? true : false}
                           onRemove={() => handleRemoveRoleItem(index)}
                         />
                       ))
@@ -603,7 +603,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
             <button
               onClick={handleCancel}
               disabled={isLoading}
-              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-md transition-colors flex items-center gap-2 "
+              className="px-6 py-3 bg-cancel-button-background hover:bg-cancel-button-background-hover text-white rounded-md transition-colors flex items-center gap-2 active:scale-95"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -613,7 +613,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
             <button
               onClick={handleSave}
               disabled={isLoading}
-              className={`px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-all flex items-center gap-2  ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={`px-6 py-3 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white rounded-md transition-all flex items-center gap-2 active:scale-95 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {isLoading ? (
                 <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
