@@ -5,10 +5,27 @@ import { MileStone } from '@/types/MileStone';
 export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const totalTasks = milestone?.subtasks.length ?? 0;
-  const completedTasks = milestone?.subtasks.filter(task => task.status === 'done' || task.subtasks.every(st => st.completed)).length ?? 0;
+  const calculateProgress = () => {
+    let totalTasks = 0;
+    let completedTasks = 0;
 
-  const progressPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+    milestone?.subtasks.forEach(task => {
+      // Count the main task
+      totalTasks++;
+      if (task.status === 'done') {
+        completedTasks++;
+      }
+
+      // Count subtasks
+      if (task.subtasks.length > 0) {
+        totalTasks += task.subtasks.length;
+        completedTasks += task.subtasks.filter(st => st.completed).length;
+      }
+    });
+
+    return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  };
+  const progressPercentage = calculateProgress();
 
   return (
     <>
@@ -47,11 +64,17 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
           </div>
           <div className="text-text-secondary flex flex-wrap gap-1 items-end">
             <p>담당자:</p>
-            {
+            {milestone.assignee.length <= 2 ? (
               milestone.assignee.map((assi) => (
                 <p key={assi.id} className="text-text-secondary">{assi.name}</p>
               ))
-            }
+            ) : (
+              <>
+                <p className="text-text-secondary">{milestone.assignee[0].name}</p>
+                <p className="text-text-secondary">{milestone.assignee[1].name}</p>
+                <p className="text-text-secondary">+{milestone.assignee.length - 2}명</p>
+              </>
+            )}
           </div>
         </div>
       </div>
