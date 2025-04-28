@@ -84,6 +84,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const handleEdit = (name: string) => {
     if (taskData.assignee?.some(assi => assi.id === user?.id)) {
       setIsEditing(name);
+      if (name !== "none") {
+        useAuthStore.getState().setAlert("편집 모드로 전환되었습니다.", "info");
+      } else {
+        useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
+      }
     } else {
       useAuthStore.getState().setAlert("작업을 수정할 권한이 없습니다.", "error");
     }
@@ -159,6 +164,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const handleCancelEdit = () => {
     setTaskData(task);
     setIsEditing("none");
+    useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
   };
 
   const handleRemoveTag = (tagIndex: number) => {
@@ -246,7 +252,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               icon={faPencil}
               size='xs'
               className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              onClick={() => handleEdit("title")}
+              onClick={() => isEditing === "title" ? handleEdit("none") : handleEdit("title")}
             />
           </div>
         )}
@@ -278,7 +284,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 icon={faPencil}
                 size='xs'
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() => handleEdit("tags")}
+                onClick={() => isEditing === "tags" ? handleEdit("none") : handleEdit("tags")}
               />
             </div>
           )}
@@ -340,7 +346,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               icon={faPencil}
               size='xs'
               className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              onClick={() => handleEdit("description")}
+              onClick={() => isEditing === "description" ? handleEdit("none") : handleEdit("description")}
             />
           </div>
           {isEditing === "description" ? (
@@ -366,7 +372,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 icon={faPencil}
                 size='xs'
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() => handleEdit("status")}
+                onClick={() => isEditing === "status" ? handleEdit("none") : handleEdit("status")}
               />
             </div>
             {isEditing === "status" ? (
@@ -396,7 +402,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 icon={faPencil}
                 size='xs'
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() => handleEdit("priority")}
+                onClick={() => isEditing === "priority" ? handleEdit("none") : handleEdit("priority")}
               />
             </div>
             {isEditing === "priority" ? (
@@ -427,7 +433,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 icon={faPencil}
                 size='xs'
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() => handleEdit("assignee")}
+                onClick={() => isEditing === "assignee" ? handleEdit("none") : handleEdit("assignee")}
               />
             </div>
             {isEditing === "assignee" ? (
@@ -516,7 +522,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 icon={faPencil}
                 size='xs'
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() => handleEdit("dueDate")}
+                onClick={() => isEditing === "dueDate" ? handleEdit("none") : handleEdit("dueDate")}
               />
             </div>
             {isEditing === "dueDate" ? (
@@ -563,7 +569,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               icon={faPencil}
               size='xs'
               className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              onClick={() => handleEdit("subtasks")}
+              onClick={() => isEditing === "subtasks" ? handleEdit("none") : handleEdit("subtasks")}
             />
           </div>
           <div className="space-y-2">
