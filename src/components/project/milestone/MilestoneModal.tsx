@@ -3,7 +3,7 @@ import { getPriorityColor } from '@/utils/getPriorityColor';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/auth/authStore';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencil, faUser, faCheck, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faPencil, faUser, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { deleteMilestone } from '@/hooks/getMilestoneData';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/Badge';
@@ -231,15 +231,15 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             <>
               <button
                 onClick={handleCancelEdit}
-                className="flex items-center gap-1.5 bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-secondary hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
+                className="flex items-center gap-1.5 bg-cancel-button-background hover:bg-cancel-button-background-hover text-white hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
               >
                 취소
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-3 py-2 rounded-md transition-all duration-200 font-medium"
+                className="flex items-center gap-1.5 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
               >
-                <FontAwesomeIcon icon={faSave} />
+                <FontAwesomeIcon icon={faCheck} />
                 저장
               </button>
             </>
