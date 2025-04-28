@@ -27,7 +27,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const user = useAuthStore.getState().user;
   const router = useRouter();
   const params = useParams();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState<string>("none");
   const [taskData, setTaskData] = useState<Task>(task);
   const [newTag, setNewTag] = useState('');
   const [isComposing, setIsComposing] = useState(false);
@@ -81,8 +81,13 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     onClose();
   };
 
-  const handleEdit = () => {
-    if (isEditing) {
+  const handleEdit = (name: string) => {
+    if (taskData.assignee?.some(assi => assi.id === user?.id)) {
+      setIsEditing(name);
+    } else {
+      useAuthStore.getState().setAlert("작업을 수정할 권한이 없습니다.", "error");
+    }
+    if (isEditing === "subtasks") {
       // Remove subtasks with empty titles when finishing edit
       const filteredSubtasks = taskData.subtasks.filter(subtask => subtask.title.trim() !== '');
       setTaskData(prev => ({
@@ -90,7 +95,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         subtasks: filteredSubtasks
       }));
     }
-    setIsEditing(!isEditing);
   };
 
   const handleSave = async () => {
@@ -116,7 +120,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       console.error("Error updating task:", error);
       useAuthStore.getState().setAlert("작업 수정에 실패했습니다.", "error");
     } finally {
-      setIsEditing(false);
+      setIsEditing("none");
     }
   };
 
@@ -154,7 +158,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
   const handleCancelEdit = () => {
     setTaskData(task);
-    setIsEditing(false);
+    setIsEditing("none");
   };
 
   const handleRemoveTag = (tagIndex: number) => {
@@ -192,7 +196,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       useAuthStore.getState().setAlert("댓글을 작성해주세요.", "warning");
       return;
     }
-    
+
     const newComment: Comment = {
       author_id: user?.id ?? 0,
       content: commentContent,
@@ -202,7 +206,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     try {
       await addComment(project?.id ? String(project.id) : "0", task.id, newComment);
       commentInput.value = '';
-      
+
       setTaskData(prev => ({
         ...prev,
         comments: [...prev.comments, newComment]
@@ -226,7 +230,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const modalHeader = (
     <div className="flex items-start justify-between">
       <div className="space-y-2">
-        {isEditing ? (
+        {isEditing === "title" ? (
           <input
             type="text"
             name="title"
@@ -236,10 +240,18 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             placeholder="작업 제목을 입력하세요"
           />
         ) : (
-          <h3 className="text-2xl font-semibold text-text-primary">{taskData?.title}</h3>
+          <div className="flex items-center gap-2 group relative">
+            <h3 className="text-2xl font-semibold text-text-primary">{taskData?.title}</h3>
+            <FontAwesomeIcon
+              icon={faPencil}
+              size='xs'
+              className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              onClick={() => handleEdit("title")}
+            />
+          </div>
         )}
         <div className="flex flex-wrap gap-2">
-          {isEditing ? (
+          {isEditing === "tags" ? (
             <>
               {taskData.tags.map((tag, index) => (
                 <Badge key={index} content={tag} color="pink" isEditable={true} onRemove={() => handleRemoveTag(index)} />
@@ -258,36 +270,46 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               </div>
             </>
           ) : (
-            taskData?.tags.map((tag, index) => (
-              <Badge key={index} content={tag} color="pink" />
-            ))
+            <div className="flex items-center gap-2 group relative">
+              {taskData?.tags.map((tag, index) => (
+                <Badge key={index} content={tag} color="pink" />
+              ))}
+              <FontAwesomeIcon
+                icon={faPencil}
+                size='xs'
+                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                onClick={() => handleEdit("tags")}
+              />
+            </div>
           )}
         </div>
       </div>
       {isUserAssignee && (
         <div className="flex items-center gap-2">
-        {isEditing && (
-          <button
-            onClick={handleCancelEdit}
-            className="flex items-center gap-1.5 bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-secondary hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
-          >
-            취소
-          </button>
-        )}
-        <button
-          onClick={() => isEditing ? handleSave() : handleEdit()}
-          className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-3 py-2 rounded-md transition-all duration-200 font-medium"
-        >
-          <FontAwesomeIcon icon={isEditing ? faSave : faPencil} />
-            {isEditing ? '저장' : '수정'}
-          </button>
+          {isEditing !== "none" && (
+            <button
+              onClick={handleCancelEdit}
+              className="flex items-center gap-1.5 bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-secondary hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
+            >
+              취소
+            </button>
+          )}
+          {isEditing !== "none" && (
+            <button
+              onClick={handleSave}
+              className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-3 py-2 rounded-md transition-all duration-200 font-medium"
+            >
+              <FontAwesomeIcon icon={faSave} />
+              저장
+            </button>
+          )}
         </div>
       )}
     </div>
   );
 
   // Footer section for ModalTemplete (only if user is assignee)
-  const modalFooter = isEditing ? (
+  const modalFooter = isEditing !== "none" ? (
     <div className="flex gap-2 justify-end">
       <button
         onClick={handleDelete}
@@ -311,8 +333,16 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     >
       <div className="space-y-6">
         <div className="space-y-2">
-          <h4 className="text-base font-medium text-text-primary">상세 설명</h4>
-          {isEditing ? (
+          <div className="flex items-center gap-2 group relative">
+            <h4 className="text-base font-medium text-text-primary">상세 설명</h4>
+            <FontAwesomeIcon
+              icon={faPencil}
+              size='xs'
+              className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              onClick={() => handleEdit("description")}
+            />
+          </div>
+          {isEditing === "description" ? (
             <textarea
               name="description"
               value={taskData.description}
@@ -329,8 +359,16 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium text-text-primary">상태</h4>
-            {isEditing ? (
+            <div className="flex items-center gap-2 group relative">
+              <h4 className="font-medium text-text-primary">상태</h4>
+              <FontAwesomeIcon
+                icon={faPencil}
+                size='xs'
+                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                onClick={() => handleEdit("status")}
+              />
+            </div>
+            {isEditing === "status" ? (
               <select
                 name="status"
                 value={taskData.status}
@@ -351,8 +389,16 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-medium text-text-primary">우선순위</h4>
-            {isEditing ? (
+            <div className="flex items-center gap-2 group relative">
+              <h4 className="font-medium text-text-primary">우선순위</h4>
+              <FontAwesomeIcon
+                icon={faPencil}
+                size='xs'
+                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                onClick={() => handleEdit("priority")}
+              />
+            </div>
+            {isEditing === "priority" ? (
               <select
                 name="priority"
                 value={taskData.priority}
@@ -374,8 +420,16 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-medium text-text-primary">담당자</h4>
-            {isEditing ? (
+            <div className="flex items-center gap-2 group relative">
+              <h4 className="font-medium text-text-primary">담당자</h4>
+              <FontAwesomeIcon
+                icon={faPencil}
+                size='xs'
+                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                onClick={() => handleEdit("assignee")}
+              />
+            </div>
+            {isEditing === "assignee" ? (
               <div className="border border-component-border rounded-lg p-3 bg-component-secondary-background hover:border-component-border-hover transition-all">
                 <div className="mb-3">
                   <p className="text-sm text-text-secondary">선택된 담당자: {taskData.assignee?.length ?? 0 > 0 ? `${taskData.assignee?.length}명` : '없음'}</p>
@@ -443,7 +497,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   taskData?.assignee?.map((assi) => (
                     <p
                       key={assi?.id}
-                      className="text-gray-200 hover:text-blue-400 cursor-pointer transition-colors"
+                      className="text-text-secondary hover:text-blue-400 cursor-pointer transition-colors"
                       onClick={() => handleAssigneeClick(assi?.id ?? 0)}
                     >{
                         assi?.name}
@@ -455,8 +509,16 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-medium text-text-primary">마감일</h4>
-            {isEditing ? (
+            <div className="flex items-center gap-2 group relative">
+              <h4 className="font-medium text-text-primary">마감일</h4>
+              <FontAwesomeIcon
+                icon={faPencil}
+                size='xs'
+                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                onClick={() => handleEdit("dueDate")}
+              />
+            </div>
+            {isEditing === "dueDate" ? (
               <input
                 type="date"
                 name="dueDate"
@@ -494,7 +556,15 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         </div>
 
         <div className="space-y-2">
-          <h4 className="font-medium text-text-primary">하위 작업</h4>
+          <div className="flex items-center gap-2 group relative">
+            <h4 className="font-medium text-text-primary">하위 작업</h4>
+            <FontAwesomeIcon
+              icon={faPencil}
+              size='xs'
+              className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              onClick={() => handleEdit("subtasks")}
+            />
+          </div>
           <div className="space-y-2">
             {taskData?.subtasks?.length > 0 ? (
               taskData?.subtasks?.map((subtask, index) => (
@@ -540,7 +610,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 )
               ))
             ) : (
-              isEditing ? (
+              isEditing === "subtasks" ? (
                 <div className="space-y-2">
                   <div className="flex items-center justify-center p-4 bg-component-secondary-background border border-dashed border-component-border rounded-lg text-text-secondary">
                     아직 하위 작업이 없습니다. 새 하위 작업을 추가해보세요.
@@ -590,7 +660,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       <div className="flex items-center justify-between">
                         <span className="font-medium text-text-primary">
                           {project?.members.find(member => member.id === comment?.author_id)?.name}
-                          </span>
+                        </span>
                         <span className="text-xs text-text-secondary">
                           {new Date(comment?.createdAt).toLocaleDateString()}
                         </span>
