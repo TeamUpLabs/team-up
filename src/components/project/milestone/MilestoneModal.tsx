@@ -165,6 +165,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const handleCancelEdit = () => {
     setMilestoneData(milestone);
     setIsEditing("none");
+    useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
   };
 
   // Header content
