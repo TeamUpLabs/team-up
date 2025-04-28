@@ -135,6 +135,11 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const handleEdit = (name: string) => {
     if (milestoneData.assignee?.some(a => a.id === user?.id)) {
       setIsEditing(name);
+      if (name !== "none") {
+        useAuthStore.getState().setAlert("편집 모드로 전환되었습니다.", "info");
+      } else {
+        useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
+      }
     } else {
       useAuthStore.getState().setAlert("담당자가 아니므로 수정할 수 없습니다.", "warning");
     }
@@ -181,7 +186,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               icon={faPencil}
               size='xs'
               className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              onClick={() => handleEdit("title")}
+              onClick={() => isEditing === "title" ? handleEdit("none") : handleEdit("title")}
             />
           </div>
         )}
@@ -213,7 +218,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 icon={faPencil}
                 size='xs'
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() => handleEdit("tags")}
+                onClick={() => isEditing === "tags" ? handleEdit("none") : handleEdit("tags")}
               />
             </div>
           )}
@@ -269,7 +274,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             icon={faPencil}
             size='xs'
             className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            onClick={() => handleEdit("description")}
+            onClick={() => isEditing === "description" ? handleEdit("none") : handleEdit("description")}
           />
         </div>
         {isEditing === "description" ? (
@@ -292,7 +297,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               icon={faPencil}
               size='xs'
               className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              onClick={() => handleEdit("startDate")}
+              onClick={() => isEditing === "startDate" ? handleEdit("none") : handleEdit("startDate")}
             />
           </div>
           {isEditing === "startDate" ? (
@@ -315,7 +320,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               icon={faPencil}
               size='xs'
               className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              onClick={() => handleEdit("endDate")}
+              onClick={() => isEditing === "endDate" ? handleEdit("none") : handleEdit("endDate")}
             />
           </div>
           {isEditing === "endDate" ? (
@@ -339,7 +344,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               icon={faPencil}
               size='xs'
               className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              onClick={() => handleEdit("status")}
+              onClick={() => isEditing === "status" ? handleEdit("none") : handleEdit("status")}
             />
           </div>
           {isEditing === "status" ? (
@@ -369,7 +374,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               icon={faPencil}
               size='xs'
               className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              onClick={() => handleEdit("priority")}
+              onClick={() => isEditing === "priority" ? handleEdit("none") : handleEdit("priority")}
             />
           </div>
           {isEditing === "priority" ? (
@@ -400,7 +405,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               icon={faPencil}
               size='xs'
               className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              onClick={() => handleEdit("assignee")}
+              onClick={() => isEditing === "assignee" ? handleEdit("none") : handleEdit("assignee")}
             />
           </div>
           {isEditing === "assignee" ? (
@@ -493,9 +498,9 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
       </div>
 
 
-      <div className='bg-component-secondary-background p-4 rounded-lg'>
+      <div className="space-y-2">
         <h4 className="text-text-primary">하위 작업</h4>
-        <div className="space-y-2">
+        <div className="bg-component-secondary-background p-4 rounded-lg space-y-2">
           {milestoneData.subtasks.length > 0 ? (
             milestoneData.subtasks.map((subtask) => (
               <div key={subtask.id} className="flex flex-col">
