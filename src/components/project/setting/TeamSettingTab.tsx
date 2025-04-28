@@ -261,7 +261,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                         권한 변경
                       </button>
                       <button
-                        className="text-gray-400 hover:text-red-400 p-2 rounded transition-colors"
+                        className="text-text-secondary hover:text-red-400 p-2 rounded transition-colors"
                         onClick={() => handleKickOutMember(member)}
                       >
                         <FontAwesomeIcon icon={faTrash} />
