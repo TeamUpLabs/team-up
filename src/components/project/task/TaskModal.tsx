@@ -287,21 +287,22 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       {isUserAssignee && (
         <div className="flex items-center gap-2">
           {isEditing !== "none" && (
-            <button
-              onClick={handleCancelEdit}
-              className="flex items-center gap-1.5 bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-secondary hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
-            >
-              취소
-            </button>
-          )}
-          {isEditing !== "none" && (
-            <button
-              onClick={handleSave}
-              className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-3 py-2 rounded-md transition-all duration-200 font-medium"
-            >
-              <FontAwesomeIcon icon={faSave} />
-              저장
-            </button>
+            <>
+              <button
+                onClick={handleCancelEdit}
+                className="flex items-center gap-1.5 bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-secondary hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
+              >
+                취소
+              </button>
+
+              <button
+                onClick={handleSave}
+                className="flex items-center gap-1.5 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300 px-3 py-2 rounded-md transition-all duration-200 font-medium"
+              >
+                <FontAwesomeIcon icon={faSave} />
+                저장
+              </button>
+            </>
           )}
         </div>
       )}
