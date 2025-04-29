@@ -245,11 +245,11 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                       <div className="flex items-center gap-2">
                         <p className="text-text-primary font-medium">{member.name}</p>
                         {member.id === project.leader.id ? (
-                          <span className="bg-yellow-500/20 text-yellow-600 text-xs px-2 py-0.5 rounded-md">프로젝트 리더</span>
+                          <span className="bg-yellow-500/20 text-yellow-500 text-xs px-2 py-0.5 rounded-md">프로젝트 리더</span>
                         ) : Array.isArray(project.manager) && project.manager.some(manager => manager.id === member.id) ? (
-                          <span className="bg-blue-500/20 text-blue-600 text-xs px-2 py-0.5 rounded-md">관리자</span>
+                          <span className="bg-blue-500/20 text-blue-500 text-xs px-2 py-0.5 rounded-md">관리자</span>
                         ) : (
-                          <span className="bg-green-500/20 text-green-600 text-xs px-2 py-0.5 rounded-md">멤버</span>
+                          <span className="bg-green-500/20 text-green-500 text-xs px-2 py-0.5 rounded-md">멤버</span>
                         )}
                         <span className="bg-component-tertiary-background text-text-secondary text-xs px-2 py-0.5 rounded-md">{member.role}</span>
                       </div>
