@@ -283,18 +283,18 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                     }`}
                 >
                   <div className="relative flex-shrink-0">
-                    <div className="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
                       <div className="relative w-full h-full flex items-center justify-center">
                         <FontAwesomeIcon
                           icon={faUser}
-                          className={`absolute text-gray-300 transform transition-all duration-300 ${isAssigned(member.id)
+                          className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
                               ? 'opacity-0 rotate-90 scale-0'
                               : 'opacity-100 rotate-0 scale-100'
                             }`}
                         />
                         <FontAwesomeIcon
                           icon={faCheck}
-                          className={`absolute text-white transform transition-all duration-300 ${isAssigned(member.id)
+                          className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
                               ? 'opacity-100 rotate-0 scale-100'
                               : 'opacity-0 -rotate-90 scale-0'
                             }`}

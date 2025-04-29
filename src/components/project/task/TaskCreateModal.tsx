@@ -215,7 +215,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
                         />
                         <FontAwesomeIcon
                           icon={faCheck}
-                          className={`absolute text-white transform transition-all duration-300 ${isAssigned(member.id)
+                          className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
                             ? 'opacity-100 rotate-0 scale-100'
                             : 'opacity-0 -rotate-90 scale-0'
                             }`}
