@@ -55,7 +55,7 @@ export default function ChatPage({ params }: PageProps) {
       <MessageList messages={messages} />
 
       {/* 메시지 입력 */}
-      <div className="px-6 py-4 border-t border-gray-800">
+      <div className="px-6 py-4 border-t border-component-border">
         <form onSubmit={handleSendMessage} className="flex space-x-4">
           <input
             type="text"
@@ -63,7 +63,7 @@ export default function ChatPage({ params }: PageProps) {
             onChange={(e) => setMessage(e.target.value)}
             placeholder={isConnected ? "메시지를 입력하세요..." : "연결 대기 중..."}
             disabled={!isConnected}
-            className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            className="flex-1 bg-component-secondary-background border border-component-border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
           />
           <button
             type="submit"
