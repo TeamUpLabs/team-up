@@ -582,7 +582,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           <div className="space-y-2">
             {taskData?.subtasks?.length > 0 ? (
               taskData?.subtasks?.map((subtask, index) => (
-                isEditing ? (
+                isEditing === "subtasks" ? (
                   <div key={index} className="flex items-center gap-2 bg-component-secondary-background border border-component-border p-3 rounded-lg">
                     <input
                       type="checkbox"
@@ -647,7 +647,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           </div>
         </div>
 
-        {isEditing && taskData?.subtasks?.length > 0 && (
+        {isEditing === "subtasks" && taskData?.subtasks?.length > 0 && (
           <button
             type="button"
             onClick={handleAddSubtask}
