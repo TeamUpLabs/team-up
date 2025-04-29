@@ -12,6 +12,7 @@ import { getStatusColor } from "@/utils/getStatusColor";
 import { useProject } from '@/contexts/ProjectContext';
 import SelectMilestoneModal from '@/components/project/task/SelectMilestoneModal';
 import { updateTaskStatus } from '@/hooks/getTaskData';
+import { useAuthStore } from '@/auth/authStore';
 
 export default function TasksPage() {
   const { project, refreshProject } = useProject();
@@ -68,6 +69,17 @@ export default function TasksPage() {
   };
 
   const moveTask = async (taskId: number, newStatus: Task['status']) => {
+    if (newStatus === 'done') {
+      const task = tasks.find(task => task.id === taskId);
+      if (task?.subtasks && task.subtasks.length > 0) {
+        const allSubtasksCompleted = task.subtasks.every(subtask => subtask.completed);
+        if (!allSubtasksCompleted) {
+          useAuthStore.getState().setAlert('모든 하위 작업이 완료되어야 작업을 완료 상태로 이동할 수 있습니다.', 'error');
+          return;
+        }
+      }
+    }
+
     setTasks(tasks.map(task =>
       task.id === taskId ? { ...task, status: newStatus } : task
     ));
