@@ -104,6 +104,10 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
     }
     try {
       useAuthStore.getState().setConfirm(`${name}님의 참여 요청을 승인하시겠습니까?`, async () => {
+        if (project.members.length >= project.teamSize) {
+          useAuthStore.getState().setAlert("팀 인원이 다 찼습니다. 팀 규모를 늘리거나 팀원을 추방해주세요.", "error");
+          return;
+        }
         await allowParticipationRequest(project.id, user_id);
         useAuthStore.getState().setAlert(`${name}님의 참여 요청이 승인되었습니다.`, "success");
         useAuthStore.getState().clearConfirm();
