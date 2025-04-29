@@ -74,7 +74,7 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
                         <Link
                           key={channel.id}
                           href={`/platform/${titleHref.split('/').pop()}/chat/${channel.id}`}
-                          className="block text-sm text-gray-400 hover:text-white"
+                          className="block text-sm text-text-secondary hover:text-text-primary"
                         >
                           # {channel.name}
                         </Link>
