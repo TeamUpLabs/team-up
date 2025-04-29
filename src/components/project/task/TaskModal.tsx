@@ -23,7 +23,7 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
-  const { project } = useProject();
+  const { project, refreshProject } = useProject();
   const user = useAuthStore.getState().user;
   const router = useRouter();
   const params = useParams();
@@ -48,11 +48,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
     try {
       await updateSubtask(project?.id ? String(project.id) : "0", task.id, updated[index]);
-      useAuthStore.getState().setAlert("작업 상태가 변경되었습니다.", "success");
-      window.location.reload();
+      await refreshProject();
     } catch (error) {
       console.error("Error updating subtask:", error);
-      useAuthStore.getState().setAlert("작업 상태 변경에 실패했습니다.", "error");
     }
   };
 
