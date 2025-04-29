@@ -283,15 +283,15 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
           <h4 className="text-text-primary font-medium mb-3 pb-2 border-b border-component-border">역할 및 권한 설명</h4>
           <div className="space-y-3 text-sm">
             <div className="flex items-center">
-              <span className="inline-block w-20 text-yellow-600 font-medium">리더:</span>
+              <span className="inline-block w-20 text-yellow-500 font-medium">리더:</span>
               <span className="text-text-secondary">{roleDescriptions.leader}</span>
             </div>
             <div className="flex items-center">
-              <span className="inline-block w-20 text-blue-600 font-medium">관리자:</span>
+              <span className="inline-block w-20 text-blue-500 font-medium">관리자:</span>
               <span className="text-text-secondary">{roleDescriptions.manager}</span>
             </div>
             <div className="flex items-center">
-              <span className="inline-block w-20 text-green-600 font-medium">멤버:</span>
+              <span className="inline-block w-20 text-green-500 font-medium">멤버:</span>
               <span className="text-text-secondary">{roleDescriptions.member}</span>
             </div>
           </div>
