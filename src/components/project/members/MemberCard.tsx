@@ -29,15 +29,15 @@ export default function MemberCard({ member, isLeader, isManager, isExplore, onC
           {!isExplore && (
             <>
               {isLeader ? (
-                <div className="flex items-center bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                <div className="flex items-center bg-yellow-500/20 text-yellow-500 px-3 py-1 rounded-full">
                   <span className="text-sm">프로젝트 리더</span>
             </div>
           ) : isManager ? (
-            <div className="flex items-center bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full">
+            <div className="flex items-center bg-blue-500/20 text-blue-500 px-3 py-1 rounded-full">
               <span className="text-sm">관리자</span>
             </div>
           ) : (
-            <div className="flex items-center bg-green-500/20 text-green-400 px-3 py-1 rounded-full">
+            <div className="flex items-center bg-green-500/20 text-green-500 px-3 py-1 rounded-full">
               <span className="text-sm">멤버</span>
               </div>
             )}
