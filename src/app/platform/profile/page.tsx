@@ -285,22 +285,22 @@ export default function ProfilePage() {
   // Skeleton component for text fields
   const SkeletonField = () => (
     <div className="animate-pulse flex items-center gap-2">
-      <div className="w-4 h-4 bg-gray-600 rounded-full"></div>
-      <div className="h-4 bg-gray-600 rounded w-3/4"></div>
+      <div className="w-4 h-4 bg-component-secondary-background rounded-full"></div>
+      <div className="h-4 bg-component-secondary-background rounded w-3/4"></div>
     </div>
   );
 
   // Skeleton for social links
   const SkeletonSocialLink = () => (
     <div className="animate-pulse flex items-center gap-2">
-      <div className="w-4 h-4 bg-gray-600 rounded-full"></div>
-      <div className="h-4 bg-gray-600 rounded w-40"></div>
+      <div className="w-4 h-4 bg-component-secondary-background rounded-full"></div>
+      <div className="h-4 bg-component-secondary-background rounded w-40"></div>
     </div>
   );
 
   // Skeleton for skill/language tags
   const SkeletonTag = () => (
-    <div className="animate-pulse h-6 bg-gray-600 rounded-full w-20"></div>
+    <div className="animate-pulse h-6 bg-component-secondary-background rounded-full w-20"></div>
   );
 
   return (
