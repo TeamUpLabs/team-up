@@ -8,6 +8,8 @@ import { useAuthStore } from '@/auth/authStore';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/Badge';
 import { kickOutMemberFromProject } from '@/hooks/getProjectData';
+import { useProject } from '@/contexts/ProjectContext';
+
 interface MemberDetailModalProps {
   member: Member;
   isOpen: boolean;
@@ -16,6 +18,7 @@ interface MemberDetailModalProps {
 }
 
 export default function MemberDetailModal({ member, isOpen, onClose, leader_id }: MemberDetailModalProps) {
+  const { refreshProject } = useProject();
   const user = useAuthStore.getState().user;
   const router = useRouter();
   const params = useParams();
@@ -49,7 +52,7 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
         useAuthStore.getState().setAlert("팀원이 퇴출되었습니다.", "success");
         useAuthStore.getState().clearConfirm();
         onClose();
-        window.location.reload();
+        await refreshProject();
       } catch (error) {
         console.error("Error kicking out member from project:", error);
         useAuthStore.getState().setAlert("팀원 퇴출에 실패했습니다.", "error");

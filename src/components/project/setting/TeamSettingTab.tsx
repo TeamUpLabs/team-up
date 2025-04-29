@@ -6,6 +6,7 @@ import { Member } from "@/types/Member";
 import PermissionChangeModal from "@/components/project/setting/PermissionChangeModal";
 import { updateProjectMemberPermission, allowParticipationRequest, rejectParticipationRequest, kickOutMemberFromProject } from "@/hooks/getProjectData";
 import { useAuthStore } from "@/auth/authStore";
+import { useProject } from "@/contexts/ProjectContext";
 
 interface TeamSettingTabProps {
   project: Project;
@@ -19,6 +20,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [isCurrentUserLeaderOrManager, setIsCurrentUserLeaderOrManager] = useState(false);
   const { user } = useAuthStore();
+  const { refreshProject } = useProject();
 
   // Check if current user is leader or manager
   useEffect(() => {
@@ -70,9 +72,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
         await updateProjectMemberPermission(project.id, selectedMember.id, selectedRole);
         useAuthStore.getState().setAlert(`${selectedMember.name}님의 권한이 ${selectedRole === "manager" ? "관리자" : "멤버"}로 변경되었습니다.`, "success");
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
+        await refreshProject();
       } catch (error) {
         console.error("Error updating project member permission:", error);
         useAuthStore.getState().setAlert("권한 변경에 실패했습니다.", "error");
@@ -89,7 +89,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
         await kickOutMemberFromProject(project.id, member.id);
         useAuthStore.getState().setAlert(`${member.name}님이 퇴출되었습니다.`, "success");
         useAuthStore.getState().clearConfirm();
-        window.location.reload();
+        await refreshProject();
       });
     } catch (error) {
       useAuthStore.getState().setAlert("팀원 퇴출에 실패했습니다.", "error");
@@ -111,9 +111,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
         await allowParticipationRequest(project.id, user_id);
         useAuthStore.getState().setAlert(`${name}님의 참여 요청이 승인되었습니다.`, "success");
         useAuthStore.getState().clearConfirm();
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
+        await refreshProject();
       });
     } catch (error) {
       useAuthStore.getState().setAlert("참여 요청 승인에 실패했습니다.", "error");
@@ -131,9 +129,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
         await rejectParticipationRequest(project.id, user_id);
         useAuthStore.getState().setAlert(`${name}님의 참여 요청이 거절되었습니다.`, "info");
         useAuthStore.getState().clearConfirm();
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
+        await refreshProject();
       });
     } catch (error) {
       useAuthStore.getState().setAlert("참여 요청 거절에 실패했습니다.", "error");

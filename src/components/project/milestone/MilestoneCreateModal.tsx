@@ -14,7 +14,7 @@ interface MilestoneCreateModalProps {
 }
 
 export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreateModalProps) {
-  const { project } = useProject();
+  const { project, refreshProject } = useProject();
   const [formData, setFormData] = useState({
     project_id: project?.id,
     title: "",
@@ -83,7 +83,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
         setTimeout(() => {
           setSubmitStatus('idle');
           onClose();
-          window.location.reload();
+          refreshProject();
         }, 1000);
       } catch (error) {
         console.error(error);
@@ -145,7 +145,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
   // Header content for the modal
   const headerContent = (
     <div className="flex items-center space-x-4">
-      <h3 className="text-xl font-bold text-white">새로운 마일스톤 생성</h3>
+      <h3 className="text-xl font-bold text-text-primary">새로운 마일스톤 생성</h3>
     </div>
   );
 
