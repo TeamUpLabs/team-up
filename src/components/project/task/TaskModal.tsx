@@ -31,6 +31,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const [taskData, setTaskData] = useState<Task>(task);
   const [newTag, setNewTag] = useState('');
   const [isComposing, setIsComposing] = useState(false);
+  
+  // Update taskData when the task prop changes
+  useEffect(() => {
+    setTaskData(task);
+  }, [task]);
 
   const calculateProgress = (subtasksList: SubTask[]) => {
     if (subtasksList.length === 0) return 0;
@@ -41,6 +46,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const isUserAssignee = task?.assignee?.some(assi => assi.id === user?.id);
 
   const handleSubtaskToggle = async (index: number) => {
+    if (taskData.status === "done") {
+      useAuthStore.getState().setAlert("완료된 작업은 수정할 수 없습니다. 취소 후 수정해주세요.", "error");
+      return;
+    }
     const updated = taskData.subtasks.map((subtask, i) =>
       i === index ? { ...subtask, completed: !subtask.completed } : subtask
     );
