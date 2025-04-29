@@ -29,6 +29,7 @@ export default function ExploreProject() {
   }, [user])
 
   const placeholderMap: { [key: string]: string } = {
+    code: "참여 코드를 입력하세요",
     title: "프로젝트 제목을 입력하세요",
     status: "프로젝트의 상태를 입력하세요  예: 모집중, 진행중",
     role: "역할을 입력하세요  예: 백엔드 개발자, 디자이너",
@@ -39,6 +40,9 @@ export default function ExploreProject() {
   const filteredProjects = (projects ?? []).filter(project => {
     let matchesSearch = false;
     switch (selectedOption) {
+      case "code":
+        matchesSearch = project.id === searchQuery;
+        break;
       case "title":
         matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase());
         break;
@@ -74,7 +78,8 @@ export default function ExploreProject() {
             onChange={(e) => setSelectedOption(e.target.value)}
             value={selectedOption}
           >
-            <option value="">모든 카테고리</option>
+            <option value="">선택</option>
+            <option value="code">참여 코드</option>
             <option value="title">제목</option>
             <option value="status">상태</option>
             <option value="role">역할</option>
