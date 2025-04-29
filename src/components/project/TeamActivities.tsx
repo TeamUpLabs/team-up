@@ -64,15 +64,15 @@ export default function TeamActivities() {
                   <div className="flex items-center gap-2">
                     <p className="text-text-primary">{member.name}</p>
                     {member.id === project?.leader.id ? (
-                      <div className="flex items-center bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full">
+                      <div className="flex items-center bg-yellow-500/20 text-yellow-500 px-3 py-1 rounded-full">
                         <span className="text-xs">프로젝트 리더</span>
                       </div>
                     ) : project?.manager.some((manager) => manager.id === member.id) ? (
-                      <div className="flex items-center bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full">
+                      <div className="flex items-center bg-blue-500/20 text-blue-500 px-3 py-1 rounded-full">
                         <span className="text-xs">관리자</span>
                       </div>
                     ) : (
-                      <div className="flex items-center bg-green-500/20 text-green-400 px-3 py-1 rounded-full">
+                      <div className="flex items-center bg-green-500/20 text-green-500 px-3 py-1 rounded-full">
                         <span className="text-xs">멤버</span>
                       </div>
                     )}
