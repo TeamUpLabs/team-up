@@ -210,11 +210,21 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 />
               </div>
             </>
-          ) : (
+          ) : milestoneData?.tags.length > 0 ? (
             <div className="flex items-center gap-2 group relative">
               {milestoneData?.tags.map((tag, index) => (
                 <Badge key={index} content={tag} color="pink" />
               ))}
+              <FontAwesomeIcon
+                icon={faPencil}
+                size='xs'
+                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                onClick={() => isEditing === "tags" ? handleEdit("none") : handleEdit("tags")}
+              />
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 group relative">
+              <p className="text-sm text-text-secondary">태그가 없습니다.</p>
               <FontAwesomeIcon
                 icon={faPencil}
                 size='xs'
