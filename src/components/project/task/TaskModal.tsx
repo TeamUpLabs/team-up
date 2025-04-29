@@ -296,14 +296,14 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             <>
               <button
                 onClick={handleCancelEdit}
-                className="flex items-center gap-1.5 bg-cancel-button-background hover:bg-cancel-button-background-hover text-white hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
+                className="flex items-center gap-1.5 text-sm bg-cancel-button-background hover:bg-cancel-button-background-hover text-white px-3 py-2 rounded-md transition-all duration-200 font-medium"
               >
                 취소
               </button>
 
               <button
                 onClick={handleSave}
-                className="flex items-center gap-1.5 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white hover:text-text-primary px-3 py-2 rounded-md transition-all duration-200 font-medium"
+                className="flex items-center gap-1.5 text-sm bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-3 py-2 rounded-md transition-all duration-200 font-medium"
               >
                 <FontAwesomeIcon icon={faCheck} />
                 저장
