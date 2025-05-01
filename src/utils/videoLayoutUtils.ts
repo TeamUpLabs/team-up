@@ -12,11 +12,15 @@ export const getGridLayout = (
     return 'grid-cols-1 lg:grid-cols-4 lg:grid-rows-[1fr_auto]';
   }
   
+  // 동적 그리드 레이아웃: 참가자 수에 따라 최적화된 그리드 배치
   if (participantCount === 1) return 'grid-cols-1';
-  if (participantCount === 2) return 'grid-cols-1 md:grid-cols-2';
-  if (participantCount <= 4) return 'grid-cols-2';
-  if (participantCount <= 6) return 'grid-cols-2 md:grid-cols-3';
-  return 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4';
+  if (participantCount === 2) return 'grid-cols-1 sm:grid-cols-2';
+  if (participantCount === 3) return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3';
+  if (participantCount === 4) return 'grid-cols-2 md:grid-cols-2';
+  if (participantCount <= 6) return 'grid-cols-2 sm:grid-cols-3';
+  if (participantCount <= 9) return 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-3';
+  if (participantCount <= 12) return 'grid-cols-3 sm:grid-cols-3 lg:grid-cols-4';
+  return 'grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6';
 };
 
 /**
@@ -31,10 +35,13 @@ export const getVideoItemClass = (
     if (userId === pinnedUserId) {
       return 'col-span-full lg:col-span-3 lg:row-span-full';
     } else {
-      return 'h-24 md:h-32 lg:h-full';
+      return 'h-24 md:h-32 lg:h-full lg:col-span-1';
     }
   }
-  return '';
+  
+  // 그리드 모드에서는 모든 비디오가 동일한 크기를 가지지만, 
+  // 비율을 유지하고 컨테이너를 채우도록 설정
+  return 'aspect-video';
 };
 
 /**
@@ -44,6 +51,8 @@ export interface VideoParticipant {
   userId: string;
   stream: MediaStream | null;
   isLocal: boolean;
+  isScreenShare?: boolean;
+  isPinned?: boolean;
 }
 
 /**

@@ -22,6 +22,11 @@ interface SignalingMessage {
 
 const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [screenShareStream, setScreenShareStream] = useState<MediaStream | null>(null);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [isScreenSharePaused, setIsScreenSharePaused] = useState(false);
+  const [screenShareError, setScreenShareError] = useState<string | null>(null);
+  const [screenShareWithAudio, setScreenShareWithAudio] = useState(true);
   const [peers, setPeers] = useState<PeerConnection[]>([]);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
@@ -600,6 +605,13 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
         // Expected error, but forces camera release
         console.log('Forced camera release attempt complete');
       });
+    
+    // Stop screen sharing if active
+    if (screenShareStream) {
+      screenShareStream.getTracks().forEach(track => track.stop());
+      setScreenShareStream(null);
+      setIsScreenSharing(false);
+    }
   };
 
   const endCall = () => {
@@ -614,14 +626,172 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
     }
   };
 
+  // Start screen sharing with options
+  const startScreenShare = async (options?: { withAudio?: boolean }) => {
+    try {
+      // Clear previous errors
+      setScreenShareError(null);
+      
+      // Stop any existing screen share
+      if (screenShareStream) {
+        await stopScreenShare();
+      }
+      
+      // Set audio preference
+      const withAudio = options?.withAudio !== undefined ? options.withAudio : screenShareWithAudio;
+      setScreenShareWithAudio(withAudio);
+      
+      // Get screen stream with specified options
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: {
+          cursor: 'always',
+          displaySurface: 'monitor',
+          logicalSurface: true,
+          frameRate: 30
+        } as MediaTrackConstraints,
+        audio: withAudio
+      });
+      
+      // Store the stream
+      setScreenShareStream(stream);
+      setIsScreenSharing(true);
+      setIsScreenSharePaused(false);
+      
+      // Replace video track in all peer connections with screen share track
+      const videoTrack = stream.getVideoTracks()[0];
+      
+      if (videoTrack) {
+        peersRef.current.forEach(peer => {
+          const senders = peer.connection.getSenders();
+          const videoSender = senders.find(sender => 
+            sender.track?.kind === 'video'
+          );
+          
+          if (videoSender) {
+            videoSender.replaceTrack(videoTrack);
+          }
+        });
+        
+        // Handle track ending (user clicks "Stop sharing")
+        videoTrack.onended = () => {
+          stopScreenShare();
+        };
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error starting screen share:', error);
+      
+      // Set appropriate error message
+      if (error instanceof DOMException) {
+        if (error.name === 'NotAllowedError') {
+          setScreenShareError('화면 공유 권한이 거부되었습니다.');
+        } else if (error.name === 'NotFoundError') {
+          setScreenShareError('공유할 화면을 찾을 수 없습니다.');
+        } else if (error.name === 'NotReadableError') {
+          setScreenShareError('화면 캡처에 실패했습니다. 하드웨어 문제일 수 있습니다.');
+        } else {
+          setScreenShareError(`화면 공유 중 오류: ${error.message}`);
+        }
+      } else {
+        setScreenShareError('화면 공유를 시작하는 중 알 수 없는 오류가 발생했습니다.');
+      }
+      
+      return false;
+    }
+  };
+  
+  // Pause/Resume screen sharing
+  const togglePauseScreenShare = () => {
+    if (!screenShareStream) return false;
+    
+    const videoTracks = screenShareStream.getVideoTracks();
+    if (videoTracks.length > 0) {
+      const newPauseState = !isScreenSharePaused;
+      videoTracks.forEach(track => {
+        track.enabled = !newPauseState;
+      });
+      setIsScreenSharePaused(newPauseState);
+      return true;
+    }
+    
+    return false;
+  };
+  
+  // Stop screen sharing
+  const stopScreenShare = async () => {
+    try {
+      if (screenShareStream) {
+        // Stop all tracks
+        screenShareStream.getTracks().forEach(track => track.stop());
+        
+        // Replace screen share track with original video track in all peer connections
+        if (localStream) {
+          const videoTrack = localStream.getVideoTracks()[0];
+          
+          peersRef.current.forEach(peer => {
+            const senders = peer.connection.getSenders();
+            const videoSender = senders.find(sender => 
+              sender.track?.kind === 'video'
+            );
+            
+            if (videoSender && videoTrack) {
+              videoSender.replaceTrack(videoTrack);
+            }
+          });
+        }
+        
+        // Reset states
+        setScreenShareStream(null);
+        setIsScreenSharing(false);
+        setIsScreenSharePaused(false);
+        setScreenShareError(null);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error stopping screen share:', error);
+      setScreenShareError('화면 공유를 중지하는 중 오류가 발생했습니다.');
+      return false;
+    }
+  };
+
+  // Update screen share audio
+  const updateScreenShareAudio = (enabled: boolean) => {
+    if (!screenShareStream) return false;
+    
+    // Update preference for future sessions
+    setScreenShareWithAudio(enabled);
+    
+    // Try to update current session if possible
+    const audioTracks = screenShareStream.getAudioTracks();
+    if (audioTracks.length > 0) {
+      audioTracks.forEach(track => {
+        track.enabled = enabled;
+      });
+      return true;
+    }
+    
+    return false;
+  };
+
   return {
     localStream,
+    screenShareStream,
+    isScreenSharing,
+    isScreenSharePaused,
+    screenShareError,
+    screenShareWithAudio,
     peers,
     isAudioMuted,
     isVideoOff,
     connectionStatus,
     toggleAudio,
     toggleVideo,
+    startScreenShare,
+    stopScreenShare,
+    togglePauseScreenShare,
+    updateScreenShareAudio,
     endCall,
     setLocalVideoRef
   };

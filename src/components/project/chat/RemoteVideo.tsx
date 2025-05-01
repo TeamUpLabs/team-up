@@ -49,11 +49,15 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
     onPinToggle(userId);
   };
 
+  // 사용자 이름의 첫 글자를 가져오는 유틸리티 함수
+  const getInitials = (name: string) => {
+    return name.charAt(0).toUpperCase();
+  };
+
   return (
     <div 
-      className={`relative w-full h-full rounded-2xl overflow-hidden bg-gradient-to-b from-gray-800 to-gray-900 group
-        transition-all duration-300 ${isPinned ? 'ring-4 ring-indigo-500' : 'hover:ring-2 hover:ring-white/30'}`}
-      onClick={togglePin}
+      className={`relative w-full h-full overflow-hidden bg-gradient-to-b from-gray-800 to-gray-900 group
+        transition-all duration-300 rounded-xl ${isPinned ? 'ring-4 ring-indigo-500' : 'hover:ring-2 hover:ring-white/30'}`}
     >
       {stream && !hasError ? (
         <>
@@ -75,9 +79,9 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
       ) : (
         <div className="flex items-center justify-center h-full">
           <div className="flex flex-col items-center">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-              <span className="text-white text-3xl font-medium">
-                {userName.charAt(0).toUpperCase()}
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+              <span className="text-white text-xl sm:text-2xl font-medium">
+                {getInitials(userName)}
               </span>
             </div>
             {hasError && (
@@ -87,23 +91,21 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
         </div>
       )}
       
-      <div className="absolute top-0 inset-x-0 p-2 md:p-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute top-0 inset-x-0 p-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-md rounded-full pl-1.5 pr-3 py-1">
-            <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white">
-              {userName.charAt(0).toUpperCase()}
+            <div className="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+              {getInitials(userName)}
             </div>
-            <span className="text-white text-sm font-medium">{userName}</span>
+            <span className="text-white text-xs font-medium">{userName}</span>
           </div>
-          <div className="flex gap-1.5">
-            <button 
-              onClick={togglePin}
-              className={`w-8 h-8 rounded-full flex items-center justify-center
-                ${isPinned ? 'bg-indigo-500 text-white' : 'bg-black/50 text-white/80 hover:bg-black/70 hover:text-white'}`}
-            >
-              <FontAwesomeIcon icon={isPinned ? faMinimize : faMaximize} className="text-xs" />
-            </button>
-          </div>
+          <button 
+            onClick={togglePin}
+            className={`w-7 h-7 rounded-full flex items-center justify-center
+              ${isPinned ? 'bg-indigo-500 text-white' : 'bg-black/50 text-white/80 hover:bg-black/70 hover:text-white'}`}
+          >
+            <FontAwesomeIcon icon={isPinned ? faMinimize : faMaximize} className="text-xs" />
+          </button>
         </div>
       </div>
     </div>

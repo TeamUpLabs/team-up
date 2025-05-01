@@ -5,7 +5,9 @@ import {
   faVideo, faVideoSlash, 
   faPhone, faMaximize, faMinimize,
   faEllipsisVertical, faGear,
-  faUserGroup
+  faUsers,
+  faDesktop,
+  faStop
 } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import Tooltip from '@/components/ui/Tooltip';
@@ -14,40 +16,42 @@ interface VideoControlsProps {
   isAudioMuted: boolean;
   isVideoOff: boolean;
   isFullscreen: boolean;
-  layout: 'grid' | 'focus';
   showSettings: boolean;
   showOptions: boolean;
   channelId: string;
   participantCount: number;
   isParticipantListVisible: boolean;
+  isScreenSharing?: boolean;
+  isScreenSharePaused?: boolean;
   onToggleAudio: () => void;
   onToggleVideo: () => void;
   onEndCall: () => void;
-  onToggleLayout: () => void;
   onToggleSettings: () => void;
   onToggleOptions: () => void;
   onToggleFullscreen: () => void;
   onToggleParticipantList: () => void;
+  onToggleScreenShare?: () => void;
 }
 
 const VideoControls: React.FC<VideoControlsProps> = ({
   isAudioMuted,
   isVideoOff,
   isFullscreen,
-  layout,
   showSettings,
   showOptions,
   channelId,
   participantCount,
   isParticipantListVisible,
+  isScreenSharing = false,
+  isScreenSharePaused,
   onToggleAudio,
   onToggleVideo,
   onEndCall,
-  onToggleLayout,
   onToggleSettings,
   onToggleOptions,
   onToggleFullscreen,
-  onToggleParticipantList
+  onToggleParticipantList,
+  onToggleScreenShare
 }) => {
   return (
     <motion.div 
@@ -73,7 +77,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
               : 'bg-black/70 hover:bg-black/90'} transition-colors`}
         >
           <span className="flex items-center gap-1">
-            <FontAwesomeIcon icon={faUserGroup} className="text-white text-sm" />
+            <FontAwesomeIcon icon={faUsers} className="text-white text-sm" />
             <span className="text-white text-xs">{participantCount}</span>
           </span>
         </button>
@@ -125,21 +129,6 @@ const VideoControls: React.FC<VideoControlsProps> = ({
       
       <div className="w-px h-8 bg-white/20 mx-1"></div>
       
-      <Tooltip content={layout === 'grid' ? "집중 모드" : "그리드 모드"}>
-        <button 
-          onClick={onToggleLayout}
-          className={`w-10 h-10 rounded-full flex items-center justify-center
-            ${layout === 'focus' 
-              ? 'bg-indigo-600 hover:bg-indigo-700' 
-              : 'bg-black/70 hover:bg-black/90'} transition-colors`}
-        >
-          <FontAwesomeIcon 
-            icon={layout === 'focus' ? faMinimize : faMaximize} 
-            className="text-white text-sm" 
-          />
-        </button>
-      </Tooltip>
-      
       <Tooltip content="설정">
         <button 
           onClick={onToggleSettings}
@@ -175,6 +164,20 @@ const VideoControls: React.FC<VideoControlsProps> = ({
           />
         </button>
       </Tooltip>
+      
+      {onToggleScreenShare && (
+        <Tooltip content={isScreenSharing ? "화면 공유 종료" : "화면 공유"}>
+          <button 
+            onClick={onToggleScreenShare}
+            className={`w-10 h-10 rounded-full bg-black/70 hover:bg-black/90 flex items-center justify-center transition-colors ${isScreenSharePaused ? 'animate-pulse ring-2 ring-yellow-500' : ''}`}
+          >
+            <FontAwesomeIcon 
+              icon={isScreenSharing ? faStop : faDesktop} 
+              className={`text-white text-sm ${isScreenSharePaused ? 'text-yellow-400' : ''}`} 
+            />
+          </button>
+        </Tooltip>
+      )}
     </motion.div>
   );
 };
