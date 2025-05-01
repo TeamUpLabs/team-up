@@ -4,7 +4,7 @@ import { useAuthStore } from '@/auth/authStore';
 
 const SERVER_URL = 'http://localhost:8000';
 
-export const useWebSocket = (channelId: string) => {
+export const useWebSocket = (projectId: string, channelId: string) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +52,7 @@ export const useWebSocket = (channelId: string) => {
       }
 
       console.log(`채널 ${channelId}에 웹소켓 연결 시도...`);
-      const ws = new WebSocket(`ws://${SERVER_URL.replace('http://', '')}/ws/chat/${channelId}?user_id=${user.id.toString()}`);
+      const ws = new WebSocket(`ws://${SERVER_URL.replace('http://', '')}/ws/chat/${projectId}/${channelId}?user_id=${user.id.toString()}`);
       
       // 이벤트 리스너 등록 전에 소켓 참조 저장
       socketRef.current = ws;
@@ -195,7 +195,7 @@ export const useWebSocket = (channelId: string) => {
     const fetchChatHistory = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${SERVER_URL}/chat/${channelId}`);
+        const response = await fetch(`${SERVER_URL}/chat/${projectId}/${channelId}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const history = await response.json() as Message[];

@@ -13,20 +13,22 @@ import { useAuthStore } from '@/auth/authStore';
 interface PageProps {
   params: Promise<{
     channelId: string;
+    projectId: string;
   }>;
 }
 
 export default function ChatPage({ params }: PageProps) {
   const user = useAuthStore((state) => state.user);
   const [message, setMessage] = useState('');
-  const { channelId } = use(params);
-  const { messages, sendMessage, isConnected } = useWebSocket(channelId);
+  const { channelId, projectId } = use(params);
+  const { messages, sendMessage, isConnected } = useWebSocket(projectId, channelId);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && sendMessage && isConnected) {
       const messageData: Message = {
         id: Date.now(),
+        projectId: projectId,
         channelId: channelId,
         userId: user?.id ?? 0,
         user: user?.name ?? '',

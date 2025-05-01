@@ -1,5 +1,6 @@
 export interface Message {
   id: number | string;
+  projectId: string;
   channelId: string;
   userId: number;
   user: string;
