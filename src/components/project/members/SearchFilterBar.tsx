@@ -26,7 +26,7 @@ export default function SearchFilterBar({
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="이름, 역할, 작업으로 검색..."
             className="pl-10 pr-4 py-2.5 w-full bg-project-page-title-background text-text-secondary rounded-lg
-                      border border-component-border focus:border-point-color-purple-hover focus:ring-1 focus:ring-point-color-purple-hover/20 
+                      border border-component-border hover:border-point-color-purple-hover focus:border-point-color-purple-hover focus:ring-1 focus:ring-point-color-purple-hover/20 
                       outline-none transition-all duration-200 placeholder-text-secondary"
           />
           {searchQuery && (
@@ -50,7 +50,7 @@ export default function SearchFilterBar({
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
             className="pl-10 pr-8 py-2.5 w-full sm:w-44 appearance-none bg-project-page-title-background text-text-secondary rounded-lg
-                      border border-component-border focus:border-point-color-purple-hover focus:ring-1 focus:ring-point-color-purple-hover/20 
+                      border border-component-border hover:border-point-color-purple-hover focus:border-point-color-purple-hover focus:ring-1 focus:ring-point-color-purple-hover/20 
                       outline-none transition-all duration-200"
           >
             <option value="all">모든 상태</option>
