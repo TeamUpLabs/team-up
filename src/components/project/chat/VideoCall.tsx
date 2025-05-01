@@ -1,8 +1,28 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMicrophone, faMicrophoneSlash, faVideo, faVideoSlash, faPhone, faUserGroup, faMaximize, faMinimize, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faCircleInfo, 
+  faShareFromSquare
+} from '@fortawesome/free-solid-svg-icons';
 import { useProject } from '@/contexts/ProjectContext';
 import useWebRTC from '@/hooks/useWebRTC';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// Import separated components
+import RemoteVideo from '@/components/project/chat/RemoteVideo';
+import LocalVideo from '@/components/project/chat/LocalVideo';
+import VideoControls from '@/components/project/chat/VideoControls';
+import VideoParticipantList from '@/components/project/chat/VideoParticipantList';
+import VideoOptionsMenu from '@/components/project/chat/VideoOptionsMenu';
+import VideoSettings from '@/components/project/chat/VideoSettings';
+
+// Import layout utilities
+import {
+  getGridLayout,
+  getVideoItemClass,
+  arrangeVideoParticipants,
+  VideoParticipant
+} from '@/utils/videoLayoutUtils';
 
 interface VideoCallProps {
   channelId: string;
@@ -14,7 +34,13 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   const { project } = useProject();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isParticipantListVisible, setIsParticipantListVisible] = useState(false);
+  const [showControls, setShowControls] = useState(true);
+  const [showOptions, setShowOptions] = useState(false);
+  const [pinnedUser, setPinnedUser] = useState<string | null>(null);
+  const [layout, setLayout] = useState<'grid' | 'focus'>('grid');
+  const [showSettings, setShowSettings] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { 
     localStream, 
@@ -32,6 +58,31 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     projectId: project?.id 
   });
 
+  // Auto-hide controls after inactivity
+  useEffect(() => {
+    const handleMouseMove = () => {
+      setShowControls(true);
+      
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+      
+      controlsTimeoutRef.current = setTimeout(() => {
+        if (!isParticipantListVisible && !showOptions && !showSettings) {
+          setShowControls(false);
+        }
+      }, 3000);
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (controlsTimeoutRef.current) {
+        clearTimeout(controlsTimeoutRef.current);
+      }
+    };
+  }, [isParticipantListVisible, showOptions, showSettings]);
+
   // Toggle fullscreen mode
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -48,7 +99,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   };
 
   // Handle fullscreen change event
-  React.useEffect(() => {
+  useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
     };
@@ -61,6 +112,33 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
 
   const toggleParticipantList = () => {
     setIsParticipantListVisible(prev => !prev);
+    setShowOptions(false);
+    setShowSettings(false);
+  };
+
+  const toggleOptions = () => {
+    setShowOptions(prev => !prev);
+    setIsParticipantListVisible(false);
+    setShowSettings(false);
+  };
+
+  const toggleSettings = () => {
+    setShowSettings(prev => !prev);
+    setIsParticipantListVisible(false);
+    setShowOptions(false);
+  };
+
+  const toggleLayout = () => {
+    setLayout(prev => prev === 'grid' ? 'focus' : 'grid');
+  };
+
+  const pinUser = (userId: string) => {
+    setPinnedUser(pinnedUser === userId ? null : userId);
+    if (pinnedUser !== userId) {
+      setLayout('focus');
+    } else {
+      setLayout('grid');
+    }
   };
 
   const handleEndCall = () => {
@@ -68,219 +146,187 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     onClose();
   };
 
-  // Video element component for remote videos
-  const RemoteVideo = React.memo(({ stream }: { stream: MediaStream | null }) => {
-    const videoRef = useRef<HTMLVideoElement>(null);
+  // Get user name by ID
+  const getUserName = (id: string) => {
+    return project?.members.find(member => member.id === Number(id))?.name || 'Unknown';
+  };
 
-    useEffect(() => {
-      if (videoRef.current && stream) {
-        videoRef.current.srcObject = stream;
-      }
-      
-      const currentVideo = videoRef.current;
-      return () => {
-        if (currentVideo) {
-          currentVideo.srcObject = null;
-        }
-      };
-    }, [stream]);
+  // Get user role by ID
+  const getUserRole = (id: string) => {
+    return project?.members.find(member => member.id === Number(id))?.role || '';
+  };
 
-    return (
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        className="w-full h-full object-contain bg-gray-900"
-      />
+  // Prepare participant list for the VideoParticipantList component
+  const getParticipantList = () => {
+    const participants = [
+      {
+        userId: 'local',
+        name: getUserName(userId),
+        role: getUserRole(userId),
+        isLocal: true,
+        isAudioMuted,
+        isVideoOff
+      },
+      ...peers.map(peer => ({
+        userId: peer.userId,
+        name: getUserName(peer.userId),
+        role: getUserRole(peer.userId),
+        isLocal: false
+      }))
+    ];
+    
+    return participants;
+  };
+
+  // Arrange videos based on layout mode
+  const arrangeVideos = (): VideoParticipant[] => {
+    return arrangeVideoParticipants(
+      'local',
+      localStream,
+      peers.map(peer => ({ userId: peer.userId, stream: peer.stream || null })),
+      pinnedUser,
+      layout
     );
-  });
-  RemoteVideo.displayName = 'RemoteVideo';
+  };
 
-  // Render a video element with participant info
-  const renderVideoElement = (stream: MediaStream | null, userId: string, isLocal: boolean = false) => {
+  // Render the video layout
+  const renderVideoLayout = () => {
+    const arrangedUsers = arrangeVideos();
+    
     return (
-      <div 
-        className={`relative rounded-lg overflow-hidden border-2 h-full
-          ${isLocal ? 'border-blue-400' : 'border-transparent hover:border-gray-300'}`}
+      <motion.div 
+        layout
+        className={`grid gap-3 md:gap-4 h-full ${getGridLayout(peers.length + 1, layout, !!pinnedUser)}`}
       >
-        <div className="absolute top-2 left-2 z-10 bg-black bg-opacity-50 px-3 py-1 rounded-full text-white text-sm">
-          {isLocal ? 'You' : userId}
-          {isLocal && isAudioMuted && (
-            <FontAwesomeIcon icon={faMicrophoneSlash} className="ml-2 text-red-500" />
-          )}
-        </div>
-        
-        {stream ? (
-          isLocal ? (
-            <video
-              ref={setLocalVideoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-full object-contain bg-gray-900"
-            />
-          ) : (
-            <RemoteVideo stream={stream} />
-          )
-        ) : (
-          <div className="flex items-center justify-center h-full bg-gray-800 text-white">
-            <div className="text-center">
-              <FontAwesomeIcon icon={faUserGroup} className="text-gray-400 text-4xl mb-3" />
-              <p>연결 중...</p>
-            </div>
-          </div>
-        )}
-      </div>
+        {arrangedUsers.map(user => (
+          <motion.div 
+            layout
+            key={user.userId === 'local' ? 'local-video' : user.userId}
+            className={getVideoItemClass(user.userId, pinnedUser, layout)}
+          >
+            {user.isLocal ? 
+              <LocalVideo
+                isAudioMuted={isAudioMuted}
+                isVideoOff={isVideoOff}
+                localVideoRef={setLocalVideoRef}
+                userName="나"
+              /> :
+              <RemoteVideo 
+                stream={user.stream} 
+                userName={getUserName(user.userId)} 
+                userId={user.userId}
+                isPinned={pinnedUser === user.userId}
+                onPinToggle={pinUser}
+              />
+            }
+          </motion.div>
+        ))}
+      </motion.div>
     );
+  };
+
+  // Share invite link handler
+  const handleShareInviteLink = () => {
+    // Placeholder for invite link functionality
+    console.log("Share invite link");
   };
 
   return (
     <div 
       ref={containerRef}
-      className="fixed inset-0 bg-gray-900 flex flex-col z-50"
+      className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 flex flex-col z-50"
+      onMouseMove={() => setShowControls(true)}
     >
-      {/* Header - simplified */}
-      <div className="px-4 py-3 bg-gray-800 flex justify-between items-center shadow-md">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-          <h2 className="text-white">채널: #{channelId}</h2>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={toggleParticipantList}
-            className="text-white hover:bg-gray-700 p-2 rounded relative"
-            title="참가자 목록"
-          >
-            <FontAwesomeIcon icon={faUserGroup} />
-            <span className="absolute -top-1 -right-1 bg-blue-500 text-xs text-white rounded-full w-4 h-4 flex items-center justify-center">
-              {peers.length + 1}
-            </span>
-          </button>
-          <button 
-            onClick={toggleFullscreen}
-            className="text-white hover:bg-gray-700 p-2 rounded"
-            title={isFullscreen ? "전체화면 종료" : "전체화면"}
-          >
-            <FontAwesomeIcon icon={isFullscreen ? faMinimize : faMaximize} />
-          </button>
-        </div>
+      {/* Video container */}
+      <div className="flex-1 p-3 md:p-4 lg:p-5 relative">
+        {renderVideoLayout()}
       </div>
-      
-      {/* Participants list modal */}
-      {isParticipantListVisible && (
-        <div className="absolute top-14 right-4 bg-gray-800 rounded-md shadow-lg z-20 w-64 overflow-hidden">
-          <div className="flex items-center justify-between bg-gray-700 px-4 py-2">
-            <h3 className="text-white font-medium">참가자 ({peers.length + 1})</h3>
-            <button 
-              onClick={toggleParticipantList}
-              className="text-gray-300 hover:text-white"
-            >
-              <FontAwesomeIcon icon={faTimes} />
-            </button>
-          </div>
-          <ul className="max-h-80 overflow-y-auto">
-            {/* Local user */}
-            <li className="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                  {userId.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <p className="text-white">{userId} (You)</p>
-                  <p className="text-xs text-gray-400">로컬</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                {isAudioMuted && <FontAwesomeIcon icon={faMicrophoneSlash} className="text-red-500" />}
-                {isVideoOff && <FontAwesomeIcon icon={faVideoSlash} className="text-red-500" />}
-              </div>
-            </li>
-            
-            {/* Remote users */}
-            {peers.map(peer => (
-              <li key={`list-${peer.userId}`} className="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white">
-                    {peer.userId.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="text-white">{peer.userId}</p>
-                    <p className="text-xs text-gray-400">원격</p>
-                  </div>
-                </div>
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
       
       {/* Status message when no peers */}
-      {peers.length === 0 && (
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 bg-gray-800 bg-opacity-80 px-6 py-4 rounded-lg text-white text-center">
-          <p className="text-lg">{connectionStatus}</p>
-          <p className="text-sm mt-2 text-gray-300">다른 참가자가 입장할 때까지 기다려주세요</p>
-        </div>
-      )}
-      
-      {/* Video container - grid layout */}
-      <div className="flex-1 p-4">
-        <div className={`grid gap-4 h-full ${
-          peers.length === 0 ? 'grid-cols-1' : 
-          peers.length === 1 ? 'grid-cols-2' : 
-          peers.length <= 3 ? 'grid-cols-2 md:grid-cols-3' : 
-          'grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
-        }`}>
-          {/* Local video */}
-          <div key="local-video">
-            {renderVideoElement(localStream, 'You', true)}
-          </div>
-          
-          {/* Remote videos */}
-          {peers.map(peer => (
-            <div key={peer.userId}>
-              {renderVideoElement(peer.stream || null, peer.userId)}
+      <AnimatePresence>
+        {peers.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 
+              bg-black/60 backdrop-blur-xl px-8 py-6 rounded-2xl text-white text-center max-w-md shadow-2xl"
+          >
+            <div className="flex flex-col items-center gap-5">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <FontAwesomeIcon icon={faCircleInfo} className="text-white text-2xl" />
+              </div>
+              <div>
+                <h3 className="text-xl font-medium">{connectionStatus}</h3>
+                <p className="text-sm mt-2 text-gray-300">다른 참가자가 입장할 때까지 기다려주세요</p>
+                <p className="text-xs mt-4 text-gray-400">아래 버튼으로 초대 링크를 복사하여 공유할 수 있습니다</p>
+              </div>
+              <button 
+                onClick={handleShareInviteLink}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-6 py-3 rounded-full transition-all shadow-lg"
+              >
+                <FontAwesomeIcon icon={faShareFromSquare} />
+                <span className="font-medium">초대 링크 복사</span>
+              </button>
             </div>
-          ))}
-        </div>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
-      {/* Controls - simplified */}
-      <div className="px-4 py-3 bg-gray-800 flex justify-center items-center gap-4">
-        <button 
-          onClick={toggleAudio} 
-          className={`p-3 rounded-full ${isAudioMuted ? 'bg-red-500' : 'bg-blue-500'}`}
-          title={isAudioMuted ? "마이크 켜기" : "마이크 끄기"}
-        >
-          <FontAwesomeIcon 
-            icon={isAudioMuted ? faMicrophoneSlash : faMicrophone} 
-            className="text-white" 
+      {/* Main controls */}
+      <AnimatePresence>
+        {showControls && (
+          <VideoControls 
+            isAudioMuted={isAudioMuted}
+            isVideoOff={isVideoOff}
+            isFullscreen={isFullscreen}
+            layout={layout}
+            showSettings={showSettings}
+            showOptions={showOptions}
+            channelId={channelId}
+            participantCount={peers.length + 1}
+            isParticipantListVisible={isParticipantListVisible}
+            onToggleAudio={toggleAudio}
+            onToggleVideo={toggleVideo}
+            onEndCall={handleEndCall}
+            onToggleLayout={toggleLayout}
+            onToggleSettings={toggleSettings}
+            onToggleOptions={toggleOptions}
+            onToggleFullscreen={toggleFullscreen}
+            onToggleParticipantList={toggleParticipantList}
           />
-        </button>
-        
-        <button 
-          onClick={toggleVideo} 
-          className={`p-3 rounded-full ${isVideoOff ? 'bg-red-500' : 'bg-blue-500'}`}
-          title={isVideoOff ? "비디오 켜기" : "비디오 끄기"}
-        >
-          <FontAwesomeIcon 
-            icon={isVideoOff ? faVideoSlash : faVideo} 
-            className="text-white" 
+        )}
+      </AnimatePresence>
+      
+      {/* Participants list */}
+      <AnimatePresence>
+        {isParticipantListVisible && (
+          <VideoParticipantList 
+            participants={getParticipantList()}
+            pinnedUser={pinnedUser}
+            onClose={toggleParticipantList}
+            onPinUser={pinUser}
           />
-        </button>
-        
-        <button 
-          onClick={handleEndCall} 
-          className="p-3 rounded-full bg-red-500"
-          title="통화 종료"
-        >
-          <FontAwesomeIcon 
-            icon={faPhone} 
-            className="transform rotate-135 text-white" 
+        )}
+      </AnimatePresence>
+      
+      {/* Options menu */}
+      <AnimatePresence>
+        {showOptions && (
+          <VideoOptionsMenu 
+            onShareInviteLink={handleShareInviteLink}
+            onOpenSpeakerSettings={toggleSettings}
+            onClose={toggleOptions}
           />
-        </button>
-      </div>
+        )}
+      </AnimatePresence>
+      
+      {/* Settings panel */}
+      <AnimatePresence>
+        {showSettings && (
+          <VideoSettings onClose={toggleSettings} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

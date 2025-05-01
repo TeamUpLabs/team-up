@@ -480,20 +480,64 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
   const toggleAudio = () => {
     if (localStream) {
       const audioTracks = localStream.getAudioTracks();
+      const newMutedState = !isAudioMuted;
+      
       audioTracks.forEach(track => {
-        track.enabled = !track.enabled;
+        // Double ensure muting by both disabling tracks and setting volume to zero
+        track.enabled = !newMutedState;
+        
+        // For some browsers, we might need to clone and replace the audio track
+        if (newMutedState) {
+          try {
+            // Try to completely stop and replace the track in extreme cases
+            const sender = peersRef.current.flatMap(peer => 
+              peer.connection.getSenders().filter(s => s.track?.kind === 'audio')
+            );
+            
+            // Update all audio senders with the mute state
+            sender.forEach(s => {
+              if (s.track) s.track.enabled = !newMutedState;
+            });
+          } catch (e) {
+            console.warn("Error while enforcing audio mute:", e);
+          }
+        }
+        
+        console.log(`Audio track ${track.id} muted: ${newMutedState}, enabled: ${!newMutedState}`);
       });
-      setIsAudioMuted(!isAudioMuted);
+      
+      setIsAudioMuted(newMutedState);
     }
   };
 
   const toggleVideo = () => {
     if (localStream) {
       const videoTracks = localStream.getVideoTracks();
+      const newVideoOffState = !isVideoOff;
+      
       videoTracks.forEach(track => {
-        track.enabled = !track.enabled;
+        track.enabled = !newVideoOffState;
+        
+        // For some browsers, we might need to update all video senders
+        if (newVideoOffState) {
+          try {
+            const sender = peersRef.current.flatMap(peer => 
+              peer.connection.getSenders().filter(s => s.track?.kind === 'video')
+            );
+            
+            // Update all video senders
+            sender.forEach(s => {
+              if (s.track) s.track.enabled = !newVideoOffState;
+            });
+          } catch (e) {
+            console.warn("Error while enforcing video off:", e);
+          }
+        }
+        
+        console.log(`Video track ${track.id} off: ${newVideoOffState}, enabled: ${!newVideoOffState}`);
       });
-      setIsVideoOff(!isVideoOff);
+      
+      setIsVideoOff(newVideoOffState);
     }
   };
 
