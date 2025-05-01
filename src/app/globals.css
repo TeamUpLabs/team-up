@@ -107,6 +107,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  background: var(--background);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
