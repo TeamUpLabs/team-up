@@ -103,7 +103,7 @@ export default function TasksPage() {
           </div>
           <button 
             onClick={() => setIsSelectMilestoneModalOpen(true)}
-            className="flex items-center gap-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex items-center gap-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-lg transition-colors active:scale-95"
           >
             <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
             <span>작업 추가</span>

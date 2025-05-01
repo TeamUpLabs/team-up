@@ -51,7 +51,7 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
           !selectedMilestone
             ? "bg-blue-500/30 text-blue-300/70 cursor-not-allowed"
             : "bg-blue-600 hover:bg-blue-700 text-white"
-        } transition-colors flex items-center`}
+        } transition-colors flex items-center active:scale-95`}
       >
         선택하기
       </button>
