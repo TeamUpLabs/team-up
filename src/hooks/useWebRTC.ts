@@ -115,7 +115,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
     
     socketRef.current.onopen = () => {
       console.log('Connected to signaling server');
-      setConnectionStatus("시그널링 서버에 연결됨. 다른 참가자를 기다리는 중...");
+      setConnectionStatus("다른 참가자를 기다리는 중...");
     };
     
     socketRef.current.onmessage = async (event) => {
