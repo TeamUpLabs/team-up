@@ -95,7 +95,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         peer.connection.close();
       });
     };
-  }, []);
+  }, [localStream]);
 
   // Connect to signaling server after media stream is available
   useEffect(() => {
