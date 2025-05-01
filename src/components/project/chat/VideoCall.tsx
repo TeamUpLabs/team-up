@@ -417,12 +417,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     );
   };
 
-  // Share invite link handler
-  const handleShareInviteLink = () => {
-    // Placeholder for invite link functionality
-    console.log("Share invite link");
-  };
-
   return (
     <div
       ref={containerRef}
@@ -532,7 +526,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
       <AnimatePresence>
         {showOptions && (
           <VideoOptionsMenu
-            onShareInviteLink={handleShareInviteLink}
             onOpenSpeakerSettings={toggleSettings}
             onClose={toggleOptions}
           />
