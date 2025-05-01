@@ -1,8 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faCircleInfo, 
-  faShareFromSquare, 
+import {
+  faCircleInfo,
   faPause,
   faPlay,
   faVolumeMute,
@@ -51,47 +50,47 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   const containerRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { 
-    localStream, 
+  const {
+    localStream,
     screenShareStream,
     isScreenSharing,
     isScreenSharePaused,
     screenShareError,
     screenShareWithAudio,
-    peers, 
-    isAudioMuted, 
-    isVideoOff, 
-    connectionStatus, 
-    toggleAudio, 
-    toggleVideo, 
+    peers,
+    isAudioMuted,
+    isVideoOff,
+    connectionStatus,
+    toggleAudio,
+    toggleVideo,
     startScreenShare,
     stopScreenShare,
     togglePauseScreenShare,
     updateScreenShareAudio,
     endCall,
     setLocalVideoRef
-  } = useWebRTC({ 
-    channelId, 
-    userId, 
-    projectId: project?.id 
+  } = useWebRTC({
+    channelId,
+    userId,
+    projectId: project?.id
   });
 
   // Auto-hide controls after inactivity
   useEffect(() => {
     const handleMouseMove = () => {
       setShowControls(true);
-      
+
       if (controlsTimeoutRef.current) {
         clearTimeout(controlsTimeoutRef.current);
       }
-      
+
       controlsTimeoutRef.current = setTimeout(() => {
         if (!isParticipantListVisible && !showOptions && !showSettings && !showScreenShareOptions) {
           setShowControls(false);
         }
       }, 3000);
     };
-    
+
     window.addEventListener('mousemove', handleMouseMove);
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
@@ -226,7 +225,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         isLocal: false
       }))
     ];
-    
+
     return participants;
   };
 
@@ -263,7 +262,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
           ).filter(p => p.userId !== 'screen')
         ];
       }
-      
+
       // 화면 공유가 핀되어 있지 않으면 일반 배치
       return [
         {
@@ -282,7 +281,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         ).filter(p => p.userId !== 'screen')
       ];
     }
-    
+
     return arrangeVideoParticipants(
       'local',
       localStream,
@@ -296,9 +295,9 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   const renderVideoLayout = () => {
     const arrangedUsers = arrangeVideos();
     const totalParticipants = arrangedUsers.length;
-    
+
     return (
-      <motion.div 
+      <motion.div
         layout
         className={`grid gap-2 md:gap-3 lg:gap-4 w-full h-full ${getGridLayout(totalParticipants, layout, !!pinnedUser)}`}
         style={{
@@ -308,7 +307,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         }}
       >
         {arrangedUsers.map(user => (
-          <motion.div 
+          <motion.div
             layout
             key={user.userId === 'local' ? 'local-video' : (user.userId === 'screen' ? 'screen-share' : user.userId)}
             className={`
@@ -320,7 +319,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
               minWidth: 0
             }}
           >
-            {user.isLocal && !user.isScreenShare ? 
+            {user.isLocal && !user.isScreenShare ?
               <LocalVideo
                 isAudioMuted={isAudioMuted}
                 isVideoOff={isVideoOff}
@@ -328,78 +327,78 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
                 userName="나"
               /> :
               user.isScreenShare ?
-              <div className="w-full h-full rounded-lg overflow-hidden relative bg-black">
-                <video
-                  ref={(element) => {
-                    if (element && user.stream) {
-                      element.srcObject = user.stream;
-                    }
-                  }}
-                  autoPlay
-                  playsInline
-                  className={`w-full h-full object-contain ${isScreenSharePaused ? 'opacity-50' : ''}`}
-                />
-                <div className="absolute bottom-3 left-3 bg-black/70 px-3 py-1 rounded-lg text-sm text-white flex items-center gap-2">
-                  <span>화면 공유 중</span>
-                  {isScreenSharePaused && <span className="text-yellow-400">(일시 정지됨)</span>}
-                  {!screenShareWithAudio && <FontAwesomeIcon icon={faVolumeMute} className="ml-2 text-red-400" />}
-                </div>
-                
-                {/* Pause overlay */}
-                {isScreenSharePaused && (
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                    <div className="bg-black/70 p-4 rounded-full">
-                      <FontAwesomeIcon icon={faPause} className="text-white text-3xl" />
+                <div className="w-full h-full rounded-lg overflow-hidden relative bg-black">
+                  <video
+                    ref={(element) => {
+                      if (element && user.stream) {
+                        element.srcObject = user.stream;
+                      }
+                    }}
+                    autoPlay
+                    playsInline
+                    className={`w-full h-full object-contain ${isScreenSharePaused ? 'opacity-50' : ''}`}
+                  />
+                  <div className="absolute bottom-3 left-3 bg-black/70 px-3 py-1 rounded-lg text-sm text-white flex items-center gap-2">
+                    <span>화면 공유 중</span>
+                    {isScreenSharePaused && <span className="text-yellow-400">(일시 정지됨)</span>}
+                    {!screenShareWithAudio && <FontAwesomeIcon icon={faVolumeMute} className="ml-2 text-red-400" />}
+                  </div>
+
+                  {/* Pause overlay */}
+                  {isScreenSharePaused && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <div className="bg-black/70 p-4 rounded-full">
+                        <FontAwesomeIcon icon={faPause} className="text-white text-3xl" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Screen sharing controls */}
+                  <div className="absolute top-3 right-3 bg-black/70 rounded-lg overflow-hidden">
+                    <div className="flex">
+                      <button
+                        onClick={handleTogglePauseScreenShare}
+                        className="text-white p-2 hover:bg-gray-800"
+                      >
+                        <FontAwesomeIcon
+                          icon={isScreenSharePaused ? faPlay : faPause}
+                          className="w-4 h-4"
+                        />
+                      </button>
+                      <button
+                        onClick={handleToggleScreenShareAudio}
+                        className="text-white p-2 hover:bg-gray-800"
+                      >
+                        <FontAwesomeIcon
+                          icon={screenShareWithAudio ? faVolumeHigh : faVolumeMute}
+                          className="w-4 h-4"
+                        />
+                      </button>
+                      <button
+                        onClick={toggleScreenSharePin}
+                        className={`text-white p-2 hover:bg-gray-800 ${pinnedUser === 'screen' ? 'bg-indigo-600' : ''}`}
+                      >
+                        <FontAwesomeIcon
+                          icon={pinnedUser === 'screen' ? faMinimize : faMaximize}
+                          className="w-4 h-4"
+                        />
+                      </button>
+                      <button
+                        onClick={stopScreenShare}
+                        className="text-white p-2 hover:bg-red-600"
+                      >
+                        <span className="text-xs">중지</span>
+                      </button>
                     </div>
                   </div>
-                )}
-                
-                {/* Screen sharing controls */}
-                <div className="absolute top-3 right-3 bg-black/70 rounded-lg overflow-hidden">
-                  <div className="flex">
-                    <button 
-                      onClick={handleTogglePauseScreenShare}
-                      className="text-white p-2 hover:bg-gray-800"
-                    >
-                      <FontAwesomeIcon 
-                        icon={isScreenSharePaused ? faPlay : faPause} 
-                        className="w-4 h-4" 
-                      />
-                    </button>
-                    <button 
-                      onClick={handleToggleScreenShareAudio}
-                      className="text-white p-2 hover:bg-gray-800"
-                    >
-                      <FontAwesomeIcon 
-                        icon={screenShareWithAudio ? faVolumeHigh : faVolumeMute} 
-                        className="w-4 h-4" 
-                      />
-                    </button>
-                    <button 
-                      onClick={toggleScreenSharePin}
-                      className={`text-white p-2 hover:bg-gray-800 ${pinnedUser === 'screen' ? 'bg-indigo-600' : ''}`}
-                    >
-                      <FontAwesomeIcon 
-                        icon={pinnedUser === 'screen' ? faMinimize : faMaximize} 
-                        className="w-4 h-4" 
-                      />
-                    </button>
-                    <button 
-                      onClick={stopScreenShare}
-                      className="text-white p-2 hover:bg-red-600"
-                    >
-                      <span className="text-xs">중지</span>
-                    </button>
-                  </div>
-                </div>
-              </div> :
-              <RemoteVideo 
-                stream={user.stream} 
-                userName={getUserName(user.userId)} 
-                userId={user.userId}
-                isPinned={pinnedUser === user.userId}
-                onPinToggle={pinUser}
-              />
+                </div> :
+                <RemoteVideo
+                  stream={user.stream}
+                  userName={getUserName(user.userId)}
+                  userId={user.userId}
+                  isPinned={pinnedUser === user.userId}
+                  onPinToggle={pinUser}
+                />
             }
           </motion.div>
         ))}
@@ -414,7 +413,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   };
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 flex flex-col z-50"
       onMouseMove={() => setShowControls(true)}
@@ -423,7 +422,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
       <div className="flex-1 p-2 md:p-3 lg:p-4 relative overflow-hidden">
         {renderVideoLayout()}
       </div>
-      
+
       {/* Screen share error notification */}
       <AnimatePresence>
         {screenShareError && (
@@ -436,7 +435,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
           >
             <FontAwesomeIcon icon={faWarning} />
             <span>{screenShareError}</span>
-            <button 
+            <button
               onClick={() => stopScreenShare()}
               className="ml-3 p-1 hover:bg-red-700 rounded"
             >
@@ -445,7 +444,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
           </motion.div>
         )}
       </AnimatePresence>
-      
+
       {/* Screen share options popup */}
       <AnimatePresence>
         {showScreenShareOptions && (
@@ -456,7 +455,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
           />
         )}
       </AnimatePresence>
-      
+
       {/* Status message when no peers */}
       <AnimatePresence>
         {peers.length === 0 && (
@@ -474,24 +473,16 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
               <div>
                 <h3 className="text-xl font-medium">{connectionStatus}</h3>
                 <p className="text-sm mt-2 text-gray-300">다른 참가자가 입장할 때까지 기다려주세요</p>
-                <p className="text-xs mt-4 text-gray-400">아래 버튼으로 초대 링크를 복사하여 공유할 수 있습니다</p>
               </div>
-              <button 
-                onClick={handleShareInviteLink}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 px-6 py-3 rounded-full transition-all shadow-lg"
-              >
-                <FontAwesomeIcon icon={faShareFromSquare} />
-                <span className="font-medium">초대 링크 복사</span>
-              </button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-      
+
       {/* Main controls */}
       <AnimatePresence>
         {showControls && (
-          <VideoControls 
+          <VideoControls
             isAudioMuted={isAudioMuted}
             isVideoOff={isVideoOff}
             isFullscreen={isFullscreen}
@@ -513,11 +504,11 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
           />
         )}
       </AnimatePresence>
-      
+
       {/* Participants list */}
       <AnimatePresence>
         {isParticipantListVisible && (
-          <VideoParticipantList 
+          <VideoParticipantList
             participants={getParticipantList()}
             pinnedUser={pinnedUser}
             onClose={toggleParticipantList}
@@ -525,18 +516,18 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
           />
         )}
       </AnimatePresence>
-      
+
       {/* Options menu */}
       <AnimatePresence>
         {showOptions && (
-          <VideoOptionsMenu 
+          <VideoOptionsMenu
             onShareInviteLink={handleShareInviteLink}
             onOpenSpeakerSettings={toggleSettings}
             onClose={toggleOptions}
           />
         )}
       </AnimatePresence>
-      
+
       {/* Settings panel */}
       <AnimatePresence>
         {showSettings && (

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useProject } from '@/contexts/ProjectContext';
 
 interface UseWebRTCProps {
   channelId: string;
@@ -21,6 +22,7 @@ interface SignalingMessage {
 }
 
 const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
+  const { project } = useProject();
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [screenShareStream, setScreenShareStream] = useState<MediaStream | null>(null);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
@@ -132,7 +134,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
           // Create offer when a new user joins
           if (message.userId) {
             console.log(`User joined: ${message.userId}, creating offer`);
-            setConnectionStatus(`${message.userId} 사용자가 참여했습니다.`);
+            setConnectionStatus(`${project?.members.find(member => member.id === Number(message.userId))?.name}님이 참여했습니다.`);
             
             // Check if we already have a connection with this user
             const existingPeer = peersRef.current.find(p => p.userId === message.userId);
@@ -156,7 +158,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
           // Remove peer when a user leaves
           if (message.userId) {
             console.log(`User left: ${message.userId}`);
-            setConnectionStatus(`${message.userId} 사용자가 나갔습니다.`);
+            setConnectionStatus(`${project?.members.find(member => member.id === Number(message.userId))?.name}님이 나갔습니다.`);
             removePeer(message.userId);
           }
           break;
