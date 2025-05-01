@@ -74,7 +74,7 @@ export default function ExploreProject() {
       <div className="mb-6 flex flex-col md:flex-row gap-4 md:items-center md:space-x-3">
         <div className="relative">
           <select 
-            className="appearance-none bg-project-page-title-background border border-component-border rounded-lg pl-4 pr-10 py-2.5 text-sm w-full md:w-48 text-text-secondary hover:border-component-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+            className="appearance-none bg-project-page-title-background border border-component-border hover:border-point-color-indigo-hover focus:border-point-color-indigo-hover focus:ring-1 focus:ring-point-color-purple-hover/20 rounded-lg pl-4 pr-10 py-2.5 text-sm w-full md:w-48 text-text-secondary hover:border-component-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
             onChange={(e) => setSelectedOption(e.target.value)}
             value={selectedOption}
           >
