@@ -169,7 +169,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
         <Tooltip content={isScreenSharing ? "화면 공유 종료" : "화면 공유"}>
           <button 
             onClick={onToggleScreenShare}
-            className={`w-10 h-10 rounded-full bg-black/70 hover:bg-black/90 flex items-center justify-center transition-colors ${isScreenSharePaused ? 'animate-pulse ring-2 ring-yellow-500' : ''}`}
+            className={`w-10 h-10 rounded-full bg-black/70 hover:bg-black/90 flex items-center justify-center transition-colors ${isScreenSharePaused ? 'animate-pulse ring-2 ring-yellow-500' : ''} ${isScreenSharing ? 'bg-red-500 hover:bg-red-600' : ''}`}
           >
             <FontAwesomeIcon 
               icon={isScreenSharing ? faStop : faDesktop} 
