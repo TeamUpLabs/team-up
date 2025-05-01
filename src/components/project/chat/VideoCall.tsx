@@ -404,10 +404,13 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
                   </div>
                 </div> :
                 <RemoteVideo
+                  key={`remote-video-${user.userId}`}
                   stream={user.stream}
                   userName={getUserName(user.userId)}
                   userId={user.userId}
                   isPinned={pinnedUser === user.userId}
+                  isRemoteVideoOff={peers.find(p => p.userId === user.userId)?.isRemoteVideoOff || false}
+                  isRemoteAudioMuted={peers.find(p => p.userId === user.userId)?.isRemoteAudioMuted || false}
                   onPinToggle={pinUser}
                 />
             }
@@ -420,7 +423,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 flex flex-col z-50 overflow-hidden"
+      className="fixed inset-0 bg-gray-800 flex flex-col z-50 overflow-hidden"
       onMouseMove={() => setShowControls(true)}
     >
       {/* Video container */}

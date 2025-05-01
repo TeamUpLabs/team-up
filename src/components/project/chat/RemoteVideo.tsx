@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMaximize, faMinimize } from '@fortawesome/free-solid-svg-icons';
+import { faMaximize, faMinimize, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
 
 interface RemoteVideoProps {
   stream: MediaStream | null;
@@ -8,6 +8,8 @@ interface RemoteVideoProps {
   userId: string;
   isPinned: boolean;
   muted?: boolean;
+  isRemoteVideoOff?: boolean;
+  isRemoteAudioMuted?: boolean;
   onPinToggle: (userId: string) => void;
 }
 
@@ -17,15 +19,78 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
   userId, 
   isPinned,
   muted = false,
+  isRemoteVideoOff = false,
+  isRemoteAudioMuted = false,
   onPinToggle
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const previousStreamRef = useRef<MediaStream | null>(null);
+
+  // Reset video loaded state when remote video state changes
+  useEffect(() => {
+    if (isRemoteVideoOff) {
+      setVideoLoaded(false);
+    } else if (!isRemoteVideoOff && stream) {
+      // If video is turned back on, force a reload of the stream
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+        setTimeout(() => {
+          if (videoRef.current && stream) {
+            videoRef.current.srcObject = stream;
+          }
+        }, 50);
+      }
+    }
+  }, [isRemoteVideoOff, stream]);
 
   useEffect(() => {
     if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
+      // Check if this is a new stream (different from the previous one)
+      const isNewStream = previousStreamRef.current !== stream;
+      
+      if (isNewStream) {
+        console.log(`Setting new stream for peer ${userId}, isRemoteVideoOff=${isRemoteVideoOff}`);
+        // Reset loaded state when we get a new stream
+        setVideoLoaded(false);
+        setHasError(false);
+        
+        // Save the current stream for future comparison
+        previousStreamRef.current = stream;
+        
+        // Force a reload of the stream to trigger loadeddata event
+        videoRef.current.srcObject = null;
+        setTimeout(() => {
+          if (videoRef.current && stream) {
+            videoRef.current.srcObject = stream;
+            
+            // Create a direct event listener for stream loading
+            const videoElement = videoRef.current;
+            const handleVideoLoad = () => {
+              console.log(`Direct event: Video loaded for peer ${userId}`);
+              setVideoLoaded(true);
+            };
+            
+            videoElement.addEventListener('loadeddata', handleVideoLoad);
+            
+            // Fallback: set loaded after a timeout if no event fires
+            setTimeout(() => {
+              if (!videoLoaded && !isRemoteVideoOff && stream.getVideoTracks().some(track => track.enabled)) {
+                console.log(`Fallback: Setting video loaded for peer ${userId} after timeout`);
+                setVideoLoaded(true);
+              }
+            }, 2000);
+            
+            return () => {
+              videoElement.removeEventListener('loadeddata', handleVideoLoad);
+            };
+          }
+        }, 50);
+      } else if (!videoRef.current.srcObject) {
+        // If we have a stream but no srcObject (rare case), set it
+        videoRef.current.srcObject = stream;
+      }
     }
     
     const currentVideo = videoRef.current;
@@ -34,13 +99,15 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
         currentVideo.srcObject = null;
       }
     };
-  }, [stream]);
+  }, [stream, userId, isRemoteVideoOff, videoLoaded]);
 
   const handleVideoLoaded = () => {
+    console.log(`Video loaded for peer ${userId}`);
     setVideoLoaded(true);
   };
 
-  const handleVideoError = () => {
+  const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    console.error(`Video error for peer ${userId}:`, e);
     setHasError(true);
   };
 
@@ -54,12 +121,31 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
     return name.charAt(0).toUpperCase();
   };
 
+  // Determine if we should show the avatar instead of video
+  const shouldShowAvatar = !stream || hasError || isRemoteVideoOff;
+
   return (
     <div 
-      className={`relative w-full h-full overflow-hidden bg-gradient-to-b from-gray-800 to-gray-900 group
+      className={`relative w-full h-full overflow-hidden bg-gray-900 group
         transition-all duration-300 rounded-md ${isPinned ? 'ring-2 ring-indigo-500' : ''}`}
     >
-      {stream && !hasError ? (
+      {shouldShowAvatar ? (
+        <div className="flex items-center justify-center h-full">
+          <div className="flex flex-col items-center">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gray-700 flex items-center justify-center shadow-lg">
+              <span className="text-white text-lg sm:text-xl font-medium">
+                {getInitials(userName)}
+              </span>
+            </div>
+            {hasError && (
+              <p className="text-white/70 text-xs mt-2">비디오를 불러올 수 없습니다</p>
+            )}
+            {isRemoteVideoOff && !hasError && stream && (
+              <p className="text-white/70 text-xs mt-2">카메라가 꺼져 있습니다</p>
+            )}
+          </div>
+        </div>
+      ) : (
         <>
           <video
             ref={videoRef}
@@ -76,28 +162,18 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
             </div>
           )}
         </>
-      ) : (
-        <div className="flex items-center justify-center h-full">
-          <div className="flex flex-col items-center">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-              <span className="text-white text-lg sm:text-xl font-medium">
-                {getInitials(userName)}
-              </span>
-            </div>
-            {hasError && (
-              <p className="text-white/70 text-xs mt-2">비디오를 불러올 수 없습니다</p>
-            )}
-          </div>
-        </div>
       )}
       
       <div className="absolute top-0 inset-x-0 p-1.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full pl-1 pr-2 py-0.5">
-            <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+            <div className="w-5 h-5 text-xs rounded-full bg-indigo-600 flex items-center justify-center text-white">
               {getInitials(userName)}
             </div>
             <span className="text-white text-xs font-medium">{userName}</span>
+            {isRemoteAudioMuted && (
+              <FontAwesomeIcon icon={faMicrophoneSlash} className="text-red-400 text-xs ml-1" />
+            )}
           </div>
           <button 
             onClick={togglePin}

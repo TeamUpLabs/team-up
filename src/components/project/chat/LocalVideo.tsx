@@ -17,7 +17,7 @@ const LocalVideo: React.FC<LocalVideoProps> = memo(({
   userName
 }) => {
   // Get avatar letter
-  const getAvatarLetter = (name: string) => {
+  const getInitials = (name: string) => {
     return name.charAt(0).toUpperCase();
   };
 
@@ -27,13 +27,13 @@ const LocalVideo: React.FC<LocalVideoProps> = memo(({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.3 }}
-      className="relative rounded-md overflow-hidden h-full w-full bg-gradient-to-b from-gray-800 to-gray-900"
+      className="relative rounded-md overflow-hidden h-full w-full bg-gray-900"
     >
       <div className="absolute top-0 left-0 w-full p-1.5 z-10 opacity-70 hover:opacity-100 transition-opacity">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full pl-1 pr-2 py-0.5">
-            <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white">
-              {getAvatarLetter(userName)}
+            <div className="w-5 h-5 text-xs rounded-full bg-indigo-600 flex items-center justify-center text-white">
+              {getInitials(userName)}
             </div>
             <span className="text-white text-xs font-medium">{userName}</span>
           </div>
@@ -54,10 +54,11 @@ const LocalVideo: React.FC<LocalVideoProps> = memo(({
       
       <div className="relative w-full h-full">
         {isVideoOff ? (
-          <div className="w-full h-full flex items-center justify-center">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-              <span className="text-white text-lg sm:text-xl font-medium">{getAvatarLetter(userName)}</span>
+          <div className="w-full h-full flex flex-col items-center justify-center">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gray-700 flex items-center justify-center shadow-lg">
+              <span className="text-white text-lg sm:text-xl font-medium">{getInitials(userName)}</span>
             </div>
+            <p className="text-white/70 text-xs mt-2">카메라가 꺼져 있습니다</p>
           </div>
         ) : (
           <video

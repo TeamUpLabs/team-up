@@ -11,6 +11,10 @@ interface PeerConnection {
   userId: string;
   connection: RTCPeerConnection;
   stream?: MediaStream;
+  dataChannel?: RTCDataChannel;
+  remoteDataChannel?: RTCDataChannel;
+  isRemoteVideoOff?: boolean;
+  isRemoteAudioMuted?: boolean;
 }
 
 interface SignalingMessage {
@@ -224,10 +228,48 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       console.log(`Creating peer connection with ${targetUserId}, isInitiator: ${isInitiator}`);
       const peerConnection = new RTCPeerConnection(iceServers);
       
+      // Create data channel or set up data channel handler
+      let dataChannel: RTCDataChannel | undefined;
+      
+      if (isInitiator) {
+        // If we're the initiator, create the data channel
+        dataChannel = peerConnection.createDataChannel('status');
+        console.log(`Created data channel for peer ${targetUserId}`);
+        
+        // Set up data channel event handlers
+        setupDataChannel(dataChannel, targetUserId);
+      } else {
+        // If we're not the initiator, set up the handler for the data channel
+        peerConnection.ondatachannel = (event) => {
+          console.log(`Received data channel from peer ${targetUserId}`);
+          const remoteDataChannel = event.channel;
+          setupDataChannel(remoteDataChannel, targetUserId);
+          
+          // Update the peer with the remote data channel
+          setPeers(prev => {
+            const newPeers = [...prev];
+            const peerIndex = newPeers.findIndex(p => p.userId === targetUserId);
+            
+            if (peerIndex !== -1) {
+              newPeers[peerIndex].remoteDataChannel = remoteDataChannel;
+              
+              // Also update the ref
+              const refIndex = peersRef.current.findIndex(p => p.userId === targetUserId);
+              if (refIndex !== -1) {
+                peersRef.current[refIndex].remoteDataChannel = remoteDataChannel;
+              }
+            }
+            
+            return newPeers;
+          });
+        };
+      }
+      
       // Create new peer object
       const newPeer = { 
         userId: targetUserId, 
-        connection: peerConnection 
+        connection: peerConnection,
+        dataChannel
       };
       
       // Add the new peer to state
@@ -493,24 +535,47 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
         // Double ensure muting by both disabling tracks and setting volume to zero
         track.enabled = !newMutedState;
         
-        // For some browsers, we might need to clone and replace the audio track
-        if (newMutedState) {
-          try {
-            // Try to completely stop and replace the track in extreme cases
-            const sender = peersRef.current.flatMap(peer => 
-              peer.connection.getSenders().filter(s => s.track?.kind === 'audio')
-            );
-            
-            // Update all audio senders with the mute state
-            sender.forEach(s => {
-              if (s.track) s.track.enabled = !newMutedState;
-            });
-          } catch (e) {
-            console.warn("Error while enforcing audio mute:", e);
-          }
+        // Update all audio senders regardless of whether we're muting or unmuting
+        try {
+          // Get all audio senders from peer connections
+          const sender = peersRef.current.flatMap(peer => 
+            peer.connection.getSenders().filter(s => s.track?.kind === 'audio')
+          );
+          
+          // Update all audio senders
+          sender.forEach(s => {
+            if (s.track) s.track.enabled = !newMutedState;
+          });
+        } catch (e) {
+          console.warn("Error while updating audio tracks on senders:", e);
         }
         
         console.log(`Audio track ${track.id} muted: ${newMutedState}, enabled: ${!newMutedState}`);
+      });
+      
+      // Send status update to all peers
+      peersRef.current.forEach(peer => {
+        try {
+          if (peer.dataChannel && peer.dataChannel.readyState === 'open') {
+            const statusMessage = {
+              type: 'status',
+              videoOff: isVideoOff,
+              audioMuted: newMutedState
+            };
+            peer.dataChannel.send(JSON.stringify(statusMessage));
+          }
+          
+          if (peer.remoteDataChannel && peer.remoteDataChannel.readyState === 'open') {
+            const statusMessage = {
+              type: 'status',
+              videoOff: isVideoOff,
+              audioMuted: newMutedState
+            };
+            peer.remoteDataChannel.send(JSON.stringify(statusMessage));
+          }
+        } catch (error) {
+          console.warn(`Error sending audio status to peer ${peer.userId}:`, error);
+        }
       });
       
       setIsAudioMuted(newMutedState);
@@ -524,24 +589,86 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       
       videoTracks.forEach(track => {
         track.enabled = !newVideoOffState;
+      });
+      
+      // When turning video back ON, we need to replace all video tracks in peer connections
+      // to ensure remote peers receive the updated video feed
+      if (!newVideoOffState && videoTracks.length > 0) {
+        const videoTrack = videoTracks[0];
         
-        // For some browsers, we might need to update all video senders
-        if (newVideoOffState) {
+        peersRef.current.forEach(peer => {
           try {
-            const sender = peersRef.current.flatMap(peer => 
-              peer.connection.getSenders().filter(s => s.track?.kind === 'video')
+            const senders = peer.connection.getSenders();
+            const videoSender = senders.find(sender => 
+              sender.track?.kind === 'video'
             );
             
-            // Update all video senders
-            sender.forEach(s => {
-              if (s.track) s.track.enabled = !newVideoOffState;
-            });
+            if (videoSender) {
+              console.log(`Replacing video track for peer ${peer.userId} after turning video ON`);
+              // First make sure track is enabled
+              if (videoTrack) videoTrack.enabled = true;
+              
+              // Then replace track in sender
+              videoSender.replaceTrack(videoTrack)
+                .then(() => {
+                  console.log(`Successfully replaced video track for peer ${peer.userId}`);
+                })
+                .catch(err => {
+                  console.error(`Error replacing video track for peer ${peer.userId}:`, err);
+                  
+                  // Fallback: if replaceTrack fails, try to add the track directly
+                  try {
+                    // Remove existing track first
+                    peer.connection.removeTrack(videoSender);
+                    // Add the track back
+                    peer.connection.addTrack(videoTrack, localStream);
+                    console.log(`Fallback: Re-added video track for peer ${peer.userId}`);
+                  } catch (fallbackErr) {
+                    console.error(`Fallback also failed for peer ${peer.userId}:`, fallbackErr);
+                  }
+                });
+            } else {
+              // If no video sender exists, add the track
+              console.log(`No video sender found for peer ${peer.userId}, adding track`);
+              peer.connection.addTrack(videoTrack, localStream);
+            }
           } catch (e) {
-            console.warn("Error while enforcing video off:", e);
+            console.warn(`Error updating video track for peer ${peer.userId}:`, e);
           }
+        });
+      } else {
+        // When turning video OFF, just update the enabled state of existing tracks
+        try {
+          const senders = peersRef.current.flatMap(peer => 
+            peer.connection.getSenders().filter(s => s.track?.kind === 'video')
+          );
+          
+          senders.forEach(s => {
+            if (s.track) s.track.enabled = !newVideoOffState;
+          });
+        } catch (e) {
+          console.warn("Error while updating video tracks on senders:", e);
         }
-        
-        console.log(`Video track ${track.id} off: ${newVideoOffState}, enabled: ${!newVideoOffState}`);
+      }
+      
+      console.log(`Video state changed: video off = ${newVideoOffState}, tracks enabled = ${!newVideoOffState}`);
+      
+      // Send status update to all peers
+      peersRef.current.forEach(peer => {
+        try {
+          const channel = peer.dataChannel || peer.remoteDataChannel;
+          if (channel && channel.readyState === 'open') {
+            const statusMessage = {
+              type: 'status',
+              videoOff: newVideoOffState,
+              audioMuted: isAudioMuted
+            };
+            channel.send(JSON.stringify(statusMessage));
+            console.log(`Sent video status update to peer ${peer.userId}: videoOff=${newVideoOffState}`);
+          }
+        } catch (error) {
+          console.warn(`Error sending video status to peer ${peer.userId}:`, error);
+        }
       });
       
       setIsVideoOff(newVideoOffState);
@@ -775,6 +902,62 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
     }
     
     return false;
+  };
+
+  // Setup data channel event handlers
+  const setupDataChannel = (dataChannel: RTCDataChannel, peerId: string) => {
+    dataChannel.onopen = () => {
+      console.log(`Data channel with peer ${peerId} is open`);
+      
+      // Send current state when data channel is open
+      if (isVideoOff || isAudioMuted) {
+        const statusMessage = {
+          type: 'status',
+          videoOff: isVideoOff,
+          audioMuted: isAudioMuted
+        };
+        dataChannel.send(JSON.stringify(statusMessage));
+      }
+    };
+    
+    dataChannel.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        console.log(`Received message from peer ${peerId}:`, message);
+        
+        if (message.type === 'status') {
+          // Update the peer's status in state
+          setPeers(prev => {
+            const newPeers = [...prev];
+            const peerIndex = newPeers.findIndex(p => p.userId === peerId);
+            
+            if (peerIndex !== -1) {
+              newPeers[peerIndex].isRemoteVideoOff = message.videoOff;
+              newPeers[peerIndex].isRemoteAudioMuted = message.audioMuted;
+              
+              // Also update the ref
+              const refIndex = peersRef.current.findIndex(p => p.userId === peerId);
+              if (refIndex !== -1) {
+                peersRef.current[refIndex].isRemoteVideoOff = message.videoOff;
+                peersRef.current[refIndex].isRemoteAudioMuted = message.audioMuted;
+              }
+            }
+            
+            return newPeers;
+          });
+        }
+      } catch (error) {
+        console.error(`Error parsing message from peer ${peerId}:`, error);
+      }
+    };
+    
+    dataChannel.onclose = () => {
+      console.log(`Data channel with peer ${peerId} is closed`);
+    };
+    
+    dataChannel.onerror = (error) => {
+      console.error(`Data channel error with peer ${peerId}:`, error);
+    };
   };
 
   return {

@@ -61,10 +61,7 @@ const VideoParticipantList: React.FC<VideoParticipantListProps> = ({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md
-                      ${participant.isLocal
-                      ? 'bg-gradient-to-br from-indigo-500 to-purple-600'
-                      : 'bg-gradient-to-br from-gray-600 to-gray-700'}`}
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md bg-gray-700"
                   >
                     {getAvatarLetter(participant.name)}
                   </div>
