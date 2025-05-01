@@ -858,7 +858,7 @@ export default function ProfilePage() {
                           key={index}
                           content={skill}
                           color="blue"
-                          isEditable
+                          isEditable={isEditing === "skills"}
                           onRemove={() => removeSkill(skill)}
                         />
                       ) : (
@@ -914,7 +914,7 @@ export default function ProfilePage() {
                           key={index}
                           content={language}
                           color="green"
-                          isEditable
+                          isEditable={isEditing === "languages"}
                           onRemove={() => removeLanguage(language)}
                         />
                       ) : (
