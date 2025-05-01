@@ -26,9 +26,22 @@ export const login = async (userEmail: string, password: string) => {
       });
       
       if (userRes.data) {
-        useAuthStore.getState().setUser(userRes.data);
-        useAuthStore.getState().setAlert("로그인 성공", "success");
-        window.location.href = '/platform';
+        try {
+          const res = await server.put(`/member/${userRes.data.id}`, {
+            status: "활성"
+          });
+          if (res.status === 200) {
+            useAuthStore.getState().setUser(userRes.data);
+            useAuthStore.getState().setAlert("로그인 성공", "success");
+            window.location.href = '/platform';
+          } else {
+            throw new Error('Failed to update user status');
+          }
+        } catch (error) {
+          console.error("Failed to update user status:", error);
+          useAuthStore.getState().logout();
+          useAuthStore.getState().setAlert("사용자 정보를 가져오는데 실패했습니다.", "error");
+        }
       } else {
         throw new Error('User data not found');
       }
@@ -36,8 +49,8 @@ export const login = async (userEmail: string, password: string) => {
       console.error("Failed to fetch user data:", userError);
       useAuthStore.getState().logout();
       useAuthStore.getState().setAlert("사용자 정보를 가져오는데 실패했습니다.", "error");
-  } 
-} catch (error: unknown) {
+    }
+  } catch (error: unknown) {
     console.error("Login error:", error);
     if (error instanceof AxiosError) {
       if (error.response?.status === 401) {
@@ -47,5 +60,27 @@ export const login = async (userEmail: string, password: string) => {
       }
       throw error;
     }
+  }
+};
+
+export const logout = async () => {
+  const user = useAuthStore.getState().user;
+  if (!user) {
+    throw new Error('User not found');
+  }
+  await useAuthStore.getState().logout();
+  try {
+    const res = await server.put(`/member/${user.id}`, {
+      status: "비활성"
+    });
+    if (res.status === 200) {
+      useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");
+      window.location.href = '/';
+    } else {
+      throw new Error('Logout failed');
+    }
+  } catch (error) {
+    console.error("Logout error:", error);
+    useAuthStore.getState().setAlert("로그아웃에 실패했습니다.", "error");
   }
 };

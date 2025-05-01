@@ -10,22 +10,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { useTheme } from "@/contexts/ThemeContext";
+import { logout } from "@/auth/authApi";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const user = useAuthStore((state) => state.user);
   const { isDark, toggleDarkMode } = useTheme();
-  const logout = async () => {
-    try {
-      await useAuthStore.getState().logout();
-      useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");
-      window.location.href = '/';
-    } catch (error) {
-      console.error("Error logging out:", error);
-      useAuthStore.getState().setAlert("로그아웃 중 오류가 발생했습니다.", "error");
-    }
-  };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
