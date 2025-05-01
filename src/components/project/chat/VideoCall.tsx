@@ -49,6 +49,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   const [showScreenShareOptions, setShowScreenShareOptions] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const {
     localStream,
@@ -99,6 +100,16 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
       }
     };
   }, [isParticipantListVisible, showOptions, showSettings, showScreenShareOptions]);
+
+  // Listen for window resize to update layout
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Toggle fullscreen mode
   const toggleFullscreen = () => {
@@ -299,7 +310,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     return (
       <motion.div
         layout
-        className={`grid gap-2 md:gap-3 lg:gap-4 w-full h-full ${getGridLayout(totalParticipants, layout, !!pinnedUser)}`}
+        className={`grid gap-1 sm:gap-1 md:gap-2 w-full h-full ${getGridLayout(totalParticipants, layout, !!pinnedUser, windowWidth)}`}
         style={{
           minHeight: 0,
           minWidth: 0,
@@ -311,8 +322,8 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
             layout
             key={user.userId === 'local' ? 'local-video' : (user.userId === 'screen' ? 'screen-share' : user.userId)}
             className={`
-              ${user.isScreenShare ? (pinnedUser === 'screen' ? 'col-span-full lg:col-span-3 lg:row-span-full' : 'col-span-full row-span-full') : getVideoItemClass(user.userId, pinnedUser, layout)}
-              overflow-hidden rounded-xl shadow-lg relative
+              ${user.isScreenShare ? (pinnedUser === 'screen' ? 'col-span-full lg:col-span-3 lg:row-span-full' : 'col-span-full row-span-full') : getVideoItemClass(user.userId, pinnedUser, layout, totalParticipants)}
+              overflow-hidden rounded-md shadow-lg relative
             `}
             style={{
               minHeight: 0,
@@ -327,7 +338,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
                 userName="나"
               /> :
               user.isScreenShare ?
-                <div className="w-full h-full rounded-lg overflow-hidden relative bg-black">
+                <div className="w-full h-full rounded-md overflow-hidden relative bg-black">
                   <video
                     ref={(element) => {
                       if (element && user.stream) {
@@ -415,11 +426,11 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 flex flex-col z-50"
+      className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 flex flex-col z-50 overflow-hidden"
       onMouseMove={() => setShowControls(true)}
     >
       {/* Video container */}
-      <div className="flex-1 p-2 md:p-3 lg:p-4 relative overflow-hidden">
+      <div className="flex-1 p-0 md:p-1 lg:p-2 relative overflow-hidden">
         {renderVideoLayout()}
       </div>
 

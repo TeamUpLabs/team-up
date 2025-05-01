@@ -27,24 +27,24 @@ const LocalVideo: React.FC<LocalVideoProps> = memo(({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.3 }}
-      className="relative rounded-xl overflow-hidden shadow-xl h-full w-full bg-gradient-to-b from-gray-800 to-gray-900"
+      className="relative rounded-md overflow-hidden h-full w-full bg-gradient-to-b from-gray-800 to-gray-900"
     >
-      <div className="absolute top-0 left-0 w-full p-2 z-10 opacity-70 hover:opacity-100 transition-opacity">
+      <div className="absolute top-0 left-0 w-full p-1.5 z-10 opacity-70 hover:opacity-100 transition-opacity">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-md rounded-full pl-1.5 pr-3 py-1">
-            <div className="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+          <div className="flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full pl-1 pr-2 py-0.5">
+            <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white">
               {getAvatarLetter(userName)}
             </div>
             <span className="text-white text-xs font-medium">{userName}</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             {isAudioMuted && (
-              <div className="bg-red-500/80 backdrop-blur-sm rounded-full p-1 w-5 h-5 flex items-center justify-center">
+              <div className="bg-red-500/80 backdrop-blur-sm rounded-full p-0.5 w-4 h-4 flex items-center justify-center">
                 <FontAwesomeIcon icon={faMicrophoneSlash} className="text-white text-xs" />
               </div>
             )}
             {isVideoOff && (
-              <div className="bg-red-500/80 backdrop-blur-sm rounded-full p-1 w-5 h-5 flex items-center justify-center">
+              <div className="bg-red-500/80 backdrop-blur-sm rounded-full p-0.5 w-4 h-4 flex items-center justify-center">
                 <FontAwesomeIcon icon={faVideoSlash} className="text-white text-xs" />
               </div>
             )}
@@ -55,8 +55,8 @@ const LocalVideo: React.FC<LocalVideoProps> = memo(({
       <div className="relative w-full h-full">
         {isVideoOff ? (
           <div className="w-full h-full flex items-center justify-center">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-              <span className="text-white text-xl sm:text-2xl font-medium">{getAvatarLetter(userName)}</span>
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+              <span className="text-white text-lg sm:text-xl font-medium">{getAvatarLetter(userName)}</span>
             </div>
           </div>
         ) : (
