@@ -80,22 +80,65 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     // Cleanup on component unmount
     return () => {
       console.log("Cleaning up video call resources");
+      
+      // Close WebSocket connection
       if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
         socketRef.current.send(JSON.stringify({ type: 'disconnect' }));
         socketRef.current.close();
+        socketRef.current = null;
       }
       
       // Stop all tracks in local stream
       if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
+        const tracks = localStream.getTracks();
+        tracks.forEach(track => {
+          console.log(`Stopping ${track.kind} track on unmount`, track);
+          track.enabled = false;
+          track.stop();
+        });
+        
+        // Clear reference in video element
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = null;
+        }
       }
       
-      // Close all peer connections
+      // Close all peer connections and their streams
       peersRef.current.forEach(peer => {
-        peer.connection.close();
+        if (peer.stream) {
+          const remoteTracks = peer.stream.getTracks();
+          remoteTracks.forEach(track => {
+            track.enabled = false;
+            track.stop();
+          });
+        }
+        
+        if (peer.connection) {
+          // Close all transceivers
+          if (peer.connection.getTransceivers) {
+            peer.connection.getTransceivers().forEach(transceiver => {
+              if (transceiver.stop) {
+                transceiver.stop();
+              }
+            });
+          }
+          peer.connection.close();
+        }
       });
+      
+      // Clear references
+      peersRef.current = [];
+      setPeers([]);
+      setLocalStream(null);
+      
+      // Force media devices release
+      navigator.mediaDevices.getUserMedia({ audio: false, video: false })
+        .catch(() => {
+          // Expected error, but forces camera release
+          console.log('Forced camera release attempt complete');
+        });
     };
-  }, [localStream]);
+  }, []);
 
   // Connect to signaling server after media stream is available
   useEffect(() => {
@@ -551,23 +594,66 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   const endCall = () => {
     // Stop all camera and microphone tracks
     if (localStream) {
-      localStream.getTracks().forEach(track => {
+      const tracks = localStream.getTracks();
+      tracks.forEach(track => {
+        console.log(`Stopping ${track.kind} track`, track);
+        track.enabled = false;
         track.stop();
       });
+      
+      // Clear the media stream reference
+      setLocalStream(null);
+      
+      // Clear local video reference
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = null;
+      }
     }
     
     // Close WebSocket connection
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify({ type: 'disconnect' }));
       socketRef.current.close();
+      socketRef.current = null;
     }
     
-    // Close all peer connections
+    // Close all peer connections and release their streams
     peersRef.current.forEach(peer => {
-      peer.connection.close();
+      if (peer.stream) {
+        const remoteTracks = peer.stream.getTracks();
+        remoteTracks.forEach(track => {
+          track.enabled = false;
+          track.stop();
+        });
+      }
+      
+      if (peer.connection) {
+        // Close all transceivers
+        if (peer.connection.getTransceivers) {
+          peer.connection.getTransceivers().forEach(transceiver => {
+            if (transceiver.stop) {
+              transceiver.stop();
+            }
+          });
+        }
+        peer.connection.close();
+      }
     });
     
+    // Clear peers array
+    setPeers([]);
+    peersRef.current = [];
+    
+    // Force media devices release by requesting user media with audio/video turned off
+    // This trick helps ensure the camera LED turns off
+    navigator.mediaDevices.getUserMedia({ audio: false, video: false })
+      .catch(() => {
+        // Expected error, but forces camera release
+        console.log('Forced camera release attempt complete');
+      });
+    
     onClose();
+    window.location.reload();
   };
 
   // Render a video element with participant info
