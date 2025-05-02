@@ -98,9 +98,9 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
                   <Link 
                     key={index} 
                     href={item.href} 
-                    className={`flex items-center px-4 py-2 ${
-                      item.isActive ? 'text-text-primary border-point-color-indigo' : 'text-text-secondary border-transparent'
-                    } hover:text-text-primary relative`}
+                    className={`flex items-center mx-2 px-4 py-2 rounded-lg ${
+                      item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
+                  } hover:bg-point-color-indigo/10 hover:text-point-color-indigo`}
                   >
                     <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
                     {item.label}
