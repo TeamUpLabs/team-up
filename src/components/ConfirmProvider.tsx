@@ -67,12 +67,12 @@ export default function ConfirmProvider() {
                   <FontAwesomeIcon icon={faCircleQuestion} className="w-4 h-4 mr-2 text-emerald-400" />
                   확인
                 </h3>
-                <p className="text-slate-300 text-sm mb-5">{confirm.message}</p>
+                <p className="text-text-primary text-sm mb-5">{confirm.message}</p>
                 
                 <div className="flex justify-end space-x-3">
                 <button
                   onClick={handleConfirmClose}
-                    className="px-4 py-2 text-xs font-medium text-slate-300 bg-slate-100 bg-slate-800 hover:bg-slate-200 hover:bg-slate-700 rounded-lg transition-colors duration-150 flex items-center"
+                    className="px-4 py-2 text-xs font-medium text-white bg-cancel-button-background hover:bg-cancel-button-background-hover rounded-lg transition-colors duration-150 flex items-center"
                   >
                     <FontAwesomeIcon icon={faTimes} className="w-3 h-3 mr-1.5" />
                     취소
@@ -82,7 +82,7 @@ export default function ConfirmProvider() {
                     if (confirm.onConfirm) confirm.onConfirm();
                     handleConfirmClose();
                   }}
-                    className="px-4 py-2 text-xs font-medium text-text-primary bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors duration-150 flex items-center"
+                    className="px-4 py-2 text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors duration-150 flex items-center"
                   >
                     <FontAwesomeIcon icon={faCheck} className="w-3 h-3 mr-1.5" />
                     확인
