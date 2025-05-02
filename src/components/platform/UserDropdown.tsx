@@ -7,6 +7,7 @@ import {
   faRightFromBracket,
   faMoon,
   faSun,
+  faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -30,21 +31,32 @@ export default function UserDropdown() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button
+      {/* <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-center h-9 w-9 rounded-full bg-component-tertiary-background border border-component-secondary-border text-text-primary transition-colors duration-200 focus:outline-none"
         aria-label="User menu"
       >
         {user ? user.name.charAt(0) : "?"}
+      </button> */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="font-semibold text-sm"
+      >
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-component-tertiary-background border border-component-secondary-border text-text-primary">
+            {user ? user.name.charAt(0) : "?"}
+          </div>
+          {user ? user.name : "로그인을 해주세요."}
+          <FontAwesomeIcon
+            icon={faChevronDown}
+            size="sm"
+            className="text-gray-500"
+          />
+        </div>
       </button>
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-56 rounded-md bg-component-tertiary-background shadow-md z-50 border border-component-border">
-          <div className="px-4 py-2 border-b border-component-secondary-border">
-            <p className="text-sm font-medium text-text-primary">{user ? user.name : "로그인을 해주세요."}</p>
-            {user?.email && <p className="text-xs text-text-secondary">{user.email}</p>}
-          </div>
-
           <div>
             <MenuItem
               icon={faUser}

@@ -41,18 +41,18 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
   const hasParticipationRequests = project?.participationRequestMembers && project.participationRequestMembers.length > 0;
 
   return (
-    <div className={`w-64 fixed h-full border-r border-component-border bg-background z-30 transition-transform duration-300 lg:translate-x-0 ${
+    <div className={`w-64 fixed h-full border-r border-component-border bg-component-background z-30 transition-transform duration-300 lg:translate-x-0 ${
       isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
     }`}>
       <div>
-        <Link href={titleHref} className="block pt-6 pl-6 pr-6">
-          <h1 className="text-xl font-bold text-text-primary mb-8 text-center">{title}</h1>
+        <Link href={titleHref} className="block py-5 px-6">
+          <h1 className="text-xl font-bold text-text-primary text-center">{title}</h1>
         </Link>
-        <nav className="space-y-4">
+        <nav className="space-y-2">
           {navItems.map((item, index) => {
             if (item.label === "채팅") {
               return (
-                <div key={index} className="pl-6 pr-6">
+                <div key={index} className="px-6">
                   <button 
                     onClick={() => setIsChatOpen(!isChatOpen)}
                     className={`w-full flex items-center justify-between ${
@@ -113,9 +113,9 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
               <Link 
                 key={index} 
                 href={item.href} 
-                className={`flex items-center pl-6 pr-6 border-l-3 ${
-                  item.isActive ? 'text-text-primary border-point-color-indigo' : 'text-text-secondary border-transparent'
-                } hover:text-text-primary`}
+                className={`flex items-center mx-2 px-4 py-2 rounded-lg ${
+                  item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
+                } hover:bg-point-color-indigo/10 hover:text-point-color-indigo`}
               >
                 <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
                 {item.label}

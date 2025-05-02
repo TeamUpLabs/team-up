@@ -14,6 +14,9 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchVisible, setSearchVisible] = useState(false);
+  const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   
   // 인증 상태 확인
@@ -29,6 +32,19 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [pathname]);
+
+  // Handle search animations
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isSearchOpen) {
+      setSearchVisible(true);
+    } else {
+      timer = setTimeout(() => {
+        setSearchVisible(false);
+      }, 300); // match this to your animation duration
+    }
+    return () => clearTimeout(timer);
+  }, [isSearchOpen]);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -64,7 +80,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
         {/* 메인 컨텐츠 영역 */}
       <div className="w-full lg:ml-64 flex-1">
         {/* 헤더 */}
-        <header className="h-16 bg-background/70 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-10">
+        <header className="h-16 bg-component-background border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-10">
           <div className="h-full px-4 md:px-6 flex items-center justify-between">
             <div className="flex items-center">
               <button 
@@ -77,23 +93,80 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
               </button>
               <h2 className="text-lg md:text-xl font-semibold">{HeaderTitle}</h2>
             </div>
-            <div className="flex items-center space-x-2 md:space-x-4">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center relative gap-2">
+                {searchVisible && (
+                  <div className={`${isSearchOpen ? 'animate-searchAppear' : 'animate-searchDisappear'} origin-right overflow-hidden`} style={{width: isSearchOpen ? '240px' : '0'}}>
+                    <input
+                      type="text"
+                      placeholder="Search..."
+                      className="bg-component-background border border-component-border rounded-full py-1 px-4 w-full focus:outline-none focus:border-point-color-indigo hover:border-point-color-indigo"
+                      autoFocus
+                      value={headerSearchQuery}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setHeaderSearchQuery(value);
+                        
+                        const searchEvent = new CustomEvent('headerSearch', { 
+                          detail: value,
+                          bubbles: true,
+                          cancelable: true
+                        });
+                        window.dispatchEvent(searchEvent);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const searchEvent = new CustomEvent('headerSearch', { 
+                            detail: headerSearchQuery,
+                            bubbles: true,
+                            cancelable: true
+                          });
+                          window.dispatchEvent(searchEvent);
+                        }
+                      }}
+                    />
+                  </div>
+                )}
+                <button 
+                  aria-label="Search"
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                  className="rounded-full p-2 hover:bg-component-secondary-background transition-colors duration-200"
+                >
+                  {isSearchOpen ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M6 18L18 6M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </button>
+              </div>
               <button 
-                className="group active:scale-95 flex items-center justify-center gap-2 px-4 py-2 bg-point-color-indigo text-white font-medium rounded-lg transition-all hover:bg-point-color-indigo-hover"
+                aria-label="Notifications"
+                className="rounded-full p-2 hover:bg-component-secondary-background transition-colors duration-200"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.63 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <button 
+                className="group active:scale-95 flex items-center justify-center gap-2 px-4 py-2 bg-component-secondary-background border border-component-border text-sm text-text-primary font-medium rounded-lg transition-all hover:bg-component-tertiary-background"
                 onClick={() => setIsModalOpen(true)}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M8 3.33334V12.6667" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M3.33334 8H12.6667" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <span>새 프로젝트</span>
+                <span>Create</span>
               </button>
               <UserDropdown />
             </div>
           </div>
         </header>
         
-        <main className="pt-20 md:pt-24 px-4 md:px-6">
+        <main className="pt-20 md:pt-20 px-4 md:px-4">
           {children}
         </main>
       </div>
@@ -101,6 +174,77 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes searchAppear {
+          0% { 
+            width: 0; 
+            opacity: 0; 
+            transform: translateX(20px) scale(0.95);
+          }
+          60% {
+            width: 250px;
+            opacity: 0.8;
+            transform: translateX(0) scale(1.02);
+          }
+          100% { 
+            width: 240px; 
+            opacity: 1; 
+            transform: translateX(0) scale(1);
+          }
+        }
+
+        @keyframes searchDisappear {
+          0% { 
+            width: 240px; 
+            opacity: 1; 
+            transform: translateX(0) scale(1);
+          }
+          40% {
+            opacity: 0.5;
+            transform: translateX(5px) scale(0.97);
+          }
+          100% { 
+            width: 0; 
+            opacity: 0; 
+            transform: translateX(20px) scale(0.95);
+          }
+        }
+
+        .animate-searchAppear {
+          animation: searchAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        .animate-searchDisappear {
+          animation: searchDisappear 0.25s cubic-bezier(0.55, 0, 0.1, 1) forwards;
+        }
+
+        @keyframes slideIn {
+          from { width: 0; opacity: 0; }
+          to { width: 240px; opacity: 1; }
+        }
+
+        @keyframes slideOut {
+          from { width: 240px; opacity: 1; }
+          to { width: 0; opacity: 0; }
+        }
+
+        .animate-slideIn {
+          animation: slideIn 0.3s ease-out forwards;
+        }
+
+        .animate-slideOut {
+          animation: slideOut 0.3s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 }
