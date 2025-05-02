@@ -19,7 +19,7 @@ export default function ChannelHeader({ channelId }: { channelId: string }) {
   };
   
   return (
-    <>
+    <div>
       <div className="flex justify-between px-6 py-4 border-b border-component-border">
         <h2 className="text-xl font-semibold"># {channelId}</h2>
         <div className="space-x-5 self-center">
@@ -40,6 +40,6 @@ export default function ChannelHeader({ channelId }: { channelId: string }) {
           onClose={endVideoCall}
         />
       )}
-    </>
+    </div>
   )
 }

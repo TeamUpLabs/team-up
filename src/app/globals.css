@@ -195,3 +195,24 @@ body {
 .animate-searchDisappear {
   animation: searchDisappear 0.25s cubic-bezier(0.55, 0, 0.1, 1) forwards;
 }
+
+/* Hide sidebar when video call is active */
+body.video-call-active .w-64.fixed.h-full.border-r {
+  display: none;
+}
+
+body.video-call-active main {
+  margin-left: 0 !important;
+}
+
+body.video-call-active header {
+  left: 0 !important;
+}
+
+/* Ensure video call takes over the full screen */
+body.video-call-active [class*="z-[9999]"] {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}

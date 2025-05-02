@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, use } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { Message } from '@/types/Message';
@@ -12,7 +13,6 @@ import { useAuthStore } from '@/auth/authStore';
 
 interface PageProps {
   params: Promise<{
-    channelId: string;
     projectId: string;
   }>;
 }
@@ -20,7 +20,9 @@ interface PageProps {
 export default function ChatPage({ params }: PageProps) {
   const user = useAuthStore((state) => state.user);
   const [message, setMessage] = useState('');
-  const { channelId, projectId } = use(params);
+  const searchParams = useSearchParams();
+  const { projectId } = use(params);
+  const channelId = searchParams?.get('channel') || 'general';
   const { messages, sendMessage, isConnected } = useWebSocket(projectId, channelId);
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -44,7 +46,7 @@ export default function ChatPage({ params }: PageProps) {
   return (
     <div className="flex flex-col h-screen pt-16">
       {/* 채널 헤더 - 고정 */}
-      <div className="sticky top-0 z-10 bg-background">
+      <div className="sticky top-0 bg-background">
         <ChannelHeader channelId={channelId} />
         
         {/* Connection Status */}
@@ -82,4 +84,4 @@ export default function ChatPage({ params }: PageProps) {
       </div>
     </div>
   );
-}
+} 

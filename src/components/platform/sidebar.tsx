@@ -45,7 +45,7 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
   const regularItems = navItems.filter(item => item.label !== "나가기");
 
   return (
-    <div className={`w-64 fixed h-full border-r border-component-border bg-component-background z-30 transition-transform duration-300 lg:translate-x-0 ${
+    <div className={`w-64 fixed h-full border-r border-component-border z-2 bg-component-background transition-transform duration-300 lg:translate-x-0 ${
       isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
     }`}>
       <div className="flex flex-col h-full">
@@ -57,12 +57,12 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
             {regularItems.map((item, index) => {
               if (item.label === "채팅") {
                 return (
-                  <div key={index} className="px-6">
+                  <div key={index} className="mx-2">
                     <button 
                       onClick={() => setIsChatOpen(!isChatOpen)}
-                      className={`w-full flex items-center justify-between ${
-                        item.isActive ? 'text-text-primary font-semibold' : 'text-text-secondary'
-                      } hover:text-text-primary`}
+                      className={`flex items-center px-4 py-2 rounded-lg justify-between w-full ${
+                        item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
+                  } hover:bg-point-color-indigo/10 hover:text-point-color-indigo`}
                     >
                       <div className="flex items-center">
                         <FontAwesomeIcon icon={item.icon} className="w-5 mr-3" />
@@ -78,7 +78,7 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
                         {channels.map((channel) => (
                           <Link
                             key={channel.id}
-                            href={`/platform/${titleHref.split('/').pop()}/chat/${channel.id}`}
+                            href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.id}`}
                             className="block text-sm text-text-secondary hover:text-text-primary"
                           >
                             # {channel.name}
@@ -98,7 +98,7 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
                   <Link 
                     key={index} 
                     href={item.href} 
-                    className={`flex items-center pl-6 pr-6 border-l-3 ${
+                    className={`flex items-center px-4 py-2 ${
                       item.isActive ? 'text-text-primary border-point-color-indigo' : 'text-text-secondary border-transparent'
                     } hover:text-text-primary relative`}
                   >

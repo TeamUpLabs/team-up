@@ -76,6 +76,17 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     projectId: project?.id
   });
 
+  // Hide sidebar when video call is active
+  useEffect(() => {
+    // Add a class to the body to hide sidebar when video call is active
+    document.body.classList.add('video-call-active');
+    
+    return () => {
+      // Remove the class when video call is closed
+      document.body.classList.remove('video-call-active');
+    };
+  }, []);
+
   // Auto-hide controls after inactivity
   useEffect(() => {
     const handleMouseMove = () => {
@@ -310,7 +321,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     return (
       <motion.div
         layout
-        className={`grid gap-1 sm:gap-1 md:gap-2 w-full h-full ${getGridLayout(totalParticipants, layout, !!pinnedUser, windowWidth)}`}
+        className={`grid gap-1 sm:gap-1 md:gap-2 w-full h-full z-50 ${getGridLayout(totalParticipants, layout, !!pinnedUser, windowWidth)}`}
         style={{
           minHeight: 0,
           minWidth: 0,
@@ -423,7 +434,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 bg-gray-800 flex flex-col z-50 overflow-hidden"
+      className="fixed inset-0 bg-gray-800 flex flex-col z-[9999] overflow-hidden"
       onMouseMove={() => setShowControls(true)}
     >
       {/* Video container */}
