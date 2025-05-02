@@ -46,7 +46,7 @@ export default function ChatPage({ params }: PageProps) {
   return (
     <div className="flex flex-col h-screen pt-16">
       {/* 채널 헤더 - 고정 */}
-      <div className="sticky top-0 bg-background">
+      <div className="top-0 bg-background">
         <ChannelHeader channelId={channelId} />
         
         {/* Connection Status */}

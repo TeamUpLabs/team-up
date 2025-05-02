@@ -30,14 +30,7 @@ export default function UserDropdown() {
   }, []);
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center h-9 w-9 rounded-full bg-component-tertiary-background border border-component-secondary-border text-text-primary transition-colors duration-200 focus:outline-none"
-        aria-label="User menu"
-      >
-        {user ? user.name.charAt(0) : "?"}
-      </button> */}
+    <div className="relative z-50" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="font-semibold text-sm"
