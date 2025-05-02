@@ -30,7 +30,7 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
 
   const header = (
     <div className="flex items-center space-x-4">
-      <h2 className="text-xl font-bold text-white">마일스톤 선택</h2>
+      <h2 className="text-xl font-bold text-text-primary">마일스톤 선택</h2>
     </div>
   );
 
