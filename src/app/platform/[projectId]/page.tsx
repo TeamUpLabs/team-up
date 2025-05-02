@@ -7,7 +7,7 @@ import RecentFileCard from "@/components/project/RecentFileCard";
 
 export default function ProjectPage() {
   return (
-    <div className="py-4 sm:py-6 px-2 sm:px-4 md:px-6">
+    <div className="py-20 px-4">
       {/* 모바일에서는 1열, 태블릿에서 2열, 데스크탑에서 4열 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         {/* 프로젝트 진행률 - 모바일에서도 2열 span */}

@@ -152,3 +152,46 @@ body {
     transform: scale(1);
   }
 }
+
+@keyframes searchAppear {
+  0% { 
+    width: 0; 
+    opacity: 0; 
+    transform: translateX(20px) scale(0.95);
+  }
+  60% {
+    width: 250px;
+    opacity: 0.8;
+    transform: translateX(0) scale(1.02);
+  }
+  100% { 
+    width: 240px; 
+    opacity: 1; 
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes searchDisappear {
+  0% { 
+    width: 240px; 
+    opacity: 1; 
+    transform: translateX(0) scale(1);
+  }
+  40% {
+    opacity: 0.5;
+    transform: translateX(5px) scale(0.97);
+  }
+  100% { 
+    width: 0; 
+    opacity: 0; 
+    transform: translateX(20px) scale(0.95);
+  }
+}
+
+.animate-searchAppear {
+  animation: searchAppear 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-searchDisappear {
+  animation: searchDisappear 0.25s cubic-bezier(0.55, 0, 0.1, 1) forwards;
+}

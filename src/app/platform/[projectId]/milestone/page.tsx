@@ -39,7 +39,7 @@ export default function MilestonePage() {
   }, [project]);
 
   return (
-    <div className="py-6 px-2 sm:px-4 md:px-6">
+    <div className="py-20 px-4">
       <div>
         {/* Header Section */}
         <div className="flex justify-between items-center mb-6 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">

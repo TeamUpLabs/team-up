@@ -36,7 +36,7 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="flex flex-col py-4 sm:py-6 px-2 sm:px-4 md:px-6">
+    <div className="flex flex-col py-20 px-4">
       <Calendar
         currentDate={currentDate}
         tasks={project?.tasks}

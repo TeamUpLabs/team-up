@@ -42,22 +42,26 @@ export default function ChatPage({ params }: PageProps) {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]">
-      {/* 채널 헤더 */}
-      <ChannelHeader channelId={channelId} />
-      
-      {/* Connection Status */}
-      {!isConnected && (
-        <div className="bg-red-500 text-white px-4 py-2 text-center">
-          연결이 끊어졌습니다. 재연결 시도중...
-        </div>
-      )}
+    <div className="flex flex-col h-screen pt-16">
+      {/* 채널 헤더 - 고정 */}
+      <div className="sticky top-0 z-10 bg-background">
+        <ChannelHeader channelId={channelId} />
+        
+        {/* Connection Status */}
+        {!isConnected && (
+          <div className="bg-red-500 text-white px-4 py-2 text-center">
+            연결이 끊어졌습니다. 재연결 시도중...
+          </div>
+        )}
+      </div>
 
-      {/* 메시지 리스트 */}
-      <MessageList messages={messages} />
+      {/* 메시지 리스트 - 스크롤 */}
+      <div className="flex-1 overflow-y-auto">
+        <MessageList messages={messages} />
+      </div>
 
-      {/* 메시지 입력 */}
-      <div className="px-6 py-4 border-t border-component-border">
+      {/* 메시지 입력 - 고정 */}
+      <div className="px-6 py-4 border-t border-component-border bg-background">
         <form onSubmit={handleSendMessage} className="flex space-x-4">
           <input
             type="text"

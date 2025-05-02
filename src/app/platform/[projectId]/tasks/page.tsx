@@ -94,7 +94,7 @@ export default function TasksPage() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="px-2 sm:px-4 md:px-6 mx-auto py-6">
+      <div className="py-20 px-4">
         {/* Header Section */}
         <div className="flex items-center justify-between mb-8 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
           <div>

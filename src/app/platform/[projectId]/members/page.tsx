@@ -1,19 +1,18 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import MemberDetailModal from '@/components/project/members/MemberDetailModal';
 import MemberCard from '@/components/project/members/MemberCard';
-import SearchFilterBar from '@/components/project/members/SearchFilterBar';
 import { Member } from '@/types/Member';
 import { useProject } from "@/contexts/ProjectContext";
 
 export default function MembersPage() {
   const { project } = useProject();
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [allTeamMembers, setAllTeamMembers] = useState<Member[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const isMounted = useRef(false);
 
   useEffect(() => {
     setAllTeamMembers(project?.members);
@@ -35,17 +34,40 @@ export default function MembersPage() {
     }
   }, [project]);
 
+  // Listen for header search events
+  useEffect(() => {
+    const handleHeaderSearch = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const searchValue = customEvent.detail || '';
+      
+      // Only update if value is different
+      if (searchValue !== searchQuery) {
+        setSearchQuery(searchValue);
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('headerSearch', handleHeaderSearch);
+    
+    return () => {
+      window.removeEventListener('headerSearch', handleHeaderSearch);
+    };
+  }, [searchQuery]);
+
+  // Set mounted flag
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   const filteredMembers = (allTeamMembers ?? []).filter(member => {
     const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
       member.currentTask?.every((task) => task.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const matchesStatus = statusFilter === 'all' ||
-      (statusFilter === 'active' && member.status === '활성') ||
-      (statusFilter === 'away' && member.status === '자리비움') ||
-      (statusFilter === 'offline' && member.status === '오프라인');
-
-    return matchesSearch && matchesStatus;
+    return matchesSearch;
   }).sort((a, b) => {
     if (a.id === project?.leader.id) return -1;
     if (b.id === project?.leader.id) return 1;
@@ -62,7 +84,7 @@ export default function MembersPage() {
   };
 
   return (
-    <div className="py-6 px-2 sm:px-4 md:px-6">
+    <div className="py-20 px-4">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
         <div>
@@ -70,12 +92,6 @@ export default function MembersPage() {
           <p className="text-text-secondary mt-2">프로젝트의 팀원을 관리하세요</p>
         </div>
       </div>
-      <SearchFilterBar
-        searchQuery={searchQuery}
-        statusFilter={statusFilter}
-        onSearchChange={setSearchQuery}
-        onStatusChange={setStatusFilter}
-      />
       {filteredMembers.length === 0 && (
         <div className="text-center text-text-secondary mt-8 p-8 bg-component-background rounded-lg border border-component-border">
           검색 결과가 없습니다.
