@@ -166,7 +166,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
           </div>
         </header>
         
-        <main className="pt-20 md:pt-20 px-4 md:px-4">
+        <main className="pt-20 px-4">
           {children}
         </main>
       </div>
