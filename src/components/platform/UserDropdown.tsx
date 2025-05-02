@@ -33,7 +33,7 @@ export default function UserDropdown() {
     <div className="relative z-50" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="font-semibold text-sm"
+        className="font-semibold text-sm cursor-pointer"
       >
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full flex items-center justify-center bg-component-tertiary-background border border-component-secondary-border text-text-primary">
