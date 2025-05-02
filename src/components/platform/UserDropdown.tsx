@@ -3,7 +3,6 @@ import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
-  faBell,
   faRightFromBracket,
   faMoon,
   faSun,
@@ -57,13 +56,6 @@ export default function UserDropdown() {
               onClick={() => { setIsOpen(false); window.location.href = "/platform/profile"; }}
               className="text-text-secondary"
             />
-            <MenuItem
-              icon={faBell}
-              text="알림"
-              onClick={() => { setIsOpen(false); window.location.href = "/platform/notifications"; }}
-              className="text-text-secondary"
-            />
-
             <div className="border-t border-component-secondary-border"></div>
 
             <MenuItem
