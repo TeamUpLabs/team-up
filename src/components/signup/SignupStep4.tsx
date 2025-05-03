@@ -156,7 +156,7 @@ export default function SignupStep4({
       </div>
 
       <div>
-        <label htmlFor="birthDate" className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="birthDate" className="block text-sm font-medium text-text-secondary mb-1">
           생년월일
           <span className="text-point-color-purple ml-1">*</span>
         </label>
@@ -200,7 +200,7 @@ export default function SignupStep4({
       </div>
 
       <div>
-        <label htmlFor="workingHours" className="block text-sm font-medium text-gray-300 mb-1">
+        <label htmlFor="workingHours" className="block text-sm font-medium text-text-secondary mb-1">
           활동시간
           <span className="text-point-color-purple ml-1">*</span>
         </label>
