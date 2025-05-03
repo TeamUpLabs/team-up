@@ -1,6 +1,6 @@
 "use client";
 
-import { faHouse, faMessage, faTasks, faCalendar, faUsers, faFlag, faGear, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faBorderAll, faMessage, faTasks, faCalendar, faUsers, faFlag, faGear, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import Sidebar from "@/components/platform/sidebar";
 import { useState, useEffect, use } from "react";
 import { Project } from "@/types/Project";
@@ -78,7 +78,7 @@ export default function ProjectLayout({
   }
 
   const projectNavItems = [
-    { icon: faHouse, label: "대시보드", href: `/platform/${projectId}`, isActive: pathname === `/platform/${projectId}` },
+    { icon: faBorderAll, label: "대시보드", href: `/platform/${projectId}`, isActive: pathname === `/platform/${projectId}` },
     { icon: faUsers, label: "팀원", href: `/platform/${projectId}/members`, isActive: pathname === `/platform/${projectId}/members` },
     { icon: faMessage, label: "채팅", href: `/platform/${projectId}/chat`, isActive: pathname === `/platform/${projectId}/chat` },
     { icon: faTasks, label: "작업", href: `/platform/${projectId}/tasks`, isActive: pathname === `/platform/${projectId}/tasks` },
