@@ -12,11 +12,11 @@ export default function NotificationDropdown() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = notifications?.filter(n => !n.isRead).length || 0;
 
   useEffect(() => {
     if (user) {
-      const notifications = user.notification;
+      const notifications = user.notification || [];
       setNotifications(notifications);
     }
   }, [user]);
