@@ -1,6 +1,15 @@
 import { Task } from "@/types/Task";
 import { Project } from "@/types/Project";
 
+export interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  timestamp: string;
+  isRead: boolean;
+  type?: "info" | "message" | "task" | "milestone" | "chat";
+}
+
 export interface Member {
   id: number;
   name: string;
@@ -28,4 +37,5 @@ export interface Member {
     url: string;
   }[];
   participationRequests: number[];
+  notification: Notification[];
 }

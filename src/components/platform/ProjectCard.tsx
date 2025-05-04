@@ -11,7 +11,6 @@ interface ProjectCardProps {
 export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
   const user = useAuthStore((state) => state.user);
 
-  console.log(project.participationRequestMembers);
   return (
     <div className="bg-component-background rounded-lg shadow-md p-6 border border-component-border hover:border-point-color-indigo transition-colors duration-200">
       <div className="flex items-center justify-between mb-4">

@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { faHouse, faFolder, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import UserDropdown from "@/components/platform/UserDropdown";
 import NewProjectModal from "@/components/platform/NewProjectModal";
+import NotificationDropdown from "@/components/platform/NotificationDropdown";
 
 export default function PlatformLayout({ children, HeaderTitle }: { children: React.ReactNode, HeaderTitle: string }) {
   const pathname = usePathname();
@@ -65,7 +66,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
       {/* 모바일 사이드바 오버레이 */}
         {isSidebarOpen && (
           <div 
-            className="fixed inset-0 bg-background/70 z-20 lg:hidden"
+            className="fixed inset-0 bg-background/70 z-1 lg:hidden"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
@@ -80,7 +81,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
         {/* 메인 컨텐츠 영역 */}
       <div className="w-full lg:ml-64 flex-1">
         {/* 헤더 */}
-        <header className="h-16 bg-component-background border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-10">
+        <header className="h-16 bg-component-background border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64">
           <div className="h-full px-4 md:px-6 flex items-center justify-between">
             <div className="flex items-center">
               <button 
@@ -143,14 +144,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
                   )}
                 </button>
               </div>
-              <button 
-                aria-label="Notifications"
-                className="rounded-full p-2 hover:bg-component-secondary-background transition-colors duration-200"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.63 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
+              <NotificationDropdown />
               <button 
                 className="group active:scale-95 flex items-center justify-center gap-2 px-4 py-2 bg-component-secondary-background border border-component-border text-sm text-text-primary font-medium rounded-lg transition-all hover:bg-component-tertiary-background"
                 onClick={() => setIsModalOpen(true)}

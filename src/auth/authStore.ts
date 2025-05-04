@@ -46,28 +46,30 @@ export const useAuthStore = create<AuthState>()(
 );
 
 export const checkAndRefreshAuth = async () => {
-  const store = useAuthStore.getState();
-  if (!store.token) return false;
+  const token = useAuthStore.getState().token;
+  if (!token) return false;
 
   try {
     const res = await server.get('/me', {
       headers: {
-        'Authorization': `Bearer ${store.token}`,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
 
-    if (res.status === 200 && res.data.user) {
-      store.setUser(res.data.user);
-      return true;
+    if (res.status === 200) {
+      if (res.data) {
+        useAuthStore.getState().setUser(res.data);
+        return true;
+      }
     }
     
     throw new Error('Invalid user data');
   } catch (error: unknown) {
     console.error("Auth check failed:", error);
     if ((error as { response?: { status: number } }).response?.status === 401) {
-      store.logout();
-      store.setAlert('세션이 만료되었습니다. 다시 로그인 해주세요.', 'error');
+      useAuthStore.getState().logout();
+      useAuthStore.getState().setAlert('세션이 만료되었습니다. 다시 로그인 해주세요.', 'error');
       window.location.href = '/signin';
     }
     return false;
