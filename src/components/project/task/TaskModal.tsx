@@ -38,6 +38,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   }, [task]);
 
   const calculateProgress = (subtasksList: SubTask[]) => {
+    if (subtasksList.length === 0 && taskData.status === "done") return 100;
     if (subtasksList.length === 0) return 0;
     const completedTasks = subtasksList.filter(subtask => subtask.completed).length;
     return Math.round((completedTasks / subtasksList.length) * 100);
