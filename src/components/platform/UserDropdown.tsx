@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   faUser,
   faRightFromBracket,
@@ -47,38 +48,45 @@ export default function UserDropdown() {
         </div>
       </button>
 
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-md bg-component-tertiary-background shadow-md z-[9999] border border-component-border overflow-visible">
-          <div>
-            <MenuItem
-              icon={faUser}
-              text="내 프로필"
-              onClick={() => { setIsOpen(false); window.location.href = "/platform/profile"; }}
-              className="text-text-secondary"
-            />
-            <div className="border-t border-component-secondary-border"></div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute right-0 mt-2 w-56 rounded-md bg-component-tertiary-background shadow-md z-[9999] border border-component-border overflow-visible"
+          >
+            <div>
+              <MenuItem
+                icon={faUser}
+                text="내 프로필"
+                onClick={() => { setIsOpen(false); window.location.href = "/platform/profile"; }}
+                className="text-text-secondary"
+              />
+              <div className="border-t border-component-secondary-border"></div>
 
-            <MenuItem
-              icon={isDark ? faSun : faMoon}
-              text={isDark ? "라이트 모드" : "다크 모드"}
-              onClick={() => {
-                toggleDarkMode();
-                setIsOpen(false);
-              }}
-              className="text-text-secondary"
-            />
+              <MenuItem
+                icon={isDark ? faSun : faMoon}
+                text={isDark ? "라이트 모드" : "다크 모드"}
+                onClick={() => {
+                  toggleDarkMode();
+                  setIsOpen(false);
+                }}
+                className="text-text-secondary"
+              />
 
-            <div className="border-t border-component-secondary-border"></div>
+              <div className="border-t border-component-secondary-border"></div>
 
-            <MenuItem
-              icon={faRightFromBracket}
-              text="로그아웃"
-              onClick={logout}
-              className="text-red-400"
-            />
-          </div>
-        </div>
-      )}
+              <MenuItem
+                icon={faRightFromBracket}
+                text="로그아웃"
+                onClick={logout}
+                className="text-red-400"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
