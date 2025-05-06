@@ -29,7 +29,7 @@ export default function UserDropdown() {
   }, []);
 
   return (
-    <div className="relative z-50" ref={dropdownRef}>
+    <div className="relative z-[9000]" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="font-semibold text-sm cursor-pointer"
@@ -48,7 +48,7 @@ export default function UserDropdown() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 rounded-md bg-component-tertiary-background shadow-md z-50 border border-component-border">
+        <div className="absolute right-0 mt-2 w-56 rounded-md bg-component-tertiary-background shadow-md z-[9999] border border-component-border overflow-visible">
           <div>
             <MenuItem
               icon={faUser}

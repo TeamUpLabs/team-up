@@ -15,6 +15,7 @@ export default function MemberCard({ member, isLeader, isManager, isExplore, onC
                 transition-all duration-300 border border-component-border  
                 hover:border-point-color-indigo-hover cursor-pointer space-y-3"
       onClick={onClick}
+      style={{ isolation: 'auto' }}
     >
       <div className="flex justify-between items-start">
         <div className="flex items-center">

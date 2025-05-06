@@ -45,7 +45,7 @@ export default function Sidebar({ isSidebarOpen, title, titleHref, navItems }: S
   const regularItems = navItems.filter(item => item.label !== "나가기");
 
   return (
-    <div className={`w-64 fixed h-full border-r border-component-border z-2 bg-component-background transition-transform duration-300 lg:translate-x-0 ${
+    <div className={`w-64 fixed h-full border-r border-component-border z-[8500] bg-component-background transition-transform duration-300 lg:translate-x-0 ${
       isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
     }`}>
       <div className="flex flex-col h-full">

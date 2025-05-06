@@ -66,7 +66,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
       {/* 모바일 사이드바 오버레이 */}
         {isSidebarOpen && (
           <div 
-            className="fixed inset-0 bg-background/70 z-1 lg:hidden"
+            className="fixed inset-0 bg-background/70 z-[8400] lg:hidden"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
@@ -81,7 +81,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
         {/* 메인 컨텐츠 영역 */}
       <div className="w-full lg:ml-64 flex-1">
         {/* 헤더 */}
-        <header className="h-16 bg-component-background border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64">
+        <header className="h-16 bg-component-background border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-[8000]">
           <div className="h-full px-4 md:px-6 flex items-center justify-between">
             <div className="flex items-center">
               <button 
