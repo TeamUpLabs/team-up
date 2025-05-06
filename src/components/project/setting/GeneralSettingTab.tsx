@@ -164,6 +164,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
       await updateProject(project.id, formData);
       useAuthStore.getState().setAlert("프로젝트가 업데이트되었습니다.", "success");
       await refreshProject();
+      setIsEditing("none");
     } catch (error) {
       console.error("Error saving project:", error);
       useAuthStore.getState().setAlert("저장 중 오류가 발생했습니다.", "error");
