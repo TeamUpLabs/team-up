@@ -7,7 +7,7 @@ export interface Notification {
   message: string;
   timestamp: string;
   isRead: boolean;
-  type?: "info" | "message" | "task" | "milestone" | "chat";
+  type?: "info" | "message" | "task" | "milestone" | "chat" | "scout";
 }
 
 export interface Member {
