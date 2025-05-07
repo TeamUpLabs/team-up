@@ -36,13 +36,12 @@
 - `Next.js`
 - `Tailwind CSS`
 - `Zustand` (상태 관리)
-- `Socket.IO Client` (실시간 채팅)
+- `WebSocket` (실시간 채팅)
 - `WebRTC` (화상통화)
 
 ### 백엔드
-- `Spring Boot` or `Node.js (Express)`
-- `Socket.IO Server`
-- `PostgreSQL` or `MongoDB`
+- `Python FastAPI`
+- `PostgreSQL`
 - `Firebase Authentication` (GitHub OAuth)
 
 ### 기타
