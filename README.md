@@ -117,4 +117,4 @@ TeamUp은 함께 만들어가는 플랫폼입니다.
 
 ## 📄 라이선스
 
-MIT License
+[MIT License](./LICENSE)
