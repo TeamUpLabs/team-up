@@ -58,7 +58,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
   }
 
   const mainNavItems = [
-      { icon: faHouse, label: "홈", href: "/platform", isActive: pathname === "/platform" },
+      { icon: faHouse, label: "내 프로젝트", href: "/platform", isActive: pathname === "/platform" },
       { icon: faFolder, label: "프로젝트 찾기", href: "/platform/projects", isActive: pathname === "/platform/projects" },
       { icon: faPeopleGroup, label: "팀원 찾기", href: "/platform/members", isActive: pathname === "/platform/members" },
     ];
