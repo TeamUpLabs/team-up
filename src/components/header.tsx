@@ -12,7 +12,7 @@ export default function Header() {
           <Link href="/">
             <Logo />
           </Link>
-          <nav className="hidden md:flex space-x-10 text-sm font-medium">
+          <nav className="md:flex space-x-10 text-sm font-medium">
             <Link href="/platform" className="hover:text-point-color-purple transition-colors duration-200">플랫폼</Link>
             <Link href="#" className="hover:text-point-color-purple transition-colors duration-200" onClick={alertServicePreparing}>커뮤니티</Link>
             <Link href="#" className="hover:text-point-color-purple transition-colors duration-200" onClick={alertServicePreparing}>멘토링</Link>
