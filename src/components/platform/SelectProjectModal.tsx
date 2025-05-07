@@ -2,7 +2,7 @@ import { Fragment, useState, useEffect } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { Project } from "@/types/Project";
 import { getProjectByMemberId } from "@/hooks/getProjectData";
-import { updateProjectMember } from "@/hooks/getMemberData";
+import { sendScout } from "@/hooks/getMemberData";
 import ModalTemplete from "@/components/ModalTemplete";
 
 interface SelectProjectModalProps {
@@ -50,8 +50,9 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
     if (!selectedProject || !memberToScout) return;
     
     try {
+      if (!user) return;
       setIsSubmitting(true);
-      await updateProjectMember(selectedProject, memberToScout.id);
+      await sendScout(selectedProject, user.id, memberToScout.id);
       useAuthStore.getState().setAlert(`${memberToScout.name}님을 프로젝트에 스카우트했습니다!`, "success");
       onClose();
     } catch (error) {

@@ -61,6 +61,23 @@ export const updateProjectMember = async (projectId: string, memberId: number) =
   }
 }
 
+export const sendScout = async (project_id: string, sender_id: number, receiver_id: number) => {
+  try {
+    const res = await server.post(`/project/${project_id}/member/${receiver_id}/scout`, {
+      sender_id: sender_id,
+      receiver_id: receiver_id,
+    });
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to send scout");
+    }
+  } catch (error) {
+    console.error("Error sending scout:", error);
+    throw error;
+  }
+}
+
 export const sendParticipationRequest = async (project_id: string, member_id: number) => {
   try {
     const res = await server.put(`/project/${project_id}/participationRequest/${member_id}/send`);

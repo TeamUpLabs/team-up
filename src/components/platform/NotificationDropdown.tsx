@@ -48,8 +48,23 @@ export default function NotificationDropdown() {
     }
   };
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(notification => ({ ...notification, isRead: true })));
+  const markAllAsRead = async () => {
+    if (user?.id) {
+      try {
+        // Get all unread notifications
+        const unreadNotifications = notifications.filter(notification => !notification.isRead);
+        
+        // Process each notification sequentially to ensure reliability
+        for (const notification of unreadNotifications) {
+          await markAsRead(notification.id);
+        }
+        
+        // Update local state after all API calls are successful
+        setNotifications(notifications.map(notification => ({ ...notification, isRead: true })));
+      } catch (error) {
+        console.error("Failed to update all notifications:", error);
+      }
+    }
   };
 
   const getIconByType = (type: Notification["type"]) => {
