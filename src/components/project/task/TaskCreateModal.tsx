@@ -44,7 +44,7 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
 
     if (project?.id) {
       try {
-        await createTask({ ...formData, project_id: project.id, milestone_id: milestone_id ?? 0 });
+        await createTask(project.id, { ...formData, project_id: project.id, milestone_id: milestone_id ?? 0 });
         setSubmitStatus('success');
         useAuthStore.getState().setAlert('작업이 성공적으로 생성되었습니다.', 'success');
 

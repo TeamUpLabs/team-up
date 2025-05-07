@@ -15,9 +15,9 @@ interface TaskFormData {
   milestone_id: number;
 }
 
-export const createTask = async (task: TaskFormData) => {
+export const createTask = async (project_id: string, task: TaskFormData) => {
   try {
-    const res = await server.post('/task', {
+    const res = await server.post(`/project/${project_id}/task`, {
       project_id: task.project_id,
       milestone_id: task.milestone_id,
       title: task.title,
@@ -46,9 +46,9 @@ export const createTask = async (task: TaskFormData) => {
   }
 }
 
-export const deleteTask = async (taskId: number) => {
+export const deleteTask = async (project_id: string, taskId: number) => {
   try {
-    const res = await server.delete(`/task/${taskId}`);
+    const res = await server.delete(`/project/${project_id}/task/${taskId}`);
     if (res.status === 200) {
       return res.data;
     } else {

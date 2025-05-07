@@ -12,9 +12,9 @@ interface MilestoneFormData {
   assignee_id: number[];
 }
 
-export const createMilestone = async (milestone: MilestoneFormData) => {
+export const createMilestone = async (project_id: string, milestone: MilestoneFormData) => {
   try {
-    const res = await server.post("/milestone", milestone);
+    const res = await server.post(`/project/${project_id}/milestone`, milestone);
     if (res.status === 200) {
       return res.data;
     } else {
@@ -26,9 +26,9 @@ export const createMilestone = async (milestone: MilestoneFormData) => {
   }
 };
 
-export const deleteMilestone = async (milestoneId: number) => {
+export const deleteMilestone = async (project_id: string, milestoneId: number) => {
   try {
-    const res = await server.delete(`/milestone/${milestoneId}`);
+    const res = await server.delete(`/project/${project_id}/milestone/${milestoneId}`);
     if (res.status === 200) {
       return res.data;
     } else {

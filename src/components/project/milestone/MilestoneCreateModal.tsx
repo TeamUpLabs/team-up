@@ -76,7 +76,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
           project_id: project.id,
         };
 
-        await createMilestone(formattedData);
+        await createMilestone(project.id, formattedData);
         setSubmitStatus('success');
         useAuthStore.getState().setAlert('마일스톤이 성공적으로 생성되었습니다.', 'success');
 

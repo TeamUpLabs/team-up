@@ -144,7 +144,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const handleDelete = () => {
     useAuthStore.getState().setConfirm("작업을 삭제하시겠습니까?", async () => {
       try {
-        await deleteTask(task.id);
+        await deleteTask(project?.id ?? "", task.id);
         useAuthStore.getState().setAlert("작업 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
         onClose();
