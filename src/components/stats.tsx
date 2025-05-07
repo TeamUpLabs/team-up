@@ -55,20 +55,20 @@ export default function Stats() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-purple-400 mb-2">{counts.developers >= targets.current.developers ? `${counts.developers/1000}K+` : counts.developers}</p>
-              <p className="text-gray-400 text-sm uppercase tracking-wider">개발자</p>
+              <p className="text-4xl md:text-5xl font-bold text-point-color-purple mb-2">{counts.developers >= targets.current.developers ? `${counts.developers/1000}K+` : counts.developers}</p>
+              <p className="text-text-secondary-color text-sm uppercase tracking-wider">개발자</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-green-400 mb-2">{counts.projects >= targets.current.projects ? `${counts.projects}+` : counts.projects}</p>
-              <p className="text-gray-400 text-sm uppercase tracking-wider">프로젝트</p>
+              <p className="text-4xl md:text-5xl font-bold text-point-color-green mb-2">{counts.projects >= targets.current.projects ? `${counts.projects}+` : counts.projects}</p>
+              <p className="text-text-secondary-color text-sm uppercase tracking-wider">프로젝트</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-purple-400 mb-2">{counts.mentors >= targets.current.mentors ? `${counts.mentors}+` : counts.mentors}</p>
-              <p className="text-gray-400 text-sm uppercase tracking-wider">멘토</p>
+              <p className="text-4xl md:text-5xl font-bold text-point-color-purple mb-2">{counts.mentors >= targets.current.mentors ? `${counts.mentors}+` : counts.mentors}</p>
+              <p className="text-text-secondary-color text-sm uppercase tracking-wider">멘토</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-green-400 mb-2">{counts.partners >= targets.current.partners ? `${counts.partners}+` : counts.partners}</p>
-              <p className="text-gray-400 text-sm uppercase tracking-wider">기업 파트너</p>
+              <p className="text-4xl md:text-5xl font-bold text-point-color-green mb-2">{counts.partners >= targets.current.partners ? `${counts.partners}+` : counts.partners}</p>
+              <p className="text-text-secondary-color text-sm uppercase tracking-wider">기업 파트너</p>
             </div>
           </div>
         </div>
