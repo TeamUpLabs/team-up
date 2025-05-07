@@ -25,6 +25,7 @@ export default function ProjectLayout({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
+  const [isMinimized, setIsMinimized] = useState(true);
 
   useEffect(() => {
     const fetchProjects = async (project_id: string) => {
@@ -102,12 +103,14 @@ export default function ProjectLayout({
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           title={project.title}
+          miniTitle={project.title.charAt(0)}
           titleHref={`/platform/${projectId}`}
           navItems={projectNavItems}
+          onMinimizeChange={setIsMinimized}
         />
 
-        <div className="w-full lg:ml-64 flex-1">
-          <header className="h-auto bg-component-background min-h-16 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-40 content-center">
+        <div className={`w-full flex-1 transition-all duration-300 ${isMinimized ? 'lg:ml-16' : 'lg:ml-64'}`}>
+          <header className={`h-auto bg-component-background min-h-16 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isMinimized ? 'lg:left-16' : 'lg:left-64'} z-40 content-center transition-all duration-300`}>
             <div className="h-full px-3 py-2 sm:px-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <button

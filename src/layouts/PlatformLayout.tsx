@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/platform/sidebar";
-import Logo from "@/components/logo";
+import { Logo, MiniLogo } from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
 import { usePathname } from "next/navigation";
 import { faHouse, faFolder, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
@@ -18,6 +18,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
+  const [isMinimized, setIsMinimized] = useState(true);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   
   // 인증 상태 확인
@@ -74,14 +75,16 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
         <Sidebar 
           isSidebarOpen={isSidebarOpen}
           title={<Logo />}
+          miniTitle={<MiniLogo />}
           titleHref="/platform"
           navItems={mainNavItems}
+          onMinimizeChange={setIsMinimized}
         />
 
         {/* 메인 컨텐츠 영역 */}
-      <div className="w-full lg:ml-64 flex-1">
+      <div className={`w-full flex-1 transition-all duration-300 ${isMinimized ? 'lg:ml-16' : 'lg:ml-64'}`}>
         {/* 헤더 */}
-        <header className="h-16 bg-component-background border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 lg:left-64 z-[8000]">
+        <header className={`h-16 bg-component-background border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isMinimized ? 'lg:left-16' : 'lg:left-64'} z-[8000] transition-all duration-300`}>
           <div className="h-full px-4 md:px-6 flex items-center justify-between">
             <div className="flex items-center">
               <button 

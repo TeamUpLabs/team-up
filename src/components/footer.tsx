@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import Logo from "@/components/logo";
+import { Logo } from "@/components/logo";
 
 export default function Footer() {
     const [openSection, setOpenSection] = useState<string | null>(null);

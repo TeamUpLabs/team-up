@@ -1,5 +1,5 @@
 import Link from "next/link"
-import Logo from "@/components/logo"
+import { Logo } from "@/components/logo"
 import { useAuthStore } from "@/auth/authStore"
 
 export default function Header() {
