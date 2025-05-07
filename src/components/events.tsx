@@ -14,7 +14,7 @@ export default function Events() {
     return (
         <section className="py-24 px-6 relative overflow-hidden">
         <div className="max-w-6xl mx-auto relative">
-          <div className="flex flex-col md:flex-row items-center gap-12">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-12">
             <div className="md:w-1/2">
               <h2 className="text-3xl text-text-primary-color md:text-4xl font-bold mb-5 tracking-tight">다가오는 이벤트</h2>
               <p className="text-text-secondary-color mb-10 max-w-xl leading-relaxed">온라인과 오프라인에서 개최되는 다양한 개발자 이벤트에 참여하세요</p>
