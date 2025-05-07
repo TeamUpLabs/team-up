@@ -2,11 +2,11 @@ import { server } from '@/auth/server';
 import { useAuthStore } from '@/auth/authStore';
 import { AxiosError } from 'axios';
 
-export const login = async (userEmail: string, password: string) => {
+export const login = async (email: string, password: string) => {
   try {
     const res = await server.post('/login', {
-      userEmail,  // Changed from userEmail to email to match server expectation
-      password,
+      userEmail: email,
+      password: password,
     });
 
     const data = res.data;
