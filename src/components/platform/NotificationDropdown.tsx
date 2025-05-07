@@ -11,6 +11,7 @@ export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const unreadCount = notifications?.filter(n => !n.isRead).length || 0;
 
@@ -20,6 +21,22 @@ export default function NotificationDropdown() {
       setNotifications(notifications);
     }
   }, [user]);
+
+  // Check for mobile view
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkIfMobile();
+    
+    // Add event listener
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   // 외부 클릭 감지
   useEffect(() => {
@@ -152,7 +169,13 @@ export default function NotificationDropdown() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute right-0 mt-2 w-80 bg-component-background border border-component-border rounded-lg shadow-lg z-50 overflow-hidden"
+            className={`absolute ${isMobile ? 'right-0 left-0 -translate-x-1/2 md:translate-x-0 md:left-auto md:right-0' : 'right-0'} mt-2 w-80 ${isMobile ? 'max-w-[calc(100vw-2rem)] mx-auto' : ''} bg-component-background border border-component-border rounded-lg shadow-lg z-50 overflow-hidden`}
+            style={isMobile ? {
+              width: 'calc(100vw - 2rem)',
+              maxWidth: '320px',
+              left: '50%',
+              transform: 'translateX(-50%)'
+            } : undefined}
           >
             <div className="p-3 border-b border-component-border flex justify-between items-center">
               <h3 className="font-semibold text-text-primary">알림</h3>
