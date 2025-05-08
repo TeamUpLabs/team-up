@@ -5,6 +5,8 @@ import { useAuthStore } from "@/auth/authStore";
 import { Notification } from "@/types/Member";
 import { updateNotification } from "@/hooks/getNotificationData";
 import { acceptScout, rejectScout } from "@/hooks/getMemberData";
+import { checkAndRefreshAuth } from "@/auth/authStore";
+
 interface NotificationSidebarProps {
   isOpen: boolean;
   onClose?: () => void;
@@ -146,21 +148,40 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
 
   const handleAcceptScout = async (notification: Notification) => {
     if (user?.id) {
-      await acceptScout(user.id, notification.id);
-      setNotifications(notifications.map(notification =>
-        notification.id === notification.id ? { ...notification, result: "accept" } : notification
-      ));
-      useAuthStore.getState().setAlert("스카우트를 수락하였습니다.", "success");
+      try {
+        if (notification.isRead == false) {
+          await markAsRead(notification.id);
+        }
+        await acceptScout(user.id, notification.id);
+        // Refresh user data to update projects list
+        await checkAndRefreshAuth();
+        
+        setNotifications(notifications.map(n =>
+          n.id === notification.id ? { ...n, result: "accept" } : n
+        ));
+        useAuthStore.getState().setAlert("스카우트를 수락하였습니다.", "success");
+      } catch (error) {
+        console.error("Failed to accept scout:", error);
+        useAuthStore.getState().setAlert("스카우트 수락에 실패했습니다.", "error");
+      }
     }
   }
 
   const handleRejectScout = async (notification: Notification) => {
     if (user?.id) {
-      await rejectScout(user.id, notification.id);
-      setNotifications(notifications.map(notification =>
-        notification.id === notification.id ? { ...notification, result: "reject" } : notification
-      ));
-      useAuthStore.getState().setAlert("스카우트를 거절하였습니다.", "success");
+      try {
+        if (notification.isRead == false) {
+          await markAsRead(notification.id);
+        }
+        await rejectScout(user.id, notification.id);
+        setNotifications(notifications.map(n =>
+          n.id === notification.id ? { ...n, result: "reject" } : n
+        ));
+        useAuthStore.getState().setAlert("스카우트를 거절하였습니다.", "success");
+      } catch (error) {
+        console.error("Failed to reject scout:", error);
+        useAuthStore.getState().setAlert("스카우트 거절에 실패했습니다.", "error");
+      }
     }
   }
 

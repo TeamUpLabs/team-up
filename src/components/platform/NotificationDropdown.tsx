@@ -6,6 +6,8 @@ import { useAuthStore } from "@/auth/authStore";
 import { Notification } from "@/types/Member";
 import { updateNotification } from "@/hooks/getNotificationData";
 import { acceptScout, rejectScout } from "@/hooks/getMemberData";
+import { checkAndRefreshAuth } from "@/auth/authStore";
+
 interface NotificationDropdownProps {
   onToggleSidebar: () => void;
 }
@@ -93,23 +95,63 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
     onToggleSidebar();
   };
 
-  const handleAcceptScout = async (notification: Notification) => {
+  const handleNotificationClick = (notificationId: number) => {
+    markAsRead(notificationId);
+  };
+
+  const handleAcceptScout = async (e: React.MouseEvent, notification: Notification) => {
+    // 이벤트 전파 중지
+    e.stopPropagation();
+    
     if (user?.id) {
-      await acceptScout(user.id, notification.id);
-      setNotifications(notifications.map(notification =>
-        notification.id === notification.id ? { ...notification, result: "accept" } : notification
-      ));
-      useAuthStore.getState().setAlert("스카우트를 수락하였습니다.", "success");
+      try {
+        if (notification.isRead == false) {
+          await markAsRead(notification.id);
+        }
+        await acceptScout(user.id, notification.id);
+        // Refresh user data to update projects list
+        await checkAndRefreshAuth();
+
+        setNotifications(prev => 
+          prev.map(n => n.id === notification.id ? { ...n, result: "accept" as const } : n)
+        );
+        
+        useAuthStore.getState().setAlert("스카우트를 수락하였습니다.", "success");
+      } catch (error) {
+        setNotifications(prev => 
+          prev.map(n => n.id === notification.id ? 
+            { ...n, result: notification.result } : n)
+        );
+        console.error("Failed to accept scout:", error);
+        useAuthStore.getState().setAlert("스카우트 수락에 실패했습니다.", "error");
+      }
     }
   }
 
-  const handleRejectScout = async (notification: Notification) => {
+  const handleRejectScout = async (e: React.MouseEvent, notification: Notification) => {
+    // 이벤트 전파 중지
+    e.stopPropagation();
+    
     if (user?.id) {
-      await rejectScout(user.id, notification.id);
-      setNotifications(notifications.map(notification =>
-        notification.id === notification.id ? { ...notification, result: "reject" } : notification
-      ));
-      useAuthStore.getState().setAlert("스카우트를 거절하였습니다.", "success");
+      try {
+        if (notification.isRead == false) {
+          await markAsRead(notification.id);
+        }
+        await rejectScout(user.id, notification.id);
+
+        setNotifications(prev => 
+          prev.map(n => n.id === notification.id ? { ...n, result: "reject" as const } : n)
+        );
+
+        useAuthStore.getState().setAlert("스카우트를 거절하였습니다.", "success");
+      } catch (error) {
+        setNotifications(prev => 
+          prev.map(n => n.id === notification.id ? 
+            { ...n, result: notification.result } : n)
+        );
+        console.error("Failed to reject scout:", error);
+        useAuthStore.getState().setAlert("스카우트 거절에 실패했습니다.", "error");
+      }
     }
   }
 
@@ -224,7 +266,7 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
                   <div
                     key={notification.id}
                     className={`p-3 border-b border-component-border hover:bg-component-secondary-background cursor-pointer ${!notification.isRead ? 'bg-component-tertiary-background' : ''}`}
-                    onClick={() => markAsRead(notification.id)}
+                    onClick={() => handleNotificationClick(notification.id)}
                   >
                     <div className="flex items-start gap-3">
                       {getIconByType(notification.type)}
@@ -237,13 +279,13 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
                         {notification.type === "scout" && notification.result !== "accept" && notification.result !== "reject" && (
                           <div className="flex items-center justify-self-end gap-2">
                             <button
-                              onClick={() => handleAcceptScout(notification)}
+                              onClick={(e) => handleAcceptScout(e, notification)}
                               className="text-xs text-point-color-indigo hover:underline"
                             >
                               수락
                             </button>
                             <button
-                              onClick={() => handleRejectScout(notification)}
+                              onClick={(e) => handleRejectScout(e, notification)}
                               className="text-xs text-point-color-indigo hover:underline"
                             >
                               거절
