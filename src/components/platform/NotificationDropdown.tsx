@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/auth/authStore";
 import { Notification } from "@/types/Member";
 import { updateNotification } from "@/hooks/getNotificationData";
-
+import { acceptScout, rejectScout } from "@/hooks/getMemberData";
 interface NotificationDropdownProps {
   onToggleSidebar: () => void;
 }
@@ -92,6 +92,26 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
     setIsOpen(false);
     onToggleSidebar();
   };
+
+  const handleAcceptScout = async (notification: Notification) => {
+    if (user?.id) {
+      await acceptScout(user.id, notification.id);
+      setNotifications(notifications.map(notification =>
+        notification.id === notification.id ? { ...notification, result: "accept" } : notification
+      ));
+      useAuthStore.getState().setAlert("스카우트를 수락하였습니다.", "success");
+    }
+  }
+
+  const handleRejectScout = async (notification: Notification) => {
+    if (user?.id) {
+      await rejectScout(user.id, notification.id);
+      setNotifications(notifications.map(notification =>
+        notification.id === notification.id ? { ...notification, result: "reject" } : notification
+      ));
+      useAuthStore.getState().setAlert("스카우트를 거절하였습니다.", "success");
+    }
+  }
 
   const getIconByType = (type: Notification["type"]) => {
     switch (type) {
@@ -214,10 +234,30 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
                           <span className="text-xs text-text-secondary whitespace-nowrap ml-2">{notification.timestamp}</span>
                         </div>
                         <p className="text-sm text-text-secondary mt-1 line-clamp-2">{notification.message}</p>
-                        {notification.type === "scout" && (
+                        {notification.type === "scout" && notification.result !== "accept" && notification.result !== "reject" && (
                           <div className="flex items-center justify-self-end gap-2">
-                            <button className="text-xs text-point-color-indigo hover:underline">승인</button>
-                            <button className="text-xs text-point-color-indigo hover:underline">거절</button>
+                            <button
+                              onClick={() => handleAcceptScout(notification)}
+                              className="text-xs text-point-color-indigo hover:underline"
+                            >
+                              수락
+                            </button>
+                            <button
+                              onClick={() => handleRejectScout(notification)}
+                              className="text-xs text-point-color-indigo hover:underline"
+                            >
+                              거절
+                            </button>
+                          </div>
+                        )}
+                        {notification.type === "scout" && notification.result === "accept" && (
+                          <div className="flex items-center justify-self-end gap-2">
+                            <p className="text-xs text-point-color-indigo">수락함</p>
+                          </div>
+                        )}
+                        {notification.type === "scout" && notification.result === "reject" && (
+                          <div className="flex items-center justify-self-end gap-2">
+                            <p className="text-xs text-point-color-indigo">거절함</p>
                           </div>
                         )}
                       </div>

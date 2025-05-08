@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { Notification } from "@/types/Member";
 import { updateNotification } from "@/hooks/getNotificationData";
-
+import { acceptScout, rejectScout } from "@/hooks/getMemberData";
 interface NotificationSidebarProps {
   isOpen: boolean;
   onClose?: () => void;
@@ -144,6 +144,26 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
 
   const dateOrder = ["오늘", "어제", "이전"];
 
+  const handleAcceptScout = async (notification: Notification) => {
+    if (user?.id) {
+      await acceptScout(user.id, notification.id);
+      setNotifications(notifications.map(notification =>
+        notification.id === notification.id ? { ...notification, result: "accept" } : notification
+      ));
+      useAuthStore.getState().setAlert("스카우트를 수락하였습니다.", "success");
+    }
+  }
+
+  const handleRejectScout = async (notification: Notification) => {
+    if (user?.id) {
+      await rejectScout(user.id, notification.id);
+      setNotifications(notifications.map(notification =>
+        notification.id === notification.id ? { ...notification, result: "reject" } : notification
+      ));
+      useAuthStore.getState().setAlert("스카우트를 거절하였습니다.", "success");
+    }
+  }
+
   return (
     <div className={`fixed top-0 right-0 h-full border-l border-component-border bg-component-background transition-all duration-300 w-72 transform ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
       <div className="py-4 h-full flex flex-col">
@@ -226,10 +246,30 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
                               <div className="flex justify-between items-center">
                                 <span className="text-xs text-text-secondary">{notification.timestamp}</span>
 
-                                {notification.type === "scout" && (
+                                {notification.type === "scout" && notification.result !== "accept" && notification.result !== "reject" && (
                                   <div className="flex items-center justify-self-end gap-2">
-                                    <button className="text-xs text-point-color-indigo hover:underline">승인</button>
-                                    <button className="text-xs text-point-color-indigo hover:underline">거절</button>
+                                    <button
+                                      onClick={() => handleAcceptScout(notification)}
+                                      className="text-xs text-point-color-indigo hover:underline"
+                                    >
+                                      수락
+                                    </button>
+                                    <button
+                                      onClick={() => handleRejectScout(notification)}
+                                      className="text-xs text-point-color-indigo hover:underline"
+                                    >
+                                      거절
+                                    </button>
+                                  </div>
+                                )}
+                                {notification.type === "scout" && notification.result === "accept" && (
+                                  <div className="flex items-center justify-self-end gap-2">
+                                    <p className="text-xs text-point-color-indigo">수락함</p>
+                                  </div>
+                                )}
+                                {notification.type === "scout" && notification.result === "reject" && (
+                                  <div className="flex items-center justify-self-end gap-2">
+                                    <p className="text-xs text-point-color-indigo">거절함</p>
                                   </div>
                                 )}
                               </div>

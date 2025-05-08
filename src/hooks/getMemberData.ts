@@ -78,6 +78,34 @@ export const sendScout = async (project_id: string, sender_id: number, receiver_
   }
 }
 
+export const acceptScout = async (member_id: number, notification_id: number) => {
+  try {
+    const res = await server.post(`/member/${member_id}/notification/${notification_id}/scout/accept`);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to accept scout");
+    }
+  } catch (error) {
+    console.error("Error accepting scout:", error);
+    throw error;
+  }
+}
+
+export const rejectScout = async (member_id: number, notification_id: number) => {
+  try {
+    const res = await server.post(`/member/${member_id}/notification/${notification_id}/scout/reject`);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to reject scout");
+    }
+  } catch (error) {
+    console.error("Error rejecting scout:", error);
+    throw error;
+  }
+}
+
 export const sendParticipationRequest = async (project_id: string, member_id: number) => {
   try {
     const res = await server.put(`/project/${project_id}/participationRequest/${member_id}/send`);
