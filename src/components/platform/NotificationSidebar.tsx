@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { Notification } from "@/types/Member";
-import { updateNotification } from "@/hooks/getNotificationData";
+import { updateNotification, deleteNotification, deleteAllNotifications } from "@/hooks/getNotificationData";
 import { acceptScout, rejectScout } from "@/hooks/getMemberData";
 import { checkAndRefreshAuth } from "@/auth/authStore";
 
@@ -49,6 +49,19 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
         setNotifications(notifications.map(notification => ({ ...notification, isRead: true })));
       } catch (error) {
         console.error("Failed to update all notifications:", error);
+      }
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (user?.id && notifications.length > 0) {
+      try {
+        await deleteAllNotifications(user.id);
+        setNotifications([]);
+        useAuthStore.getState().setAlert("모든 알림이 삭제되었습니다.", "success");
+      } catch (error) {
+        console.error("Failed to delete all notifications:", error);
+        useAuthStore.getState().setAlert("알림 삭제에 실패했습니다.", "error");
       }
     }
   };
@@ -185,6 +198,20 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
     }
   }
 
+  const handleDeleteNotification = async (e: React.MouseEvent, notification: Notification) => {
+    e.stopPropagation();
+    if (user?.id) {
+      try {
+        await deleteNotification(user.id, notification.id);
+        setNotifications(notifications.filter(n => n.id !== notification.id));
+        useAuthStore.getState().setAlert("알림이 삭제되었습니다.", "success");
+      } catch (error) {
+        console.error("Failed to delete notification:", error);
+        useAuthStore.getState().setAlert("알림 삭제에 실패했습니다.", "error");
+      }
+    }
+  }
+
   return (
     <div className={`fixed top-0 right-0 h-full border-l border-component-border bg-component-background transition-all duration-300 w-72 transform ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
       <div className="py-4 h-full flex flex-col">
@@ -228,13 +255,31 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
           </button>
         </div>
 
-        {unreadCount > 0 && (
-          <div className="px-4 mb-4">
+        {notifications.length > 0 && (
+          <div className="px-4 mb-4 flex gap-2">
+            {unreadCount > 0 && (
+              <button
+                onClick={markAllAsRead}
+                className="flex-1 py-2 text-sm font-medium bg-component-secondary-background hover:bg-component-tertiary-background text-point-color-indigo border border-component-border rounded-lg transition-colors duration-200"
+              >
+                <div className="flex items-center justify-center gap-1.5">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15M9 5C9 6.10457 9.89543 7 11 7H13C14.1046 7 15 6.10457 15 5M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5M9 14L11 16L15 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  모두 읽음
+                </div>
+              </button>
+            )}
             <button
-              onClick={markAllAsRead}
-              className="w-full py-2 text-sm text-white bg-point-color-indigo rounded-md hover:bg-opacity-90 transition-colors duration-200 font-medium"
+              onClick={handleDeleteAll}
+              className="flex-1 py-2 text-sm font-medium bg-component-secondary-background hover:bg-component-tertiary-background text-red-500 border border-component-border rounded-lg transition-colors duration-200"
             >
-              모두 읽음 표시
+              <div className="flex items-center justify-center gap-1.5">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                모두 삭제
+              </div>
             </button>
           </div>
         )}
@@ -251,48 +296,69 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
                       {groupedNotifications[date].map((notification) => (
                         <div
                           key={notification.id}
-                          className="p-3 rounded-lg hover:bg-component-secondary-background cursor-pointer transition-colors duration-200 border border-component-border"
+                          className={`p-4 rounded-lg hover:bg-component-secondary-background cursor-pointer transition-colors duration-200 border ${notification.isRead ? "border-component-border" : "border-point-color-indigo"}`}
                           onClick={() => markAsRead(notification.id)}
                         >
-                          <div className="flex items-start gap-3">
-                            {getIconByType(notification.type)}
+                          <div className="flex gap-3">
+                            <div className="flex-shrink-0 mt-0.5">
+                              {getIconByType(notification.type)}
+                            </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex justify-between items-start mb-1">
-                                <p className="font-medium text-text-primary">{notification.title}</p>
+                                <p className="font-medium text-text-primary text-sm">{notification.title}</p>
                                 {!notification.isRead && (
-                                  <div className="w-2 h-2 rounded-full bg-point-color-indigo flex-shrink-0"></div>
+                                  <div className="w-2 h-2 rounded-full bg-point-color-indigo flex-shrink-0 ml-2"></div>
                                 )}
                               </div>
                               <p className="text-sm text-text-secondary mb-2">{notification.message}</p>
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs text-text-secondary">{notification.timestamp}</span>
-
-                                {notification.type === "scout" && notification.result !== "accept" && notification.result !== "reject" && (
-                                  <div className="flex items-center justify-self-end gap-2">
-                                    <button
-                                      onClick={() => handleAcceptScout(notification)}
-                                      className="text-xs text-point-color-indigo hover:underline"
-                                    >
-                                      수락
-                                    </button>
-                                    <button
-                                      onClick={() => handleRejectScout(notification)}
-                                      className="text-xs text-point-color-indigo hover:underline"
-                                    >
-                                      거절
-                                    </button>
-                                  </div>
-                                )}
-                                {notification.type === "scout" && notification.result === "accept" && (
-                                  <div className="flex items-center justify-self-end gap-2">
-                                    <p className="text-xs text-point-color-indigo">수락함</p>
-                                  </div>
-                                )}
-                                {notification.type === "scout" && notification.result === "reject" && (
-                                  <div className="flex items-center justify-self-end gap-2">
-                                    <p className="text-xs text-point-color-indigo">거절함</p>
-                                  </div>
-                                )}
+                              
+                              <div className="flex items-center justify-between mt-2">
+                                <span className="text-xs text-text-tertiary">{notification.timestamp}</span>
+                                
+                                <div className="flex items-center">
+                                  {notification.type === "scout" && notification.result !== "accept" && notification.result !== "reject" && (
+                                    <div className="flex items-center gap-3 mr-3">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleAcceptScout(notification);
+                                        }}
+                                        className="text-xs font-medium text-point-color-indigo hover:underline"
+                                      >
+                                        수락
+                                      </button>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleRejectScout(notification);
+                                        }}
+                                        className="text-xs font-medium text-point-color-indigo hover:underline"
+                                      >
+                                        거절
+                                      </button>
+                                    </div>
+                                  )}
+                                  {notification.type === "scout" && notification.result === "accept" && (
+                                    <div className="flex items-center mr-3">
+                                      <span className="text-xs font-medium text-point-color-indigo">수락함</span>
+                                    </div>
+                                  )}
+                                  {notification.type === "scout" && notification.result === "reject" && (
+                                    <div className="flex items-center mr-3">
+                                      <span className="text-xs font-medium text-point-color-indigo">거절함</span>
+                                    </div>
+                                  )}
+                                  
+                                  <button
+                                    onClick={(e) => handleDeleteNotification(e, notification)}
+                                    className="text-text-tertiary hover:text-red-500 p-1 transition-colors duration-200"
+                                    aria-label="Delete notification"
+                                  >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>

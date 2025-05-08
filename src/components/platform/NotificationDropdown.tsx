@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/auth/authStore";
 import { Notification } from "@/types/Member";
-import { updateNotification } from "@/hooks/getNotificationData";
+import { updateNotification, deleteNotification, deleteAllNotifications } from "@/hooks/getNotificationData";
 import { acceptScout, rejectScout } from "@/hooks/getMemberData";
 import { checkAndRefreshAuth } from "@/auth/authStore";
 
@@ -90,6 +90,19 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
     }
   };
 
+  const handleDeleteAll = async () => {
+    if (user?.id && notifications.length > 0) {
+      try {
+        await deleteAllNotifications(user.id);
+        setNotifications([]);
+        useAuthStore.getState().setAlert("모든 알림이 삭제되었습니다.", "success");
+      } catch (error) {
+        console.error("Failed to delete all notifications:", error);
+        useAuthStore.getState().setAlert("알림 삭제에 실패했습니다.", "error");
+      }
+    }
+  };
+
   const handleViewAllClick = () => {
     setIsOpen(false);
     onToggleSidebar();
@@ -99,10 +112,24 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
     markAsRead(notificationId);
   };
 
+  const handleDeleteNotification = async (e: React.MouseEvent, notificationId: number) => {
+    e.stopPropagation();
+    if (user?.id) {
+      try {
+        await deleteNotification(user.id, notificationId);
+        setNotifications(notifications.filter(notification => notification.id !== notificationId));
+        useAuthStore.getState().setAlert("알림이 삭제되었습니다.", "success");
+      } catch (error) {
+        console.error("Failed to delete notification:", error);
+        useAuthStore.getState().setAlert("알림 삭제에 실패했습니다.", "error");
+      }
+    }
+  };
+
   const handleAcceptScout = async (e: React.MouseEvent, notification: Notification) => {
     // 이벤트 전파 중지
     e.stopPropagation();
-    
+
     if (user?.id) {
       try {
         if (notification.isRead == false) {
@@ -112,14 +139,14 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
         // Refresh user data to update projects list
         await checkAndRefreshAuth();
 
-        setNotifications(prev => 
+        setNotifications(prev =>
           prev.map(n => n.id === notification.id ? { ...n, result: "accept" as const } : n)
         );
-        
+
         useAuthStore.getState().setAlert("스카우트를 수락하였습니다.", "success");
       } catch (error) {
-        setNotifications(prev => 
-          prev.map(n => n.id === notification.id ? 
+        setNotifications(prev =>
+          prev.map(n => n.id === notification.id ?
             { ...n, result: notification.result } : n)
         );
         console.error("Failed to accept scout:", error);
@@ -131,7 +158,7 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
   const handleRejectScout = async (e: React.MouseEvent, notification: Notification) => {
     // 이벤트 전파 중지
     e.stopPropagation();
-    
+
     if (user?.id) {
       try {
         if (notification.isRead == false) {
@@ -139,14 +166,14 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
         }
         await rejectScout(user.id, notification.id);
 
-        setNotifications(prev => 
+        setNotifications(prev =>
           prev.map(n => n.id === notification.id ? { ...n, result: "reject" as const } : n)
         );
 
         useAuthStore.getState().setAlert("스카우트를 거절하였습니다.", "success");
       } catch (error) {
-        setNotifications(prev => 
-          prev.map(n => n.id === notification.id ? 
+        setNotifications(prev =>
+          prev.map(n => n.id === notification.id ?
             { ...n, result: notification.result } : n)
         );
         console.error("Failed to reject scout:", error);
@@ -248,77 +275,111 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
               transform: 'translateX(-50%)'
             } : undefined}
           >
-            <div className="p-3 border-b border-component-border flex justify-between items-center">
-              <h3 className="font-semibold text-text-primary">알림 ({notifications.length})</h3>
-              {unreadCount > 0 && (
-                <button
-                  onClick={markAllAsRead}
-                  className="text-xs text-point-color-indigo hover:underline"
-                >
-                  모두 읽음 표시
-                </button>
-              )}
+            <div className="p-4 border-b border-component-border flex justify-between items-center">
+              <h3 className="font-semibold text-text-primary text-base">알림 ({notifications.length})</h3>
+              <div className="flex gap-3">
+                {unreadCount > 0 && (
+                  <button
+                    onClick={markAllAsRead}
+                    className="text-xs text-point-color-indigo hover:underline font-medium"
+                  >
+                    모두 읽음
+                  </button>
+                )}
+                {notifications.length > 0 && (
+                  <button
+                    onClick={handleDeleteAll}
+                    className="text-xs text-red-500 hover:underline font-medium"
+                  >
+                    전체 삭제
+                  </button>
+                )}
+              </div>
             </div>
 
-            <div className="overflow-y-auto max-h-96">
+            <div className="overflow-y-auto max-h-[400px] divide-y divide-component-border">
               {notifications.length > 0 ? (
                 notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-3 border-b border-component-border hover:bg-component-secondary-background cursor-pointer ${!notification.isRead ? 'bg-component-tertiary-background' : ''}`}
+                    className={`p-4 hover:bg-component-secondary-background cursor-pointer transition-colors duration-200 ${!notification.isRead ? 'bg-component-tertiary-background/50' : ''}`}
                     onClick={() => handleNotificationClick(notification.id)}
                   >
-                    <div className="flex items-start gap-3">
-                      {getIconByType(notification.type)}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex justify-between items-start">
-                          <p className="font-medium text-text-primary">{notification.title}</p>
-                          <span className="text-xs text-text-secondary whitespace-nowrap ml-2">{notification.timestamp}</span>
-                        </div>
-                        <p className="text-sm text-text-secondary mt-1 line-clamp-2">{notification.message}</p>
-                        {notification.type === "scout" && notification.result !== "accept" && notification.result !== "reject" && (
-                          <div className="flex items-center justify-self-end gap-2">
-                            <button
-                              onClick={(e) => handleAcceptScout(e, notification)}
-                              className="text-xs text-point-color-indigo hover:underline"
-                            >
-                              수락
-                            </button>
-                            <button
-                              onClick={(e) => handleRejectScout(e, notification)}
-                              className="text-xs text-point-color-indigo hover:underline"
-                            >
-                              거절
-                            </button>
-                          </div>
-                        )}
-                        {notification.type === "scout" && notification.result === "accept" && (
-                          <div className="flex items-center justify-self-end gap-2">
-                            <p className="text-xs text-point-color-indigo">수락함</p>
-                          </div>
-                        )}
-                        {notification.type === "scout" && notification.result === "reject" && (
-                          <div className="flex items-center justify-self-end gap-2">
-                            <p className="text-xs text-point-color-indigo">거절함</p>
-                          </div>
-                        )}
+                    <div className="flex gap-3">
+                      <div className="flex-shrink-0 mt-0.5">
+                        {getIconByType(notification.type)}
                       </div>
-                      {!notification.isRead && (
-                        <div className="w-2 h-2 rounded-full bg-point-color-indigo flex-shrink-0 mt-2"></div>
-                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start mb-1">
+                          <p className="font-medium text-text-primary text-sm">{notification.title}</p>
+                          {!notification.isRead && (
+                            <div className="w-2 h-2 rounded-full bg-point-color-indigo flex-shrink-0 ml-2"></div>
+                          )}
+                        </div>
+                        <p className="text-sm text-text-secondary mb-2">{notification.message}</p>
+
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-xs text-text-tertiary">{notification.timestamp}</span>
+
+                          <div className="flex items-center">
+                            {notification.type === "scout" && notification.result !== "accept" && notification.result !== "reject" && (
+                              <div className="flex items-center gap-3 mr-3">
+                                <button
+                                  onClick={(e) => handleAcceptScout(e, notification)}
+                                  className="text-xs font-medium text-point-color-indigo hover:underline"
+                                >
+                                  수락
+                                </button>
+                                <button
+                                  onClick={(e) => handleRejectScout(e, notification)}
+                                  className="text-xs font-medium text-point-color-indigo hover:underline"
+                                >
+                                  거절
+                                </button>
+                              </div>
+                            )}
+                            {notification.type === "scout" && notification.result === "accept" && (
+                              <div className="flex items-center mr-3">
+                                <span className="text-xs font-medium text-point-color-indigo">수락함</span>
+                              </div>
+                            )}
+                            {notification.type === "scout" && notification.result === "reject" && (
+                              <div className="flex items-center mr-3">
+                                <span className="text-xs font-medium text-point-color-indigo">거절함</span>
+                              </div>
+                            )}
+
+                            <button
+                              onClick={(e) => handleDeleteNotification(e, notification.id)}
+                              className="text-text-tertiary hover:text-red-500 p-1 transition-colors duration-200"
+                              aria-label="Delete notification"
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7M10 11V17M14 11V17M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7M4 7H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="p-6 text-center text-text-secondary">
-                  <p>알림이 없습니다</p>
+                <div className="flex flex-col items-center justify-center h-60 text-center">
+                  <div className="bg-gray-100 p-3 rounded-full mb-3">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.63 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <p className="text-text-secondary mb-1 font-medium">알림이 없습니다</p>
+                  <p className="text-sm text-text-tertiary">새로운 알림이 도착하면 여기에 표시됩니다</p>
                 </div>
               )}
             </div>
 
-            <div className="p-3 border-t border-component-border">
+            <div className="p-3 border-t border-component-border bg-component-secondary-background/50">
               <button
-                className="w-full py-1.5 text-sm text-center text-point-color-indigo hover:underline"
+                className="w-full py-2 text-sm font-medium text-center text-point-color-indigo hover:underline"
                 onClick={handleViewAllClick}
               >
                 모든 알림 보기
