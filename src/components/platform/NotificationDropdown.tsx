@@ -6,7 +6,11 @@ import { useAuthStore } from "@/auth/authStore";
 import { Notification } from "@/types/Member";
 import { updateNotification } from "@/hooks/getNotificationData";
 
-export default function NotificationDropdown() {
+interface NotificationDropdownProps {
+  onToggleSidebar: () => void;
+}
+
+export default function NotificationDropdown({ onToggleSidebar }: NotificationDropdownProps) {
   const user = useAuthStore((state) => state.user);
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -82,6 +86,11 @@ export default function NotificationDropdown() {
         console.error("Failed to update all notifications:", error);
       }
     }
+  };
+
+  const handleViewAllClick = () => {
+    setIsOpen(false);
+    onToggleSidebar();
   };
 
   const getIconByType = (type: Notification["type"]) => {
@@ -178,7 +187,7 @@ export default function NotificationDropdown() {
             } : undefined}
           >
             <div className="p-3 border-b border-component-border flex justify-between items-center">
-              <h3 className="font-semibold text-text-primary">알림</h3>
+              <h3 className="font-semibold text-text-primary">알림 ({notifications.length})</h3>
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
@@ -228,6 +237,7 @@ export default function NotificationDropdown() {
             <div className="p-3 border-t border-component-border">
               <button
                 className="w-full py-1.5 text-sm text-center text-point-color-indigo hover:underline"
+                onClick={handleViewAllClick}
               >
                 모든 알림 보기
               </button>
