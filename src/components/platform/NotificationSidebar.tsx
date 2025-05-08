@@ -210,7 +210,7 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
                       {groupedNotifications[date].map((notification) => (
                         <div
                           key={notification.id}
-                          className={`p-3 rounded-lg hover:bg-component-secondary-background cursor-pointer transition-colors duration-200 ${!notification.isRead ? 'bg-component-tertiary-background/30 border-l-2 border-point-color-indigo' : 'border border-component-border'}`}
+                          className="p-3 rounded-lg hover:bg-component-secondary-background cursor-pointer transition-colors duration-200 border border-component-border"
                           onClick={() => markAsRead(notification.id)}
                         >
                           <div className="flex items-start gap-3">
