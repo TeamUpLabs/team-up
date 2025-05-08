@@ -8,6 +8,10 @@ export interface Notification {
   timestamp: string;
   isRead: boolean;
   type?: "info" | "message" | "task" | "milestone" | "chat" | "scout";
+  sender_id: number;
+  receiver_id: number;
+  project_id: string;
+  result: "accept" | "reject";
 }
 
 export interface Member {

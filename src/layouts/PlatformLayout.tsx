@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/platform/sidebar";
+import NotificationSidebar from "@/components/platform/NotificationSidebar";
 import { Logo, MiniLogo } from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
 import { usePathname } from "next/navigation";
@@ -19,6 +20,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
   const [searchVisible, setSearchVisible] = useState(false);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const [isMinimized, setIsMinimized] = useState(true);
+  const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   
   // 인증 상태 확인
@@ -52,6 +54,10 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
     setIsModalOpen(false);
   };
 
+  const toggleNotificationSidebar = () => {
+    setIsNotificationSidebarOpen(!isNotificationSidebarOpen);
+  };
+
   // 로딩 중이거나 인증되지 않은 상태면 내용을 표시하지 않음
   if (isLoading) {
     return null;
@@ -71,6 +77,14 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
+        
+        {/* 모바일 알림 사이드바 오버레이 */}
+        {isNotificationSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-background/70 z-[8400] lg:hidden"
+            onClick={() => setIsNotificationSidebarOpen(false)}
+          />
+        )}
   
         <Sidebar 
           isSidebarOpen={isSidebarOpen}
@@ -82,9 +96,9 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
         />
 
         {/* 메인 컨텐츠 영역 */}
-      <div className={`w-full flex-1 transition-all duration-300 ${isMinimized ? 'lg:ml-16' : 'lg:ml-64'}`}>
+      <div className={`w-full flex-1 transition-all duration-300 ${isMinimized ? 'lg:ml-16' : 'lg:ml-64'} ${isNotificationSidebarOpen ? 'lg:mr-72' : ''}`}>
         {/* 헤더 */}
-        <header className={`h-16 bg-component-background border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isMinimized ? 'lg:left-16' : 'lg:left-64'} z-[8000] transition-all duration-300`}>
+        <header className={`h-16 bg-component-background border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isMinimized ? 'lg:left-16' : 'lg:left-64'} ${isNotificationSidebarOpen ? 'lg:right-72' : ''} z-[8000] transition-all duration-300`}>
           <div className="h-full px-4 md:px-6 flex items-center justify-between">
             <div className="flex items-center">
               <button 
@@ -147,7 +161,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
                   )}
                 </button>
               </div>
-              <NotificationDropdown />
+              <NotificationDropdown onToggleSidebar={toggleNotificationSidebar} />
               <button 
                 className="group active:scale-95 flex items-center justify-center gap-2 px-4 py-2 bg-component-secondary-background border border-component-border text-sm text-text-primary font-medium rounded-lg transition-all hover:bg-component-tertiary-background"
                 onClick={() => setIsModalOpen(true)}
@@ -167,6 +181,10 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
           {children}
         </main>
       </div>
+      <NotificationSidebar 
+        isOpen={isNotificationSidebarOpen} 
+        onClose={() => setIsNotificationSidebarOpen(false)}
+      />
       <NewProjectModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}

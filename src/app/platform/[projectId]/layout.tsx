@@ -9,6 +9,7 @@ import { getProjectById } from "@/hooks/getProjectData";
 import { ProjectProvider } from "@/contexts/ProjectContext";
 import UserDropdown from "@/components/platform/UserDropdown";
 import NotificationDropdown from "@/components/platform/NotificationDropdown";
+import NotificationSidebar from "@/components/platform/NotificationSidebar";
 
 export default function ProjectLayout({
   children,
@@ -26,6 +27,7 @@ export default function ProjectLayout({
   const [searchVisible, setSearchVisible] = useState(false);
   const [headerSearchQuery, setHeaderSearchQuery] = useState('');
   const [isMinimized, setIsMinimized] = useState(true);
+  const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async (project_id: string) => {
@@ -60,6 +62,10 @@ export default function ProjectLayout({
     }
     return () => clearTimeout(timer);
   }, [isSearchOpen]);
+
+  const toggleNotificationSidebar = () => {
+    setIsNotificationSidebarOpen(!isNotificationSidebarOpen);
+  };
 
   if (isLoading) {
     return (
@@ -100,6 +106,14 @@ export default function ProjectLayout({
           />
         )}
 
+        {/* 모바일 알림 사이드바 오버레이 */}
+        {isNotificationSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-background/70 z-[8400] lg:hidden"
+            onClick={() => setIsNotificationSidebarOpen(false)}
+          />
+        )}
+
         <Sidebar
           isSidebarOpen={isSidebarOpen}
           title={project.title}
@@ -109,8 +123,8 @@ export default function ProjectLayout({
           onMinimizeChange={setIsMinimized}
         />
 
-        <div className={`w-full flex-1 transition-all duration-300 ${isMinimized ? 'lg:ml-16' : 'lg:ml-64'}`}>
-          <header className={`h-auto bg-component-background min-h-16 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isMinimized ? 'lg:left-16' : 'lg:left-64'} z-40 content-center transition-all duration-300`}>
+        <div className={`w-full flex-1 transition-all duration-300 ${isMinimized ? 'lg:ml-16' : 'lg:ml-64'} ${isNotificationSidebarOpen ? 'lg:mr-72' : ''}`}>
+          <header className={`h-auto bg-component-background min-h-16 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isMinimized ? 'lg:left-16' : 'lg:left-64'} ${isNotificationSidebarOpen ? 'lg:right-72' : ''} z-40 content-center transition-all duration-300`}>
             <div className="h-full px-3 py-2 sm:px-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <button
@@ -180,7 +194,7 @@ export default function ProjectLayout({
                     )}
                   </button>
                 </div>
-                <NotificationDropdown />
+                <NotificationDropdown onToggleSidebar={toggleNotificationSidebar} />
                 <UserDropdown />
               </div>
             </div>
@@ -190,6 +204,10 @@ export default function ProjectLayout({
             {children}
           </main>
         </div>
+        <NotificationSidebar 
+          isOpen={isNotificationSidebarOpen} 
+          onClose={() => setIsNotificationSidebarOpen(false)}
+        />
       </div>
     </ProjectProvider>
   );
