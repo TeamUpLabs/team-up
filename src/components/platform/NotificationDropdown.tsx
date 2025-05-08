@@ -27,13 +27,13 @@ export default function NotificationDropdown() {
     const checkIfMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     // Initial check
     checkIfMobile();
-    
+
     // Add event listener
     window.addEventListener('resize', checkIfMobile);
-    
+
     // Cleanup
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
@@ -70,12 +70,12 @@ export default function NotificationDropdown() {
       try {
         // Get all unread notifications
         const unreadNotifications = notifications.filter(notification => !notification.isRead);
-        
+
         // Process each notification sequentially to ensure reliability
         for (const notification of unreadNotifications) {
           await markAsRead(notification.id);
         }
-        
+
         // Update local state after all API calls are successful
         setNotifications(notifications.map(notification => ({ ...notification, isRead: true })));
       } catch (error) {
@@ -130,11 +130,11 @@ export default function NotificationDropdown() {
         return (
           <div className="bg-emerald-100 rounded-full p-2 flex items-center justify-center">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
         );
-        
+
       default:
         return (
           <div className="bg-gray-100 rounded-full p-2 flex items-center justify-center">
@@ -205,6 +205,12 @@ export default function NotificationDropdown() {
                           <span className="text-xs text-text-secondary whitespace-nowrap ml-2">{notification.timestamp}</span>
                         </div>
                         <p className="text-sm text-text-secondary mt-1 line-clamp-2">{notification.message}</p>
+                        {notification.type === "scout" && (
+                          <div className="flex items-center justify-self-end gap-2">
+                            <button className="text-xs text-point-color-indigo hover:underline">승인</button>
+                            <button className="text-xs text-point-color-indigo hover:underline">거절</button>
+                          </div>
+                        )}
                       </div>
                       {!notification.isRead && (
                         <div className="w-2 h-2 rounded-full bg-point-color-indigo flex-shrink-0 mt-2"></div>
