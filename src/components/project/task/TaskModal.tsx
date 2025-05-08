@@ -128,7 +128,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       useAuthStore.getState().setAlert("작업 수정에 성공했습니다.", "success");
       onClose();
-      window.location.reload();
+      await refreshProject();
     } catch (error) {
       console.error("Error updating task:", error);
       useAuthStore.getState().setAlert("작업 수정에 실패했습니다.", "error");
@@ -489,7 +489,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                               />
                               <FontAwesomeIcon
                                 icon={faCheck}
-                                className={`absolute text-white transform transition-all duration-300 ${isSelected
+                                className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
                                   ? 'opacity-100 rotate-0 scale-100'
                                   : 'opacity-0 -rotate-90 scale-0'
                                   }`}
