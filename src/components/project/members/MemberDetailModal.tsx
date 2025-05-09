@@ -9,7 +9,7 @@ import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/Badge';
 import { kickOutMemberFromProject } from '@/hooks/getProjectData';
 import { useProject } from '@/contexts/ProjectContext';
-
+import Image from 'next/image';
 interface MemberDetailModalProps {
   member: Member;
   isOpen: boolean;
@@ -64,9 +64,13 @@ export default function MemberDetailModal({ member, isOpen, onClose, leader_id }
   const headerContent = (
     <div className="flex items-center space-x-4">
       <div className="flex-shrink-0">
-        <div className="w-12 h-12 rounded-full bg-component-secondary-background 
+        <div className="w-12 h-12 relative border rounded-full border-component-border bg-component-secondary-background 
                     flex items-center justify-center text-xl font-bold text-text-primary">
-          {member.name.charAt(0)}
+          {member.profileImage ? (
+            <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+          ) : (
+            <p>{member.name.charAt(0)}</p>
+          )}
         </div>
       </div>
       <div>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -36,8 +37,12 @@ export default function UserDropdown() {
         className="font-semibold text-sm cursor-pointer"
       >
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-component-tertiary-background border border-component-secondary-border text-text-primary">
-            {user ? user.name.charAt(0) : "?"}
+          <div className="w-8 h-8 relative rounded-full flex items-center justify-center bg-component-tertiary-background border border-component-secondary-border text-text-primary">
+            {user?.profileImage ? (
+              <Image src={user.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+            ) : (
+              <p>{user?.name.charAt(0)}</p>
+            )}
           </div>
           {user ? user.name : "로그인을 해주세요."}
           <FontAwesomeIcon

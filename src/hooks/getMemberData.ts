@@ -154,8 +154,6 @@ interface UpdateMemberData {
   }[];
 }
 
-
-
 export const updateUserProfile = async (memberId: number, memberData: UpdateMemberData) => {
   try {
     const res = await server.put(`/member/${memberId}`, memberData);
@@ -166,6 +164,35 @@ export const updateUserProfile = async (memberId: number, memberData: UpdateMemb
     }
   } catch (error) {
     console.error("Error updating member:", error);
+    throw error;
+  }
+}
+
+export const updateUserProfileImage = async (memberId: number, imageUrl: string) => {
+  const formData = new FormData();
+  if (imageUrl.startsWith('blob:')) {
+    const response = await fetch(imageUrl);
+    const blobData = await response.blob();
+    const profileImageFile = new File([blobData], "profileImage.jpg", { type: blobData.type });
+    formData.append('profileImage', profileImageFile);
+  } else {
+    throw new Error("Expected a blob URL for image upload");
+  }
+  
+  try {
+    const res = await server.put(`/member/${memberId}/profile-image`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to update member profile image");
+    }
+  } catch (error) {
+    console.error("Error updating member profile image:", error);
     throw error;
   }
 }

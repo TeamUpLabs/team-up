@@ -1,4 +1,5 @@
 import type { Task } from '@/types/Task';
+import Image from 'next/image';
 
 export default function TaskComponent({ task }: { task: Task }) {
   return (
@@ -23,8 +24,12 @@ export default function TaskComponent({ task }: { task: Task }) {
         {task?.assignee && task.assignee.length > 0 && (
           <div className="flex -space-x-2.5">
             {task.assignee.slice(0, 2).map((assi, idx) => (
-              <div key={assi?.id ?? idx} className="w-8 h-8 rounded-full bg-component-background border-2 border-component-border text-xs flex items-center justify-center">
-                {assi?.name.charAt(0)}
+              <div key={assi?.id ?? idx} className="w-8 h-8 relative rounded-full bg-component-background border-2 border-component-border text-xs flex items-center justify-center">
+                {assi?.profileImage ? (
+                  <Image src={assi.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                ) : (
+                  <p>{assi?.name.charAt(0)}</p>
+                )}
               </div>
             ))}
             {task.assignee.length > 2 && (

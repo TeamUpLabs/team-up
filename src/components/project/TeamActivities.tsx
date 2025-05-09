@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useProject } from "@/contexts/ProjectContext";
-
+import Image from "next/image";
 
 export default function TeamActivities() {
   const { project } = useProject();
@@ -57,8 +57,12 @@ export default function TeamActivities() {
           project?.members.map((member) => (
             <div key={member.id} className="flex items-center justify-between p-2 hover:bg-component-secondary-background transition duration-200">
               <div className="flex items-center">
-                <div className={`w-10 h-10 bg-component-secondary-background rounded-full flex items-center justify-center text-text-primary font-bold`}>
-                  {member.name.charAt(0)}
+                <div className={`w-10 h-10 relative border border-component-border bg-component-secondary-background rounded-full flex items-center justify-center text-text-primary font-bold`}>
+                  {member.profileImage ? (
+                    <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                  ) : (
+                    <p>{member.name.charAt(0)}</p>
+                  )}
                 </div>
                 <div className="ml-3">
                   <div className="flex items-center gap-2">
