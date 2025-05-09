@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    domains: ["vnaetwpgkoexfobnveuv.supabase.co"],
+  },
   async rewrites() {
     return [
       {
