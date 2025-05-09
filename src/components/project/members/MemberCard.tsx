@@ -1,5 +1,5 @@
+import Image from 'next/image';
 import { Member } from '@/types/Member';
-
 interface MemberCardProps {
   member: Member;
   isLeader: boolean;
@@ -19,8 +19,12 @@ export default function MemberCard({ member, isLeader, isManager, isExplore, onC
     >
       <div className="flex justify-between items-start">
         <div className="flex items-center">
-          <span className="w-8 h-8 bg-component-secondary-background rounded-full flex items-center justify-center mr-2 text-sm">
-            {member.name.charAt(0)}
+          <span className="w-8 h-8 relative border border-component-border bg-component-secondary-background rounded-full flex items-center justify-center mr-2 text-sm">
+            {member.profileImage ? (
+              <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+            ) : (
+              <p>{member.name.charAt(0)}</p>
+            )}
           </span>
           <h2 className="text-xl font-bold text-text-primary transition-colors">
             {member.name}

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Project } from "@/types/Project";
 import Link from "next/link";
 import { useAuthStore } from "@/auth/authStore";
@@ -30,8 +31,12 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
         <div className="flex -space-x-2">
           {
             project.members.slice(0, 2).map((member => (
-              <div key={member.id} className="w-8 h-8 rounded-full bg-component-secondary-background border-2 border-component-border text-sm flex align-center justify-center place-items-center">
-                {member.name.charAt(0)}
+              <div key={member.id} className="w-8 h-8 relative rounded-full bg-component-secondary-background border-2 border-component-border text-sm flex align-center justify-center place-items-center">
+                {member.profileImage ? (
+                  <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+            ) : (
+              <p>{member.name.charAt(0)}</p>
+            )}
               </div>
             )))
           }

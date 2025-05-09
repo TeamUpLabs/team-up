@@ -322,16 +322,16 @@ export default function ProfilePage() {
         <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 h-32">
           <div className="absolute -bottom-12 left-8">
             <div className="relative">
-              <div className="h-24 w-24 rounded-full border-4 border-component-border bg-component-secondary-background flex items-center justify-center overflow-hidden">
+              <div className="h-24 w-24 relative rounded-full border-4 border-component-border bg-component-secondary-background flex items-center justify-center overflow-hidden">
                 {isDataLoading ? (
                   <div className="animate-pulse w-full h-full bg-component-secondary-background"></div>
-                ) : previewImage ? (
+                ) : user?.profileImage ? (
                   <Image
-                    src={previewImage}
+                    src={user.profileImage}
                     alt="Profile"
-                    className="w-full h-full object-cover rounded-full"
-                    width={96}
-                    height={96}
+                    className="w-full h-full object-fit rounded-full"
+                    quality={100}
+                    fill
                   />
                 ) : (
                   <FontAwesomeIcon icon={faUser} className="text-text-secondary text-3xl" />

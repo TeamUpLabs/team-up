@@ -7,7 +7,7 @@ import PermissionChangeModal from "@/components/project/setting/PermissionChange
 import { updateProjectMemberPermission, allowParticipationRequest, rejectParticipationRequest, kickOutMemberFromProject } from "@/hooks/getProjectData";
 import { useAuthStore } from "@/auth/authStore";
 import { useProject } from "@/contexts/ProjectContext";
-
+import Image from "next/image";
 interface TeamSettingTabProps {
   project: Project;
 }
@@ -175,8 +175,12 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                   <div key={request.id} className="px-4 py-3 bg-component-secondary-background hover:bg-component-secondary-background/60 transition-colors">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
-                          {request.name.charAt(0)}
+                        <div className="w-9 h-9 relative bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
+                          {request.profileImage ? (
+                            <Image src={request.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                          ) : (
+                            <p>{request.name.charAt(0)}</p>
+                          )}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
@@ -234,8 +238,12 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
               <div key={member.id} className="px-4 py-3 bg-component-secondary-background hover:bg-component-secondary-background/60 transition-colors">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
-                      {member.name.charAt(0)}
+                    <div className="w-10 h-10 relative border border-component-border bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
+                      {member.profileImage ? (
+                        <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                      ) : (
+                        <p>{member.name.charAt(0)}</p>
+                      )}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { Member } from '@/types/Member';
 import SelectProjectModal from './SelectProjectModal';
@@ -18,9 +19,13 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
   const header = (
     <div className="flex items-center space-x-4">
       <div className="flex-shrink-0">
-        <div className="w-12 h-12 rounded-full bg-component-secondary-background
+        <div className="w-12 h-12 relative rounded-full border border-component-border bg-component-secondary-background
                     flex items-center justify-center text-xl font-bold text-text-primary">
-          {member.name.charAt(0)}
+          {member.profileImage ? (
+            <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+          ) : (
+            <p>{member.name.charAt(0)}</p>
+          )}
         </div>
       </div>
       <div>

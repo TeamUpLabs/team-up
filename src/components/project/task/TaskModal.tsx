@@ -15,6 +15,7 @@ import { deleteTask, updateTask, addComment, updateSubtask } from '@/hooks/getTa
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/Badge';
 import { getCurrentKoreanTimeDate } from '@/utils/dateUtils';
+import Image from 'next/image';
 
 interface TaskModalProps {
   task: Task;
@@ -668,8 +669,12 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               taskData?.comments?.map((comment, index) => (
                 <div key={index} className="bg-component-secondary-background p-4 rounded-lg border border-component-border hover:border-component-border-hover transition-all duration-200 shadow-sm">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-component-tertiary-background flex items-center justify-center shadow-inner">
-                      <FontAwesomeIcon icon={faUser} className="text-text-secondary" />
+                    <div className="w-10 h-10 relative border border-component-border rounded-full bg-component-tertiary-background flex items-center justify-center shadow-inner">
+                      {project?.members.find(member => member.id === comment?.author_id)?.profileImage ? (
+                        <Image src={project?.members.find(member => member.id === comment?.author_id)?.profileImage ?? "/DefaultProfile.jpg"} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                      ) : (
+                        <p>{project?.members.find(member => member.id === comment?.author_id)?.name.charAt(0)}</p>
+                      )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
@@ -683,7 +688,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                         </div>
                         {comment?.author_id === user?.id && (
                           <button
-                            className="text-text-secondary hover:text-red-400 p-1.5 rounded-full hover:bg-red-500/10 transition-all"
+                            className="text-text-secondary hover:text-red-400 p-1.5 transition-all"
                             aria-label="댓글 삭제"
                           >
                             <FontAwesomeIcon icon={faTrash} size="sm" />
@@ -708,8 +713,12 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               onSubmit={handleCommentSubmit}
             >
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 mt-2 rounded-full bg-component-tertiary-background flex-shrink-0 flex items-center justify-center shadow-inner">
-                  <FontAwesomeIcon icon={faUser} className="text-text-secondary" />
+                <div className="w-10 h-10 mt-2 relative border border-component-border rounded-full bg-component-tertiary-background flex-shrink-0 flex items-center justify-center shadow-inner">
+                  {user?.profileImage ? (
+                    <Image src={user?.profileImage ?? "/DefaultProfile.jpg"} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                  ) : (
+                    <p>{user?.name.charAt(0)}</p>
+                  )}
                 </div>
                 <div className="flex-1">
                   <textarea
