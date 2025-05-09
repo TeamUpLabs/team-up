@@ -22,11 +22,12 @@ import {
   faLanguage,
   faCakeCandles,
   faLink,
-  faPencil
+  faPencil,
 } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faLinkedin, faTwitter, faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
-import { updateUserProfile } from "@/hooks/getMemberData";
+import { updateUserProfile, updateUserProfileImage } from "@/hooks/getMemberData";
 import Badge from "@/components/Badge";
+import ImageCropModal from "@/components/platform/profile/ImageCropModal";
 
 interface WorkingHours {
   start: string;
@@ -83,6 +84,8 @@ export default function ProfilePage() {
 
   const [newSkill, setNewSkill] = useState("");
   const [newLanguage, setNewLanguage] = useState("");
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [cropImage, setCropImage] = useState('');
 
   useEffect(() => {
     setIsDataLoading(true);
@@ -264,12 +267,35 @@ export default function ProfilePage() {
   const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      // Create a URL for the selected image
       const imageUrl = URL.createObjectURL(file);
-      setPreviewImage(imageUrl);
+      setCropImage(imageUrl);
+      setShowCropModal(true);
+    }
+  };
 
-      console.log("Selected file:", file);
-      // You might want to add the image upload logic to the profile save function
+  const handleCropComplete = async (croppedImageUrl: string) => {
+    setIsLoading(true);
+    setPreviewImage(croppedImageUrl);
+
+    const response = await updateUserProfileImage(user?.id || 0, croppedImageUrl);
+
+    if (user) {
+      useAuthStore.getState().setUser({
+        ...user,
+        profileImage: response
+      });
+    }
+    
+    setShowCropModal(false);
+    useAuthStore.getState().setAlert("프로필 이미지가 업데이트되었습니다.", "success");
+    setIsLoading(false);
+  };
+
+  const handleCloseModal = () => {
+    setShowCropModal(false);
+    // Clean up object URL
+    if (cropImage) {
+      URL.revokeObjectURL(cropImage);
     }
   };
 
@@ -279,8 +305,11 @@ export default function ProfilePage() {
       if (previewImage) {
         URL.revokeObjectURL(previewImage);
       }
+      if (cropImage) {
+        URL.revokeObjectURL(cropImage);
+      }
     };
-  }, [previewImage]);
+  }, [previewImage, cropImage]);
 
   // Skeleton component for text fields
   const SkeletonField = () => (
@@ -322,37 +351,45 @@ export default function ProfilePage() {
         <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 h-32">
           <div className="absolute -bottom-12 left-8">
             <div className="relative">
-              <div className="h-24 w-24 relative rounded-full border-4 border-component-border bg-component-secondary-background flex items-center justify-center overflow-hidden">
+              <div className="h-24 w-24 relative rounded-full border-4 border-component-border bg-component-secondary-background flex items-center justify-center overflow-hidden group cursor-pointer" onClick={handleProfilePictureClick}>
                 {isDataLoading ? (
                   <div className="animate-pulse w-full h-full bg-component-secondary-background"></div>
                 ) : user?.profileImage ? (
-                  <Image
-                    src={user.profileImage}
-                    alt="Profile"
-                    className="w-full h-full object-fit rounded-full"
-                    quality={100}
-                    fill
-                  />
+                  <>
+                    <Image
+                      src={user.profileImage}
+                      alt="Profile"
+                      className="w-full h-full object-fit rounded-full"
+                      quality={100}
+                      fill
+                    />
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <FontAwesomeIcon icon={faCamera} className="text-white text-xl" />
+                    </div>
+                  </>
                 ) : (
-                  <FontAwesomeIcon icon={faUser} className="text-text-secondary text-3xl" />
+                  <>
+                    <FontAwesomeIcon icon={faUser} className="text-text-secondary text-3xl" />
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <FontAwesomeIcon icon={faCamera} className="text-white text-xl" />
+                    </div>
+                  </>
                 )}
               </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleProfilePictureChange}
+              />
               {isEditing === "profileImage" && (
-                <>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleProfilePictureChange}
-                  />
-                  <div
-                    className="absolute bottom-0 right-0 bg-component-secondary-background w-8 h-8 rounded-full flex items-center justify-center cursor-pointer hover:bg-component-tertiary-background transition-all"
-                    onClick={handleProfilePictureClick}
-                  >
-                    <FontAwesomeIcon icon={faCamera} className="text-text-secondary w-4 h-4" />
-                  </div>
-                </>
+                <div
+                  className="absolute bottom-0 right-0 bg-component-secondary-background w-8 h-8 rounded-full flex items-center justify-center cursor-pointer hover:bg-component-tertiary-background transition-all"
+                  onClick={handleProfilePictureClick}
+                >
+                  <FontAwesomeIcon icon={faCamera} className="text-text-secondary w-4 h-4" />
+                </div>
               )}
             </div>
           </div>
@@ -948,6 +985,16 @@ export default function ProfilePage() {
             {isLoading ? "저장 중..." : "저장"}
           </button>
         </div>
+      )}
+
+      {/* Image Crop Modal */}
+      {showCropModal && (
+        <ImageCropModal
+          image={cropImage}
+          onClose={handleCloseModal}
+          onCropComplete={handleCropComplete}
+          loading={isLoading}
+        />
       )}
     </div>
   );
