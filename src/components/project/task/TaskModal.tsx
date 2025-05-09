@@ -226,6 +226,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         ...prev,
         comments: [...prev.comments, newComment]
       }));
+      await refreshProject();
     } catch (error) {
       console.error("Error adding comment:", error);
       useAuthStore.getState().setAlert("댓글 추가에 실패했습니다.", "error");
