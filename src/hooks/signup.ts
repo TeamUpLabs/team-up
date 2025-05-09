@@ -11,10 +11,10 @@ export const signup = async (data: SignUpFormData) => {
 
   let profileImageFile = null;
   try {
-    const imageUrl = '/DefaultProfile.png';
+    const imageUrl = '/DefaultProfile.jpg';
     const response = await fetch(imageUrl);
     const blob = await response.blob();
-    profileImageFile = new File([blob], "DefaultProfile.png", { type: blob.type });
+    profileImageFile = new File([blob], "DefaultProfile.jpg", { type: blob.type });
   } catch (error) {
     console.error("Error fetching logo image:", error);
   }
@@ -32,7 +32,7 @@ export const signup = async (data: SignUpFormData) => {
     workingHours: transformedWorkingHours,
     languages: data.languages,
     introduction: data.introduction,
-    status: '활성',
+    status: '비활성',
     lastLogin: getCurrentKoreanTime(),
     createdAt: getCurrentKoreanTimeDate(),
   };
