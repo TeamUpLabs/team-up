@@ -208,7 +208,7 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
                 {unreadCount > 0 && (
                   <button 
                     onClick={markAllAsRead}
-                    className="text-xs bg-component-secondary-background hover:bg-component-tertiary-background text-point-color-indigo py-1 px-2 rounded-md transition-colors duration-200"
+                    className="text-xs hover:underline text-point-color-indigo py-1 px-2 rounded-md transition-colors duration-200"
                   >
                     모두 읽음
                   </button>
@@ -216,7 +216,7 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
                 {notifications.length > 0 && (
                   <button 
                     onClick={deleteAllNotifications}
-                    className="text-xs bg-component-secondary-background hover:bg-component-tertiary-background text-red-500 py-1 px-2 rounded-md transition-colors duration-200"
+                    className="text-xs hover:underline text-red-500 py-1 px-2 rounded-md transition-colors duration-200"
                   >
                     모두 삭제
                   </button>

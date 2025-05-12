@@ -53,8 +53,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             // Single notification, add it to existing ones
             setNotifications(prev => [data, ...prev]);
             
-            // Optionally show a toast/alert for new notifications
-            useAuthStore.getState().setAlert("새로운 알림이 도착했습니다.", "info");
+            // NotificationAlertProvider will handle showing the toast/alert
           }
         }
       } catch (error) {

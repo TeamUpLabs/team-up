@@ -11,6 +11,7 @@ import UserDropdown from "@/components/platform/UserDropdown";
 import NewProjectModal from "@/components/platform/NewProjectModal";
 import NotificationDropdown from "@/components/platform/NotificationDropdown";
 import { NotificationProvider } from "@/providers/NotificationProvider";
+import NotificationAlertProvider from "@/providers/NotificationAlertProvider";
 
 export default function PlatformLayout({ children, HeaderTitle }: { children: React.ReactNode, HeaderTitle: string }) {
   const pathname = usePathname();
@@ -71,6 +72,7 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
     ];
   return (
     <NotificationProvider>
+      <NotificationAlertProvider />
       <div className="flex min-h-screen bg-background">
         {/* 모바일 사이드바 오버레이 */}
           {isSidebarOpen && (
