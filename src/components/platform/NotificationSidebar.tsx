@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { Notification } from "@/types/Member";
-import { updateNotification, deleteNotification, deleteAllNotifications } from "@/hooks/getNotificationData";
 import { acceptScout, rejectScout } from "@/hooks/getMemberData";
 import { checkAndRefreshAuth } from "@/auth/authStore";
+import { useNotifications } from "@/providers/NotificationProvider";
 
 interface NotificationSidebarProps {
   isOpen: boolean;
@@ -14,57 +14,90 @@ interface NotificationSidebarProps {
 
 export default function NotificationSidebar({ isOpen, onClose }: NotificationSidebarProps) {
   const user = useAuthStore((state) => state.user);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { 
+    notifications, 
+    markAsRead, 
+    markAllAsRead, 
+    deleteNotification: deleteNotificationItem, 
+    deleteAllNotifications
+  } = useNotifications();
   const [activeTab, setActiveTab] = useState<"all" | "unread">("all");
 
-  useEffect(() => {
-    if (user) {
-      const notifications = user.notification || [];
-      setNotifications(notifications);
-    }
-  }, [user]);
-
-  const markAsRead = async (id: number) => {
+  const handleAcceptScout = async (notification: Notification) => {
     if (user?.id) {
       try {
-        await updateNotification(user.id, id);
-        setNotifications(notifications.map(notification =>
-          notification.id === id ? { ...notification, isRead: true } : notification
-        ));
-      } catch (error) {
-        console.error("Failed to update notification:", error);
-      }
-    }
-  };
-
-  const markAllAsRead = async () => {
-    if (user?.id) {
-      try {
-        const unreadNotifications = notifications.filter(notification => !notification.isRead);
-
-        for (const notification of unreadNotifications) {
+        if (notification.isRead == false) {
           await markAsRead(notification.id);
         }
-
-        setNotifications(notifications.map(notification => ({ ...notification, isRead: true })));
+        await acceptScout(user.id, notification.id);
+        // Refresh user data to update projects list
+        await checkAndRefreshAuth();
+        
+        useAuthStore.getState().setAlert("스카우트를 수락하였습니다.", "success");
       } catch (error) {
-        console.error("Failed to update all notifications:", error);
+        console.error("Failed to accept scout:", error);
+        useAuthStore.getState().setAlert("스카우트 수락에 실패했습니다.", "error");
       }
     }
-  };
+  }
 
-  const handleDeleteAll = async () => {
-    if (user?.id && notifications.length > 0) {
+  const handleRejectScout = async (notification: Notification) => {
+    if (user?.id) {
       try {
-        await deleteAllNotifications(user.id);
-        setNotifications([]);
-        useAuthStore.getState().setAlert("모든 알림이 삭제되었습니다.", "success");
+        if (notification.isRead == false) {
+          await markAsRead(notification.id);
+        }
+        await rejectScout(user.id, notification.id);
+        useAuthStore.getState().setAlert("스카우트를 거절하였습니다.", "success");
       } catch (error) {
-        console.error("Failed to delete all notifications:", error);
-        useAuthStore.getState().setAlert("알림 삭제에 실패했습니다.", "error");
+        console.error("Failed to reject scout:", error);
+        useAuthStore.getState().setAlert("스카우트 거절에 실패했습니다.", "error");
       }
     }
+  }
+
+  const handleDeleteNotification = async (e: React.MouseEvent, notification: Notification) => {
+    e.stopPropagation();
+    if (user?.id) {
+      try {
+        await deleteNotificationItem(notification.id);
+      } catch (error) {
+        console.error("Failed to delete notification:", error);
+      }
+    }
+  }
+
+  // Group notifications by date
+  const getNotificationDate = (timestamp: string) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (timestamp.includes("분 전") || timestamp.includes("시간 전") || timestamp.includes("방금 전")) {
+      return "오늘";
+    } else if (timestamp.includes("어제")) {
+      return "어제";
+    } else {
+      return "이전";
+    }
   };
+
+  const filteredNotifications = activeTab === "all"
+    ? notifications
+    : notifications.filter(n => !n.isRead);
+
+  const unreadCount = notifications?.filter(n => !n.isRead).length || 0;
+
+  const groupedNotifications = filteredNotifications.reduce((groups, notification) => {
+    const date = getNotificationDate(notification.timestamp);
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(notification);
+    return groups;
+  }, {} as Record<string, Notification[]>);
+
+  const dateOrder = ["오늘", "어제", "이전"];
 
   const getIconByType = (type: Notification["type"]) => {
     switch (type) {
@@ -127,91 +160,6 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
     }
   };
 
-  const filteredNotifications = activeTab === "all"
-    ? notifications
-    : notifications.filter(n => !n.isRead);
-
-  const unreadCount = notifications?.filter(n => !n.isRead).length || 0;
-
-  // Group notifications by date
-  const getNotificationDate = (timestamp: string) => {
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (timestamp.includes("분 전") || timestamp.includes("시간 전") || timestamp.includes("방금 전")) {
-      return "오늘";
-    } else if (timestamp.includes("어제")) {
-      return "어제";
-    } else {
-      return "이전";
-    }
-  };
-
-  const groupedNotifications = filteredNotifications.reduce((groups, notification) => {
-    const date = getNotificationDate(notification.timestamp);
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(notification);
-    return groups;
-  }, {} as Record<string, Notification[]>);
-
-  const dateOrder = ["오늘", "어제", "이전"];
-
-  const handleAcceptScout = async (notification: Notification) => {
-    if (user?.id) {
-      try {
-        if (notification.isRead == false) {
-          await markAsRead(notification.id);
-        }
-        await acceptScout(user.id, notification.id);
-        // Refresh user data to update projects list
-        await checkAndRefreshAuth();
-        
-        setNotifications(notifications.map(n =>
-          n.id === notification.id ? { ...n, result: "accept" } : n
-        ));
-        useAuthStore.getState().setAlert("스카우트를 수락하였습니다.", "success");
-      } catch (error) {
-        console.error("Failed to accept scout:", error);
-        useAuthStore.getState().setAlert("스카우트 수락에 실패했습니다.", "error");
-      }
-    }
-  }
-
-  const handleRejectScout = async (notification: Notification) => {
-    if (user?.id) {
-      try {
-        if (notification.isRead == false) {
-          await markAsRead(notification.id);
-        }
-        await rejectScout(user.id, notification.id);
-        setNotifications(notifications.map(n =>
-          n.id === notification.id ? { ...n, result: "reject" } : n
-        ));
-        useAuthStore.getState().setAlert("스카우트를 거절하였습니다.", "success");
-      } catch (error) {
-        console.error("Failed to reject scout:", error);
-        useAuthStore.getState().setAlert("스카우트 거절에 실패했습니다.", "error");
-      }
-    }
-  }
-
-  const handleDeleteNotification = async (e: React.MouseEvent, notification: Notification) => {
-    e.stopPropagation();
-    if (user?.id) {
-      try {
-        await deleteNotification(user.id, notification.id);
-        setNotifications(notifications.filter(n => n.id !== notification.id));
-        useAuthStore.getState().setAlert("알림이 삭제되었습니다.", "success");
-      } catch (error) {
-        console.error("Failed to delete notification:", error);
-        useAuthStore.getState().setAlert("알림 삭제에 실패했습니다.", "error");
-      }
-    }
-  }
-
   return (
     <div className={`fixed top-0 right-0 h-full border-l border-component-border bg-component-background transition-all duration-300 w-72 transform ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
       <div className="py-4 h-full flex flex-col">
@@ -271,7 +219,7 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
               </button>
             )}
             <button
-              onClick={handleDeleteAll}
+              onClick={deleteAllNotifications}
               className="flex-1 py-2 text-sm font-medium bg-component-secondary-background hover:bg-component-tertiary-background text-red-500 border border-component-border rounded-lg transition-colors duration-200"
             >
               <div className="flex items-center justify-center gap-1.5">

@@ -4,9 +4,9 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/auth/authStore";
 import { Notification } from "@/types/Member";
-import { updateNotification, deleteNotification, deleteAllNotifications } from "@/hooks/getNotificationData";
 import { acceptScout, rejectScout } from "@/hooks/getMemberData";
 import { checkAndRefreshAuth } from "@/auth/authStore";
+import { useNotifications } from "@/providers/NotificationProvider";
 
 interface NotificationDropdownProps {
   onToggleSidebar: () => void;
@@ -14,19 +14,17 @@ interface NotificationDropdownProps {
 
 export default function NotificationDropdown({ onToggleSidebar }: NotificationDropdownProps) {
   const user = useAuthStore((state) => state.user);
+  const { 
+    notifications, 
+    unreadCount, 
+    markAsRead, 
+    markAllAsRead, 
+    deleteNotification: deleteNotificationItem, 
+    deleteAllNotifications 
+  } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
-
-  const unreadCount = notifications?.filter(n => !n.isRead).length || 0;
-
-  useEffect(() => {
-    if (user) {
-      const notifications = user.notification || [];
-      setNotifications(notifications);
-    }
-  }, [user]);
 
   // Check for mobile view
   useEffect(() => {
@@ -58,51 +56,6 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
     };
   }, []);
 
-  const markAsRead = async (id: number) => {
-    if (user?.id) {
-      try {
-        await updateNotification(user.id, id);
-        setNotifications(notifications.map(notification =>
-          notification.id === id ? { ...notification, isRead: true } : notification
-        ));
-      } catch (error) {
-        console.error("Failed to update notification:", error);
-      }
-    }
-  };
-
-  const markAllAsRead = async () => {
-    if (user?.id) {
-      try {
-        // Get all unread notifications
-        const unreadNotifications = notifications.filter(notification => !notification.isRead);
-
-        // Process each notification sequentially to ensure reliability
-        for (const notification of unreadNotifications) {
-          await markAsRead(notification.id);
-        }
-
-        // Update local state after all API calls are successful
-        setNotifications(notifications.map(notification => ({ ...notification, isRead: true })));
-      } catch (error) {
-        console.error("Failed to update all notifications:", error);
-      }
-    }
-  };
-
-  const handleDeleteAll = async () => {
-    if (user?.id && notifications.length > 0) {
-      try {
-        await deleteAllNotifications(user.id);
-        setNotifications([]);
-        useAuthStore.getState().setAlert("모든 알림이 삭제되었습니다.", "success");
-      } catch (error) {
-        console.error("Failed to delete all notifications:", error);
-        useAuthStore.getState().setAlert("알림 삭제에 실패했습니다.", "error");
-      }
-    }
-  };
-
   const handleViewAllClick = () => {
     setIsOpen(false);
     onToggleSidebar();
@@ -114,15 +67,10 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
 
   const handleDeleteNotification = async (e: React.MouseEvent, notificationId: number) => {
     e.stopPropagation();
-    if (user?.id) {
-      try {
-        await deleteNotification(user.id, notificationId);
-        setNotifications(notifications.filter(notification => notification.id !== notificationId));
-        useAuthStore.getState().setAlert("알림이 삭제되었습니다.", "success");
-      } catch (error) {
-        console.error("Failed to delete notification:", error);
-        useAuthStore.getState().setAlert("알림 삭제에 실패했습니다.", "error");
-      }
+    try {
+      await deleteNotificationItem(notificationId);
+    } catch (error) {
+      console.error("Failed to delete notification:", error);
     }
   };
 
@@ -139,16 +87,8 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
         // Refresh user data to update projects list
         await checkAndRefreshAuth();
 
-        setNotifications(prev =>
-          prev.map(n => n.id === notification.id ? { ...n, result: "accept" as const } : n)
-        );
-
         useAuthStore.getState().setAlert("스카우트를 수락하였습니다.", "success");
       } catch (error) {
-        setNotifications(prev =>
-          prev.map(n => n.id === notification.id ?
-            { ...n, result: notification.result } : n)
-        );
         console.error("Failed to accept scout:", error);
         useAuthStore.getState().setAlert("스카우트 수락에 실패했습니다.", "error");
       }
@@ -166,16 +106,8 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
         }
         await rejectScout(user.id, notification.id);
 
-        setNotifications(prev =>
-          prev.map(n => n.id === notification.id ? { ...n, result: "reject" as const } : n)
-        );
-
         useAuthStore.getState().setAlert("스카우트를 거절하였습니다.", "success");
       } catch (error) {
-        setNotifications(prev =>
-          prev.map(n => n.id === notification.id ?
-            { ...n, result: notification.result } : n)
-        );
         console.error("Failed to reject scout:", error);
         useAuthStore.getState().setAlert("스카우트 거절에 실패했습니다.", "error");
       }
@@ -267,31 +199,26 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className={`absolute ${isMobile ? 'right-0 left-0 -translate-x-1/2 md:translate-x-0 md:left-auto md:right-0' : 'right-0'} mt-2 w-80 ${isMobile ? 'max-w-[calc(100vw-2rem)] mx-auto' : ''} bg-component-background border border-component-border rounded-lg shadow-lg z-50 overflow-hidden`}
-            style={isMobile ? {
-              width: 'calc(100vw - 2rem)',
-              maxWidth: '320px',
-              left: '50%',
-              transform: 'translateX(-50%)'
-            } : undefined}
+            transition={{ duration: 0.2 }}
+            className="absolute right-0 mt-2 bg-component-background border border-component-border rounded-lg shadow-lg overflow-hidden z-[9000] w-80 max-w-[calc(100vw-2rem)]"
           >
             <div className="p-4 border-b border-component-border flex justify-between items-center">
-              <h3 className="font-semibold text-text-primary text-base">알림 ({notifications.length})</h3>
-              <div className="flex gap-3">
+              <h3 className="font-semibold">알림</h3>
+              <div className="flex gap-2">
                 {unreadCount > 0 && (
-                  <button
+                  <button 
                     onClick={markAllAsRead}
-                    className="text-xs text-point-color-indigo hover:underline font-medium"
+                    className="text-xs hover:underline text-point-color-indigo py-1 px-2 rounded-md transition-colors duration-200"
                   >
                     모두 읽음
                   </button>
                 )}
                 {notifications.length > 0 && (
-                  <button
-                    onClick={handleDeleteAll}
-                    className="text-xs text-red-500 hover:underline font-medium"
+                  <button 
+                    onClick={deleteAllNotifications}
+                    className="text-xs hover:underline text-red-500 py-1 px-2 rounded-md transition-colors duration-200"
                   >
-                    전체 삭제
+                    모두 삭제
                   </button>
                 )}
               </div>
@@ -317,13 +244,11 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
                           )}
                         </div>
                         <p className="text-sm text-text-secondary mb-2">{notification.message}</p>
-
-                        <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center justify-between">
                           <span className="text-xs text-text-tertiary">{notification.timestamp}</span>
-
                           <div className="flex items-center">
                             {notification.type === "scout" && notification.result !== "accept" && notification.result !== "reject" && (
-                              <div className="flex items-center gap-3 mr-3">
+                              <div className="flex items-center gap-2 mr-2">
                                 <button
                                   onClick={(e) => handleAcceptScout(e, notification)}
                                   className="text-xs font-medium text-point-color-indigo hover:underline"
@@ -339,16 +264,15 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
                               </div>
                             )}
                             {notification.type === "scout" && notification.result === "accept" && (
-                              <div className="flex items-center mr-3">
+                              <div className="flex items-center mr-2">
                                 <span className="text-xs font-medium text-point-color-indigo">수락함</span>
                               </div>
                             )}
                             {notification.type === "scout" && notification.result === "reject" && (
-                              <div className="flex items-center mr-3">
+                              <div className="flex items-center mr-2">
                                 <span className="text-xs font-medium text-point-color-indigo">거절함</span>
                               </div>
                             )}
-
                             <button
                               onClick={(e) => handleDeleteNotification(e, notification.id)}
                               className="text-text-tertiary hover:text-red-500 p-1 transition-colors duration-200"
@@ -365,26 +289,27 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
                   </div>
                 ))
               ) : (
-                <div className="flex flex-col items-center justify-center h-60 text-center">
-                  <div className="bg-gray-100 p-3 rounded-full mb-3">
+                <div className="py-10 flex flex-col items-center justify-center text-center">
+                  <div className="bg-component-tertiary-background p-3 rounded-full mb-3">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.63 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.63 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
-                  <p className="text-text-secondary mb-1 font-medium">알림이 없습니다</p>
-                  <p className="text-sm text-text-tertiary">새로운 알림이 도착하면 여기에 표시됩니다</p>
+                  <p className="text-text-secondary font-medium text-sm">알림이 없습니다</p>
                 </div>
               )}
             </div>
 
-            <div className="p-3 border-t border-component-border bg-component-secondary-background/50">
-              <button
-                className="w-full py-2 text-sm font-medium text-center text-point-color-indigo hover:underline"
-                onClick={handleViewAllClick}
-              >
-                모든 알림 보기
-              </button>
-            </div>
+            {notifications.length > 0 && !isMobile && (
+              <div className="p-3 border-t border-component-border">
+                <button
+                  onClick={handleViewAllClick}
+                  className="w-full py-2 text-center text-sm font-medium text-point-color-indigo hover:bg-component-tertiary-background rounded-md transition-colors duration-200"
+                >
+                  모든 알림 보기
+                </button>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
