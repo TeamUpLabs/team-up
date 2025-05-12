@@ -32,6 +32,7 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(true);
   const [showLabels, setShowLabels] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { project } = useProject();
   
   useEffect(() => {
@@ -52,6 +53,17 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
     return () => clearTimeout(timer);
   }, [isMinimized]);
   
+  // Check if we're on mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // 1024px is the lg breakpoint in Tailwind
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
   // 임시 채널 데이터
   const channels: Channel[] = [
     { id: 'general', name: '일반' },
@@ -69,18 +81,18 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
   return (
     <div 
       className={`fixed h-full border-r border-component-border z-[8500] bg-component-background transition-all duration-300 lg:translate-x-0 ${
-        isMinimized ? 'w-16' : 'w-64'
+        isMobile ? 'w-64' : (isMinimized ? 'w-16' : 'w-64')
       } ${
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
-      onMouseEnter={() => setIsMinimized(false)}
-      onMouseLeave={() => setIsMinimized(true)}
+      onMouseEnter={() => !isMobile && setIsMinimized(false)}
+      onMouseLeave={() => !isMobile && setIsMinimized(true)}
     >
       <div className="flex flex-col h-full">
         <div>
           <div className="flex items-center justify-center py-5 px-6 transition-all duration-300">
-            {!isMinimized ? (
-              <Link href={titleHref} className={`block transition-opacity duration-200 ${showLabels ? 'opacity-100' : 'opacity-0'}`}>
+            {(!isMinimized || isMobile) ? (
+              <Link href={titleHref} className={`block transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
                 <h1 className="text-xl font-bold text-text-primary text-center whitespace-nowrap">{title}</h1>
               </Link>
             ) : (
@@ -99,25 +111,25 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                       className={`flex items-center px-4 py-2 rounded-lg w-full transition-all duration-300 ${
                         item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
                       } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${
-                        isMinimized ? 'justify-center' : 'justify-between'
+                        (isMinimized && !isMobile) ? 'justify-center' : 'justify-between'
                       }`}
                     >
                       <div className="flex items-center">
-                        <FontAwesomeIcon icon={item.icon} className={`w-5 ${isMinimized ? '' : 'mr-3'}`} />
-                        {!isMinimized && (
-                          <span className={`transition-opacity duration-200 whitespace-nowrap ${showLabels ? 'opacity-100' : 'opacity-0'}`}>
+                        <FontAwesomeIcon icon={item.icon} className={`w-5 ${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />
+                        {(!isMinimized || isMobile) && (
+                          <span className={`transition-opacity duration-200 whitespace-nowrap ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
                             {item.label}
                           </span>
                         )}
                       </div>
-                      {!isMinimized && (
+                      {(!isMinimized || isMobile) && (
                         <FontAwesomeIcon 
                           icon={isChatOpen ? faChevronUp : faChevronDown} 
-                          className={`w-3 transition-opacity duration-200 ${showLabels ? 'opacity-100' : 'opacity-0'}`}
+                          className={`w-3 transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}
                         />
                       )}
                     </button>
-                    {isChatOpen && !isMinimized && showLabels && (
+                    {isChatOpen && (!isMinimized || isMobile) && (showLabels || isMobile) && (
                       <div className="ml-8 mt-2 space-y-2 transition-opacity duration-200">
                         {channels.map((channel) => (
                           <Link
@@ -145,16 +157,16 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                     className={`flex items-center mx-2 px-4 py-2 rounded-lg transition-all duration-300 ${
                       item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
                     } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${
-                      isMinimized ? 'justify-center' : ''
+                      (isMinimized && !isMobile) ? 'justify-center' : ''
                     }`}
                   >
-                    <FontAwesomeIcon icon={item.icon} className={`w-5 ${isMinimized ? '' : 'mr-3'}`} />
-                    {!isMinimized && (
-                      <span className={`transition-opacity duration-200 whitespace-nowrap ${showLabels ? 'opacity-100' : 'opacity-0'}`}>
+                    <FontAwesomeIcon icon={item.icon} className={`w-5 ${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />
+                    {(!isMinimized || isMobile) && (
+                      <span className={`transition-opacity duration-200 whitespace-nowrap ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
                         {item.label}
                       </span>
                     )}
-                    <span className={`${isMinimized ? 'absolute right-2' : 'absolute right-4'} flex h-5 w-5`}>
+                    <span className={`${(isMinimized && !isMobile) ? 'absolute right-2' : 'absolute right-4'} flex h-5 w-5`}>
                       <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-100"></span>
                       <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
                         {notificationCount}
@@ -171,13 +183,13 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                   className={`flex items-center mx-2 px-4 py-2 rounded-lg transition-all duration-300 ${
                     item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
                   } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${
-                    isMinimized ? 'justify-center' : ''
+                    (isMinimized && !isMobile) ? 'justify-center' : ''
                   }`}
-                  title={isMinimized ? item.label : ''}
+                  title={(isMinimized && !isMobile) ? item.label : ''}
                 >
-                  <FontAwesomeIcon icon={item.icon} className={`w-5 ${isMinimized ? '' : 'mr-3'}`} />
-                  {!isMinimized && (
-                    <span className={`transition-opacity duration-200 whitespace-nowrap ${showLabels ? 'opacity-100' : 'opacity-0'}`}>
+                  <FontAwesomeIcon icon={item.icon} className={`w-5 ${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />
+                  {(!isMinimized || isMobile) && (
+                    <span className={`transition-opacity duration-200 whitespace-nowrap ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
                       {item.label}
                     </span>
                   )}
@@ -195,13 +207,13 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
               className={`flex items-center mx-2 px-4 py-2 rounded-lg transition-all duration-300 ${
                 exitItem.isActive ? 'text-red-500 bg-red-500/10' : 'text-text-secondary'
               } hover:bg-red-500/10 hover:text-red-500 ${
-                isMinimized ? 'justify-center' : ''
+                (isMinimized && !isMobile) ? 'justify-center' : ''
               }`}
-              title={isMinimized ? exitItem.label : ''}
+              title={(isMinimized && !isMobile) ? exitItem.label : ''}
             >
-              <FontAwesomeIcon icon={exitItem.icon} className={`w-5 ${isMinimized ? '' : 'mr-3'}`} />
-              {!isMinimized && (
-                <span className={`transition-opacity duration-200 whitespace-nowrap ${showLabels ? 'opacity-100' : 'opacity-0'}`}>
+              <FontAwesomeIcon icon={exitItem.icon} className={`w-5 ${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />
+              {(!isMinimized || isMobile) && (
+                <span className={`transition-opacity duration-200 whitespace-nowrap ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
                   {exitItem.label}
                 </span>
               )}
