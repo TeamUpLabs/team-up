@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faBell, faMessage, faCalendarCheck, faUser, faComments } from '@fortawesome/free-solid-svg-icons';
-import { useNotifications } from "./NotificationProvider";
+import { useNotifications } from "@/providers/NotificationProvider";
 import { Notification } from "@/types/Member";
 
 // Internal component that uses hooks and will only render when inside NotificationProvider
