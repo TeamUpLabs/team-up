@@ -24,23 +24,6 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
   } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Check for mobile view
-  useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    // Initial check
-    checkIfMobile();
-
-    // Add event listener
-    window.addEventListener('resize', checkIfMobile);
-
-    // Cleanup
-    return () => window.removeEventListener('resize', checkIfMobile);
-  }, []);
 
   // 외부 클릭 감지
   useEffect(() => {
@@ -300,7 +283,7 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
               )}
             </div>
 
-            {notifications.length > 0 && !isMobile && (
+            {notifications.length > 0 && (
               <div className="p-3 border-t border-component-border">
                 <button
                   onClick={handleViewAllClick}
