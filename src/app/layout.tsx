@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'
@@ -8,6 +8,12 @@ import ConfirmProvider from "@/providers/ConfirmProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 
 config.autoAddCss = false
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "TeamUp | 함께 성장하는 협업 플랫폼",
@@ -47,11 +53,6 @@ export const metadata: Metadata = {
     description: "개발자, 디자이너, 기획자를 위한 토이 프로젝트 협업 플랫폼",
     images: ["/Logo.jpg"],
     creator: "@teamup",
-  },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
   },
   icons: {
     icon: "/MiniLogo.jpg",
