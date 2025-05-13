@@ -54,13 +54,12 @@ export default function ConfirmProvider() {
     <>
       {confirm && (
         <div
-          className={`fixed top-0 left-0 right-0 z-[10001] transition-all duration-300 ease-out ${
-            confirmVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+          className={`fixed top-0 left-0 right-0 z-[10001] transition-all duration-300 ease-out ${confirmVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
             }`}
         >
           <div className="max-w-2xl mx-auto px-4 py-3 mt-4">
             <div
-              className="bg-component-background border-0 rounded-xl shadow-lg backdrop-blur-xl transition-all relative overflow-hidden"
+              className="bg-component-background border border-component-border rounded-xl shadow-lg backdrop-blur-xl transition-all relative overflow-hidden"
             >
               <div className="p-5">
                 <h3 className="text-sm font-medium text-text-primary mb-3 flex items-center">
@@ -68,25 +67,25 @@ export default function ConfirmProvider() {
                   확인
                 </h3>
                 <p className="text-text-primary text-sm mb-5">{confirm.message}</p>
-                
+
                 <div className="flex justify-end space-x-3">
-                <button
-                  onClick={handleConfirmClose}
+                  <button
+                    onClick={handleConfirmClose}
                     className="px-4 py-2 text-xs font-medium text-white bg-cancel-button-background hover:bg-cancel-button-background-hover rounded-lg transition-colors duration-150 flex items-center"
                   >
                     <FontAwesomeIcon icon={faTimes} className="w-3 h-3 mr-1.5" />
                     취소
-                </button>
-                <button
-                  onClick={() => {
-                    if (confirm.onConfirm) confirm.onConfirm();
-                    handleConfirmClose();
-                  }}
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm.onConfirm) confirm.onConfirm();
+                      handleConfirmClose();
+                    }}
                     className="px-4 py-2 text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors duration-150 flex items-center"
                   >
                     <FontAwesomeIcon icon={faCheck} className="w-3 h-3 mr-1.5" />
                     확인
-                </button>
+                  </button>
                 </div>
               </div>
 
