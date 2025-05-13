@@ -6,11 +6,13 @@ import {
   faMicrophoneSlash, faVideoSlash
 } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface Participant {
   userId: string;
   name: string;
   role: string;
+  profileImage: string | undefined;
   isLocal: boolean;
   isAudioMuted?: boolean;
   isVideoOff?: boolean;
@@ -61,9 +63,13 @@ const VideoParticipantList: React.FC<VideoParticipantListProps> = ({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md bg-gray-700"
+                  <div className="w-12 h-12 relative rounded-full flex items-center justify-center text-white shadow-md bg-gray-700"
                   >
-                    {getAvatarLetter(participant.name)}
+                    {participant.profileImage ? (
+                      <Image src={participant.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                    ) : (
+                      getAvatarLetter(participant.name)
+                    )}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">

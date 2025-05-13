@@ -1,11 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMaximize, faMinimize, faMicrophoneSlash } from '@fortawesome/free-solid-svg-icons';
+import Image from 'next/image';
 
 interface RemoteVideoProps {
   stream: MediaStream | null;
   userName: string;
   userId: string;
+  userProfileImage: string | undefined;
   isPinned: boolean;
   muted?: boolean;
   isRemoteVideoOff?: boolean;
@@ -17,6 +19,7 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
   stream, 
   userName, 
   userId, 
+  userProfileImage,
   isPinned,
   muted = false,
   isRemoteVideoOff = false,
@@ -132,10 +135,14 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
       {shouldShowAvatar ? (
         <div className="flex items-center justify-center h-full">
           <div className="flex flex-col items-center">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gray-700 flex items-center justify-center shadow-lg">
-              <span className="text-white text-lg sm:text-xl font-medium">
-                {getInitials(userName)}
-              </span>
+            <div className="w-14 h-14 sm:w-16 sm:h-16 relative rounded-full bg-gray-700 flex items-center justify-center shadow-lg">
+              {userProfileImage ? (
+                <Image src={userProfileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+              ) : (
+                <span className="text-white text-lg sm:text-xl font-medium">
+                  {getInitials(userName)}
+                </span>
+              )}
             </div>
             {hasError && (
               <p className="text-white/70 text-xs mt-2">비디오를 불러올 수 없습니다</p>
@@ -167,8 +174,12 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
       <div className="absolute top-0 inset-x-0 p-1.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full pl-1 pr-2 py-0.5">
-            <div className="w-5 h-5 text-xs rounded-full bg-indigo-600 flex items-center justify-center text-white">
-              {getInitials(userName)}
+            <div className="w-5 h-5 relative text-xs rounded-full bg-indigo-600 flex items-center justify-center text-white">
+              {userProfileImage ? (
+                <Image src={userProfileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+              ) : (
+                getInitials(userName)
+              )}
             </div>
             <span className="text-white text-xs font-medium">{userName}</span>
             {isRemoteAudioMuted && (

@@ -235,6 +235,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         userId: 'local',
         name: getUserName(userId),
         role: getUserRole(userId),
+        profileImage: project?.members.find(member => member.id === Number(userId))?.profileImage,
         isLocal: true,
         isAudioMuted,
         isVideoOff,
@@ -244,6 +245,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         userId: peer.userId,
         name: getUserName(peer.userId),
         role: getUserRole(peer.userId),
+        profileImage: project?.members.find(member => member.id === Number(peer.userId))?.profileImage,
         isLocal: false
       }))
     ];
@@ -418,6 +420,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
                   key={`remote-video-${user.userId}`}
                   stream={user.stream}
                   userName={getUserName(user.userId)}
+                  userProfileImage={project?.members.find(member => member.id === Number(user.userId))?.profileImage || undefined}
                   userId={user.userId}
                   isPinned={pinnedUser === user.userId}
                   isRemoteVideoOff={peers.find(p => p.userId === user.userId)?.isRemoteVideoOff || false}
