@@ -91,13 +91,13 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
                   }
                 });
               }}
-              className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover"
+              className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover hover:underline"
             >
               참여 요청하기
             </button>
           )
         ) : (
-          <Link href={`/platform/${project.id}`} className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover">
+          <Link href={`/platform/${project.id}`} className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover hover:underline">
             참여하기
           </Link>
         )}
