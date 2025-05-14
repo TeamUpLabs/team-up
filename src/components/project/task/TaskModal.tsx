@@ -24,7 +24,7 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
-  const { project, refreshProject } = useProject();
+  const { project } = useProject();
   const user = useAuthStore.getState().user;
   const router = useRouter();
   const params = useParams();
@@ -59,7 +59,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
     try {
       await updateSubtask(project?.id ? String(project.id) : "0", task.id, updated[index]);
-      await refreshProject();
     } catch (error) {
       console.error("Error updating subtask:", error);
     }
@@ -129,7 +128,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       useAuthStore.getState().setAlert("작업 수정에 성공했습니다.", "success");
       onClose();
-      await refreshProject();
     } catch (error) {
       console.error("Error updating task:", error);
       useAuthStore.getState().setAlert("작업 수정에 실패했습니다.", "error");
@@ -149,7 +147,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         useAuthStore.getState().setAlert("작업 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
         onClose();
-        window.location.reload();
       } catch (error) {
         console.error("Error deleting task:", error);
         useAuthStore.getState().setAlert("작업 삭제에 실패했습니다.", "error");
@@ -226,7 +223,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         ...prev,
         comments: [...prev.comments, newComment]
       }));
-      await refreshProject();
     } catch (error) {
       console.error("Error adding comment:", error);
       useAuthStore.getState().setAlert("댓글 추가에 실패했습니다.", "error");

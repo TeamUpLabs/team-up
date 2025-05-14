@@ -21,7 +21,7 @@ interface MilestoneModalProps {
 export default function MilestoneModal({ milestone, isOpen, onClose }: MilestoneModalProps) {
   const user = useAuthStore.getState().user;
   const params = useParams();
-  const { project, refreshProject } = useProject();
+  const { project } = useProject();
   const router = useRouter();
   const [milestoneData, setMilestoneData] = useState<MileStone>(milestone);
   const [isEditing, setIsEditing] = useState<string>("none");
@@ -111,7 +111,6 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
         useAuthStore.getState().setAlert("마일스톤 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
         onClose();
-        await refreshProject();
       } catch (error) {
         console.error("Error deleting milestone:", error);
         useAuthStore.getState().setAlert("마일스톤 삭제에 실패했습니다.", "error");
@@ -153,7 +152,6 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
       });
       useAuthStore.getState().setAlert("마일스톤이 성공적으로 수정되었습니다.", "success");
       setIsEditing("none");
-      await refreshProject();
     } catch (error) {
       console.error("Error updating milestone:", error);
       useAuthStore.getState().setAlert("마일스톤 수정에 실패했습니다.", "error");

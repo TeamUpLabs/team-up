@@ -51,7 +51,6 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
         setTimeout(() => {
           setSubmitStatus('idle');
           onClose();
-          window.location.reload();
         }, 1000);
       } catch (error) {
         console.error(error);
