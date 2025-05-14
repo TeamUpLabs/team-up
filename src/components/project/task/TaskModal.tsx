@@ -721,7 +721,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   <textarea
                     name="comment"
                     placeholder="댓글을 작성하세요..."
-                    className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
+                    className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent resize-none"
                     rows={3}
                   />
                   <div className="flex justify-end mt-2">
