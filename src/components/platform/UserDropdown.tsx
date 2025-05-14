@@ -31,7 +31,7 @@ export default function UserDropdown() {
   }, []);
 
   return (
-    <div className="relative z-[9000]" ref={dropdownRef}>
+    <div className="relative z-[9000] flex" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="font-semibold text-sm cursor-pointer"
@@ -59,7 +59,7 @@ export default function UserDropdown() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute right-0 mt-2 w-56 rounded-md bg-component-tertiary-background shadow-md z-[9999] border border-component-border overflow-visible"
+            className="absolute right-0 mt-10 w-56 rounded-md bg-component-tertiary-background shadow-md z-[9999] border border-component-border overflow-visible"
           >
             <div>
               <MenuItem
