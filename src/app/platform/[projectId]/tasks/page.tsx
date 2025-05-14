@@ -15,7 +15,7 @@ import { updateTaskStatus } from '@/hooks/getTaskData';
 import { useAuthStore } from '@/auth/authStore';
 
 export default function TasksPage() {
-  const { project, refreshProject } = useProject();
+  const { project } = useProject();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,7 +84,6 @@ export default function TasksPage() {
       task.id === taskId ? { ...task, status: newStatus } : task
     ));
     await updateTaskStatus(project?.id ?? '', taskId, newStatus);
-    await refreshProject();
   };
 
   const handleTaskClick = (task: Task) => {
