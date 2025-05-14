@@ -14,7 +14,7 @@ interface MilestoneCreateModalProps {
 }
 
 export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreateModalProps) {
-  const { project, refreshProject } = useProject();
+  const { project } = useProject();
   const [formData, setFormData] = useState({
     project_id: project?.id,
     title: "",
@@ -83,7 +83,6 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
         setTimeout(() => {
           setSubmitStatus('idle');
           onClose();
-          refreshProject();
         }, 1000);
       } catch (error) {
         console.error(error);

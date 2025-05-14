@@ -5,13 +5,12 @@ import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faPencil } from "@fortawesome/free-solid-svg-icons";
 import Badge from "@/components/Badge";
-import { useProject } from "@/contexts/ProjectContext";
+
 interface GeneralSettingTabProps {
   project: Project;
 }
 
 export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
-  const { refreshProject } = useProject();
   const user = useAuthStore(state => state.user);
   const [isEditing, setIsEditing] = useState<string>("none");
   const [isLoading, setIsLoading] = useState(false);
@@ -163,7 +162,6 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
 
       await updateProject(project.id, formData);
       useAuthStore.getState().setAlert("프로젝트가 업데이트되었습니다.", "success");
-      await refreshProject();
       setIsEditing("none");
     } catch (error) {
       console.error("Error saving project:", error);
