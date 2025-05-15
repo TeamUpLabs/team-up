@@ -1,13 +1,14 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faMicrophone, faMicrophoneSlash, 
-  faVideo, faVideoSlash, 
+import {
+  faMicrophone, faMicrophoneSlash,
+  faVideo, faVideoSlash,
   faPhone, faMaximize, faMinimize,
   faEllipsisVertical, faGear,
   faUsers,
   faDesktop,
-  faStop
+  faStop,
+  faFolderOpen
 } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import Tooltip from '@/components/ui/Tooltip';
@@ -31,6 +32,8 @@ interface VideoControlsProps {
   onToggleFullscreen: () => void;
   onToggleParticipantList: () => void;
   onToggleScreenShare?: () => void;
+  onToggleSharedFiles?: () => void;
+  hasSharedFiles?: boolean;
 }
 
 const VideoControls: React.FC<VideoControlsProps> = ({
@@ -51,10 +54,12 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   onToggleOptions,
   onToggleFullscreen,
   onToggleParticipantList,
-  onToggleScreenShare
+  onToggleScreenShare,
+  onToggleSharedFiles,
+  hasSharedFiles = false
 }) => {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
@@ -67,12 +72,12 @@ const VideoControls: React.FC<VideoControlsProps> = ({
         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
         <span className="text-sm whitespace-nowrap">채널: #{channelId}</span>
       </div>
-      
+
       <Tooltip content={isParticipantListVisible ? "참가자 목록 닫기" : "참가자 목록 보기"}>
-        <button 
-          onClick={onToggleParticipantList} 
+        <button
+          onClick={onToggleParticipantList}
           className={`w-10 h-10 rounded-full flex items-center justify-center
-            ${isParticipantListVisible 
+            ${isParticipantListVisible
               ? 'bg-indigo-600'
               : 'bg-black/70 hover:bg-black/90'} transition-colors`}
         >
@@ -82,98 +87,116 @@ const VideoControls: React.FC<VideoControlsProps> = ({
           </span>
         </button>
       </Tooltip>
-      
+
       <div className="w-px h-8 bg-white/20 mx-1"></div>
-      
+
       <Tooltip content={isAudioMuted ? "마이크 켜기" : "마이크 끄기"}>
-        <button 
-          onClick={onToggleAudio} 
+        <button
+          onClick={onToggleAudio}
           className={`w-12 h-12 md:w-14 md:h-14 rounded-full transition-all flex items-center justify-center
-            ${isAudioMuted 
-              ? 'bg-red-500 hover:bg-red-600' 
+            ${isAudioMuted
+              ? 'bg-red-500 hover:bg-red-600'
               : 'bg-indigo-600 hover:bg-indigo-700'}`}
         >
-          <FontAwesomeIcon 
-            icon={isAudioMuted ? faMicrophoneSlash : faMicrophone} 
-            className="text-white" 
+          <FontAwesomeIcon
+            icon={isAudioMuted ? faMicrophoneSlash : faMicrophone}
+            className="text-white"
           />
         </button>
       </Tooltip>
-      
+
       <Tooltip content={isVideoOff ? "비디오 켜기" : "비디오 끄기"}>
-        <button 
-          onClick={onToggleVideo} 
+        <button
+          onClick={onToggleVideo}
           className={`w-12 h-12 md:w-14 md:h-14 rounded-full transition-all flex items-center justify-center
-            ${isVideoOff 
-              ? 'bg-red-500 hover:bg-red-600' 
+            ${isVideoOff
+              ? 'bg-red-500 hover:bg-red-600'
               : 'bg-indigo-600 hover:bg-indigo-700'}`}
         >
-          <FontAwesomeIcon 
-            icon={isVideoOff ? faVideoSlash : faVideo} 
-            className="text-white" 
+          <FontAwesomeIcon
+            icon={isVideoOff ? faVideoSlash : faVideo}
+            className="text-white"
           />
         </button>
       </Tooltip>
-      
+
       <Tooltip content="통화 종료">
-        <button 
-          onClick={onEndCall} 
+        <button
+          onClick={onEndCall}
           className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-red-500 hover:bg-red-600 transition-colors flex items-center justify-center"
         >
-          <FontAwesomeIcon 
-            icon={faPhone} 
-            className="transform rotate-135 text-white" 
+          <FontAwesomeIcon
+            icon={faPhone}
+            className="transform rotate-135 text-white"
           />
         </button>
       </Tooltip>
-      
+
       <div className="w-px h-8 bg-white/20 mx-1"></div>
-      
+
+      {onToggleSharedFiles && (
+        <Tooltip content="공유된 파일 보기">
+          <button
+            onClick={onToggleSharedFiles}
+            className={`w-10 h-10 rounded-full flex items-center justify-center
+              ${hasSharedFiles ? 'bg-indigo-600' : 'bg-black/70 hover:bg-black/90'} transition-colors relative`}
+          >
+            <FontAwesomeIcon
+              icon={faFolderOpen}
+              className="text-white text-sm"
+            />
+            {hasSharedFiles && (
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+            )}
+          </button>
+        </Tooltip>
+      )}
+
       <Tooltip content="설정">
-        <button 
+        <button
           onClick={onToggleSettings}
           className={`w-10 h-10 rounded-full flex items-center justify-center
-            ${showSettings 
+            ${showSettings
               ? 'bg-indigo-600'
               : 'bg-black/70 hover:bg-black/90'} transition-colors`}
         >
           <FontAwesomeIcon icon={faGear} className="text-white text-sm" />
         </button>
       </Tooltip>
-      
+
       <Tooltip content="더 보기">
-        <button 
+        <button
           onClick={onToggleOptions}
           className={`w-10 h-10 rounded-full flex items-center justify-center
-            ${showOptions 
+            ${showOptions
               ? 'bg-indigo-600'
               : 'bg-black/70 hover:bg-black/90'} transition-colors`}
         >
           <FontAwesomeIcon icon={faEllipsisVertical} className="text-white text-sm" />
         </button>
       </Tooltip>
-      
+
       <Tooltip content={isFullscreen ? "전체화면 종료" : "전체화면"}>
-        <button 
+        <button
           onClick={onToggleFullscreen}
           className="w-10 h-10 rounded-full bg-black/70 hover:bg-black/90 flex items-center justify-center transition-colors"
         >
-          <FontAwesomeIcon 
-            icon={isFullscreen ? faMinimize : faMaximize} 
-            className="text-white text-sm" 
+          <FontAwesomeIcon
+            icon={isFullscreen ? faMinimize : faMaximize}
+            className="text-white text-sm"
           />
         </button>
       </Tooltip>
-      
+
       {onToggleScreenShare && (
         <Tooltip content={isScreenSharing ? "화면 공유 종료" : "화면 공유"}>
-          <button 
+          <button
             onClick={onToggleScreenShare}
             className={`w-10 h-10 rounded-full bg-black/70 hover:bg-black/90 flex items-center justify-center transition-colors ${isScreenSharePaused ? 'animate-pulse ring-2 ring-yellow-500' : ''} ${isScreenSharing ? 'bg-red-500 hover:bg-red-600' : ''}`}
           >
-            <FontAwesomeIcon 
-              icon={isScreenSharing ? faStop : faDesktop} 
-              className={`text-white text-sm ${isScreenSharePaused ? 'text-yellow-400' : ''}`} 
+            <FontAwesomeIcon
+              icon={isScreenSharing ? faStop : faDesktop}
+              className={`text-white text-sm ${isScreenSharePaused ? 'text-yellow-400' : ''}`}
             />
           </button>
         </Tooltip>
