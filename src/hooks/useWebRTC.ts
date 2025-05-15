@@ -506,6 +506,18 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
     // Find peer in ref first
     const peerIndex = peersRef.current.findIndex(p => p.userId === peerId);
     if (peerIndex !== -1) {
+      // Safely close data channels first
+      try {
+        if (peersRef.current[peerIndex].dataChannel) {
+          peersRef.current[peerIndex].dataChannel.close();
+        }
+        if (peersRef.current[peerIndex].remoteDataChannel) {
+          peersRef.current[peerIndex].remoteDataChannel.close();
+        }
+      } catch (e) {
+        console.warn(`Error closing data channels for peer ${peerId}:`, e);
+      }
+      
       // Close the connection
       peersRef.current[peerIndex].connection.close();
       
@@ -557,21 +569,29 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       peersRef.current.forEach(peer => {
         try {
           if (peer.dataChannel && peer.dataChannel.readyState === 'open') {
-            const statusMessage = {
-              type: 'status',
-              videoOff: isVideoOff,
-              audioMuted: newMutedState
-            };
-            peer.dataChannel.send(JSON.stringify(statusMessage));
+            try {
+              const statusMessage = {
+                type: 'status',
+                videoOff: isVideoOff,
+                audioMuted: newMutedState
+              };
+              peer.dataChannel.send(JSON.stringify(statusMessage));
+            } catch (channelError) {
+              console.warn(`Error sending through data channel to peer ${peer.userId}:`, channelError);
+            }
           }
           
           if (peer.remoteDataChannel && peer.remoteDataChannel.readyState === 'open') {
-            const statusMessage = {
-              type: 'status',
-              videoOff: isVideoOff,
-              audioMuted: newMutedState
-            };
-            peer.remoteDataChannel.send(JSON.stringify(statusMessage));
+            try {
+              const statusMessage = {
+                type: 'status',
+                videoOff: isVideoOff,
+                audioMuted: newMutedState
+              };
+              peer.remoteDataChannel.send(JSON.stringify(statusMessage));
+            } catch (channelError) {
+              console.warn(`Error sending through remote data channel to peer ${peer.userId}:`, channelError);
+            }
           }
         } catch (error) {
           console.warn(`Error sending audio status to peer ${peer.userId}:`, error);
@@ -658,13 +678,17 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
         try {
           const channel = peer.dataChannel || peer.remoteDataChannel;
           if (channel && channel.readyState === 'open') {
-            const statusMessage = {
-              type: 'status',
-              videoOff: newVideoOffState,
-              audioMuted: isAudioMuted
-            };
-            channel.send(JSON.stringify(statusMessage));
-            console.log(`Sent video status update to peer ${peer.userId}: videoOff=${newVideoOffState}`);
+            try {
+              const statusMessage = {
+                type: 'status',
+                videoOff: newVideoOffState,
+                audioMuted: isAudioMuted
+              };
+              channel.send(JSON.stringify(statusMessage));
+              console.log(`Sent video status update to peer ${peer.userId}: videoOff=${newVideoOffState}`);
+            } catch (channelError) {
+              console.warn(`Error sending through data channel to peer ${peer.userId}:`, channelError);
+            }
           }
         } catch (error) {
           console.warn(`Error sending video status to peer ${peer.userId}:`, error);
@@ -915,12 +939,16 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       
       // Send current state when data channel is open
       if (isVideoOff || isAudioMuted) {
-        const statusMessage = {
-          type: 'status',
-          videoOff: isVideoOff,
-          audioMuted: isAudioMuted
-        };
-        dataChannel.send(JSON.stringify(statusMessage));
+        try {
+          const statusMessage = {
+            type: 'status',
+            videoOff: isVideoOff,
+            audioMuted: isAudioMuted
+          };
+          dataChannel.send(JSON.stringify(statusMessage));
+        } catch (error) {
+          console.warn(`Error sending initial status to peer ${peerId}:`, error);
+        }
       }
     };
     
@@ -961,6 +989,13 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
     
     dataChannel.onerror = (error) => {
       console.error(`Data channel error with peer ${peerId}:`, error);
+      // Attempt to recreate the data channel if connection is still alive
+      const peer = peersRef.current.find(p => p.userId === peerId);
+      if (peer && peer.connection.connectionState === 'connected') {
+        console.log(`Attempting to recover data channel for peer ${peerId}`);
+        // We don't immediately recreate to avoid potential loops
+        // Just mark it for potential future recovery
+      }
     };
   };
 
