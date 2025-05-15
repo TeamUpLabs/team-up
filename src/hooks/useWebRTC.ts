@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useProject } from '@/contexts/ProjectContext';
 
 interface UseWebRTCProps {
@@ -748,12 +748,16 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
     window.location.reload();
   };
 
-  const setLocalVideoRef = (element: HTMLVideoElement | null) => {
-    if (element && localStream) {
-      element.srcObject = localStream;
+  const setLocalVideoRef = useCallback((element: HTMLVideoElement | null) => {
+    if (element) {
       localVideoRef.current = element;
+      if (localStream) {
+        element.srcObject = localStream;
+      }
+    } else {
+      localVideoRef.current = null;
     }
-  };
+  }, [localStream]);
 
   // Start screen sharing with options
   const startScreenShare = async (options?: { withAudio?: boolean }) => {
