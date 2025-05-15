@@ -31,6 +31,21 @@ import {
   VideoParticipant
 } from '@/utils/videoLayoutUtils';
 
+// Import new components
+import FilePreviewModal from '@/components/project/chat/FilePreviewModal';
+import SharedFilesDialog from '@/components/project/chat/SharedFilesDialog';
+
+// Define file type for shared files
+export interface SharedFile {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+  sharedBy: string;
+  timestamp: number;
+}
+
 interface VideoCallProps {
   channelId: string;
   userId: string;
@@ -47,9 +62,15 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   const [layout, setLayout] = useState<'grid' | 'focus'>('grid');
   const [showSettings, setShowSettings] = useState(false);
   const [showScreenShareOptions, setShowScreenShareOptions] = useState(false);
+  const [showFileShareDialog, setShowFileShareDialog] = useState(false);
+  const [fileUploadProgress, setFileUploadProgress] = useState<number | null>(null);
+  const [previewFile, setPreviewFile] = useState<SharedFile | null>(null);
+  const [showSharedFiles, setShowSharedFiles] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const prevSharedFilesLengthRef = useRef<number>(0); // Ref to store previous shared files length
 
   const {
     localStream,
@@ -69,7 +90,9 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     togglePauseScreenShare,
     updateScreenShareAudio,
     endCall,
-    setLocalVideoRef
+    setLocalVideoRef,
+    sharedFiles,
+    shareFile
   } = useWebRTC({
     channelId,
     userId,
@@ -80,12 +103,23 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   useEffect(() => {
     // Add a class to the body to hide sidebar when video call is active
     document.body.classList.add('video-call-active');
-    
+
     return () => {
       // Remove the class when video call is closed
       document.body.classList.remove('video-call-active');
     };
   }, []);
+
+  // Effect to open SharedFilesDialog when a new file is shared
+  useEffect(() => {
+    if (sharedFiles && sharedFiles.length > prevSharedFilesLengthRef.current) {
+      if (!showSharedFiles && !showFileShareDialog) { // Only open if not already visible
+        setShowSharedFiles(true);
+      }
+    }
+    // Update the ref with the current length for the next comparison
+    prevSharedFilesLengthRef.current = sharedFiles ? sharedFiles.length : 0;
+  }, [sharedFiles, showSharedFiles, showFileShareDialog]);
 
   // Auto-hide controls after inactivity
   useEffect(() => {
@@ -97,7 +131,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
       }
 
       controlsTimeoutRef.current = setTimeout(() => {
-        if (!isParticipantListVisible && !showOptions && !showSettings && !showScreenShareOptions) {
+        if (!isParticipantListVisible && !showOptions && !showSettings && !showScreenShareOptions && !showFileShareDialog && !previewFile) {
           setShowControls(false);
         }
       }, 3000);
@@ -110,7 +144,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         clearTimeout(controlsTimeoutRef.current);
       }
     };
-  }, [isParticipantListVisible, showOptions, showSettings, showScreenShareOptions]);
+  }, [isParticipantListVisible, showOptions, showSettings, showScreenShareOptions, showFileShareDialog, previewFile]);
 
   // Listen for window resize to update layout
   useEffect(() => {
@@ -181,6 +215,8 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     setShowOptions(false);
     setShowSettings(false);
     setShowScreenShareOptions(false);
+    setShowFileShareDialog(false);
+    setPreviewFile(null);
   };
 
   const toggleOptions = () => {
@@ -188,6 +224,8 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     setIsParticipantListVisible(false);
     setShowSettings(false);
     setShowScreenShareOptions(false);
+    setShowFileShareDialog(false);
+    setPreviewFile(null);
   };
 
   const toggleSettings = () => {
@@ -195,6 +233,8 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     setIsParticipantListVisible(false);
     setShowOptions(false);
     setShowScreenShareOptions(false);
+    setShowFileShareDialog(false);
+    setPreviewFile(null);
   };
 
   const toggleScreenShareOptions = () => {
@@ -202,6 +242,34 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     setIsParticipantListVisible(false);
     setShowSettings(false);
     setShowOptions(false);
+    setShowFileShareDialog(false);
+    setPreviewFile(null);
+  };
+
+  const toggleFileShareDialog = () => {
+    setShowFileShareDialog(prev => !prev);
+    if (!showFileShareDialog) {
+      setShowSharedFiles(false);
+    }
+    setIsParticipantListVisible(false);
+    setShowSettings(false);
+    setShowOptions(false);
+    setShowScreenShareOptions(false);
+    if (!showFileShareDialog) {
+      setPreviewFile(null);
+    }
+  };
+
+  const toggleSharedFiles = () => {
+    setShowSharedFiles(prev => !prev);
+    if (!showSharedFiles) {
+      setShowFileShareDialog(false);
+    }
+    setIsParticipantListVisible(false);
+    setShowSettings(false);
+    setShowOptions(false);
+    setShowScreenShareOptions(false);
+    setPreviewFile(null);
   };
 
   const pinUser = (userId: string) => {
@@ -434,16 +502,154 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     );
   };
 
+  const handleShareFile = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+
+    // Start upload simulation
+    setFileUploadProgress(0);
+
+    // Simulate upload process
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 20;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+
+        // Add file to shared files
+        const fileId = `file-${Date.now()}`;
+        const fileUrl = URL.createObjectURL(file);
+        const newFile: SharedFile = {
+          id: fileId,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url: fileUrl,
+          sharedBy: userId,
+          timestamp: Date.now()
+        };
+
+        if(shareFile) shareFile(newFile);
+
+        setFileUploadProgress(null);
+
+        // In a real application, you would upload the file to a server here
+        // and broadcast the file info to all peers
+      }
+
+      setFileUploadProgress(Math.round(progress));
+    }, 200);
+
+    // Open file share dialog after selecting a file
+    if (!showFileShareDialog) {
+      setShowFileShareDialog(true);
+    }
+
+    // Reset the file input so the same file can be selected again
+    event.target.value = '';
+  };
+
+  const downloadFile = (file: SharedFile) => {
+    const link = document.createElement('a');
+    link.href = file.url;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Format file size
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    else if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+    else return (bytes / 1073741824).toFixed(1) + ' GB';
+  };
+
+  // Format timestamp
+  const formatTimestamp = (timestamp: number): string => {
+    const date = new Date(timestamp);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${hours}:${minutes}`;
+  };
+
+  // Navigate to next or previous file
+  const navigatePreview = (direction: 'next' | 'prev') => {
+    if (!previewFile || sharedFiles.length <= 1) return;
+
+    const currentIndex = sharedFiles.findIndex(file => file.id === previewFile.id);
+    if (currentIndex === -1) return;
+
+    let newIndex;
+    if (direction === 'next') {
+      newIndex = currentIndex === sharedFiles.length - 1 ? 0 : currentIndex + 1;
+    } else {
+      newIndex = currentIndex === 0 ? sharedFiles.length - 1 : currentIndex - 1;
+    }
+
+    setPreviewFile(sharedFiles[newIndex]);
+  };
+
+  // Preview file
+  const openFilePreview = (file: SharedFile) => {
+    setPreviewFile(file);
+  };
+
   return (
     <div
       ref={containerRef}
       className="fixed inset-0 bg-gray-800 flex flex-col z-[9999] overflow-hidden"
       onMouseMove={() => setShowControls(true)}
     >
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleFileSelect}
+        accept="*/*" // You can restrict file types if needed
+      />
+
       {/* Video container */}
       <div className="flex-1 p-0 md:p-1 lg:p-2 relative overflow-hidden">
         {renderVideoLayout()}
       </div>
+
+      {/* File preview modal */}
+      <FilePreviewModal
+        file={previewFile}
+        sharedFiles={sharedFiles}
+        onClose={() => setPreviewFile(null)}
+        onDownload={downloadFile}
+        getUserName={getUserName}
+        formatFileSize={formatFileSize}
+        onNavigate={navigatePreview}
+      />
+
+      {/* Shared files dialog */}
+      <SharedFilesDialog
+        isVisible={showSharedFiles || showFileShareDialog}
+        sharedFiles={sharedFiles}
+        fileUploadProgress={fileUploadProgress}
+        onClose={showFileShareDialog ? toggleFileShareDialog : toggleSharedFiles}
+        onShareFile={handleShareFile}
+        onPreviewFile={openFilePreview}
+        onDownloadFile={downloadFile}
+        getUserName={getUserName}
+        formatFileSize={formatFileSize}
+        formatTimestamp={formatTimestamp}
+      />
 
       {/* Screen share error notification */}
       <AnimatePresence>
@@ -523,6 +729,8 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
             onToggleFullscreen={toggleFullscreen}
             onToggleParticipantList={toggleParticipantList}
             onToggleScreenShare={toggleScreenShare}
+            onToggleSharedFiles={toggleSharedFiles}
+            hasSharedFiles={sharedFiles.length > 0}
           />
         )}
       </AnimatePresence>
@@ -559,4 +767,4 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   );
 };
 
-export default VideoCall; 
+export default VideoCall;
