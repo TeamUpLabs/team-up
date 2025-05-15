@@ -36,7 +36,7 @@ import FilePreviewModal from '@/components/project/chat/FilePreviewModal';
 import SharedFilesDialog from '@/components/project/chat/SharedFilesDialog';
 
 // Define file type for shared files
-interface SharedFile {
+export interface SharedFile {
   id: string;
   name: string;
   size: number;
@@ -63,7 +63,6 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   const [showSettings, setShowSettings] = useState(false);
   const [showScreenShareOptions, setShowScreenShareOptions] = useState(false);
   const [showFileShareDialog, setShowFileShareDialog] = useState(false);
-  const [sharedFiles, setSharedFiles] = useState<SharedFile[]>([]);
   const [fileUploadProgress, setFileUploadProgress] = useState<number | null>(null);
   const [previewFile, setPreviewFile] = useState<SharedFile | null>(null);
   const [showSharedFiles, setShowSharedFiles] = useState(false);
@@ -71,6 +70,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const prevSharedFilesLengthRef = useRef<number>(0); // Ref to store previous shared files length
 
   const {
     localStream,
@@ -90,7 +90,9 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     togglePauseScreenShare,
     updateScreenShareAudio,
     endCall,
-    setLocalVideoRef
+    setLocalVideoRef,
+    sharedFiles,
+    shareFile
   } = useWebRTC({
     channelId,
     userId,
@@ -107,6 +109,17 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
       document.body.classList.remove('video-call-active');
     };
   }, []);
+
+  // Effect to open SharedFilesDialog when a new file is shared
+  useEffect(() => {
+    if (sharedFiles && sharedFiles.length > prevSharedFilesLengthRef.current) {
+      if (!showSharedFiles && !showFileShareDialog) { // Only open if not already visible
+        setShowSharedFiles(true);
+      }
+    }
+    // Update the ref with the current length for the next comparison
+    prevSharedFilesLengthRef.current = sharedFiles ? sharedFiles.length : 0;
+  }, [sharedFiles, showSharedFiles, showFileShareDialog]);
 
   // Auto-hide controls after inactivity
   useEffect(() => {
@@ -525,7 +538,8 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
           timestamp: Date.now()
         };
 
-        setSharedFiles(prev => [newFile, ...prev]);
+        if(shareFile) shareFile(newFile);
+
         setFileUploadProgress(null);
 
         // In a real application, you would upload the file to a server here

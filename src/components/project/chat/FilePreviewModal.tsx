@@ -16,16 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-
-interface SharedFile {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  url: string;
-  sharedBy: string;
-  timestamp: number;
-}
+import type { SharedFile } from './VideoCall';
 
 interface FilePreviewModalProps {
   file: SharedFile | null;

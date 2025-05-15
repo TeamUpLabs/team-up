@@ -14,16 +14,7 @@ import {
   faEye
 } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface SharedFile {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  url: string;
-  sharedBy: string;
-  timestamp: number;
-}
+import type { SharedFile } from './VideoCall';
 
 interface SharedFilesDialogProps {
   isVisible: boolean;
