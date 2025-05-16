@@ -271,6 +271,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 name="teamSize"
                 value={formData.teamSize}
                 onChange={handleChange}
+                onWheel={(e) => e.currentTarget.blur()}
                 className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors placeholder:text-text-secondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 placeholder="5"
                 required
