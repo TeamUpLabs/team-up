@@ -135,8 +135,8 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
     // If in development mode (localhost), use the hardcoded backend URL
     const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
     const serverUrl = isLocalhost
-      ? `ws://localhost:8000/project/${projectId}/ws/call/${channelId}/${userId}`
-      : `${wsProtocol}//${host}/project/${projectId}/ws/call/${channelId}/${userId}`;
+      ? `ws://localhost:8000/project/${projectId}/ws/video-call/${channelId}/${userId}`
+      : `${wsProtocol}//${host}/project/${projectId}/ws/video-call/${channelId}/${userId}`;
     
     console.log(`Connecting to signaling server at ${serverUrl}`);
     socketRef.current = new WebSocket(serverUrl);

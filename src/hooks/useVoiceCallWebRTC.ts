@@ -103,8 +103,8 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
     const host = window.location.host;
     const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
     const serverUrl = isLocalhost
-      ? `ws://localhost:8000/project/${projectId}/ws/call/${channelId}/${userId}` // Ensure this endpoint is appropriate for voice
-      : `${wsProtocol}//${host}/project/${projectId}/ws/call/${channelId}/${userId}`;
+      ? `ws://localhost:8000/project/${projectId}/ws/voice-call/${channelId}/${userId}` // Ensure this endpoint is appropriate for voice
+      : `${wsProtocol}//${host}/project/${projectId}/ws/voice-call/${channelId}/${userId}`;
     
     console.log(`Connecting to signaling server for voice call at ${serverUrl}`);
     socketRef.current = new WebSocket(serverUrl);
