@@ -2,15 +2,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideo, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import VideoCall from '@/components/project/chat/VideoCall';
-import VoiceCall from '@/components/project/chat/VoiceCall';
 import { useAuthStore } from '@/auth/authStore';
+import { useVoiceCall } from '@/contexts/VoiceCallContext';
 
 export default function ChannelHeader({ channelId }: { channelId: string }) {
   const [showVideoCall, setShowVideoCall] = useState(false);
-  const [showVoiceCall, setShowVoiceCall] = useState(false);
-  
-  // This would come from your authentication system
   const userId = useAuthStore.getState().user?.id.toString() || 'anonymous';
+  const { startVoiceCall } = useVoiceCall();
   
   const startVideoCall = () => {
     setShowVideoCall(true);
@@ -20,12 +18,8 @@ export default function ChannelHeader({ channelId }: { channelId: string }) {
     setShowVideoCall(false);
   };
 
-  const startVoiceCall = () => {
-    setShowVoiceCall(true);
-  };
-
-  const endVoiceCall = () => {
-    setShowVoiceCall(false);
+  const handleStartVoiceCall = () => {
+    startVoiceCall(channelId, userId);
   };
   
   return (
@@ -36,7 +30,7 @@ export default function ChannelHeader({ channelId }: { channelId: string }) {
           <FontAwesomeIcon 
             icon={faPhone} 
             className="text-text-secondary cursor-pointer hover:text-text-primary" 
-            onClick={startVoiceCall}
+            onClick={handleStartVoiceCall}
           />
           <FontAwesomeIcon 
             icon={faVideo} 
@@ -52,14 +46,6 @@ export default function ChannelHeader({ channelId }: { channelId: string }) {
           channelId={channelId}
           userId={userId}
           onClose={endVideoCall}
-        />
-      )}
-
-      {showVoiceCall && (
-        <VoiceCall
-          channelId={channelId}
-          userId={userId}
-          onClose={endVoiceCall}
         />
       )}
     </div>

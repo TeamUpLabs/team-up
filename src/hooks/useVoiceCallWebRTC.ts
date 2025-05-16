@@ -449,9 +449,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
 
   const endCall = () => {
     cleanupResources();
-    // Consider if reload is always desired or if UI should just hide
-    // For now, keeping reload for simplicity similar to original hook
-    // window.location.reload(); 
+    window.location.reload(); 
   };
   
   const setupDataChannel = (dataChannel: RTCDataChannel, peerId: string, isPrimaryChannel: boolean) => {

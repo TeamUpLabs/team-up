@@ -6,13 +6,15 @@ import {
   faMicrophoneSlash,
   faUsers,
   faTimes,
-  // faUserCircle, // Removed as it's not used
+  faCompressAlt
 } from '@fortawesome/free-solid-svg-icons';
-import useVoiceCallWebRTC, { VoicePeerConnection } from '@/hooks/useVoiceCallWebRTC'; // Keep VoicePeerConnection for explicit typing if needed
+import useVoiceCallWebRTC, { VoicePeerConnection } from '@/hooks/useVoiceCallWebRTC';
 import { useAuthStore } from '@/auth/authStore';
 import { useProject } from '@/contexts/ProjectContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import PipControls from '@/components/project/chat/PipView';
+import { useVoiceCall } from '@/contexts/VoiceCallContext';
 
 interface VoiceCallProps {
   channelId: string;
@@ -22,25 +24,25 @@ interface VoiceCallProps {
 
 const MAX_DISPLAY_AVATARS = 5;
 
-// Define a unified participant type for easier handling in the UI
 interface DisplayParticipant extends Partial<VoicePeerConnection> {
   userId: string;
   name: string;
   profileImage?: string | null;
   isLocal: boolean;
-  currentAudioMuted: boolean; // Unified mute status for local and remote
+  currentAudioMuted: boolean;
 }
 
 const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => {
   const { project } = useProject();
   const [isParticipantListVisible, setIsParticipantListVisible] = useState(false);
+  const { isPipMode, setIsPipMode } = useVoiceCall();
   const connectedUser = useAuthStore((state) => state.user);
 
   const {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     localStream,
-    peers, // peers should be of type VoicePeerConnection[] from the hook
-    isAudioMuted, // Local user's mute status
+    peers,
+    isAudioMuted,
     connectionStatus,
     toggleAudio,
     endCall,
@@ -59,16 +61,27 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
     setIsParticipantListVisible(prev => !prev);
   };
 
+  const togglePipMode = () => {
+    setIsPipMode(!isPipMode);
+    if (isPipMode && isParticipantListVisible) {
+        setIsParticipantListVisible(false);
+    }
+  };
+  
+  const handleExitPip = () => {
+    setIsPipMode(false);
+  };
+
   const getInitials = (name: string = '') => {
     const nameParts = name.split(' ');
-    if (nameParts.length === 0 || !nameParts[0]) return '??'; // Handle empty or undefined names
+    if (nameParts.length === 0 || !nameParts[0]) return '??';
     if (nameParts.length > 1 && nameParts[1]) {
       return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
   };
 
-  // Create a memoized list of all participants for display
+
   const allDisplayParticipants = React.useMemo((): DisplayParticipant[] => {
     const localParticipant: DisplayParticipant = {
       userId: userId,
@@ -83,8 +96,7 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
       name: project?.members.find(m => m.id.toString() === peer.userId)?.name || `User ${peer.userId.substring(0, 6)}`,
       profileImage: project?.members.find(m => m.id.toString() === peer.userId)?.profileImage,
       isLocal: false,
-      currentAudioMuted: !!peer.isRemoteAudioMuted, // Ensure boolean
-      // Include other properties from VoicePeerConnection if needed by DisplayParticipant
+      currentAudioMuted: !!peer.isRemoteAudioMuted,
       connection: peer.connection,
       stream: peer.stream,
       dataChannel: peer.dataChannel,
@@ -123,11 +135,28 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
   }, [peers]);
 
   useEffect(() => {
-    document.body.classList.add('video-call-active');
+    if (!isPipMode) {
+      document.body.classList.add('video-call-active');
+    } else {
+      document.body.classList.remove('video-call-active');
+    }
     return () => {
       document.body.classList.remove('video-call-active');
     };
-  }, []);
+  }, [isPipMode]); // Re-run when isPipMode changes
+
+  if (isPipMode) {
+    return (
+      <PipControls
+        participantCount={allDisplayParticipants.length}
+        isAudioMuted={isAudioMuted}
+        onToggleAudio={toggleAudio}
+        onEndCall={handleEndCall}
+        onToggleParticipantList={toggleParticipantList}
+        onExitPip={handleExitPip}
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-gray-900 flex flex-col z-[9999] overflow-hidden">
@@ -237,6 +266,15 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
           >
             <FontAwesomeIcon icon={isAudioMuted ? faMicrophoneSlash : faMicrophone} size="lg" className="mb-1.5" />
             <span className="text-xs font-medium">{isAudioMuted ? 'Unmute' : 'Mute'}</span>
+          </button>
+
+          <button
+            onClick={togglePipMode} // Button to enter PIP mode
+            className="flex flex-col items-center justify-center p-2 rounded-xl hover:bg-white/20 active:bg-white/30 transition-all duration-200 text-white w-24 h-16"
+            aria-label="Picture-in-Picture"
+          >
+            <FontAwesomeIcon icon={faCompressAlt} size="lg" className="mb-1.5" />
+            <span className="text-xs font-medium">PIP</span>
           </button>
 
           <button
