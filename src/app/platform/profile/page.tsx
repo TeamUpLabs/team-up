@@ -407,7 +407,7 @@ export default function ProfilePage() {
                       icon={faPencil}
                       size="xs"
                       className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      onClick={() => isEditing === "none" ? handleEdit("name") : handleCancelEdit()}
+                      onClick={() => isEditing === "name" ? handleCancelEdit() : handleEdit("name")}
                     />
                   </div>
                   {isDataLoading ? (
@@ -435,7 +435,7 @@ export default function ProfilePage() {
                       icon={faPencil}
                       size="xs"
                       className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      onClick={() => isEditing === "none" ? handleEdit("email") : handleCancelEdit()}
+                      onClick={() => isEditing === "email" ? handleCancelEdit() : handleEdit("email")}
                     />
                   </div>
                   {isDataLoading ? (
@@ -464,7 +464,7 @@ export default function ProfilePage() {
                       icon={faPencil}
                       size="xs"
                       className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      onClick={() => isEditing === "none" ? handleEdit("role") : handleCancelEdit()}
+                      onClick={() => isEditing === "role" ? handleCancelEdit() : handleEdit("role")}
                     />
                   </div>
                   {isDataLoading ? (
@@ -497,7 +497,7 @@ export default function ProfilePage() {
                       icon={faPencil}
                       size="xs"
                       className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      onClick={() => isEditing === "none" ? handleEdit("contactNumber") : handleCancelEdit()}
+                      onClick={() => isEditing === "contactNumber" ? handleCancelEdit() : handleEdit("contactNumber")}
                     />
                   </div>
                   {isDataLoading ? (
@@ -525,7 +525,7 @@ export default function ProfilePage() {
                       icon={faPencil}
                       size="xs"
                       className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      onClick={() => isEditing === "none" ? handleEdit("birthDate") : handleCancelEdit()}
+                      onClick={() => isEditing === "birthDate" ? handleCancelEdit() : handleEdit("birthDate")}
                     />
                   </div>
                   {isDataLoading ? (
@@ -559,7 +559,7 @@ export default function ProfilePage() {
                         icon={faPencil}
                         size="xs"
                         className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                        onClick={() => isEditing === "none" ? handleEdit("workingHours.start") : handleCancelEdit()}
+                        onClick={() => isEditing === "workingHours.start" ? handleCancelEdit() : handleEdit("workingHours.start")}
                       />
                     </div>
                     {isDataLoading ? (
@@ -587,7 +587,7 @@ export default function ProfilePage() {
                         icon={faPencil}
                         size="xs"
                         className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                        onClick={() => isEditing === "none" ? handleEdit("workingHours.end") : handleCancelEdit()}
+                        onClick={() => isEditing === "workingHours.end" ? handleCancelEdit() : handleEdit("workingHours.end")}
                       />
                     </div>
                     {isDataLoading ? (
@@ -616,7 +616,7 @@ export default function ProfilePage() {
                       icon={faPencil}
                       size="xs"
                       className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      onClick={() => isEditing === "none" ? handleEdit("workingHours.timezone") : handleCancelEdit()}
+                      onClick={() => isEditing === "workingHours.timezone" ? handleCancelEdit() : handleEdit("workingHours.timezone")}
                     />
                   </div>
                   {isDataLoading ? (
@@ -654,7 +654,7 @@ export default function ProfilePage() {
                       icon={faPencil}
                       size="xs"
                       className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      onClick={() => isEditing === "none" ? handleEdit("socialLinks") : handleCancelEdit()}
+                      onClick={() => isEditing === "socialLinks" ? handleCancelEdit() : handleEdit("socialLinks")}
                     />
                   </div>
                   <div className="space-y-3">
@@ -826,7 +826,7 @@ export default function ProfilePage() {
                 <FontAwesomeIcon
                   icon={faPencil}
                   className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  onClick={() => isEditing === "none" ? handleEdit("introduction") : handleCancelEdit()}
+                  onClick={() => isEditing === "introduction" ? handleCancelEdit() : handleEdit("introduction")}
                 />
               </div>
               {isDataLoading ? (
@@ -860,7 +860,7 @@ export default function ProfilePage() {
                 <FontAwesomeIcon
                   icon={faPencil}
                   className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  onClick={() => isEditing === "none" ? handleEdit("skills") : handleCancelEdit()}
+                  onClick={() => isEditing === "skills" ? handleCancelEdit() : handleEdit("skills")}
                 />
               </div>
               <div className="space-y-4">
@@ -918,7 +918,7 @@ export default function ProfilePage() {
                 <FontAwesomeIcon
                   icon={faPencil}
                   className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  onClick={() => isEditing === "none" ? handleEdit("languages") : handleCancelEdit()}
+                  onClick={() => isEditing === "languages" ? handleCancelEdit() : handleEdit("languages")}
                 />
               </div>
               <div className="space-y-4">
