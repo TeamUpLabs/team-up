@@ -64,6 +64,7 @@ export default function ProjectPage() {
     { id: '2', component: <MileStoneCard /> },
     { id: '3', component: <TeamActivities /> },
     { id: '4', component: <RecentFileCard /> },
+    { id: '5', component: <Activity /> },
   ];
 
   const [cards, setCards] = useState<CardItemType[]>(() => {
