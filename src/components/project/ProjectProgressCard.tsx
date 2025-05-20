@@ -34,7 +34,7 @@ export default function ProjectProgressCard() {
     return (
       <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-text-primary">프로젝트 진행률</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-text-primary">프로젝트 진행률</h1>
           <div className="flex items-center text-text-secondary">
             <Link href={`/platform/${project?.id}/tasks`} className="flex items-center text-text-secondary hover:text-text-primary">
               더보기
@@ -68,7 +68,7 @@ export default function ProjectProgressCard() {
   return (
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl sm:text-2xl font-bold text-text-primary">프로젝트 진행률</h1>
+        <h1 className="text-lg sm:text-xl font-bold text-text-primary">프로젝트 진행률</h1>
         <Link href={`/platform/${project?.id}/tasks`} className="flex items-center text-text-secondary hover:text-text-primary">
           더보기
           <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -89,7 +89,7 @@ export default function ProjectProgressCard() {
             <div key={index} className={`bg-component-secondary-background p-4 rounded-lg text-center ${taskLabel.color} border border-component-border
                 hover:border-point-color-indigo-hover transition duration-200 ease-in-out`}>
               <p className="text-text-secondary">{taskLabel.label}</p>
-              <p className="text-xl font-bold">{taskLabel.value}</p>
+              <p className="text-lg font-bold">{taskLabel.value}</p>
             </div>
           ))}
         </div>
