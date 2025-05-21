@@ -112,10 +112,10 @@ const EditWidgetsModal: React.FC<EditWidgetsModalProps> = ({
             onClick={() => onToggleCard(card.id)}
           >
             <div className="md:col-span-2">
-              <h4 className={`font-medium ${card.active ? 'text-blue-700' : 'text-gray-800'}`}>
+              <h4 className={`font-medium ${card.active ? 'text-blue-700' : 'text-text-primary'}`}>
                 {card.title}
               </h4>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-text-secondary mt-1">
                 {card.description}
               </p>
               <div className="mt-3 flex items-center">
