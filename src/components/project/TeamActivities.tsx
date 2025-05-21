@@ -1,14 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useProject } from "@/contexts/ProjectContext";
 import Image from "next/image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faTrash } from "@fortawesome/free-solid-svg-icons";
+import TeamActivitiesSkeleton from "@/components/skeleton/TeamActivitiesSkeleton";
 
 export default function TeamActivities() {
   const { project } = useProject();
   const [isLoading, setIsLoading] = useState(true);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (project && project.members) {
@@ -16,84 +13,17 @@ export default function TeamActivities() {
     }
   }, [project]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowDropdown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleDeleteClick = () => {
-    // Implement delete functionality here
-    console.log('Delete button clicked');
-    setShowDropdown(false);
-  };
-
-  const SkeletonLoader = () => (
-    Array(3).fill(0).map((_, index) => (
-      <div key={index} className="flex items-center justify-between p-2 border-b border-component-border animate-pulse">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-component-skeleton-background rounded-full flex items-center justify-center">
-            <div className="w-4 h-4 bg-component-skeleton-background rounded-sm"></div>
-          </div>
-          <div className="space-y-2">
-            <div className="h-4 bg-component-skeleton-background rounded w-24"></div>
-            <div className="h-3 bg-component-skeleton-background rounded w-20"></div>
-            <div className="flex items-center">
-              <span className="h-2.5 bg-component-skeleton-background rounded w-[100px]"></span>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-end space-y-2">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-component-skeleton-background rounded-full"></div>
-            <div className="h-3 bg-component-skeleton-background rounded w-12"></div>
-          </div>
-          <div className="h-2 bg-component-skeleton-background rounded w-16"></div>
-        </div>
-      </div>
-    ))
-  );
+  if (isLoading) {
+    return <TeamActivitiesSkeleton />;
+  }
 
   return (
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-semibold text-text-primary">팀원 활동</h2>
-        <div className="relative" ref={dropdownRef}>
-          <button 
-            className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border"
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            <FontAwesomeIcon icon={faEllipsis} />
-          </button>
-          {showDropdown && (
-            <div className="absolute right-0 mt-1 w-36 bg-component-secondary-background border border-component-border rounded-md shadow-lg z-10">
-              <ul>
-                <li>
-                  <button 
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-component-tertiary-background flex items-center rounded-md"
-                    onClick={handleDeleteClick}
-                  >
-                    <FontAwesomeIcon icon={faTrash} className="mr-2" />
-                    삭제
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
-        </div>
       </div>
       <div className="max-h-[300px] overflow-y-auto divide-y divide-component-border">
-        {isLoading ? (
-          <SkeletonLoader />
-        ) : (
-          project?.members.map((member) => (
+        {project?.members.map((member) => (
             <div key={member.id} className="flex items-center justify-between p-2 hover:bg-component-secondary-background transition duration-200">
               <div className="flex items-center">
                 <div className={`w-10 h-10 relative border border-component-border bg-component-secondary-background rounded-full flex items-center justify-center text-text-primary font-bold`}>
@@ -147,7 +77,7 @@ export default function TeamActivities() {
               </div>
             </div>
           ))
-        )}
+        }
       </div>
     </div>
   )
