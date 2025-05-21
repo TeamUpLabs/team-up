@@ -9,15 +9,20 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
 } from '@dnd-kit/core';
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
-  rectSortingStrategy, // Or verticalListSortingStrategy / horizontalListSortingStrategy if preferred
+  rectSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGripVertical, faRotateLeft } from '@fortawesome/free-solid-svg-icons';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import ProjectProgressCard from "@/components/project/ProjectProgressCard";
 import MileStoneCard from "@/components/project/MileStoneCard";
@@ -25,6 +30,7 @@ import TeamActivities from "@/components/project/TeamActivities";
 import RecentFileCard from "@/components/project/RecentFileCard";
 import Activity from "@/components/project/Activity";
 import RecentTask from "@/components/project/RecentTask";
+import Schedule from "@/components/project/Schedule";
 
 // Define the structure for our card items
 interface CardItemType {
@@ -48,14 +54,36 @@ function SortableItem({ id, children }: { id: string; children: React.ReactNode 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    zIndex: isDragging ? 10 : undefined, // Ensure dragging item is on top
-    // opacity: isDragging ? 0.5 : 1, // Optional: visual feedback while dragging
+    zIndex: isDragging ? 10 : 1,
+    position: 'relative',
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {children}
-    </div>
+    <motion.div
+      ref={setNodeRef}
+      style={style}
+      initial={{ scale: 1 }}
+      animate={{
+        scale: isDragging ? 1.02 : 1,
+        opacity: isDragging ? 0.85 : 1,
+      }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className={`relative rounded-lg ${isDragging ? 'shadow-xl' : ''}`}
+    >
+      <div className="group relative transition-all duration-300 ease-in-out">
+        <div className="absolute -top-2 -right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div
+            {...attributes}
+            {...listeners}
+            className="bg-blue-50 hover:bg-blue-100 rounded-full w-8 h-8 shadow-md flex items-center justify-center cursor-move transition-all duration-200 hover:scale-110"
+            title="드래그하여 카드 위치 조정"
+          >
+            <FontAwesomeIcon icon={faGripVertical} className="text-blue-500" size="sm" />
+          </div>
+        </div>
+        {children}
+      </div>
+    </motion.div>
   );
 }
 
@@ -67,6 +95,7 @@ export default function ProjectPage() {
     { id: '4', component: <RecentFileCard /> },
     { id: '5', component: <Activity /> },
     { id: '6', component: <RecentTask /> },
+    { id: '7', component: <Schedule /> },
   ];
 
   const [cards, setCards] = useState<CardItemType[]>(() => {
@@ -95,6 +124,18 @@ export default function ProjectPage() {
     }
     return initialCardsMaster; // Default order
   });
+  
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [showResetButton, setShowResetButton] = useState(false);
+  const [resetTooltip, setResetTooltip] = useState(false);
+
+  // Check if current order differs from default to show reset button
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
+      setShowResetButton(!!savedOrder);
+    }
+  }, [cards]);
 
   // Effect to save to localStorage when cards change
   useEffect(() => {
@@ -104,15 +145,44 @@ export default function ProjectPage() {
     }
   }, [cards]);
 
+  // Function to reset cards to original order
+  const resetCardOrder = () => {
+    setCards(initialCardsMaster);
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+    setShowResetButton(false);
+    
+    // Show success animation/notification
+    const notification = document.getElementById('reset-notification');
+    if (notification) {
+      notification.classList.remove('hidden');
+      setTimeout(() => {
+        notification.classList.add('hidden');
+      }, 3000);
+    }
+  };
+
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Small threshold to prevent accidental drags
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
+  function handleDragStart(event: DragStartEvent) {
+    setActiveId(event.active.id as string);
+    // Add a subtle haptic feedback on mobile if available
+    if (window.navigator && window.navigator.vibrate) {
+      window.navigator.vibrate(50);
+    }
+  }
+  
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
+    setActiveId(null);
 
     if (over && active.id !== over.id) {
       setCards((items) => {
@@ -122,29 +192,87 @@ export default function ProjectPage() {
         // localStorage will be updated by the useEffect hook
         return newItems;
       });
+      setShowResetButton(true);
+      
+      // Add a subtle haptic feedback on mobile if available
+      if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate([50, 50, 50]);
+      }
     }
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext items={cards.map(card => card.id)} strategy={rectSortingStrategy}>
-        <div className="py-20 px-4">
-          {/* 모바일에서는 1열, 태블릿에서 2열, 데스크탑에서 2열 */}
-          <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-            {cards.map((card) => (
-              <SortableItem key={card.id} id={card.id}>
-                <div className="col-span-1 cursor-grab">
-                  {card.component}
-                </div>
-              </SortableItem>
-            ))}
-          </div>
+    <div className="relative">
+      {/* Reset Layout Button */}
+      {showResetButton && (
+        <div className="fixed right-6 bottom-6 z-20" 
+             onMouseEnter={() => setResetTooltip(true)}
+             onMouseLeave={() => setResetTooltip(false)}>
+          <motion.button
+            onClick={resetCardOrder}
+            className="bg-white hover:bg-gray-50 text-gray-700 p-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FontAwesomeIcon icon={faRotateLeft} size="lg" />
+          </motion.button>
+          
+          {/* Tooltip */}
+          <AnimatePresence>
+            {resetTooltip && (
+              <motion.div 
+                className="absolute right-12 bottom-3 bg-gray-800 text-white px-3 py-1 rounded text-sm whitespace-nowrap"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                transition={{ duration: 0.2 }}
+              >
+                원래 배치로 초기화
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </SortableContext>
-    </DndContext>
+      )}
+      
+      {/* Reset Success Notification */}
+      <div id="reset-notification" className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md hidden z-50 transition-all duration-300">
+        카드 배치가 초기화되었습니다
+      </div>
+      
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={cards.map(card => card.id)} strategy={rectSortingStrategy}>
+          <div className="py-20 px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+              <AnimatePresence>
+                {cards.map((card) => (
+                  <SortableItem key={card.id} id={card.id}>
+                    <motion.div 
+                      className="col-span-1 hover:shadow-md transition-shadow duration-300"
+                      layoutId={card.id}
+                    >
+                      {card.component}
+                    </motion.div>
+                  </SortableItem>
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>
+        </SortableContext>
+        
+        {/* Show overlay of the currently dragged item */}
+        <DragOverlay adjustScale={true} zIndex={100}>
+          {activeId ? (
+            <div className="opacity-90 rounded-lg shadow-2xl">
+              {cards.find(card => card.id === activeId)?.component}
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+    </div>
   );
 }
