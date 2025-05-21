@@ -3,6 +3,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, Ca
 import { useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsis, faTrash } from '@fortawesome/free-solid-svg-icons';
+import ActivitySkeleton from '@/components/skeleton/ActivitySkeleton';
 
 interface ChartDataItem {
   date: string;
@@ -94,6 +95,10 @@ export default function Activity() {
     }
   }, [project]);
 
+  if (isLoading) {
+    return <ActivitySkeleton />;
+  } 
+
   return (
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
@@ -124,11 +129,7 @@ export default function Activity() {
       </div>
 
       <div className="h-[300px]">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-text-secondary">차트 데이터 로딩 중...</p>
-          </div>
-        ) : chartData.length === 0 ? (
+        {chartData.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-text-secondary">표시할 활동 데이터가 없습니다.</p>
           </div>
