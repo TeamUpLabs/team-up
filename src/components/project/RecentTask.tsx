@@ -1,10 +1,10 @@
 import { useProject } from '@/contexts/ProjectContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis, faCommentDots } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faCommentDots, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { getPriorityColor } from '@/utils/getPriorityColor';
 import Image from 'next/image';
 import { Task } from '@/types/Task';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 const TaskSkeleton = () => {
   return (
@@ -34,12 +34,46 @@ const TaskSkeleton = () => {
 export default function RecentTask() {
   const { project } = useProject();
   const [isLoading, setIsLoading] = useState(true);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (project && project.tasks) {
       setIsLoading(false);
     }
   }, [project]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+        setActiveTaskId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleDeleteClick = (taskId?: string) => {
+    // Implement delete functionality here
+    console.log('Delete button clicked', taskId ? `for task ${taskId}` : 'for card');
+    setShowDropdown(false);
+    setActiveTaskId(null);
+  };
+
+  const toggleDropdown = (taskId?: string) => {
+    if (taskId) {
+      setActiveTaskId(taskId === activeTaskId ? null : taskId);
+      setShowDropdown(false);
+    } else {
+      setShowDropdown(!showDropdown);
+      setActiveTaskId(null);
+    }
+  };
 
   const calculateProgress = (task: Task): number => {
     const { subtasks, status } = task;
@@ -57,9 +91,29 @@ export default function RecentTask() {
       <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
         <div className="flex items-center justify-between mb-3 sm:mb-4">
           <h2 className="text-lg sm:text-xl font-bold text-text-primary">최근 작업</h2>
-          <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
-            <FontAwesomeIcon icon={faEllipsis} />
-          </button>
+          <div className="relative" ref={dropdownRef}>
+            <button 
+              className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border"
+              onClick={() => toggleDropdown()}
+            >
+              <FontAwesomeIcon icon={faEllipsis} />
+            </button>
+            {showDropdown && (
+              <div className="absolute right-0 mt-1 w-36 bg-component-secondary-background border border-component-border rounded-md shadow-lg z-10">
+                <ul>
+                  <li>
+                    <button 
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-component-tertiary-background flex items-center rounded-md"
+                      onClick={() => handleDeleteClick()}
+                    >
+                      <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                      삭제
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <TaskSkeleton />
@@ -73,9 +127,29 @@ export default function RecentTask() {
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-bold text-text-primary">최근 작업</h2>
-        <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
-          <FontAwesomeIcon icon={faEllipsis} />
-        </button>
+        <div className="relative" ref={dropdownRef}>
+          <button 
+            className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border"
+            onClick={() => toggleDropdown()}
+          >
+            <FontAwesomeIcon icon={faEllipsis} />
+          </button>
+          {showDropdown && (
+            <div className="absolute right-0 mt-1 w-36 bg-component-secondary-background border border-component-border rounded-md shadow-lg z-10">
+              <ul>
+                <li>
+                  <button 
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-component-tertiary-background flex items-center rounded-md"
+                    onClick={() => handleDeleteClick()}
+                  >
+                    <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                    삭제
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -87,7 +161,28 @@ export default function RecentTask() {
                   <span className={`w-2 h-2 mr-2 rounded-full ${task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'}`}></span>
                   {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                 </span>
-                <FontAwesomeIcon icon={faEllipsis} className="text-text-secondary cursor-pointer" />
+                <div className="relative">
+                  <FontAwesomeIcon 
+                    icon={faEllipsis} 
+                    className="text-text-secondary cursor-pointer" 
+                    onClick={() => toggleDropdown(task.id.toString())}
+                  />
+                  {activeTaskId === task.id.toString() && (
+                    <div className="absolute right-0 mt-1 w-36 bg-white border border-component-border rounded-md shadow-lg z-10">
+                      <ul>
+                        <li>
+                          <button 
+                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
+                            onClick={() => handleDeleteClick(task.id.toString())}
+                          >
+                            <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                            삭제
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
               <h3 className="text-md font-semibold text-text-primary mb-1">{task.title}</h3>
               <p className="text-sm text-text-secondary mb-3 h-10 overflow-hidden text-ellipsis">

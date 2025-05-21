@@ -1,14 +1,16 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MileStone } from '@/types/MileStone';
 import { useProject } from '@/contexts/ProjectContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function MileStoneCard() {
   const { project } = useProject();
   const [closestMilestone, setClosestMilestone] = useState<MileStone | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const getClosestMilestone = async () => {
@@ -34,6 +36,25 @@ export default function MileStoneCard() {
     getClosestMilestone();
   }, [project]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleDeleteClick = () => {
+    // Implement delete functionality here
+    console.log('Delete button clicked');
+    setShowDropdown(false);
+  };
+
   const totalTasks = closestMilestone?.subtasks.length ?? 0;
   const completedTasks = closestMilestone?.subtasks.filter(task => task.status === 'done').length ?? 0;
 
@@ -44,9 +65,29 @@ export default function MileStoneCard() {
       <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md overflow-x-auto border border-component-border">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-text-primary">다가오는 마일스톤</h2>
-          <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
-            <FontAwesomeIcon icon={faEllipsis} />
-          </button>
+          <div className="relative" ref={dropdownRef}>
+            <button 
+              className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              <FontAwesomeIcon icon={faEllipsis} />
+            </button>
+            {showDropdown && (
+              <div className="absolute right-0 mt-1 w-36 bg-component-secondary-background border border-component-border rounded-md shadow-lg z-10">
+                <ul>
+                  <li>
+                    <button 
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-component-tertiary-background flex items-center rounded-md"
+                      onClick={handleDeleteClick}
+                    >
+                      <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                      삭제
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
         <div className="space-y-4">
           <div className="bg-component-secondary-background p-3 rounded-lg border border-component-border">
@@ -81,9 +122,29 @@ export default function MileStoneCard() {
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md overflow-x-auto border border-component-border">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-text-primary">다가오는 마일스톤</h2>
-        <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
-          <FontAwesomeIcon icon={faEllipsis} />
-        </button>
+        <div className="relative" ref={dropdownRef}>
+          <button 
+            className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            <FontAwesomeIcon icon={faEllipsis} />
+          </button>
+          {showDropdown && (
+            <div className="absolute right-0 mt-1 w-36 bg-component-secondary-background border border-component-border rounded-md shadow-lg z-10">
+              <ul>
+                <li>
+                  <button 
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-component-tertiary-background flex items-center rounded-md"
+                    onClick={handleDeleteClick}
+                  >
+                    <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                    삭제
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
       <div className="space-y-4">
         {closestMilestone ? (

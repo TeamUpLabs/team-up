@@ -1,15 +1,57 @@
 "use client";
+import { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsis, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function RecentFileCard() {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleDeleteClick = () => {
+    // Implement delete functionality here
+    console.log('Delete button clicked');
+    setShowDropdown(false);
+  };
   return (
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-text-primary">최근 파일</h2>
-        <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
-          <FontAwesomeIcon icon={faEllipsis} />
-        </button>
+        <div className="relative" ref={dropdownRef}>
+          <button 
+            className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            <FontAwesomeIcon icon={faEllipsis} />
+          </button>
+          {showDropdown && (
+            <div className="absolute right-0 mt-1 w-36 bg-component-secondary-background border border-component-border rounded-md shadow-lg z-10">
+              <ul>
+                <li>
+                  <button 
+                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-component-tertiary-background flex items-center rounded-md"
+                    onClick={handleDeleteClick}
+                  >
+                    <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                    삭제
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
       <div className="space-y-2 sm:space-y-3">
         <div className="flex flex-col sm:flex-row items-start sm:items-center p-3 bg-component-secondary-background rounded-lg hover:bg-component-tertiary-background border border-component-border transition-colors">
