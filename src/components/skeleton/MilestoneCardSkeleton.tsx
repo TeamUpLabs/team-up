@@ -15,11 +15,11 @@ export default function MilestoneCardSkeleton({ isPreview = false }: { isPreview
           </div>
           <div className="flex flex-col gap-2 mt-3">
             <div className="flex items-center">
-              <span className={`${isPreview ? 'text-xs' : 'text-sm'} text-text-secondary mr-2`}>시작일:</span>
+              <span className={`${isPreview ? 'text-[8px]' : 'text-sm'} text-text-secondary mr-2`}>시작일:</span>
               <div className={`${isPreview ? 'h-2' : 'h-4'} bg-component-skeleton-background rounded ${isPreview ? 'w-12' : 'w-24'} animate-[pulse_1.5s_ease-in-out_infinite]`}></div>
             </div>
             <div className="flex items-center">
-              <span className={`${isPreview ? 'text-xs' : 'text-sm' } text-text-secondary mr-2`}>종료일:</span>
+              <span className={`${isPreview ? 'text-[8px]' : 'text-sm' } text-text-secondary mr-2`}>종료일:</span>
               <div className={`${isPreview ? 'h-2' : 'h-4'} bg-component-skeleton-background rounded ${isPreview ? 'w-12' : 'w-24'} animate-[pulse_1.5s_ease-in-out_infinite]`}></div>
             </div>
           </div>
