@@ -55,10 +55,10 @@ export default function RecentTask() {
   if (isLoading) {
     return (
       <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
           <h2 className="text-lg sm:text-xl font-bold text-text-primary">최근 작업</h2>
-          <button className="text-text-secondary hover:text-text-primary p-2 rounded-md">
-            <FontAwesomeIcon icon={faEllipsis} className="w-5 h-5" />
+          <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
+            <FontAwesomeIcon icon={faEllipsis} />
           </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -71,10 +71,10 @@ export default function RecentTask() {
 
   return (
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-bold text-text-primary">최근 작업</h2>
-        <button className="text-text-secondary hover:text-text-primary p-2 rounded-md">
-          <FontAwesomeIcon icon={faEllipsis} className="w-5 h-5" />
+        <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
+          <FontAwesomeIcon icon={faEllipsis} />
         </button>
       </div>
 
