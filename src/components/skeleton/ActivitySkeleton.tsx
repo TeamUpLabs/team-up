@@ -1,18 +1,9 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
-
 export default function ActivitySkeleton({ isPreview = false }: { isPreview?: boolean }) {
   return (
     <div className={isPreview ? 'rounded-lg overflow-hidden bg-component-background p-3 origin-top-left' : 'col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border'}>
       {/* Header Skeleton: Title and Options Button */}
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className={`font-semibold text-text-primary ${isPreview ? 'text-xs' : 'text-lg sm:text-xl'}`}>일별 활동량</h2>
-
-        <button
-          className={`flex items-center text-text-secondary hover:text-text-primary ${isPreview ? 'p-1' : 'p-2'} rounded-md border border-component-border`}
-        >
-          <FontAwesomeIcon icon={faEllipsis} size={isPreview ? 'xs' : 'sm'} />
-        </button>
       </div>
 
       {/* Detailed Chart Area Skeleton */}
