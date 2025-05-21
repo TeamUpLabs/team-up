@@ -73,7 +73,7 @@ function SortableItem({ id, children }: { id: string; children: React.ReactNode 
         opacity: isDragging ? 0.85 : 1,
       }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-      className={`relative rounded-lg ${isDragging ? 'shadow-xl' : ''}`}
+      className={`relative rounded-lg ${isDragging ? 'shadow-xl' : ''} break-inside-avoid-column`}
     >
       <div className="group relative transition-all duration-300 ease-in-out">
         <div className="absolute -top-2 -right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -254,13 +254,13 @@ export default function ProjectPage() {
         onDragEnd={handleDragEnd}
       >
         <SortableContext items={cards.map(card => card.id)} strategy={rectSortingStrategy}>
-          <div className="py-20 px-4">
-            <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+          <div className="py-24 md:py-20 px-4">
+            <div className="columns-1 md:columns-1 lg:columns-2 xl:columns-2 gap-6">
               <AnimatePresence>
                 {cards.filter(card => card.active).map((card) => (
                   <SortableItem key={card.id} id={card.id}>
                     <motion.div
-                      className="col-span-1 hover:shadow-md transition-shadow duration-300"
+                      className="break-inside-avoid-column hover:shadow-md transition-shadow duration-300 mb-6"
                       layoutId={card.id}
                     >
                       {card.component}
