@@ -1,7 +1,8 @@
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useProject } from "@/contexts/ProjectContext";
 import Image from "next/image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
 export default function TeamActivities() {
   const { project } = useProject();
@@ -43,12 +44,9 @@ export default function TeamActivities() {
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-semibold text-text-primary">팀원 활동</h2>
-        <Link href={`/platform/${project?.id}/members`} className="flex items-center text-text-secondary hover:text-text-primary">
-          더보기
-          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
+        <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
+          <FontAwesomeIcon icon={faEllipsis} />
+        </button>
       </div>
       <div className="max-h-[300px] overflow-y-auto divide-y divide-component-border">
         {isLoading ? (

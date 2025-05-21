@@ -1,6 +1,8 @@
 import { useProject } from "@/contexts/ProjectContext";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from 'recharts'; 
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from 'recharts';
 import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 
 interface ChartDataItem {
   date: string;
@@ -59,15 +61,15 @@ export default function Activity() {
             '시작된 마일스톤': aggregatedData[dateKey].milestones,
             '전체': aggregatedData[dateKey].total,
           }))
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); 
-        
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
         setChartData(formattedData);
         setIsLoading(false);
       };
       processData();
-    } else if (project) { 
-        setChartData([]);
-        setIsLoading(false);
+    } else if (project) {
+      setChartData([]);
+      setIsLoading(false);
     }
   }, [project]);
 
@@ -75,6 +77,9 @@ export default function Activity() {
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-semibold text-text-primary">일별 활동량</h2>
+        <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
+          <FontAwesomeIcon icon={faEllipsis} />
+        </button>
       </div>
 
       <div className="h-[300px]">
@@ -90,9 +95,9 @@ export default function Activity() {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-component-border)" horizontal={true} vertical={false} />
-              <XAxis 
-                dataKey="date" 
-                stroke="var(--color-text-secondary)" 
+              <XAxis
+                dataKey="date"
+                stroke="var(--color-text-secondary)"
                 tickFormatter={(tick) => {
                   // tick is YYYY-MM-DD, format to 'M월 D일'
                   const dateObj = new Date(tick);
@@ -101,19 +106,19 @@ export default function Activity() {
                 axisLine={false}
                 tickLine={false}
               />
-              <YAxis 
-                stroke="var(--color-text-secondary)" 
+              <YAxis
+                stroke="var(--color-text-secondary)"
                 allowDecimals={false}
                 axisLine={false}
                 tickLine={false}
               />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'var(--color-component-secondary-background)', 
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'var(--color-component-secondary-background)',
                   borderColor: 'var(--color-component-border)',
-                  borderRadius: '0.375rem', 
-                  boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.05)', 
-                  padding: '8px 12px', 
+                  borderRadius: '0.375rem',
+                  boxShadow: '0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.05)',
+                  padding: '8px 12px',
                 }}
                 labelStyle={{ color: 'var(--color-text-primary)', marginBottom: '4px', fontWeight: '500' }}
                 itemStyle={{ color: 'var(--color-text-secondary)' }}
@@ -124,15 +129,15 @@ export default function Activity() {
                 }}
               />
               {/* Display the total as the main area */}
-              <Line 
-                type="monotoneX" 
-                dataKey="전체" 
-                name="전체" 
-                stroke="#22c55e" 
-                strokeWidth={2} 
-                activeDot={{ r: 5, strokeWidth: 1.5, fill: 'var(--color-component-background)', stroke: '#22c55e' }} 
+              <Line
+                type="monotoneX"
+                dataKey="전체"
+                name="전체"
+                stroke="#22c55e"
+                strokeWidth={2}
+                activeDot={{ r: 5, strokeWidth: 1.5, fill: 'var(--color-component-background)', stroke: '#22c55e' }}
               />
-              
+
               <Line type="monotoneX" dataKey="생성된 작업" name="생성된 작업" stroke="var(--color-accent-primary)" strokeWidth={1} activeDot={{ r: 4, strokeWidth: 1, fill: 'var(--color-component-background)', stroke: 'var(--color-accent-primary)' }} strokeDasharray="5 5" />
               <Line type="monotoneX" dataKey="시작된 마일스톤" name="시작된 마일스톤" stroke="var(--color-accent-secondary)" strokeWidth={1} activeDot={{ r: 4, strokeWidth: 1, fill: 'var(--color-component-background)', stroke: 'var(--color-accent-secondary)' }} strokeDasharray="5 5" />
               <Legend verticalAlign="top" align="right" height={36} iconSize={10} wrapperStyle={{ top: -5, right: 0 }} />

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { useProject } from '@/contexts/ProjectContext';
 
 interface TaskLabelRenderType {
@@ -34,14 +35,11 @@ export default function ProjectProgressCard() {
     return (
       <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-lg sm:text-xl font-bold text-text-primary">프로젝트 진행률</h1>
+          <h2 className="text-xl font-semibold text-text-primary">프로젝트 진행률</h2>
           <div className="flex items-center text-text-secondary">
-            <Link href={`/platform/${project?.id}/tasks`} className="flex items-center text-text-secondary hover:text-text-primary">
-              더보기
-              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
+            <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
+              <FontAwesomeIcon icon={faEllipsis} />
+            </button>
           </div>
         </div>
         <div className="space-y-3 sm:space-y-4">
@@ -68,13 +66,10 @@ export default function ProjectProgressCard() {
   return (
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg sm:text-xl font-bold text-text-primary">프로젝트 진행률</h1>
-        <Link href={`/platform/${project?.id}/tasks`} className="flex items-center text-text-secondary hover:text-text-primary">
-          더보기
-          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
+        <h2 className="text-xl font-semibold text-text-primary">프로젝트 진행률</h2>
+        <button className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border">
+          <FontAwesomeIcon icon={faEllipsis} />
+        </button>
       </div>
       <div className="space-y-3 sm:space-y-4">
         <div className="flex justify-between items-center">
