@@ -24,6 +24,7 @@ import MileStoneCard from "@/components/project/MileStoneCard";
 import TeamActivities from "@/components/project/TeamActivities";
 import RecentFileCard from "@/components/project/RecentFileCard";
 import Activity from "@/components/project/Activity";
+import RecentTask from "@/components/project/RecentTask";
 
 // Define the structure for our card items
 interface CardItemType {
@@ -65,6 +66,7 @@ export default function ProjectPage() {
     { id: '3', component: <TeamActivities /> },
     { id: '4', component: <RecentFileCard /> },
     { id: '5', component: <Activity /> },
+    { id: '6', component: <RecentTask /> },
   ];
 
   const [cards, setCards] = useState<CardItemType[]>(() => {
@@ -97,8 +99,8 @@ export default function ProjectPage() {
   // Effect to save to localStorage when cards change
   useEffect(() => {
     if (typeof window !== 'undefined') { // Ensure localStorage is available
-        const cardIds = cards.map(card => card.id);
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cardIds));
+      const cardIds = cards.map(card => card.id);
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cardIds));
     }
   }, [cards]);
 
@@ -135,11 +137,7 @@ export default function ProjectPage() {
           <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
             {cards.map((card) => (
               <SortableItem key={card.id} id={card.id}>
-                {/* Conditional styling based on card type if needed for specific grid spans */}
-                {/* Example: card.id === '1' (ProjectProgressCard) might need col-span-2 on mobile */}
-                {/* For simplicity, all cards currently take default grid cell behavior */}
-                {/* You might need to adjust className here based on card.id if spans are dynamic based on card type */}
-                <div className={`${card.id === '1' ? 'sm:col-span-1 lg:col-span-1' : ''} ${card.id === '2' ? 'sm:col-span-1 lg:col-span-1' : ''} ${card.id === '3' ? 'sm:col-span-1 lg:col-span-1' : ''} ${card.id === '4' ? 'sm:col-span-1 lg:col-span-1' : ''} `}>
+                <div className="col-span-1 cursor-grab">
                   {card.component}
                 </div>
               </SortableItem>
