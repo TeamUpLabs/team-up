@@ -2,9 +2,8 @@
 
 import Image from "next/image";
 import { useProject } from "@/contexts/ProjectContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
+import ScheduleSkeleton from "@/components/skeleton/ScheduleSkeleton";
 import { Task } from "@/types/Task";
 
 const dummyMeetings = [
@@ -43,55 +42,23 @@ const dummyMeetings = [
 export default function Schedule() {
   const { project } = useProject();
   const [activeTab, setActiveTab] = useState<'meetings' | 'tasks'>("meetings");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowDropdown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500); // Simulate loading delay
+    return () => clearTimeout(timer);
   }, []);
 
-  const handleDeleteClick = () => {
-    // Implement delete functionality here
-    console.log('Delete button clicked');
-    setShowDropdown(false);
-  };
+  if (isLoading) {
+    return <ScheduleSkeleton />;
+  }
 
   return (
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-semibold text-text-primary">일정</h2>
-        <div className="relative" ref={dropdownRef}>
-          <button 
-            className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border"
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            <FontAwesomeIcon icon={faEllipsis} />
-          </button>
-          {showDropdown && (
-            <div className="absolute right-0 mt-1 w-36 bg-component-secondary-background border border-component-border rounded-md shadow-lg z-10">
-              <ul>
-                <li>
-                  <button 
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-component-tertiary-background flex items-center rounded-md"
-                    onClick={handleDeleteClick}
-                  >
-                    <FontAwesomeIcon icon={faTrash} className="mr-2" />
-                    삭제
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
-        </div>
       </div>
       {/* 탭 UI */}
       <div className="flex mb-4 bg-component-secondary-background rounded-lg overflow-hidden w-fit p-1">
