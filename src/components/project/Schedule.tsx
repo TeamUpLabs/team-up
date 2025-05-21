@@ -53,21 +53,19 @@ export default function Schedule() {
         </button>
       </div>
       {/* 탭 UI */}
-      <div className="flex mb-4 bg-component-secondary-background rounded-lg overflow-hidden w-fit">
+      <div className="flex mb-4 bg-component-secondary-background rounded-lg overflow-hidden w-fit p-1">
         <button
-          className={`px-6 py-2 text-base font-semibold transition-colors relative ${activeTab === 'meetings' ? 'bg-white text-text-primary' : 'text-text-secondary'} `}
+          className={`px-6 py-2 rounded-lg text-base font-semibold transition-colors relative ${activeTab === 'meetings' ? 'bg-component-tertiary-background text-text-primary' : 'text-text-secondary'} `}
           onClick={() => {
             setActiveTab('meetings');
-            console.log('meetings tab click', activeTab);
           }}
         >
           Meetings <span className="ml-1 text-xs font-bold text-red-500">4</span>
         </button>
         <button
-          className={`px-6 py-2 text-base font-semibold transition-colors relative ${activeTab === 'tasks' ? 'bg-white text-text-primary' : 'text-text-secondary'} `}
+          className={`px-6 py-2 rounded-lg text-base font-semibold transition-colors relative ${activeTab === 'tasks' ? 'bg-component-tertiary-background text-text-primary' : 'text-text-secondary'} `}
           onClick={() => {
             setActiveTab('tasks');
-            console.log('tasks tab click', activeTab);
           }}
         >
           Task <span className="ml-1 text-xs font-bold text-gray-500">{project?.tasks?.length ?? 0}</span>
@@ -77,7 +75,7 @@ export default function Schedule() {
       {activeTab === 'meetings' && (
         <div className="space-y-4">
           {dummyMeetings.map((meeting) => (
-            <div key={meeting.id} className="bg-white border border-component-border rounded-xl p-4 flex flex-col gap-2">
+            <div key={meeting.id} className="bg-component-secondary-background border border-component-border rounded-xl p-4 flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-lg font-semibold text-text-primary">{meeting.title}</span>
@@ -92,7 +90,6 @@ export default function Schedule() {
                     <Image key={idx} src={avatar} alt="member" className="w-7 h-7 rounded-full border-2 border-white -ml-2 first:ml-0" width={28} height={28} />
                   ))}
                 </div>
-                <button className="ml-4 text-green-600 font-medium hover:underline">View Detail</button>
               </div>
             </div>
           ))}
@@ -101,7 +98,7 @@ export default function Schedule() {
       {activeTab === 'tasks' && (
         <div className="space-y-4">
           {(project?.tasks?.slice(0, 3) as Task[] ?? []).map((task) => (
-            <div key={task.id} className="bg-white border border-component-border rounded-xl p-4 flex flex-col gap-2">
+            <div key={task.id} className="bg-component-secondary-background border border-component-border rounded-xl p-4 flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold text-text-primary">{task.title}</span>
                 <span className="text-sm text-text-secondary font-medium">Due <span className="text-text-primary font-bold">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}</span></span>
