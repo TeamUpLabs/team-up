@@ -19,8 +19,8 @@ const dummyMeetings = [
     ),
     time: "10:00 AM – 11:00 AM",
     members: [
-      "/avatar1.png",
-      "/avatar2.png"
+      "/DefaultProfile.jpg",
+      "/DefaultProfile.jpg"
     ]
   },
   {
@@ -34,8 +34,8 @@ const dummyMeetings = [
     ),
     time: "01:00 PM – 02:00 PM",
     members: [
-      "/avatar3.png",
-      "/avatar4.png"
+      "/DefaultProfile.jpg",
+      "/DefaultProfile.jpg"
     ]
   }
 ];
@@ -101,7 +101,7 @@ export default function Schedule() {
             setActiveTab('meetings');
           }}
         >
-          Meetings <span className="ml-1 text-xs font-bold text-red-500">4</span>
+          회의 <span className="ml-1 text-xs font-bold text-red-500">4</span>
         </button>
         <button
           className={`px-6 py-2 rounded-lg text-base font-semibold transition-colors relative ${activeTab === 'tasks' ? 'bg-component-tertiary-background text-text-primary' : 'text-text-secondary'} `}
@@ -109,7 +109,7 @@ export default function Schedule() {
             setActiveTab('tasks');
           }}
         >
-          Task <span className="ml-1 text-xs font-bold text-gray-500">{project?.tasks?.length ?? 0}</span>
+          작업 <span className="ml-1 text-xs font-bold text-gray-500">{project?.tasks?.length ?? 0}</span>
         </button>
       </div>
       {/* 탭별 내용 */}
@@ -128,7 +128,7 @@ export default function Schedule() {
                 <span className="flex items-center gap-1">{meeting.platformIcon}<span className="ml-1 text-xs font-medium text-text-secondary bg-component-tertiary-background px-2 py-1 rounded">{meeting.platform}</span></span>
                 <div className="flex ml-auto gap-1">
                   {meeting.members.map((avatar, idx) => (
-                    <Image key={idx} src={avatar} alt="member" className="w-7 h-7 rounded-full border-2 border-white -ml-2 first:ml-0" width={28} height={28} />
+                    <Image key={idx} src={avatar} alt="member" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
                   ))}
                 </div>
               </div>
@@ -149,7 +149,7 @@ export default function Schedule() {
                 <span className={`px-2 py-0.5 rounded text-xs font-medium ${task.priority === 'high' ? 'bg-red-100 text-red-600' : task.priority === 'medium' ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-500'}`}>{task.priority}</span>
                 <div className="flex ml-auto gap-1">
                   {task.assignee?.slice(0,2).map((member, idx) => (
-                    <Image key={idx} src={member.profileImage || '/default-avatar.png'} alt="assignee" className="w-7 h-7 rounded-full border-2 border-white -ml-2 first:ml-0" width={28} height={28} />
+                    <Image key={idx} src={member.profileImage || '/default-avatar.png'} alt="assignee" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
                   ))}
                 </div>
               </div>
