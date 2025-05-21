@@ -1,7 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsis, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useEffect, useState } from 'react';
 import { useProject } from '@/contexts/ProjectContext';
+import ProjectProgressCardSkeleton from '@/components/skeleton/ProjectProgressCardSkeleton';
 
 interface TaskLabelRenderType {
   label: string;
@@ -12,33 +11,12 @@ interface TaskLabelRenderType {
 export default function ProjectProgressCard() {
   const { project } = useProject();
   const [isLoading, setIsLoading] = useState(true);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (project && project.tasks) {
       setIsLoading(false);
     }
   }, [project]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowDropdown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleDeleteClick = () => {
-    // Implement delete functionality here
-    console.log('Delete button clicked');
-    setShowDropdown(false);
-  };
 
   const totalTasks = project?.tasks.length ?? 0;
   const completedTasks = project?.tasks.filter(task => task.status === 'done').length ?? 0;
@@ -54,53 +32,7 @@ export default function ProjectProgressCard() {
 
   if (isLoading) {
     return (
-      <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-text-primary">프로젝트 진행률</h2>
-          <div className="flex items-center text-text-secondary">
-            <div className="relative" ref={dropdownRef}>
-              <button 
-                className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border"
-                onClick={() => setShowDropdown(!showDropdown)}
-              >
-                <FontAwesomeIcon icon={faEllipsis} />
-              </button>
-              {showDropdown && (
-                <div className="absolute right-0 mt-1 w-36 bg-component-secondary-background border border-component-border rounded-md shadow-lg z-10">
-                  <ul>
-                    <li>
-                      <button 
-                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-component-tertiary-background flex items-center rounded-md"
-                        onClick={handleDeleteClick}
-                      >
-                        <FontAwesomeIcon icon={faTrash} className="mr-2" />
-                        삭제
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="space-y-3 sm:space-y-4">
-          <div className="flex justify-between items-center">
-            <span className="text-text-secondary">전체 진행률</span>
-            <div className="h-5 bg-component-skeleton-background rounded w-12 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
-          </div>
-          <div className="relative w-full bg-component-secondary-background rounded-full h-2.5 overflow-hidden">
-            <div className="bg-component-skeleton-background h-2.5 rounded-full w-3/5 animate-progressBar"></div>
-          </div>
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-3 sm:mt-4">
-            {TaskLabelRender.map((taskLabel, index) => (
-              <div key={index} className="bg-component-secondary-background p-4 rounded-lg text-center border border-component-border">
-                <p className="text-text-secondary">{taskLabel.label}</p>
-                <div className="h-7 bg-component-skeleton-background rounded w-10 mx-auto mt-2 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <ProjectProgressCardSkeleton />
     );
   }
 
@@ -108,29 +40,6 @@ export default function ProjectProgressCard() {
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-text-primary">프로젝트 진행률</h2>
-        <div className="relative" ref={dropdownRef}>
-          <button 
-            className="flex items-center text-text-secondary hover:text-text-primary p-2 rounded-md border border-component-border"
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            <FontAwesomeIcon icon={faEllipsis} />
-          </button>
-          {showDropdown && (
-            <div className="absolute right-0 mt-1 w-36 bg-component-secondary-background border border-component-border rounded-md shadow-lg z-10">
-              <ul>
-                <li>
-                  <button 
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-component-tertiary-background flex items-center rounded-md"
-                    onClick={handleDeleteClick}
-                  >
-                    <FontAwesomeIcon icon={faTrash} className="mr-2" />
-                    삭제
-                  </button>
-                </li>
-              </ul>
-            </div>
-          )}
-        </div>
       </div>
       <div className="space-y-3 sm:space-y-4">
         <div className="flex justify-between items-center">
