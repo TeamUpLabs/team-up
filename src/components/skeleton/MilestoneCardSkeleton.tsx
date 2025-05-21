@@ -6,7 +6,7 @@ export default function MilestoneCardSkeleton({ isPreview = false }: { isPreview
       </div>
       <div className="space-y-4">
         <div className="bg-component-secondary-background p-3 rounded-lg border border-component-border">
-          <div className={`${isPreview ? 'h-2' : 'h-4'} bg-component-skeleton-background rounded w-2/3 animate-[pulse_1.5s_ease-in-out_infinite] mt-2`}></div>
+          <div className={`${isPreview ? 'h-2' : 'h-4'} bg-component-skeleton-background rounded ${isPreview ? 'w-1/3' : 'w-2/3'} animate-[pulse_1.5s_ease-in-out_infinite] mt-2`}></div>
           <div className="mt-4 flex items-center">
             <div className={`w-full bg-component-skeleton-background rounded-full h-1.5 ${isPreview ? 'w-12' : 'w-24'}`}>
               <div className="bg-component-skeleton-background h-1.5 rounded-full w-[60%] animate-[pulse_1.5s_ease-in-out_infinite]"></div>
