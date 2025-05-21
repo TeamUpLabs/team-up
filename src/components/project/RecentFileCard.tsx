@@ -1,7 +1,9 @@
 export default function RecentFileCard() {
   return (
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
-      <h2 className="text-lg sm:text-xl font-semibold text-text-primary mb-3 sm:mb-4">최근 파일</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold text-text-primary">최근 파일</h2>
+      </div>
       <div className="space-y-2 sm:space-y-3">
         <div className="flex flex-col sm:flex-row items-start sm:items-center p-3 bg-component-secondary-background rounded-lg hover:bg-component-tertiary-background border border-component-border transition-colors">
           <div className="p-2 bg-blue-100 rounded">

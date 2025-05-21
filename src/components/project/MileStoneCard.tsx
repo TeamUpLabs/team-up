@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { MileStone } from '@/types/MileStone';
-import Link from 'next/link';
 import { useProject } from '@/contexts/ProjectContext';
+import MilestoneCardSkeleton from '@/components/skeleton/MilestoneCardSkeleton';
 
 export default function MileStoneCard() {
   const { project } = useProject();
@@ -40,42 +40,7 @@ export default function MileStoneCard() {
 
   if (isLoading) {
     return (
-      <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md overflow-x-auto border border-component-border">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-text-primary">다가오는 마일스톤</h2>
-          <Link href={`/platform/${project?.id}/milestone`} className="flex items-center text-text-secondary hover:text-text-primary">
-            더보기
-            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
-        </div>
-        <div className="space-y-4">
-          <div className="bg-component-secondary-background p-3 rounded-lg border border-component-border">
-            <div className="flex justify-between items-start mb-2">
-              <div className="h-6 bg-component-skeleton-background rounded w-1/3 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
-              <div className="h-6 bg-component-skeleton-background rounded-md w-16 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
-            </div>
-            <div className="h-4 bg-component-skeleton-background rounded w-2/3 animate-[pulse_1.5s_ease-in-out_infinite] mt-2"></div>
-            <div className="mt-4 flex items-center">
-              <div className="w-full bg-component-skeleton-background rounded-full h-1.5">
-                <div className="bg-component-skeleton-background h-1.5 rounded-full w-[60%] animate-[pulse_1.5s_ease-in-out_infinite]"></div>
-              </div>
-              <div className="ml-2 h-4 bg-component-skeleton-background rounded w-12 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
-            </div>
-            <div className="flex flex-col gap-2 mt-3">
-              <div className="flex items-center">
-                <span className="text-sm text-text-secondary mr-2">시작일:</span>
-                <div className="h-4 bg-component-skeleton-background rounded w-24 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
-              </div>
-              <div className="flex items-center">
-                <span className="text-sm text-text-secondary mr-2">종료일:</span>
-                <div className="h-4 bg-component-skeleton-background rounded w-24 animate-[pulse_1.5s_ease-in-out_infinite]"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <MilestoneCardSkeleton />
     );
   }
 
@@ -83,12 +48,6 @@ export default function MileStoneCard() {
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md overflow-x-auto border border-component-border">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-text-primary">다가오는 마일스톤</h2>
-        <Link href={`/platform/${project?.id}/milestone`} className="flex items-center text-text-secondary hover:text-text-primary">
-          더보기
-          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
       </div>
       <div className="space-y-4">
         {closestMilestone ? (

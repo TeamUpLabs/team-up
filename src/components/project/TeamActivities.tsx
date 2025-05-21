@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useProject } from "@/contexts/ProjectContext";
 import Image from "next/image";
+import TeamActivitiesSkeleton from "@/components/skeleton/TeamActivitiesSkeleton";
 
 export default function TeamActivities() {
   const { project } = useProject();
@@ -13,48 +13,17 @@ export default function TeamActivities() {
     }
   }, [project]);
 
-  const SkeletonLoader = () => (
-    Array(3).fill(0).map((_, index) => (
-      <div key={index} className="flex items-center justify-between p-2 border-b border-component-border animate-pulse">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-component-skeleton-background rounded-full flex items-center justify-center">
-            <div className="w-4 h-4 bg-component-skeleton-background rounded-sm"></div>
-          </div>
-          <div className="space-y-2">
-            <div className="h-4 bg-component-skeleton-background rounded w-24"></div>
-            <div className="h-3 bg-component-skeleton-background rounded w-20"></div>
-            <div className="flex items-center">
-              <span className="h-2.5 bg-component-skeleton-background rounded w-[100px]"></span>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-end space-y-2">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-component-skeleton-background rounded-full"></div>
-            <div className="h-3 bg-component-skeleton-background rounded w-12"></div>
-          </div>
-          <div className="h-2 bg-component-skeleton-background rounded w-16"></div>
-        </div>
-      </div>
-    ))
-  );
+  if (isLoading) {
+    return <TeamActivitiesSkeleton />;
+  }
 
   return (
     <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-semibold text-text-primary">팀원 활동</h2>
-        <Link href={`/platform/${project?.id}/members`} className="flex items-center text-text-secondary hover:text-text-primary">
-          더보기
-          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
       </div>
       <div className="max-h-[300px] overflow-y-auto divide-y divide-component-border">
-        {isLoading ? (
-          <SkeletonLoader />
-        ) : (
-          project?.members.map((member) => (
+        {project?.members.map((member) => (
             <div key={member.id} className="flex items-center justify-between p-2 hover:bg-component-secondary-background transition duration-200">
               <div className="flex items-center">
                 <div className={`w-10 h-10 relative border border-component-border bg-component-secondary-background rounded-full flex items-center justify-center text-text-primary font-bold`}>
@@ -108,7 +77,7 @@ export default function TeamActivities() {
               </div>
             </div>
           ))
-        )}
+        }
       </div>
     </div>
   )
