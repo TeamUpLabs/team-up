@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import {
   startOfMonth,
   endOfMonth,
@@ -37,6 +39,21 @@ export default function CalendarPage() {
 
   return (
     <div className="flex flex-col py-20 px-4">
+      {/* Header Section */}
+      <div className="flex justify-between items-center mb-6 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
+        <div>
+          <h1 className="text-2xl font-bold text-text-primary">일정</h1>
+          <p className="text-text-secondary mt-2">프로젝트의 일정을 관리하세요</p>
+        </div>
+        <button
+          // onClick={() => setIsCreateModalOpen(true)}
+          className="flex items-center gap-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-lg transition-colors active:scale-95"
+        >
+          <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
+          <span>일정 추가</span>
+        </button>
+      </div>
+
       <Calendar
         currentDate={currentDate}
         tasks={project?.tasks}
