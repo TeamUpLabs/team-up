@@ -3,6 +3,7 @@ import { Member } from "@/types/Member";
 export interface Schedule {
     id: number;
     project_id: string;
+    type: "meeting" | "event";
     title: string;
     description: string;
     where: string;
@@ -15,5 +16,6 @@ export interface Schedule {
     created_by: string;
     updated_by: string;
     memo?: string;
-    assignee: Member[];
+    assignee_id: number[];
+    assignee?: Member[];
 }
