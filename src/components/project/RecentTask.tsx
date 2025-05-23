@@ -93,7 +93,7 @@ export default function RecentTask() {
           </div>
         ))}
         {(project?.tasks?.length || 0) < 1 && (
-          <p className="text-text-secondary col-span-full text-center py-4">No recent tasks.</p>
+          <p className="text-text-secondary col-span-full text-center py-4">최근 작업이 없습니다.</p>
         )}
         {(project?.tasks?.length || 0) === 1 && (
           <div className="hidden md:block"></div>
