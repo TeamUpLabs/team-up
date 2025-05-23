@@ -21,6 +21,7 @@ import { useProject } from '@/contexts/ProjectContext';
 import { useAuthStore } from "@/auth/authStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { MiniLogo } from "@/components/logo";
+import { createSchedule } from "@/hooks/getScheduleData";
 
 type ScheduleType = "meeting" | "event";
 type MeetingPlatform = "zoom" | "google" | "teamup";
@@ -33,17 +34,17 @@ export default function ScheduleCreateModal({ isOpen, onClose }: { isOpen: boole
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
   const [dateError, setDateError] = useState(false);
   const [formData, setFormData] = useState({
-    project_id: project?.id,
+    project_id: project?.id || "",
     type: activeTab,
     title: "",
     description: "",
-    where: selectedPlatform,
+    where: selectedPlatform || "",
     link: "",
     start_time: "",
     end_time: "",
     status: "not-started",
-    created_by: user?.id,
-    updated_by: user?.id,
+    created_by: user?.id || 0,
+    updated_by: user?.id || 0,
     memo: "",
     assignee_id: [] as number[],
   });
@@ -99,6 +100,7 @@ export default function ScheduleCreateModal({ isOpen, onClose }: { isOpen: boole
 
     if (project?.id && hasError === false) {
       try {
+        await createSchedule(project.id, formData);
         setSubmitStatus('success');
         useAuthStore.getState().setAlert('일정이 성공적으로 생성되었습니다.', 'success');
 
@@ -113,17 +115,17 @@ export default function ScheduleCreateModal({ isOpen, onClose }: { isOpen: boole
     }
     // Reset form and close modal
     setFormData({
-      project_id: project?.id,
+      project_id: project?.id || "",
       type: activeTab,
       title: "",
       description: "",
-      where: selectedPlatform,
+      where: selectedPlatform || "",
       link: "",
       start_time: "",
       end_time: "",
       status: "not-started",
-      created_by: user?.id,
-      updated_by: user?.id,
+      created_by: user?.id || 0,
+      updated_by: user?.id || 0,
       memo: "",
       assignee_id: [] as number[],
     });

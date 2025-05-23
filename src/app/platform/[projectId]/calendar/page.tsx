@@ -15,12 +15,14 @@ import TaskModal from '@/components/project/task/TaskModal';
 import Calendar from '@/components/project/calendar/CalendarComponent';
 import ScheduleStatus from '@/components/project/calendar/ScheduleStatus';
 import { useProject } from "@/contexts/ProjectContext";
+import ScheduleCreateModal from '@/components/project/calendar/ScheduleCreateModal';
 
 export default function CalendarPage() {
   const { project } = useProject();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -46,7 +48,7 @@ export default function CalendarPage() {
           <p className="text-text-secondary mt-2">프로젝트의 일정을 관리하세요</p>
         </div>
         <button
-          // onClick={() => setIsCreateModalOpen(true)}
+          onClick={() => setIsCreateModalOpen(true)}
           className="flex items-center gap-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-lg transition-colors active:scale-95"
         >
           <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
@@ -64,6 +66,11 @@ export default function CalendarPage() {
       />
 
       <ScheduleStatus tasks={project?.tasks} />
+
+      <ScheduleCreateModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
 
       {selectedTask && (
         <TaskModal
