@@ -33,8 +33,8 @@ export default function Calendar({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h1 className="text-xl sm:text-2xl font-bold text-text-primary">일정 관리</h1>
           <div className="flex items-center space-x-3 sm:space-x-4">
-            <button 
-              onClick={onPreviousMonth} 
+            <button
+              onClick={onPreviousMonth}
               className="p-2 hover:bg-component-secondary-background active:bg-component-secondary-background rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               aria-label="이전 달"
             >
@@ -43,8 +43,8 @@ export default function Calendar({
             <h2 className="text-lg sm:text-xl font-semibold text-text-primary min-w-[140px] text-center">
               {format(currentDate, 'yyyy년 M월')}
             </h2>
-            <button 
-              onClick={onNextMonth} 
+            <button
+              onClick={onNextMonth}
               className="p-2 hover:bg-component-secondary-background active:bg-component-secondary-background rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               aria-label="다음 달"
             >
@@ -56,8 +56,8 @@ export default function Calendar({
 
       <div className="grid grid-cols-7 border-b border-component-border">
         {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
-          <div 
-            key={day} 
+          <div
+            key={day}
             className={`py-2 text-center font-medium text-sm sm:text-base border-r last:border-r-0 border-component-border ${index === 0 ? 'text-red-300' : index === 6 ? 'text-blue-300' : 'text-text-secondary'}`}
           >
             {day}
@@ -153,7 +153,6 @@ export default function Calendar({
                     )}
                   </div>
                 ))}
-
               </div>
               {dayTasks && dayTasks.length > 3 && (
                 <div className="absolute bottom-0 right-0 text-[10px] sm:text-xs text-text-secondary px-1 bg-component-background/80 rounded-tl-md">

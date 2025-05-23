@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Task } from '@/types/Task';
 import { useEffect, useState } from 'react';
 import RecentTaskSkeleton from '@/components/skeleton/RecentTaskSkeleton';
+import Tooltip from '@/components/ui/Tooltip';
 
 export default function RecentTask() {
   const { project } = useProject();
@@ -67,14 +68,15 @@ export default function RecentTask() {
               <div className="flex items-center justify-between text-sm text-text-secondary">
                 <div className="flex -space-x-2">
                   {task.assignee?.map((assignee, i) => (
-                    <Image
-                      key={assignee.id}
-                      className="w-6 h-6 border-2 border-component-border rounded-full"
-                      src={assignee.profileImage}
-                      alt={`Assignee ${i + 1}`}
-                      width={24}
-                      height={24}
-                    />
+                    <Tooltip content={assignee.name} key={assignee.id}>
+                      <Image
+                        className="w-6 h-6 border-2 border-component-border rounded-full"
+                        src={assignee.profileImage}
+                        alt={`Assignee ${i + 1}`}
+                        width={24}
+                        height={24}
+                      />
+                    </Tooltip>
                   ))}
                   {task.assignee?.length === 0 && (
                     <span className="flex items-center justify-center w-6 h-6 text-xs font-medium text-white bg-component-background border-2 border-component-border rounded-full hover:bg-component-background/60">+</span>

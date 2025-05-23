@@ -23,6 +23,7 @@ import {
   faVideo,
 } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+import Tooltip from "@/components/ui/Tooltip";
 
 export default function Schedule() {
   const { project } = useProject();
@@ -134,7 +135,9 @@ export default function Schedule() {
                   )}
                   <div className="flex ml-auto items-center gap-1">
                     {meeting.assignee?.map((member, idx) => (
-                      <Image key={idx} src={member.profileImage || '/default-avatar.png'} alt="member" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
+                      <Tooltip content={member.name} key={idx}>
+                        <Image src={member.profileImage || '/default-avatar.png'} alt="member" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
+                      </Tooltip>
                     ))}
                   </div>
                 </div>
@@ -177,7 +180,9 @@ export default function Schedule() {
                   <span className="flex items-center gap-1 text-xs font-medium text-text-secondary bg-component-tertiary-background px-2 py-1 rounded"><FontAwesomeIcon icon={faMapMarkerAlt} className="mr-1" />{event.where}</span>
                   <div className="flex ml-auto items-center gap-1">
                     {event.assignee?.map((member, idx) => (
-                      <Image key={idx} src={member.profileImage || '/default-avatar.png'} alt="member" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
+                      <Tooltip content={member.name} key={idx}>
+                        <Image src={member.profileImage || '/default-avatar.png'} alt="member" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
+                      </Tooltip>
                     ))}
                   </div>
                 </div>
@@ -215,7 +220,9 @@ export default function Schedule() {
                   </span>
                   <div className="flex ml-auto items-center gap-1">
                     {task.assignee?.slice(0, 2).map((member, idx) => (
-                      <Image key={idx} src={member.profileImage || '/default-avatar.png'} alt="assignee" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
+                      <Tooltip content={member.name} key={idx}>
+                        <Image src={member.profileImage || '/default-avatar.png'} alt="assignee" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
+                      </Tooltip>
                     ))}
                   </div>
                 </div>

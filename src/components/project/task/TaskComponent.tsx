@@ -1,5 +1,6 @@
 import type { Task } from '@/types/Task';
 import Image from 'next/image';
+import Tooltip from '@/components/ui/Tooltip';
 
 export default function TaskComponent({ task }: { task: Task }) {
   return (
@@ -23,14 +24,16 @@ export default function TaskComponent({ task }: { task: Task }) {
       <div className="flex items-center justify-between gap-2 text-sm text-text-secondary">
         {task?.assignee && task.assignee.length > 0 && (
           <div className="flex -space-x-2.5">
-            {task.assignee.slice(0, 2).map((assi, idx) => (
-              <div key={assi?.id ?? idx} className="w-8 h-8 relative rounded-full bg-component-background border-2 border-component-border text-xs flex items-center justify-center">
-                {assi?.profileImage ? (
-                  <Image src={assi.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
-                ) : (
-                  <p>{assi?.name.charAt(0)}</p>
-                )}
-              </div>
+            {task.assignee.slice(0, 2).map((assi) => (
+              <Tooltip content={assi.name} key={assi.id}>
+                <div className="w-8 h-8 relative rounded-full bg-component-background border-2 border-component-border text-xs flex items-center justify-center">
+                  {assi?.profileImage ? (
+                    <Image src={assi.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                  ) : (
+                    <p>{assi?.name.charAt(0)}</p>
+                  )}
+                </div>
+              </Tooltip>
             ))}
             {task.assignee.length > 2 && (
               <div className="w-8 h-8 rounded-full bg-component-background border-2 border-component-border text-sm flex items-center justify-center">
