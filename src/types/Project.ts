@@ -1,6 +1,7 @@
 import { Member } from "@/types/Member";
 import { Task } from "@/types/Task";
 import { MileStone } from "@/types/MileStone";
+import { Schedule } from "@/types/Schedule";
 
 export interface Project {
   id: string;
@@ -21,4 +22,5 @@ export interface Project {
   milestones: MileStone[];
   participationRequest: number[];
   participationRequestMembers: Member[];
+  schedules: Schedule[];
 }

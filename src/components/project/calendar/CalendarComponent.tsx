@@ -2,11 +2,14 @@ import { format, isSameMonth, isToday } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { Task } from '@/types/Task';
-import { getStatusColor } from '@/utils/getStatusColor';
+import { Schedule } from '@/types/Schedule';
+import { getScheduleColor } from '@/utils/getScheduleColor';
 
 interface CalendarProps {
   currentDate: Date;
   tasks?: Task[];
+  meetings?: Schedule[];
+  events?: Schedule[];
   days: Date[];
   onPreviousMonth: () => void;
   onNextMonth: () => void;
@@ -16,6 +19,8 @@ interface CalendarProps {
 export default function Calendar({
   currentDate,
   tasks,
+  meetings,
+  events,
   days,
   onPreviousMonth,
   onNextMonth,
@@ -63,6 +68,8 @@ export default function Calendar({
       <div className="flex-1 grid grid-cols-7 overflow-y-auto">
         {days.map((day, index) => {
           const dayTasks = tasks?.filter(task => task?.dueDate === format(day, 'yyyy-MM-dd'));
+          const dayMeetings = meetings?.filter(meeting => meeting?.start_time.split('T')[0] === format(day, 'yyyy-MM-dd'));
+          const dayEvents = events?.filter(event => event?.start_time.split('T')[0] === format(day, 'yyyy-MM-dd'));
           const isWeekend = index % 7 === 0 || index % 7 === 6;
           const isSameMonthDay = isSameMonth(day, currentDate);
           const isTodayDay = isToday(day);
@@ -93,7 +100,7 @@ export default function Calendar({
                   <div
                     key={task?.id}
                     onClick={() => onSelectTask(task)}
-                    className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getStatusColor(task?.status ?? '')} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
+                    className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("task")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
                   >
                     <p className="font-medium truncate">{task?.title}</p>
                     {task?.assignee && task?.assignee.length > 0 && (
@@ -108,6 +115,45 @@ export default function Calendar({
                     )}
                   </div>
                 ))}
+
+                {dayMeetings?.map(meeting => (
+                  <div
+                    key={meeting?.id}
+                    className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("meeting")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
+                  >
+                    <p className="font-medium truncate">{meeting?.title}</p>
+                    {meeting?.assignee && meeting?.assignee.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-0.5">
+                        {meeting?.assignee.slice(0, 2).map(assi => (
+                          <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
+                        ))}
+                        {meeting?.assignee.length > 2 && (
+                          <span className="text-[10px] sm:text-xs opacity-75 truncate">+{meeting?.assignee.length - 2}명</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {dayEvents?.map(event => (
+                  <div
+                    key={event?.id}
+                    className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("event")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
+                  >
+                    <p className="font-medium truncate">{event?.title}</p>
+                    {event?.assignee && event?.assignee.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-0.5">
+                        {event?.assignee.slice(0, 2).map(assi => (
+                          <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
+                        ))}
+                        {event?.assignee.length > 2 && (
+                          <span className="text-[10px] sm:text-xs opacity-75 truncate">+{event?.assignee.length - 2}명</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+
               </div>
               {dayTasks && dayTasks.length > 3 && (
                 <div className="absolute bottom-0 right-0 text-[10px] sm:text-xs text-text-secondary px-1 bg-component-background/80 rounded-tl-md">
