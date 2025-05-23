@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faUser, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { useProject } from '@/contexts/ProjectContext';
@@ -21,17 +21,29 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
     title: '',
     description: '',
     status: 'not-started',
-    dueDate: '',
+    startDate: '',
+    endDate: '',
     assignee_id: [] as number[],
     tags: [] as string[],
     priority: 'medium',
     subtasks: [] as string[],
-    milestone_id: milestone_id
+    milestone_id: milestone_id,
+    createdBy: useAuthStore.getState().user?.id || 0,
+    updatedBy: useAuthStore.getState().user?.id || 0,
   })
   const [tagsInput, setTagsInput] = useState('');
   const [subtasksInput, setSubtasksInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [dateError, setDateError] = useState(false);
+
+  useEffect(() => {
+    if (formData.startDate && formData.endDate) {
+      setDateError(new Date(formData.endDate) < new Date(formData.startDate));
+    } else {
+      setDateError(false);
+    }
+  }, [formData.startDate, formData.endDate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -40,6 +52,17 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    let hasError = false;
+
+    if (dateError) {
+      hasError = true;
+    }
+
+    if (hasError) {
+      return;
+    }
+
     setSubmitStatus('submitting');
 
     if (project?.id) {
@@ -152,21 +175,39 @@ export default function TaskCreateModal({ isOpen, onClose, milestone_id }: TaskC
         </div>
 
         <div className="relative">
-          <label htmlFor="dueDate" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
-            마감 일자 <span className="text-point-color-purple ml-1">*</span>
+          <label htmlFor="startDate" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            시작 일자 <span className="text-point-color-purple ml-1">*</span>
           </label>
           <input
             type="date"
-            id="dueDate"
-            name="dueDate"
-            value={formData.dueDate}
+            id="startDate"
+            name="startDate"
+            value={formData.startDate}
             onChange={handleChange}
             className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             required
           />
         </div>
 
-        <div>
+        <div className="relative">
+          <label htmlFor="endDate" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
+            종료 일자 <span className="text-point-color-purple ml-1">*</span>
+          </label>
+          <input
+            type="date"
+            id="endDate"
+            name="endDate"
+            value={formData.endDate}
+            onChange={handleChange}
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+            required
+          />
+          {dateError && (
+            <p className="text-red-500 text-sm mt-2">종료일은 시작일 이후여야 합니다.</p>
+          )}
+        </div>
+
+        <div className="col-span-2">
           <label htmlFor="priority" className="flex items-center text-sm font-medium mb-2 text-text-secondary">
             우선순위 <span className="text-point-color-purple ml-1">*</span>
           </label>

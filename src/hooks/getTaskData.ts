@@ -7,12 +7,15 @@ interface TaskFormData {
   title: string;
   description: string;
   status: string;
-  dueDate: string;
   assignee_id: number[];
   tags: string[];
   priority: string;
   subtasks: string[];
   milestone_id: number;
+  startDate: string;
+  endDate: string;
+  createdBy: number;
+  updatedBy: number;
 }
 
 export const createTask = async (project_id: string, task: TaskFormData) => {
@@ -23,7 +26,8 @@ export const createTask = async (project_id: string, task: TaskFormData) => {
       title: task.title,
       description: task.description,
       status: task.status,
-      dueDate: task.dueDate,
+      startDate: task.startDate,
+      endDate: task.endDate,
       assignee_id: task.assignee_id,
       tags: task.tags,
       priority: task.priority,
@@ -32,6 +36,8 @@ export const createTask = async (project_id: string, task: TaskFormData) => {
         title: subtask,
         completed: false,
       })),
+      createdBy: task.createdBy,
+      updatedBy: task.updatedBy,
       createdAt: getCurrentKoreanTime(),
       updatedAt: getCurrentKoreanTime(),
     });
@@ -81,7 +87,8 @@ interface UpdateTaskFormData {
   description: string;
   status: string;
   priority: string;
-  dueDate: string;
+  startDate: string;
+  endDate: string;
   assignee_id: number[];
   tags: string[];
   subtasks: SubTask[];

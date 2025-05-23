@@ -106,6 +106,7 @@ interface ProjectFormData {
   techStack: string[];
   location: string;
   teamSize: number;
+  startDate: string;
   endDate: string;
 }
 
@@ -142,8 +143,9 @@ export const createProject = async (formData: ProjectFormData) => {
       techStack: formData.techStack,
       location: formData.location,
       teamSize: Number(formData.teamSize),
-      startDate: getCurrentKoreanTimeDate(),
+      startDate: formData.startDate,
       endDate: formData.endDate,
+      createdAt: getCurrentKoreanTimeDate(),
     }, {
       headers: {
         'Content-Type': 'application/json',

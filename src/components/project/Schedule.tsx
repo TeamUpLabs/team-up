@@ -78,8 +78,8 @@ export default function Schedule() {
         <div className="space-y-4">
           {project?.schedules?.filter((schedule) => schedule.type === 'meeting').length === 0 ? (
             <div className="flex flex-col items-center justify-center p-10 text-center">
-              <FontAwesomeIcon icon={faExclamationCircle} className="text-4xl text-text-tertiary mb-3" />
-              <span className="text-text-secondary">예정된 회의가 없습니다.</span>
+              <FontAwesomeIcon icon={faExclamationCircle} className="text-4xl text-text-secondary-color mb-3" />
+              <span className="text-text-secondary-color">예정된 회의가 없습니다.</span>
             </div>
           ) : (
             project?.schedules?.filter((schedule) => schedule.type === 'meeting').map((meeting) => (
@@ -151,8 +151,8 @@ export default function Schedule() {
         <div className="space-y-4">
           {project?.schedules?.filter((schedule) => schedule.type === 'event').length === 0 ? (
             <div className="flex flex-col items-center justify-center p-10 text-center">
-              <FontAwesomeIcon icon={faExclamationCircle} className="text-4xl text-text-tertiary mb-3" />
-              <span className="text-text-secondary">예정된 이벤트가 없습니다.</span>
+              <FontAwesomeIcon icon={faExclamationCircle} className="text-4xl text-text-secondary-color mb-3" />
+              <span className="text-text-secondary-color">예정된 이벤트가 없습니다.</span>
             </div>
           ) : (
             project?.schedules?.filter((schedule) => schedule.type === 'event').map((event) => (
@@ -196,8 +196,8 @@ export default function Schedule() {
         <div className="space-y-4">
           {project?.tasks?.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-10 text-center">
-              <FontAwesomeIcon icon={faExclamationCircle} className="text-4xl text-text-tertiary mb-3" />
-              <span className="text-text-secondary">진행 중인 작업이 없습니다.</span>
+              <FontAwesomeIcon icon={faExclamationCircle} className="text-4xl text-text-secondary-color mb-3" />
+              <span className="text-text-secondary-color">진행 중인 작업이 없습니다.</span>
             </div>
           ) : (
             (project?.tasks?.slice(0, 3) as Task[] ?? []).map((task) => (
@@ -205,7 +205,7 @@ export default function Schedule() {
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between">
                     <span className="text-base sm:text-lg font-semibold text-text-primary">{task.title}</span>
-                    <span className="text-xs sm:text-sm text-text-secondary font-medium flex items-center gap-1 self-start sm:self-center"><FontAwesomeIcon icon={faCalendarCheck} className="w-3 h-3 sm:w-auto sm:h-auto" /> Due <span className="text-text-primary font-bold">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}</span></span>
+                    <span className="text-xs sm:text-sm text-text-secondary font-medium flex items-center gap-1 self-start sm:self-center"><FontAwesomeIcon icon={faCalendarCheck} className="w-3 h-3 sm:w-auto sm:h-auto" /> Due <span className="text-text-primary font-bold">{task.endDate ? new Date(task.endDate).toLocaleDateString() : '-'}</span></span>
                   </div>
                   <span className="text-xs sm:text-sm text-text-secondary">{task.description}</span>
                 </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, KeyboardEvent } from 'react';
+import { useState, KeyboardEvent, useEffect } from 'react';
 import { createProject } from '@/hooks/getProjectData';
 import { updateProjectMember } from '@/hooks/getMemberData';
 import { useAuthStore } from '@/auth/authStore';
@@ -25,6 +25,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     techStack: [] as string[],
     location: '',
     teamSize: 1,
+    startDate: '',
     endDate: '',
   });
 
@@ -34,6 +35,16 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   const [isComposing, setIsComposing] = useState(false);
 
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+
+  const [dateError, setDateError] = useState(false);
+
+  useEffect(() => {
+    if (formData.startDate && formData.endDate) {
+      setDateError(new Date(formData.endDate) < new Date(formData.startDate));
+    } else {
+      setDateError(false);
+    }
+  }, [formData.startDate, formData.endDate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -83,6 +94,17 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    let hasError = false;
+
+    if (dateError) {
+      hasError = true;
+    }
+
+    if (hasError) {
+      return;
+    }
+
     if (formData.title === '' || formData.description === '' || formData.projectType === '' || formData.endDate === '' || formData.roles.length === 0 || formData.techStack.length === 0 || formData.location === '' || formData.teamSize === 0) {
       useAuthStore.getState().setAlert("모든 필드를 입력해주세요.", "error");
       return;
@@ -96,9 +118,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
         setSubmitStatus('success');
         useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
 
-      setTimeout(() => {
-        setSubmitStatus('idle');
-        onClose();
+        setTimeout(() => {
+          setSubmitStatus('idle');
+          onClose();
           window.location.reload();
         }, 1000);
       } catch (error) {
@@ -110,7 +132,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
   const handleButtonClick = () => {
     // Create a synthetic form event
-    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent<HTMLFormElement>;
+    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent<HTMLFormElement>;
     handleSubmit(syntheticEvent);
   };
 
@@ -122,7 +144,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   );
 
   const modalContent = (
-    <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto pl-2 pr-2">
+    <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
       <div className="space-y-6 mb-1">
         <div>
           <label htmlFor="title" className="block text-sm font-medium mb-1">
@@ -158,6 +180,39 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <div>
+            <label htmlFor="startDate" className="block text-sm font-medium mb-1">
+              프로젝트 시작일 <span className="text-point-color-purple ml-1">*</span>
+            </label>
+            <input
+              type="date"
+              id="startDate"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="endDate" className="block text-sm font-medium mb-1">
+              프로젝트 종료일 <span className="text-point-color-purple ml-1">*</span>
+            </label>
+            <input
+              type="date"
+              id="endDate"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+              required
+            />
+            {dateError && (
+              <p className="text-red-500 text-sm mt-2">종료일은 시작일 이후여야 합니다.</p>
+            )}
+          </div>
+
+          <div className="col-span-2">
             <label htmlFor="projectType" className="block text-sm font-medium mb-1">
               프로젝트 카테고리 <span className="text-point-color-purple ml-1">*</span>
             </label>
@@ -177,21 +232,6 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               <option value="비즈니스">비즈니스</option>
               <option value="토이">토이 프로젝트</option>
             </select>
-          </div>
-
-          <div>
-            <label htmlFor="endDate" className="block text-sm font-medium mb-1">
-              프로젝트 종료일 <span className="text-point-color-purple ml-1">*</span>
-            </label>
-            <input
-              type="date"
-              id="endDate"
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
-              required
-            />
           </div>
         </div>
 

@@ -19,11 +19,14 @@ export interface Task {
   status: 'not-started' | 'in-progress' | 'done';
   priority: 'low' | 'medium' | 'high';
   assignee?: Member[];
-  dueDate?: string;
+  startDate?: string;
+  endDate?: string;
   tags: string[];
   subtasks: SubTask[];
   comments: Comment[];
+  milestone_id: number;
   createdAt: string;
   updatedAt: string;
-  milestone_id: number;
+  createdBy: number;
+  updatedBy: number;
 }
