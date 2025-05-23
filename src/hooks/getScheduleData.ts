@@ -39,4 +39,24 @@ export const createSchedule = async (project_id: string, formData: ScheduleFormD
     throw error;
   }
 };
+
+export const getScheduleByProject = async (project_id: string) => {
+  try {
+    const res = await server.get(`/project/${project_id}/schedules`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to fetch schedule data");
+    }
+  } catch (error) {
+    console.error("Error fetching schedule data:", error);
+    throw error;
+  }
+};
+  
   
