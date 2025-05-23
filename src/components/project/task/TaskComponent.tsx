@@ -42,9 +42,9 @@ export default function TaskComponent({ task }: { task: Task }) {
             )}
           </div>
         )}
-        {task?.dueDate && (
+        {task?.endDate && (
           <span>
-            마감일: {task?.dueDate}
+            마감일: {task?.endDate}
           </span>
         )}
       </div>
