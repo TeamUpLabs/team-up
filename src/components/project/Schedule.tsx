@@ -134,9 +134,9 @@ export default function Schedule() {
                       {meeting.where === "zoom" ? "Zoom" : meeting.where === "google" ? "Google Meet" : "TeamUp"}
                     </span>
                   )}
-                  <div className="flex ml-auto items-center gap-1">
+                  <div className="flex ml-auto items-center">
                     {meeting.assignee?.map((member, idx) => (
-                      <Tooltip content={member.name} key={idx}>
+                      <Tooltip content={member.name} key={idx} className="-ml-2">
                         <Image src={member.profileImage || '/default-avatar.png'} alt="member" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
                       </Tooltip>
                     ))}
@@ -179,9 +179,9 @@ export default function Schedule() {
                 </div>
                 <div className="flex items-center gap-2 mt-2">
                   <span className="flex items-center gap-1 text-xs font-medium text-text-secondary bg-component-tertiary-background px-2 py-1 rounded"><FontAwesomeIcon icon={faMapMarkerAlt} className="mr-1" />{event.where}</span>
-                  <div className="flex ml-auto items-center gap-1">
+                  <div className="flex ml-auto items-center">
                     {event.assignee?.map((member, idx) => (
-                      <Tooltip content={member.name} key={idx}>
+                      <Tooltip content={member.name} key={idx} className="-ml-2">
                         <Image src={member.profileImage || '/default-avatar.png'} alt="member" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
                       </Tooltip>
                     ))}
@@ -219,9 +219,9 @@ export default function Schedule() {
                     <FontAwesomeIcon icon={faTag} /> 
                     {task.priority === "high" ? "높음" : task.priority === "medium" ? "중간" : "낮음"}
                   </span>
-                  <div className="flex ml-auto items-center gap-1">
+                  <div className="flex ml-auto items-center">
                     {task.assignee?.slice(0, 2).map((member, idx) => (
-                      <Tooltip content={member.name} key={idx}>
+                      <Tooltip content={member.name} key={idx} className="-ml-2">
                         <Image src={member.profileImage || '/default-avatar.png'} alt="assignee" className="w-7 h-7 rounded-full border-2 border-component-border -ml-2 first:ml-0" width={28} height={28} />
                       </Tooltip>
                     ))}

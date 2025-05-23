@@ -3,14 +3,15 @@ import React, { useState } from 'react';
 interface TooltipProps {
   content: string;
   children: React.ReactNode;
+  className?: string;
 }
 
-const Tooltip: React.FC<TooltipProps> = ({ content, children }) => {
+const Tooltip: React.FC<TooltipProps> = ({ content, children, className }) => {
   const [isVisible, setIsVisible] = useState(false);
   
   return (
     <div 
-      className="relative group"
+      className={`relative group ${className}`}
       onMouseEnter={() => setIsVisible(true)}
       onMouseLeave={() => setIsVisible(false)}
     >
