@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { MileStone } from '@/types/MileStone';
 import { useProject } from '@/contexts/ProjectContext';
 import MilestoneCardSkeleton from '@/components/skeleton/MilestoneCardSkeleton';
+import { getStatusColor } from '@/utils/getStatusColor';
 
 export default function MileStoneCard() {
   const { project } = useProject();
@@ -54,10 +55,7 @@ export default function MileStoneCard() {
           <div className="bg-component-secondary-background p-3 rounded-lg border border-component-border hover:border-point-color-indigo-hover transition duration-200">
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-xl font-semibold text-text-primary">{closestMilestone?.title}</h3>
-              <span className={`px-3 py-1 rounded-md text-sm ${closestMilestone?.status === 'done' ? 'bg-green-500/20 text-green-400' :
-                closestMilestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
-                  'bg-gray-500/20 text-gray-400'
-                }`}>
+              <span className={`px-3 py-1 rounded-md text-sm ${getStatusColor(closestMilestone?.status ?? '')}`}>
                 {closestMilestone?.status === 'done' ? '완료' :
                   closestMilestone.status === 'in-progress' ? '진행중' : '시작 전'}
               </span>

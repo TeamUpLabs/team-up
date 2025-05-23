@@ -318,7 +318,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             />
           ) : (
-            <p className="bg-component-secondary-background p-4 rounded-lg text-text-secondary">시작일: {milestoneData.startDate}</p>
+            <p className="bg-component-secondary-background p-4 rounded-lg text-text-secondary">{milestoneData.startDate}</p>
           )}
         </div>
 
@@ -341,7 +341,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             />
           ) : (
-            <p className="bg-component-secondary-background p-4 rounded-lg text-text-secondary">종료일: {milestoneData.endDate}</p>
+            <p className="bg-component-secondary-background p-4 rounded-lg text-text-secondary">{milestoneData.endDate}</p>
           )}
         </div>
 

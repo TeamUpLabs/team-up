@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import MilestoneModal from './MilestoneModal';
 import { MileStone } from '@/types/MileStone';
+import { getStatusColor } from '@/utils/getStatusColor';
 
 export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,11 +36,7 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
       >
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-xl font-semibold text-text-primary">{milestone.title}</h3>
-          <span className={`px-3 py-1 rounded-full text-sm ${
-            milestone.status === 'done' ? 'bg-green-500/20 text-green-400' : 
-            milestone.status === 'in-progress' ? 'bg-blue-500/20 text-blue-400' :
-            'bg-gray-500/20 text-gray-400'
-          }`}>
+          <span className={`px-3 py-1 rounded-md text-sm ${getStatusColor(milestone.status)}`}>
             {milestone.status === 'done' ? '완료' : 
              milestone.status === 'in-progress' ? '진행중' : '시작 전'}
           </span>
