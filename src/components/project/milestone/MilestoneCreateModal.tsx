@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useProject } from "@/contexts/ProjectContext";
 import { createMilestone } from "@/hooks/getMilestoneData";
 import { useAuthStore } from "@/auth/authStore";
@@ -280,20 +281,23 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
                     }`}
                 >
                   <div className="relative flex-shrink-0">
-                    <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-component-secondary-background border-2 border-component-border flex items-center justify-center overflow-hidden">
                       <div className="relative w-full h-full flex items-center justify-center">
-                        <FontAwesomeIcon
-                          icon={faUser}
+                        <Image
+                          src={member.profileImage}
+                          alt={member.name}
+                          width={50}
+                          height={50}
                           className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
-                              ? 'opacity-0 rotate-90 scale-0'
-                              : 'opacity-100 rotate-0 scale-100'
+                            ? 'opacity-0 rotate-90 scale-0'
+                            : 'opacity-100 rotate-0 scale-100'
                             }`}
                         />
                         <FontAwesomeIcon
                           icon={faCheck}
                           className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
-                              ? 'opacity-100 rotate-0 scale-100'
-                              : 'opacity-0 -rotate-90 scale-0'
+                            ? 'opacity-100 rotate-0 scale-100'
+                            : 'opacity-0 -rotate-90 scale-0'
                             }`}
                         />
                       </div>

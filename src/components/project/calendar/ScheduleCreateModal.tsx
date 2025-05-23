@@ -427,7 +427,7 @@ export default function ScheduleCreateModal({ isOpen, onClose }: { isOpen: boole
                   }`}
               >
                 <div className="relative flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
+                  <div className="w-10 h-10 rounded-full bg-component-secondary-background border-2 border-component-border flex items-center justify-center overflow-hidden">
                     <div className="relative w-full h-full flex items-center justify-center">
                       <Image
                         src={member.profileImage}
