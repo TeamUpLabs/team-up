@@ -85,7 +85,7 @@ export default function ScheduleCreateModal({ isOpen, onClose }: { isOpen: boole
       hasError = true;
     }
 
-    if (selectedPlatform !== "teamup" && formData.link === "") {
+    if (selectedPlatform !== "teamup" && formData.link === "" && formData.type === "meeting") {
       useAuthStore.getState().setAlert('링크를 입력해주세요.', 'error');
       hasError = true;
     }
