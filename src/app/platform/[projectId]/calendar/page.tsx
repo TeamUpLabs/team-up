@@ -59,13 +59,19 @@ export default function CalendarPage() {
       <Calendar
         currentDate={currentDate}
         tasks={project?.tasks}
+        meetings={project?.schedules.filter(schedule => schedule.type === 'meeting')}
+        events={project?.schedules.filter(schedule => schedule.type === 'event')}
         days={days}
         onPreviousMonth={previousMonth}
         onNextMonth={nextMonth}
         onSelectTask={handleSelectTask}
       />
 
-      <ScheduleStatus tasks={project?.tasks} />
+      <ScheduleStatus 
+        tasks={project?.tasks} 
+        meetings={project?.schedules.filter(schedule => schedule.type === 'meeting')} 
+        events={project?.schedules.filter(schedule => schedule.type === 'event')} 
+      />
 
       <ScheduleCreateModal
         isOpen={isCreateModalOpen}
