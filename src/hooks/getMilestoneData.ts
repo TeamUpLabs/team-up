@@ -1,4 +1,5 @@
 import { server } from "@/auth/server";
+import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
 
 interface MilestoneFormData {
   project_id: string;
@@ -10,11 +11,21 @@ interface MilestoneFormData {
   priority: string;
   tags: string[];
   assignee_id: number[];
+  createdBy: number;
+  updatedBy: number;
 }
 
 export const createMilestone = async (project_id: string, milestone: MilestoneFormData) => {
   try {
-    const res = await server.post(`/project/${project_id}/milestone`, milestone);
+    const res = await server.post(`/project/${project_id}/milestone`, {
+      ...milestone,
+      createdAt: getCurrentKoreanTimeDate(),
+      updatedAt: getCurrentKoreanTimeDate(),
+    }, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (res.status === 200) {
       return res.data;
     } else {

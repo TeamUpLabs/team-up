@@ -14,4 +14,8 @@ export interface MileStone {
   priority: 'low' | 'medium' | 'high';
   tags: string[];
   subtasks: Task[];
+  createdAt: string;
+  updatedAt: string;
+  createdBy: number;
+  updatedBy: number;
 }

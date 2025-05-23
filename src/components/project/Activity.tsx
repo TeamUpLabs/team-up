@@ -7,6 +7,8 @@ interface ChartDataItem {
   date: string;
   '생성된 작업': number;
   '시작된 마일스톤': number;
+  '회의': number;
+  '이벤트': number;
   '전체': number; // Added the total as a new property
 }
 
@@ -16,10 +18,10 @@ export default function Activity() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (project && project.tasks && project.milestones) {
+    if (project && project.tasks && project.milestones && project.schedules) {
       setIsLoading(true);
       const processData = () => {
-        const aggregatedData: { [key: string]: { tasks: number; milestones: number; total: number } } = {};
+        const aggregatedData: { [key: string]: { tasks: number; milestones: number; total: number; meetings: number; events: number } } = {};
 
         project.tasks.forEach(task => {
           if (task.createdAt) {
@@ -30,7 +32,7 @@ export default function Activity() {
             const dateKey = `${year}-${month}-${day}`;
 
             if (!aggregatedData[dateKey]) {
-              aggregatedData[dateKey] = { tasks: 0, milestones: 0, total: 0 };
+              aggregatedData[dateKey] = { tasks: 0, milestones: 0, total: 0, meetings: 0, events: 0 };
             }
             aggregatedData[dateKey].tasks++;
             aggregatedData[dateKey].total++;
@@ -38,17 +40,49 @@ export default function Activity() {
         });
 
         project.milestones.forEach(milestone => {
-          if (milestone.startDate) {
-            const d = new Date(milestone.startDate);
+          if (milestone.createdAt) {
+            const d = new Date(milestone.createdAt);
             const year = d.getFullYear();
             const month = (d.getMonth() + 1).toString().padStart(2, '0');
             const day = d.getDate().toString().padStart(2, '0');
             const dateKey = `${year}-${month}-${day}`;
 
             if (!aggregatedData[dateKey]) {
-              aggregatedData[dateKey] = { tasks: 0, milestones: 0, total: 0 };
+              aggregatedData[dateKey] = { tasks: 0, milestones: 0, total: 0, meetings: 0, events: 0 };
             }
             aggregatedData[dateKey].milestones++;
+            aggregatedData[dateKey].total++;
+          }
+        });
+
+        project.schedules.filter(schedule => schedule.type === 'meeting').forEach(meeting => {
+          if (meeting.created_at) {
+            const d = new Date(meeting.created_at.split('T')[0]);
+            const year = d.getFullYear();
+            const month = (d.getMonth() + 1).toString().padStart(2, '0');
+            const day = d.getDate().toString().padStart(2, '0');
+            const dateKey = `${year}-${month}-${day}`;
+
+            if (!aggregatedData[dateKey]) {
+              aggregatedData[dateKey] = { tasks: 0, milestones: 0, total: 0, meetings: 0, events: 0 };
+            }
+            aggregatedData[dateKey].meetings++;
+            aggregatedData[dateKey].total++;
+          }
+        });
+
+        project.schedules.filter(schedule => schedule.type === 'event').forEach(event => {
+          if (event.created_at) {
+            const d = new Date(event.created_at.split('T')[0]);
+            const year = d.getFullYear();
+            const month = (d.getMonth() + 1).toString().padStart(2, '0');
+            const day = d.getDate().toString().padStart(2, '0');
+            const dateKey = `${year}-${month}-${day}`;
+
+            if (!aggregatedData[dateKey]) {
+              aggregatedData[dateKey] = { tasks: 0, milestones: 0, total: 0, meetings: 0, events: 0 };
+            }
+            aggregatedData[dateKey].events++;
             aggregatedData[dateKey].total++;
           }
         });
@@ -58,6 +92,8 @@ export default function Activity() {
             date: dateKey, // Store YYYY-MM-DD string
             '생성된 작업': aggregatedData[dateKey].tasks,
             '시작된 마일스톤': aggregatedData[dateKey].milestones,
+            '회의': aggregatedData[dateKey].meetings,
+            '이벤트': aggregatedData[dateKey].events,
             '전체': aggregatedData[dateKey].total,
           }))
           .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -134,8 +170,10 @@ export default function Activity() {
                 activeDot={{ r: 5, strokeWidth: 1.5, fill: 'var(--color-component-background)', stroke: '#22c55e' }}
               />
 
-              <Line type="monotoneX" dataKey="생성된 작업" name="생성된 작업" stroke="var(--color-accent-primary)" strokeWidth={1} activeDot={{ r: 4, strokeWidth: 1, fill: 'var(--color-component-background)', stroke: 'var(--color-accent-primary)' }} strokeDasharray="5 5" />
-              <Line type="monotoneX" dataKey="시작된 마일스톤" name="시작된 마일스톤" stroke="var(--color-accent-secondary)" strokeWidth={1} activeDot={{ r: 4, strokeWidth: 1, fill: 'var(--color-component-background)', stroke: 'var(--color-accent-secondary)' }} strokeDasharray="5 5" />
+              <Line type="monotoneX" dataKey="작업" name="" stroke="var(--color-accent-primary)" strokeWidth={1} activeDot={{ r: 4, strokeWidth: 1, fill: 'var(--color-component-background)', stroke: 'var(--color-accent-primary)' }} strokeDasharray="5 5" />
+              <Line type="monotoneX" dataKey="마일스톤" name="" stroke="var(--color-accent-secondary)" strokeWidth={1} activeDot={{ r: 4, strokeWidth: 1, fill: 'var(--color-component-background)', stroke: 'var(--color-accent-secondary)' }} strokeDasharray="5 5" />
+              <Line type="monotoneX" dataKey="회의" name="" stroke="var(--color-accent-tertiary)" strokeWidth={1} activeDot={{ r: 4, strokeWidth: 1, fill: 'var(--color-component-background)', stroke: 'var(--color-accent-tertiary)' }} strokeDasharray="5 5" />
+              <Line type="monotoneX" dataKey="이벤트" name="" stroke="var(--color-accent-quaternary)" strokeWidth={1} activeDot={{ r: 4, strokeWidth: 1, fill: 'var(--color-component-background)', stroke: 'var(--color-accent-quaternary)' }} strokeDasharray="5 5" />
               <Legend verticalAlign="top" align="right" height={36} iconSize={10} wrapperStyle={{ top: -5, right: 0 }} />
             </LineChart>
           </ResponsiveContainer>

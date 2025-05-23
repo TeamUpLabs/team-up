@@ -15,8 +15,9 @@ interface MilestoneCreateModalProps {
 
 export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreateModalProps) {
   const { project } = useProject();
+  const user = useAuthStore((state) => state.user);
   const [formData, setFormData] = useState({
-    project_id: project?.id,
+    project_id: project?.id || "",
     title: "",
     description: "",
     startDate: "",
@@ -25,6 +26,8 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
     priority: "",
     tags: [] as string[],
     assignee_id: [] as number[],
+    createdBy: user?.id || 0,
+    updatedBy: user?.id || 0,
   });
   const [tagsInput, setTagsInput] = useState("");
   const [isComposing, setIsComposing] = useState(false);
@@ -71,12 +74,7 @@ export default function MilestoneCreateModal({ isOpen, onClose }: MilestoneCreat
 
     if (project?.id) {
       try {
-        const formattedData = {
-          ...formData,
-          project_id: project.id,
-        };
-
-        await createMilestone(project.id, formattedData);
+        await createMilestone(project.id, formData);
         setSubmitStatus('success');
         useAuthStore.getState().setAlert('마일스톤이 성공적으로 생성되었습니다.', 'success');
 
