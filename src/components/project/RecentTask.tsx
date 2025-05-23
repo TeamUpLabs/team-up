@@ -50,6 +50,7 @@ export default function RecentTask() {
                   <span className={`w-2 h-2 mr-2 rounded-full ${task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500'}`}></span>
                   {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                 </span>
+                <p className="text-sm text-text-secondary">마감일: {task.endDate}</p>
               </div>
               <h3 className="text-md font-semibold text-text-primary mb-1">{task.title}</h3>
               <p className="text-sm text-text-secondary mb-3 h-10 overflow-hidden text-ellipsis">

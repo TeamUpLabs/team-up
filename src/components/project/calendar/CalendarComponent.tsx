@@ -67,7 +67,7 @@ export default function Calendar({
 
       <div className="flex-1 grid grid-cols-7 overflow-y-auto">
         {days.map((day, index) => {
-          const dayTasks = tasks?.filter(task => task?.dueDate === format(day, 'yyyy-MM-dd'));
+          const dayTasks = tasks?.filter(task => task?.endDate === format(day, 'yyyy-MM-dd'));
           const dayMeetings = meetings?.filter(meeting => meeting?.start_time.split('T')[0] === format(day, 'yyyy-MM-dd'));
           const dayEvents = events?.filter(event => event?.start_time.split('T')[0] === format(day, 'yyyy-MM-dd'));
           const isWeekend = index % 7 === 0 || index % 7 === 6;

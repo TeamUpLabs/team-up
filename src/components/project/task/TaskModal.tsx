@@ -32,7 +32,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const [taskData, setTaskData] = useState<Task>(task);
   const [newTag, setNewTag] = useState('');
   const [isComposing, setIsComposing] = useState(false);
-  
+
   // Update taskData when the task prop changes
   useEffect(() => {
     setTaskData(task);
@@ -117,7 +117,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         assignee_id: taskData.assignee?.map(a => a.id) ?? [],
         createdAt: taskData.createdAt,
         updatedAt: getCurrentKoreanTimeDate(),
-        dueDate: taskData.dueDate ?? '',
+        endDate: taskData.endDate ?? '',
+        startDate: taskData.startDate ?? '',
         subtasks: taskData.subtasks,
         comments: taskData.comments,
         milestone_id: taskData.milestone_id,
@@ -434,117 +435,142 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
           <div className="space-y-2">
             <div className="flex items-center gap-2 group relative">
-              <h4 className="font-medium text-text-primary">담당자</h4>
+              <h4 className="font-medium text-text-primary">시작일</h4>
               <FontAwesomeIcon
                 icon={faPencil}
                 size='xs'
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() => isEditing === "assignee" ? handleEdit("none") : handleEdit("assignee")}
+                onClick={() => isEditing === "startDate" ? handleEdit("none") : handleEdit("startDate")}
               />
             </div>
-            {isEditing === "assignee" ? (
-              <div className="border border-component-border rounded-lg p-3 bg-component-secondary-background hover:border-component-border-hover transition-all">
-                <div className="mb-3">
-                  <p className="text-sm text-text-secondary">선택된 담당자: {taskData.assignee?.length ?? 0 > 0 ? `${taskData.assignee?.length}명` : '없음'}</p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {project?.members.map((member) => {
-                    const isSelected = taskData.assignee?.some(a => a.id === member.id);
-                    return (
-                      <div
-                        key={member.id}
-                        onClick={() => {
-                          if (isSelected) {
-                            if (taskData.assignee?.length && taskData.assignee?.length > 1) {
-                              setTaskData({
-                                ...taskData,
-                                assignee: taskData.assignee?.filter(a => a.id !== member.id),
-                              });
-                            } else {
-                              useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "warning");
-                            }
-                          } else {
-                            setTaskData({
-                              ...taskData,
-                              assignee: [...taskData.assignee ?? [], member],
-                            });
-                          }
-                        }}
-                        className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${isSelected
-                          ? 'bg-purple-500/20 border border-purple-500/50'
-                          : 'bg-component-tertiary-background border border-transparent hover:bg-component-tertiary-background/60'
-                          }`}
-                      >
-                        <div className="relative flex-shrink-0">
-                          <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
-                            <div className="relative w-full h-full flex items-center justify-center">
-                              <FontAwesomeIcon
-                                icon={faUser}
-                                className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
-                                  ? 'opacity-0 rotate-90 scale-0'
-                                  : 'opacity-100 rotate-0 scale-100'
-                                  }`}
-                              />
-                              <FontAwesomeIcon
-                                icon={faCheck}
-                                className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
-                                  ? 'opacity-100 rotate-0 scale-100'
-                                  : 'opacity-0 -rotate-90 scale-0'
-                                  }`}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-col">
-                          <p className="text-sm font-medium text-text-primary">{member.name}</p>
-                          <p className="text-xs text-text-secondary">{member.role}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+            {isEditing === "startDate" ? (
+              <input
+                type="date"
+                name="startDate"
+                value={taskData.startDate}
+                onChange={handleChange}
+                className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+              />
             ) : (
-              <div className="flex flex-wrap gap-2 bg-component-secondary-background p-4 rounded-lg">
-                {
-                  taskData?.assignee?.map((assi) => (
-                    <p
-                      key={assi?.id}
-                      className="text-text-secondary hover:text-blue-400 cursor-pointer transition-colors"
-                      onClick={() => handleAssigneeClick(assi?.id ?? 0)}
-                    >{
-                        assi?.name}
-                    </p>
-                  ))
-                }
+              <div className="bg-component-secondary-background p-4 rounded-lg">
+                <p className="text-text-secondary">{taskData.startDate}</p>
               </div>
             )}
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center gap-2 group relative">
-              <h4 className="font-medium text-text-primary">마감일</h4>
+              <h4 className="font-medium text-text-primary">종료일</h4>
               <FontAwesomeIcon
                 icon={faPencil}
                 size='xs'
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() => isEditing === "dueDate" ? handleEdit("none") : handleEdit("dueDate")}
+                onClick={() => isEditing === "endDate" ? handleEdit("none") : handleEdit("endDate")}
               />
             </div>
-            {isEditing === "dueDate" ? (
+            {isEditing === "endDate" ? (
               <input
                 type="date"
-                name="dueDate"
-                value={taskData.dueDate}
+                name="endDate"
+                value={taskData.endDate}
                 onChange={handleChange}
                 className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
               />
             ) : (
               <div className="bg-component-secondary-background p-4 rounded-lg">
-                <p className="text-text-secondary">{taskData.dueDate}</p>
+                <p className="text-text-secondary">{taskData.endDate}</p>
               </div>
             )}
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 group relative">
+            <h4 className="font-medium text-text-primary">담당자</h4>
+            <FontAwesomeIcon
+              icon={faPencil}
+              size='xs'
+              className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              onClick={() => isEditing === "assignee" ? handleEdit("none") : handleEdit("assignee")}
+            />
+          </div>
+          {isEditing === "assignee" ? (
+            <div className="border border-component-border rounded-lg p-3 bg-component-secondary-background hover:border-component-border-hover transition-all">
+              <div className="mb-3">
+                <p className="text-sm text-text-secondary">선택된 담당자: {taskData.assignee?.length ?? 0 > 0 ? `${taskData.assignee?.length}명` : '없음'}</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {project?.members.map((member) => {
+                  const isSelected = taskData.assignee?.some(a => a.id === member.id);
+                  return (
+                    <div
+                      key={member.id}
+                      onClick={() => {
+                        if (isSelected) {
+                          if (taskData.assignee?.length && taskData.assignee?.length > 1) {
+                            setTaskData({
+                              ...taskData,
+                              assignee: taskData.assignee?.filter(a => a.id !== member.id),
+                            });
+                          } else {
+                            useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "warning");
+                          }
+                        } else {
+                          setTaskData({
+                            ...taskData,
+                            assignee: [...taskData.assignee ?? [], member],
+                          });
+                        }
+                      }}
+                      className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${isSelected
+                        ? 'bg-purple-500/20 border border-purple-500/50'
+                        : 'bg-component-tertiary-background border border-transparent hover:bg-component-tertiary-background/60'
+                        }`}
+                    >
+                      <div className="relative flex-shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
+                          <div className="relative w-full h-full flex items-center justify-center">
+                            <FontAwesomeIcon
+                              icon={faUser}
+                              className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
+                                ? 'opacity-0 rotate-90 scale-0'
+                                : 'opacity-100 rotate-0 scale-100'
+                                }`}
+                            />
+                            <FontAwesomeIcon
+                              icon={faCheck}
+                              className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
+                                ? 'opacity-100 rotate-0 scale-100'
+                                : 'opacity-0 -rotate-90 scale-0'
+                                }`}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col">
+                        <p className="text-sm font-medium text-text-primary">{member.name}</p>
+                        <p className="text-xs text-text-secondary">{member.role}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2 bg-component-secondary-background p-4 rounded-lg">
+              {
+                taskData?.assignee?.map((assi) => (
+                  <p
+                    key={assi?.id}
+                    className="text-text-secondary hover:text-blue-400 cursor-pointer transition-colors"
+                    onClick={() => handleAssigneeClick(assi?.id ?? 0)}
+                  >{
+                      assi?.name}
+                  </p>
+                ))
+              }
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
