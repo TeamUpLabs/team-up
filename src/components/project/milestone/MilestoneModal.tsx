@@ -491,7 +491,6 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
         </div>
 
         <div className="col-span-2">
-          <h4 className="text-text-primary">진행률</h4>
           <div className="flex justify-between text-sm text-text-secondary mb-2">
             <span>진행도</span>
             <span>{progressPercentage}%</span>

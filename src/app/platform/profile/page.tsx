@@ -338,7 +338,7 @@ export default function ProfilePage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-component-secondary-background hover:bg-component-tertiary-background text-text-secondary transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-component-secondary-background hover:bg-component-tertiary-background border border-component-border text-text-secondary transition-colors"
             aria-label="뒤로 가기"
           >
             <FontAwesomeIcon icon={faArrowLeft} />
