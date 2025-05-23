@@ -8,8 +8,18 @@ const ScheduleSkeleton = ({ isPreview }: { isPreview?: boolean }) => {
 
       {/* Tabs Skeleton */}
       <div className={`flex mb-4 bg-component-secondary-background rounded-lg overflow-hidden w-fit p-1 ${isPreview ? 'mb-1' : ''}`}>
-        <div className={`${isPreview ? 'px-2 py-1' : 'px-6 py-2'} rounded-lg ${isPreview ? 'text-[8px]' : 'text-base'} font-semibold text-text-secondary bg-component-tertiary-background_hover w-fit`}>회의 <span className={`ml-1 ${isPreview ? 'text-[8px]' : 'text-xs'} font-bold text-gray-400 animate-pulse`}>N</span></div>
-        <div className={`${isPreview ? 'px-2 py-1' : 'px-6 py-2'} rounded-lg ${isPreview ? 'text-[8px]' : 'text-base'} font-semibold text-text-secondary bg-component-tertiary-background_hover w-fit`}>작업 <span className={`ml-1 ${isPreview ? 'text-[8px]' : 'text-xs'} font-bold text-gray-400 animate-pulse`}>N</span></div>
+        <div className={`${isPreview ? 'px-2 py-1' : 'px-6 py-2'} rounded-lg ${isPreview ? 'text-[8px]' : 'text-base'} font-semibold text-text-secondary bg-component-tertiary-background_hover w-fit`}>
+          회의 
+          <span className={`ml-1 ${isPreview ? 'text-[8px]' : 'text-xs'} font-bold text-gray-400 animate-pulse`}>N</span>
+        </div>
+        <div className={`${isPreview ? 'px-2 py-1' : 'px-6 py-2'} rounded-lg ${isPreview ? 'text-[8px]' : 'text-base'} font-semibold text-text-secondary bg-component-tertiary-background_hover w-fit`}>
+          이벤트 
+          <span className={`ml-1 ${isPreview ? 'text-[8px]' : 'text-xs'} font-bold text-gray-400 animate-pulse`}>N</span>
+        </div>
+        <div className={`${isPreview ? 'px-2 py-1' : 'px-6 py-2'} rounded-lg ${isPreview ? 'text-[8px]' : 'text-base'} font-semibold text-text-secondary bg-component-tertiary-background_hover w-fit`}>
+          작업 
+          <span className={`ml-1 ${isPreview ? 'text-[8px]' : 'text-xs'} font-bold text-gray-400 animate-pulse`}>N</span>
+        </div>
       </div>
 
       {/* Meeting Items Skeleton (assuming 'meetings' tab is default) */}
