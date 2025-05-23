@@ -24,6 +24,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import Tooltip from "@/components/ui/Tooltip";
+import { MiniLogo } from "@/components/logo";
 
 export default function Schedule() {
   const { project } = useProject();
@@ -113,24 +114,24 @@ export default function Schedule() {
                           ) : meeting.where === "google" ? (
                             <FontAwesomeIcon icon={faGoogle} className="mr-1" />
                           ) : (
-                            <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-1" />
+                            <MiniLogo />
                           )
                         }
-                        {meeting.where}
+                        {meeting.where === "zoom" ? "Zoom" : meeting.where === "google" ? "Google Meet" : "TeamUp"}
                       </span>
                     </Link>
                   ) : (
-                    <span className="flex items-center gap-1 text-xs font-medium text-text-secondary bg-component-tertiary-background px-2 py-1 rounded hover:bg-point-color-purple-hover/20">
+                    <span className="flex items-center gap-1 text-xs font-medium text-text-secondary bg-component-tertiary-background px-2 py-1 rounded">
                       {
                         meeting.where === "zoom" ? (
                           <FontAwesomeIcon icon={faVideo} className="mr-1" />
                         ) : meeting.where === "google" ? (
                           <FontAwesomeIcon icon={faGoogle} className="mr-1" />
                         ) : (
-                          <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-1" />
+                          <MiniLogo className="text-xs!" />
                         )
                       }
-                      {meeting.where}
+                      {meeting.where === "zoom" ? "Zoom" : meeting.where === "google" ? "Google Meet" : "TeamUp"}
                     </span>
                   )}
                   <div className="flex ml-auto items-center gap-1">
