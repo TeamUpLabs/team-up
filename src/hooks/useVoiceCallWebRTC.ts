@@ -44,6 +44,8 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
   const peersRef = useRef<PeerConnection[]>([]);
   const pendingConnectionsRef = useRef<{userId: string, isInitiator: boolean}[]>([]);
 
+  const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const iceServers = {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
@@ -99,12 +101,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
   }, [peers]);
 
   const connectSignalingServer = () => {
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.host;
-    const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
-    const serverUrl = isLocalhost
-      ? `ws://localhost:8000/project/${projectId}/ws/voice-call/${channelId}/${userId}` // Ensure this endpoint is appropriate for voice
-      : `${wsProtocol}//${host}/project/${projectId}/ws/voice-call/${channelId}/${userId}`;
+    const serverUrl = `ws://${SERVER_URL?.replace('http://', '').replace('https://', '')}/project/${projectId}/ws/voice-call/${channelId}/${userId}`;
     
     console.log(`Connecting to signaling server for voice call at ${serverUrl}`);
     socketRef.current = new WebSocket(serverUrl);

@@ -60,6 +60,8 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
   const pendingConnectionsRef = useRef<{userId: string, isInitiator: boolean}[]>([]);
   const localVideoRef = useRef<HTMLVideoElement | null>(null);
 
+  const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
+
   // Enhanced ICE servers configuration for NAT traversal
   const iceServers = {
     iceServers: [
@@ -128,15 +130,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
   }, [peers]);
 
   const connectSignalingServer = () => {
-    // Determine the WebSocket URL based on current protocol and host
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.host;
-    
-    // If in development mode (localhost), use the hardcoded backend URL
-    const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
-    const serverUrl = isLocalhost
-      ? `ws://localhost:8000/project/${projectId}/ws/video-call/${channelId}/${userId}`
-      : `${wsProtocol}//${host}/project/${projectId}/ws/video-call/${channelId}/${userId}`;
+    const serverUrl = `ws://${SERVER_URL?.replace('http://', '').replace('https://', '')}/project/${projectId}/ws/video-call/${channelId}/${userId}`;
     
     console.log(`Connecting to signaling server at ${serverUrl}`);
     socketRef.current = new WebSocket(serverUrl);
