@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Message } from '@/types/Message';
 import { useAuthStore } from '@/auth/authStore';
 
-const SERVER_URL = 'http://localhost:8000';
+const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const useWebSocket = (projectId: string, channelId: string) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -52,7 +52,7 @@ export const useWebSocket = (projectId: string, channelId: string) => {
       }
 
       console.log(`채널 ${channelId}에 웹소켓 연결 시도...`);
-      const ws = new WebSocket(`ws://${SERVER_URL.replace('http://', '')}/ws/chat/${projectId}/${channelId}?user_id=${user.id.toString()}`);
+      const ws = new WebSocket(`ws://${SERVER_URL?.replace('http://', '').replace('https://', '')}/ws/chat/${projectId}/${channelId}?user_id=${user.id.toString()}`);
       
       // 이벤트 리스너 등록 전에 소켓 참조 저장
       socketRef.current = ws;
