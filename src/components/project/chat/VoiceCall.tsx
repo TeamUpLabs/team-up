@@ -180,7 +180,7 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
                     style={{ zIndex }}
                   >
                     {p.profileImage ? (
-                      <Image src={p.profileImage} alt={p.name} className="w-full h-full rounded-full object-cover" fill />
+                      <Image src={p.profileImage} alt={p.name} className="w-full h-full rounded-full object-cover" width={32} height={32} />
                     ) : (
                       getInitials(p.name)
                     )}
@@ -228,7 +228,7 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 relative rounded-full bg-gray-600 flex items-center justify-center text-sm font-semibold text-white overflow-hidden">
                       {p.profileImage ? (
-                        <Image src={p.profileImage} alt={p.name} className="w-full h-full object-cover" fill />
+                        <Image src={p.profileImage} alt={p.name} className="w-full h-full object-cover" width={32} height={32} />
                       ) : (
                         getInitials(p.name)
                       )}

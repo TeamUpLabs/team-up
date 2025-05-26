@@ -66,7 +66,7 @@ const VideoParticipantList: React.FC<VideoParticipantListProps> = ({
                   <div className="w-12 h-12 relative rounded-full flex items-center justify-center text-white shadow-md bg-gray-700"
                   >
                     {participant.profileImage ? (
-                      <Image src={participant.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                      <Image src={participant.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={32} height={32} />
                     ) : (
                       getAvatarLetter(participant.name)
                     )}

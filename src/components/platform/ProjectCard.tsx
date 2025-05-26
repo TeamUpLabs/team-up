@@ -33,7 +33,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
             project.members.slice(0, 2).map((member => (
               <div key={member.id} className="w-8 h-8 relative rounded-full bg-component-secondary-background border-2 border-component-border text-sm flex align-center justify-center place-items-center">
                 {member.profileImage ? (
-                  <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                  <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={32} height={32} />
             ) : (
               <p>{member.name.charAt(0)}</p>
             )}

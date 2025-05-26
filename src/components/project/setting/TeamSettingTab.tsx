@@ -171,7 +171,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 relative bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
                           {request.profileImage ? (
-                            <Image src={request.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                            <Image src={request.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={32} height={32} />
                           ) : (
                             <p>{request.name.charAt(0)}</p>
                           )}
@@ -234,7 +234,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 relative border border-component-border bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
                       {member.profileImage ? (
-                        <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                        <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={32} height={32} />
                       ) : (
                         <p>{member.name.charAt(0)}</p>
                       )}

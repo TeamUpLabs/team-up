@@ -21,7 +21,7 @@ export default function MemberCard({ member, isLeader, isManager, isExplore, onC
         <div className="flex items-center">
           <span className="w-8 h-8 relative border border-component-border bg-component-secondary-background rounded-full flex items-center justify-center mr-2 text-sm">
             {member.profileImage ? (
-              <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+              <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={32} height={32} />
             ) : (
               <p>{member.name.charAt(0)}</p>
             )}
