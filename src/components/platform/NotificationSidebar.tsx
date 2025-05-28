@@ -70,12 +70,17 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
   // Group notifications by date
   const getNotificationDate = (timestamp: string) => {
     const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+    today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
 
-    if (timestamp.includes("분 전") || timestamp.includes("시간 전") || timestamp.includes("방금 전")) {
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1); // Yesterday also normalized
+
+    const notificationDate = new Date(timestamp);
+    notificationDate.setHours(0, 0, 0, 0); // Normalize notification date
+
+    if (notificationDate.getTime() === today.getTime()) {
       return "오늘";
-    } else if (timestamp.includes("어제")) {
+    } else if (notificationDate.getTime() === yesterday.getTime()) {
       return "어제";
     } else {
       return "이전";
@@ -241,9 +246,9 @@ export default function NotificationSidebar({ isOpen, onClose }: NotificationSid
                   <div key={date}>
                     <h2 className="text-sm font-medium text-text-secondary mb-2">{date}</h2>
                     <div className="space-y-2">
-                      {groupedNotifications[date].map((notification) => (
+                      {groupedNotifications[date].map((notification, index) => (
                         <div
-                          key={notification.id}
+                          key={index}
                           className={`p-4 rounded-lg hover:bg-component-secondary-background cursor-pointer transition-colors duration-200 border ${notification.isRead ? "border-component-border" : "border-point-color-indigo"}`}
                           onClick={() => markAsRead(notification.id)}
                         >

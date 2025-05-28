@@ -209,9 +209,9 @@ export default function NotificationDropdown({ onToggleSidebar }: NotificationDr
 
             <div className="overflow-y-auto max-h-[400px] divide-y divide-component-border">
               {notifications.length > 0 ? (
-                notifications.map((notification) => (
+                notifications.map((notification, index) => (
                   <div
-                    key={notification.id}
+                    key={index}
                     className={`p-4 hover:bg-component-secondary-background cursor-pointer transition-colors duration-200 ${!notification.isRead ? 'bg-component-tertiary-background/50' : ''}`}
                     onClick={() => handleNotificationClick(notification.id)}
                   >
