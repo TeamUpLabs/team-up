@@ -28,7 +28,7 @@ export default function TeamActivities() {
               <div className="flex items-center">
                 <div className={`w-10 h-10 relative border border-component-border bg-component-secondary-background rounded-full flex items-center justify-center text-text-primary font-bold`}>
                   {member.profileImage ? (
-                    <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                    <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={40} height={40} />
                   ) : (
                     <p>{member.name.charAt(0)}</p>
                   )}

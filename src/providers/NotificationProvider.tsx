@@ -64,7 +64,6 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
             if (Array.isArray(data)) {
               // Full notifications refresh
               setNotifications(data);
-              console.log("Full notifications refresh:", data);
             } else {
               // Single notification, add it to existing ones
               setNotifications(prev => [data, ...prev]);
