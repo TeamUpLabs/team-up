@@ -1,6 +1,7 @@
 import { server } from '@/auth/server';
 import { useAuthStore } from '@/auth/authStore';
 import { AxiosError } from 'axios';
+import { getCurrentKoreanTime } from '@/utils/dateUtils';
 
 export const login = async (email: string, password: string) => {
   try {
@@ -28,7 +29,8 @@ export const login = async (email: string, password: string) => {
       if (userRes.data) {
         try {
           const res = await server.put(`/member/${userRes.data.id}`, {
-            status: "활성"
+            status: "활성",
+            lastLogin: getCurrentKoreanTime()
           });
           if (res.status === 200) {
             useAuthStore.getState().setUser(userRes.data);

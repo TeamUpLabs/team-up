@@ -22,14 +22,14 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
 
   // Check if current user is leader or manager
   useEffect(() => {
-    if (user && project) {
+    if (user && project && project.leader) {
       const isLeader = project.leader.id === user.id;
       const isManager = Array.isArray(project.manager) && project.manager.some(manager => manager.id === user.id);
       setIsCurrentUserLeaderOrManager(isLeader || isManager);
     }
   }, [user, project]);
 
-  const filteredMembers = project?.members
+  const filteredMembers = (project?.members || [])
     .filter(member =>
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -145,7 +145,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
 
       <div className="p-6 space-y-6">
         {/* Join Requests Section */}
-        {project.participationRequestMembers.length > 0 && (
+        {project.participationRequestMembers && project.participationRequestMembers.length > 0 && (
           <div className="rounded-lg border border-component-border overflow-hidden">
             <div className="bg-component-tertiary-background px-4 py-3 flex justify-between items-center">
               <div className="flex items-center gap-2">
@@ -165,7 +165,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
 
             {showJoinRequests && (
               <div className="divide-y divide-component-border">
-                {project.participationRequestMembers.map((request) => (
+                {project.participationRequestMembers && project.participationRequestMembers.map((request) => (
                   <div key={request.id} className="px-4 py-3 bg-component-secondary-background hover:bg-component-secondary-background/60 transition-colors">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-3">
@@ -228,7 +228,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
           </div>
 
           <div className="divide-y divide-component-border">
-            {filteredMembers?.map((member) => (
+            {filteredMembers && filteredMembers?.map((member) => (
               <div key={member.id} className="px-4 py-3 bg-component-secondary-background hover:bg-component-secondary-background/60 transition-colors">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
@@ -242,7 +242,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="text-text-primary font-medium">{member.name}</p>
-                        {member.id === project.leader.id ? (
+                        {project.leader && member.id === project.leader.id ? (
                           <span className="bg-yellow-500/20 text-yellow-500 text-xs px-2 py-0.5 rounded-md">프로젝트 리더</span>
                         ) : Array.isArray(project.manager) && project.manager.some(manager => manager.id === member.id) ? (
                           <span className="bg-blue-500/20 text-blue-500 text-xs px-2 py-0.5 rounded-md">관리자</span>
@@ -254,7 +254,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                       <p className="text-text-secondary text-xs">{member.email}</p>
                     </div>
                   </div>
-                  {isCurrentUserLeaderOrManager && member.id !== project.leader.id && (
+                  {isCurrentUserLeaderOrManager && project.leader && member.id !== project.leader.id && (
                     <div className="flex items-center gap-2">
                       <button
                         className="bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-primary rounded px-3 py-1.5 text-sm transition-colors border border-component-border"
