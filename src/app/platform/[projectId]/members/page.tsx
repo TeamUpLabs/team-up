@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import MemberDetailModal from '@/components/project/members/MemberDetailModal';
 import MemberCard from '@/components/project/members/MemberCard';
-import { Member } from '@/types/Member.ts';
+import { Member } from '@/types/Member';
 import { useProject } from "@/contexts/ProjectContext";
 
 export default function MembersPage() {
