@@ -101,7 +101,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
   }, [peers]);
 
   const connectSignalingServer = () => {
-    const serverUrl = `ws://${SERVER_URL?.replace('http://', '').replace('https://', '')}/project/${projectId}/ws/voice-call/${channelId}/${userId}`;
+    const serverUrl = `wss://${SERVER_URL?.replace('http://', '').replace('https://', '')}/project/${projectId}/ws/voice-call/${channelId}/${userId}`;
     
     console.log(`Connecting to signaling server for voice call at ${serverUrl}`);
     socketRef.current = new WebSocket(serverUrl);
