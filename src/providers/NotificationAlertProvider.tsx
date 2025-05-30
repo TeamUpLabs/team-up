@@ -25,7 +25,7 @@ function NotificationAlert() {
     
     // Check for new notifications by comparing with previous state
     const prevIds = new Set(prevNotificationsRef.current.map(n => n.id));
-    const newNotifications = notifications.filter(n => !prevIds.has(n.id));
+    const newNotifications = notifications.filter(n => !prevIds.has(n.id) && !n.isRead);
     
     // If we have new notifications, show the most recent one
     if (newNotifications.length > 0) {
