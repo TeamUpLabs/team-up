@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { MileStone } from '@/types/MileStone';
 import { getPriorityColor } from '@/utils/getPriorityColor';
 import { useParams, useRouter } from 'next/navigation';
@@ -452,14 +453,31 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                     >
                       <div className="relative flex-shrink-0">
                         <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
-                          <div className="relative w-full h-full flex items-center justify-center">
-                            <FontAwesomeIcon
-                              icon={faUser}
-                              className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
-                                ? 'opacity-0 rotate-90 scale-0'
-                                : 'opacity-100 rotate-0 scale-100'
-                                }`}
-                            />
+                          <div className="relative w-full h-full flex items-center justify-center border border-component-border rounded-full">
+                            {member.profileImage ? (
+                              <Image 
+                                src={member.profileImage} 
+                                alt="Profile" 
+                                className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
+                                  ? 'opacity-0 rotate-90 scale-0'
+                                  : 'opacity-100 rotate-0 scale-100'
+                                  }`}
+                                quality={100} 
+                                width={40} 
+                                height={40} 
+                                onError={(e) => {
+                                  e.currentTarget.src = '/DefaultProfile.jpg';
+                                }}
+                              />
+                            ) : (
+                              <FontAwesomeIcon
+                                icon={faUser}
+                                className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
+                                  ? 'opacity-0 rotate-90 scale-0'
+                                  : 'opacity-100 rotate-0 scale-100'
+                                  }`}
+                              />
+                            )}
                             <FontAwesomeIcon
                               icon={faCheck}
                               className={`absolute text-text-primary transform transition-all duration-300 ${isSelected
