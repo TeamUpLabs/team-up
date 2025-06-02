@@ -1,17 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
-type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "brown" | "teal";
+type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone";
 
 interface BadgeProps {
   content: string | React.ReactNode;
   color?: BadgeColor;
   isEditable?: boolean;
   onRemove?: () => void;
+  onClick?: () => void;
   className?: string;
 }
 
-export default function Badge({ content, color = "gray", isEditable = false, onRemove, className }: BadgeProps) {
+export default function Badge({ content, color = "gray", isEditable = false, onRemove, onClick, className }: BadgeProps) {
 
   const badgeColors = {
     gray: "bg-gray-100 text-gray-800",
@@ -22,8 +23,9 @@ export default function Badge({ content, color = "gray", isEditable = false, onR
     purple: "bg-purple-100 text-purple-800",
     orange: "bg-orange-100 text-orange-800",
     pink: "bg-pink-100 text-pink-800",
-    brown: "bg-brown-100 text-brown-800",
+    zinc: "bg-zinc-100 text-zinc-800",
     teal: "bg-teal-100 text-teal-800",
+    stone: "bg-stone-100 text-stone-800",
   };
 
   const badgeXmarkColors = {
@@ -35,12 +37,13 @@ export default function Badge({ content, color = "gray", isEditable = false, onR
     purple: "text-purple-800 hover:text-purple-600",
     orange: "text-orange-800 hover:text-orange-600",
     pink: "text-pink-800 hover:text-pink-600",
-    brown: "text-brown-800 hover:text-brown-600",
+    zinc: "text-zinc-800 hover:text-zinc-600",
     teal: "text-teal-800 hover:text-teal-600",
+    stone: "text-stone-800 hover:text-stone-600",
   };
 
   return (
-    <span className={`${badgeColors[color]} px-3 py-1 rounded-md text-sm ${className}`}>
+    <span className={`${badgeColors[color]} px-3 py-1 rounded-md text-sm ${className}`} onClick={onClick}>
       {content}
       {isEditable && (
         <button

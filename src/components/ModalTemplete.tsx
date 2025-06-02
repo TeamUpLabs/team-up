@@ -56,7 +56,7 @@ export default function ModalTemplete({ header, children, footer, isOpen, onClos
                   <div className="mt-2 space-y-6 overflow-y-auto px-1">
                     {children}
                     {footer && (
-                      <div className="border-t border-component-border pt-6 mt-auto">
+                      <div className="mt-auto">
                         {footer}
                       </div>
                     )}
