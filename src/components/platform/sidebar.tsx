@@ -167,7 +167,7 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                         {item.label}
                       </span>
                     )}
-                    <span className={`${(isMinimized && !isMobile) ? 'absolute right-2 top-1/2 -translate-y-1/2' : 'absolute right-4'} flex h-5 w-5`}>
+                    <span className={`${(isMinimized && !isMobile) ? 'absolute right-2 -translate-y-1/2' : 'absolute right-4'} flex h-5 w-5`}>
                       <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-100"></span>
                       <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
                         {notificationCount}
