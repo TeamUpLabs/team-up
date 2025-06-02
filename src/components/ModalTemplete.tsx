@@ -40,7 +40,7 @@ export default function ModalTemplete({ header, children, footer, isOpen, onClos
               >
                 <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-component-background backdrop-blur-sm p-6 text-left align-middle shadow-xl transition-all border border-component-border flex flex-col max-h-[90vh]">
                   {/* 헤더 섹션 */}
-                  <div className="flex justify-between gap-3 items-start pb-6">
+                  <div className="flex justify-between gap-3 items-start pb-2">
                     <div className="w-full">
                       {header}
                     </div>
@@ -53,7 +53,7 @@ export default function ModalTemplete({ header, children, footer, isOpen, onClos
                   </div>
 
                   {/* 내용 섹션 */}
-                  <div className="mt-6 space-y-6 overflow-y-auto px-1">
+                  <div className="mt-2 space-y-6 overflow-y-auto px-1">
                     {children}
                     {footer && (
                       <div className="border-t border-component-border pt-6 mt-auto">

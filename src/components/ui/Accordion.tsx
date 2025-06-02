@@ -1,7 +1,7 @@
 import React, { useState, useRef, ReactNode } from 'react';
 
 interface AccordionProps {
-  title: string;
+  title: string | ReactNode;
   children: ReactNode;
   defaultOpen?: boolean;
 }
@@ -18,7 +18,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, defaultOpen = fa
     <div className="rounded-md mb-2">
       <button
         onClick={toggleAccordion}
-        className="group w-full flex justify-between items-center pb-2 border-b border-component-border text-left focus:outline-none transition-colors duration-200 ease-in-out"
+        className="group w-full flex justify-between items-center pb-2 focus:outline-none transition-colors duration-200 ease-in-out"
         aria-expanded={isOpen}
       >
         <span className="font-medium text-text-primary group-hover:underline">
@@ -37,9 +37,9 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, defaultOpen = fa
       <div
         ref={contentRef}
         style={{ maxHeight: isOpen ? `${contentRef.current?.scrollHeight}px` : '0px' }}
-        className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+        className="overflow-hidden transition-[max-height] duration-300 ease-in-out border-b border-component-border"
       >
-        <div className="pt-2 pb-4">
+        <div className="pb-4 px-1">
           {children}
         </div>
       </div>
