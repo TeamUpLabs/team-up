@@ -11,7 +11,7 @@ import { SubTask } from "@/types/Task";
 import { updateTask, addComment, updateSubtask, deleteTask } from "@/hooks/getTaskData";
 import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencil, faBullseye, faCheck, faHourglassStart, faHourglassEnd, faTrash, faPlus, faUser, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faBullseye, faXmark, faCheck, faHourglassStart, faHourglassEnd, faTrash, faPlus, faUser, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { InfoCircle, CalendarWeek, FileCheck, User, Flag, Tag, MessageDots, TrashBin } from "flowbite-react-icons/outline";
 import Badge from "@/components/Badge";
 import Accordion from "@/components/ui/Accordion";
@@ -24,7 +24,7 @@ interface TaskModalProps {
   onClose: () => void;
 }
 
-export default function NewTaskModal({ task, isOpen, onClose }: TaskModalProps) {
+export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const { project } = useProject();
   const user = useAuthStore.getState().user;
   const router = useRouter();
@@ -318,13 +318,15 @@ export default function NewTaskModal({ task, isOpen, onClose }: TaskModalProps) 
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge
-            content={project?.milestones?.find((milestone) => milestone.id === taskData?.milestone_id)?.title}
-            color="teal"
-            isEditable={false}
-            className="!rounded-full !px-2 !py-0.5 cursor-pointer"
-            onClick={() => handleMilestoneClick(taskData?.milestone_id ?? 0)}
-          />
+          <div className="flex items-center gap-2">
+            <Badge
+              content={project?.milestones?.find((milestone) => milestone.id === taskData?.milestone_id)?.title}
+              color="teal"
+              isEditable={false}
+              className="!rounded-full !px-2 !py-0.5 cursor-pointer"
+              onClick={() => handleMilestoneClick(taskData?.milestone_id ?? 0)}
+            />
+          </div>
           {isEditing === "status" ? (
             <select
               name="status"
@@ -396,14 +398,15 @@ export default function NewTaskModal({ task, isOpen, onClose }: TaskModalProps) 
             <>
               <button
                 onClick={handleCancelEdit}
-                className="flex items-center gap-1.5 text-sm bg-cancel-button-background hover:bg-cancel-button-background-hover text-white px-3 py-2 rounded-md transition-all duration-200 font-medium"
+                className="flex items-center gap-1.5 text-sm border border-component-border hover:bg-can text-text-primary px-4 py-2 rounded-md transition-all duration-200 font-medium"
               >
+                <FontAwesomeIcon icon={faXmark} />
                 취소
               </button>
 
               <button
                 onClick={handleSave}
-                className="flex items-center gap-1.5 text-sm bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-3 py-2 rounded-md transition-all duration-200 font-medium"
+                className="flex items-center gap-1.5 text-sm bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-md transition-all duration-200 font-medium"
               >
                 <FontAwesomeIcon icon={faCheck} />
                 저장
