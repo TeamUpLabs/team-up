@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  faHome,
-  faMessage,
-  faTasks,
-  faCalendar,
-  faUsers,
-  faFlag,
-  faGear,
-  faChevronLeft,
-} from "@fortawesome/free-solid-svg-icons";
+
 import Sidebar from "@/components/platform/sidebar";
 import { useState, useEffect, use } from "react";
 import { Project } from "@/types/Project";
@@ -21,6 +12,24 @@ import NotificationDropdown from "@/components/platform/NotificationDropdown";
 import NotificationSidebar from "@/components/platform/NotificationSidebar";
 import { VoiceCallProvider } from "@/contexts/VoiceCallContext";
 import VoiceCallContainer from "@/components/project/chat/VoiceCallContainer";
+import { 
+  Grid as GridOutline, 
+  Users as UsersOutline, 
+  Messages as MessagesOutline, 
+  ClipboardList as ClipboardListOutline, 
+  CalendarMonth as CalendarMonthOutline, 
+  Flag as FlagOutline, 
+  Cog as CogOutline, 
+  ArrowRightToBracket as ArrowRightToBracketOutline } from "flowbite-react-icons/outline";
+import { 
+  Grid as GridSolid,
+  Users as UsersSolid,
+  Messages as MessagesSolid,
+  ClipboardList as ClipboardListSolid,
+  CalendarMonth as CalendarMonthSolid,
+  Flag as FlagSolid,
+  Cog as CogSolid,
+} from "flowbite-react-icons/solid";
 
 export default function ProjectLayout({
   children,
@@ -99,49 +108,57 @@ export default function ProjectLayout({
 
   const projectNavItems = [
     {
-      icon: faHome,
+      icon: GridOutline,
+      activeIcon: GridSolid,
       label: "대시보드",
       href: `/platform/${projectId}`,
       isActive: pathname === `/platform/${projectId}`,
     },
     {
-      icon: faUsers,
+      icon: UsersOutline,
+      activeIcon: UsersSolid,
       label: "팀원",
       href: `/platform/${projectId}/members`,
       isActive: pathname === `/platform/${projectId}/members`,
     },
     {
-      icon: faMessage,
+      icon: MessagesOutline,
+      activeIcon: MessagesSolid,
       label: "채팅",
       href: `/platform/${projectId}/chat`,
       isActive: pathname === `/platform/${projectId}/chat`,
     },
     {
-      icon: faTasks,
+      icon: ClipboardListOutline,
+      activeIcon: ClipboardListSolid,
       label: "작업",
       href: `/platform/${projectId}/tasks`,
       isActive: pathname === `/platform/${projectId}/tasks`,
     },
     {
-      icon: faCalendar,
+      icon: CalendarMonthOutline, 
+      activeIcon: CalendarMonthSolid,
       label: "일정",
       href: `/platform/${projectId}/calendar`,
       isActive: pathname === `/platform/${projectId}/calendar`,
     },
     {
-      icon: faFlag,
+      icon: FlagOutline,
+      activeIcon: FlagSolid,
       label: "마일스톤",
       href: `/platform/${projectId}/milestone`,
       isActive: pathname === `/platform/${projectId}/milestone`,
     },
     {
-      icon: faGear,
+      icon: CogOutline,
+      activeIcon: CogSolid,
       label: "설정",
       href: `/platform/${projectId}/setting`,
       isActive: pathname === `/platform/${projectId}/setting`,
     },
     {
-      icon: faChevronLeft,
+      icon: ArrowRightToBracketOutline,
+      activeIcon: ArrowRightToBracketOutline,
       label: "나가기",
       href: `/platform`,
       isActive: pathname === `/platform`,
