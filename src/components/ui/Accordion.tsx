@@ -1,0 +1,50 @@
+import React, { useState, useRef, ReactNode } from 'react';
+
+interface AccordionProps {
+  title: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}
+
+const Accordion: React.FC<AccordionProps> = ({ title, children, defaultOpen = false }) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  const toggleAccordion = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <div className="rounded-md mb-2">
+      <button
+        onClick={toggleAccordion}
+        className="group w-full flex justify-between items-center pb-2 border-b border-component-border text-left focus:outline-none transition-colors duration-200 ease-in-out"
+        aria-expanded={isOpen}
+      >
+        <span className="font-medium text-text-primary group-hover:underline">
+          {title}
+        </span>
+        <svg
+          className={`w-5 h-5 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div
+        ref={contentRef}
+        style={{ maxHeight: isOpen ? `${contentRef.current?.scrollHeight}px` : '0px' }}
+        className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+      >
+        <div className="pt-2 pb-4">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Accordion;
