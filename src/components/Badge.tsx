@@ -8,38 +8,39 @@ interface BadgeProps {
   color?: BadgeColor;
   isEditable?: boolean;
   onRemove?: () => void;
+  className?: string;
 }
 
-export default function Badge({ content, color = "gray", isEditable = false, onRemove }: BadgeProps) {
+export default function Badge({ content, color = "gray", isEditable = false, onRemove, className }: BadgeProps) {
 
   const badgeColors = {
-    gray: "bg-gray-500/20 text-gray-500",
-    red: "bg-red-500/20 text-red-500",
-    green: "bg-green-500/20 text-green-500",
-    blue: "bg-blue-500/20 text-blue-500",
-    yellow: "bg-yellow-500/20 text-yellow-500",
-    purple: "bg-purple-500/20 text-purple-500",
-    orange: "bg-orange-500/20 text-orange-500",
-    pink: "bg-pink-500/20 text-pink-500",
-    brown: "bg-brown-500/20 text-brown-500",
-    teal: "bg-teal-500/20 text-teal-500",
+    gray: "bg-gray-100 text-gray-800",
+    red: "bg-red-100 text-red-800",
+    green: "bg-green-100 text-green-800",
+    blue: "bg-blue-100 text-blue-800",
+    yellow: "bg-yellow-100 text-yellow-800",
+    purple: "bg-purple-100 text-purple-800",
+    orange: "bg-orange-100 text-orange-800",
+    pink: "bg-pink-100 text-pink-800",
+    brown: "bg-brown-100 text-brown-800",
+    teal: "bg-teal-100 text-teal-800",
   };
 
   const badgeXmarkColors = {
-    gray: "text-gray-500 hover:text-gray-400",
-    red: "text-red-500 hover:text-red-400",
-    green: "text-green-500 hover:text-green-400",
-    blue: "text-blue-500 hover:text-blue-400",
-    yellow: "text-yellow-500 hover:text-yellow-400",
-    purple: "text-purple-500 hover:text-purple-400",
-    orange: "text-orange-500 hover:text-orange-400",
-    pink: "text-pink-500 hover:text-pink-400",
-    brown: "text-brown-500 hover:text-brown-400",
-    teal: "text-teal-500 hover:text-teal-400",
+    gray: "text-gray-800 hover:text-gray-600",
+    red: "text-red-800 hover:text-red-600",
+    green: "text-green-800 hover:text-green-600",
+    blue: "text-blue-800 hover:text-blue-600",
+    yellow: "text-yellow-800 hover:text-yellow-600",
+    purple: "text-purple-800 hover:text-purple-600",
+    orange: "text-orange-800 hover:text-orange-600",
+    pink: "text-pink-800 hover:text-pink-600",
+    brown: "text-brown-800 hover:text-brown-600",
+    teal: "text-teal-800 hover:text-teal-600",
   };
 
   return (
-    <span className={`${badgeColors[color]} px-3 py-1 rounded-md text-sm`}>
+    <span className={`${badgeColors[color]} px-3 py-1 rounded-md text-sm ${className}`}>
       {content}
       {isEditable && (
         <button
