@@ -4,7 +4,7 @@ import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "brown" | "teal";
 
 interface BadgeProps {
-  content: string;
+  content: string | React.ReactNode;
   color?: BadgeColor;
   isEditable?: boolean;
   onRemove?: () => void;
