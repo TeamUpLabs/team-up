@@ -574,7 +574,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         defaultOpen
       >
         <div className="space-y-4">
-          <div className="bg-component-secondary-background p-3 rounded-lg">
+          <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
             <div className="flex items-center justify-between">
               <span className="font-medium">Overall Progress</span>
               <span className="text-sm font-medium">{progress}%</span>
@@ -599,7 +599,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               </div>
             ) : (
               taskData.subtasks.map((subtask, index) => (
-                <div key={index} className="flex items-center border border-component-border p-3 rounded-lg justify-between group relative">
+                <div key={index} className="flex items-center bg-component-secondary-background border border-component-border p-3 rounded-lg justify-between group relative">
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
