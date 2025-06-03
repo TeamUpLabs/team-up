@@ -479,13 +479,13 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             <div className="space-y-2">
               <h4 className="font-medium">Created</h4>
               <p className="text-sm text-muted-foreground">
-                {new Date(task.createdAt).toLocaleDateString()} by User {task.createdBy}
+                {new Date(task.createdAt).toLocaleDateString()} by {project?.members.find((member) => member.id === task.createdBy)?.name}
               </p>
             </div>
             <div className="space-y-2">
               <h4 className="font-medium">Last Updated</h4>
               <p className="text-sm text-muted-foreground">
-                {new Date(task.updatedAt).toLocaleDateString()} by User {task.updatedBy}
+                {new Date(task.updatedAt).toLocaleDateString()} by {project?.members.find((member) => member.id === task.updatedBy)?.name}
               </p>
             </div>
           </div>
