@@ -842,7 +842,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         title={
           <div className="flex items-center gap-2 text-text-primary">
             <Tag />
-            <span className="font-bold">Tags</span>
+            <span className="font-bold">Tags & Labels</span>
           </div>
         }
       >
