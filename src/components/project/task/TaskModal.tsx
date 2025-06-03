@@ -48,7 +48,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     return Math.round((completedTasks / subtasksList.length) * 100);
   };
 
-  const isUserAssignee = task?.assignee?.some((assi) => assi.id === user?.id);
+  const isUserAssignee = user && task?.assignee?.some((assi) => assi.id === user?.id);
 
   const handleSubtaskToggle = async (index: number) => {
     if (taskData.status === "done") {
@@ -102,7 +102,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   };
 
   const handleEdit = (name: string) => {
-    if (taskData.assignee?.some((assi) => assi.id === user?.id)) {
+    if (user && taskData.assignee?.some((assi) => assi.id === user?.id)) {
       setIsEditing(name);
       if (name !== "none") {
         useAuthStore.getState().setAlert("편집 모드로 전환되었습니다.", "info");
@@ -392,27 +392,25 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           )}
         </div>
       </div>
-      {isUserAssignee && (
+      {(isUserAssignee && isEditing !== "none") && (
         <div className="flex items-center gap-2">
-          {isEditing !== "none" && (
-            <>
-              <button
-                onClick={handleCancelEdit}
-                className="flex items-center gap-1.5 text-sm border border-component-border hover:bg-can text-text-primary px-4 py-2 rounded-md transition-all duration-200 font-medium"
-              >
-                <FontAwesomeIcon icon={faXmark} />
-                취소
-              </button>
+          <>
+            <button
+              onClick={handleCancelEdit}
+              className="flex items-center gap-1.5 text-sm border border-component-border hover:bg-can text-text-primary px-4 py-2 rounded-md transition-all duration-200 font-medium"
+            >
+              <FontAwesomeIcon icon={faXmark} />
+              취소
+            </button>
 
-              <button
-                onClick={handleSave}
-                className="flex items-center gap-1.5 text-sm bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-md transition-all duration-200 font-medium"
-              >
-                <FontAwesomeIcon icon={faCheck} />
-                저장
-              </button>
-            </>
-          )}
+            <button
+              onClick={handleSave}
+              className="flex items-center gap-1.5 text-sm bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-md transition-all duration-200 font-medium"
+            >
+              <FontAwesomeIcon icon={faCheck} />
+              저장
+            </button>
+          </>
         </div>
       )}
     </div>
