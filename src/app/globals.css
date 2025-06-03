@@ -23,8 +23,8 @@
   --input-secondary-border: #b9c2d2;
   --input-border-hover: #5b42e0;
 
-  --cancel-button-background: oklch(70.7% 0.022 261.325);
-  --cancel-button-background-hover: oklch(55.1% 0.027 264.364);
+  --cancel-button-background: #ffffff;
+  --cancel-button-background-hover: #f4f6fa;
   
   --point-color-purple: #7e22ce;
   --point-color-purple-hover: #6b21a8;
@@ -57,8 +57,8 @@
   --input-secondary-border: #4A5565;
   --input-border-hover: #432DD7;
 
-  --cancel-button-background: oklch(44.6% 0.03 256.802);
-  --cancel-button-background-hover: oklch(37.3% 0.034 259.733);
+  --cancel-button-background: #0D1119;
+  --cancel-button-background-hover: #161C29;
   
   --point-color-purple: #AD47FF;
   --point-color-purple-hover: #9856D6;
