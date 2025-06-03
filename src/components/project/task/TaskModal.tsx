@@ -729,7 +729,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                               <Image
                                 src={member.profileImage}
                                 alt="Profile"
-                                className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
+                                className={`rounded-full absolute text-text-secondary transform transition-all duration-300 ${isSelected
                                   ? "opacity-0 rotate-90 scale-0"
                                   : "opacity-100 rotate-0 scale-100"
                                   }`}
