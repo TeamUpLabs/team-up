@@ -4,6 +4,7 @@ import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons
 import { Task } from '@/types/Task';
 import { Schedule } from '@/types/Schedule';
 import { getScheduleColor } from '@/utils/getScheduleColor';
+import Tooltip from '@/components/ui/Tooltip';
 
 interface CalendarProps {
   currentDate: Date;
@@ -95,34 +96,35 @@ export default function Calendar({
                 ${isSameMonthDay && !isWeekend && !isTodayDay ? 'text-text-secondary' : ''}`}>
                 {format(day, 'd')}
               </p>
-              <div className="mt-1 space-y-1 max-h-[60px] sm:max-h-[80px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+              <div className="mt-1 space-y-1 max-h-[60px] sm:max-h-[80px] overflow-y-auto">
                 {dayTasks?.map((task) => (
-                  <div
-                    key={task?.id}
-                    onClick={() => onSelectTask(task)}
-                    className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("task")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
-                  >
-                    <p className="font-medium truncate">{task?.title}</p>
-                    {task?.assignee && task?.assignee.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-0.5">
-                        {task?.assignee.slice(0, 2).map(assi => (
-                          <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
-                        ))}
-                        {task?.assignee.length > 2 && (
-                          <span className="text-[10px] sm:text-xs opacity-75 truncate">+{task?.assignee.length - 2}명</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <Tooltip content="작업" key={task?.id}>
+                    <div
+                      onClick={() => onSelectTask(task)}
+                      className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("task")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
+                    >
+                      <p className="font-medium truncate">{task?.title}</p>
+                      {task?.assignee && task?.assignee.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-0.5">
+                          {task?.assignee.slice(0, 2).map(assi => (
+                            <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
+                          ))}
+                          {task?.assignee.length > 2 && (
+                            <span className="text-[10px] sm:text-xs opacity-75 truncate">+{task?.assignee.length - 2}명</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </Tooltip>
                 ))}
 
                 {dayMeetings?.map(meeting => (
-                  <div
-                    key={meeting?.id}
-                    className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("meeting")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
-                  >
-                    <p className="font-medium truncate">{meeting?.title}</p>
-                    {meeting?.assignee && meeting?.assignee.length > 0 && (
+                  <Tooltip content="회의" key={meeting?.id}>
+                    <div
+                      className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("meeting")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
+                    >
+                      <p className="font-medium truncate">{meeting?.title}</p>
+                      {meeting?.assignee && meeting?.assignee.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-0.5">
                         {meeting?.assignee.slice(0, 2).map(assi => (
                           <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
@@ -133,12 +135,13 @@ export default function Calendar({
                       </div>
                     )}
                   </div>
+                </Tooltip>
                 ))}
 
                 {dayEvents?.map(event => (
-                  <div
-                    key={event?.id}
-                    className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("event")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
+                  <Tooltip content="이벤트" key={event?.id}>
+                    <div
+                      className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("event")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
                   >
                     <p className="font-medium truncate">{event?.title}</p>
                     {event?.assignee && event?.assignee.length > 0 && (
@@ -152,6 +155,7 @@ export default function Calendar({
                       </div>
                     )}
                   </div>
+                </Tooltip>
                 ))}
               </div>
               {dayTasks && dayTasks.length > 3 && (

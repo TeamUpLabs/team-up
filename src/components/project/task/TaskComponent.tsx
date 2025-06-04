@@ -25,7 +25,7 @@ export default function TaskComponent({ task }: { task: Task }) {
         {task?.assignee && task.assignee.length > 0 && (
           <div className="flex -space-x-2.5">
             {task.assignee.slice(0, 2).map((assi) => (
-              <Tooltip content={assi.name} key={assi.id}>
+              <Tooltip content={assi.name} key={assi.id} placement="bottom">
                 <div className="w-8 h-8 relative rounded-full bg-component-background border-2 border-component-border text-xs flex items-center justify-center">
                   {assi?.profileImage ? (
                     <Image src={assi.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={32} height={32} />

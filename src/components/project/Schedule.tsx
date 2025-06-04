@@ -221,6 +221,7 @@ export default function Schedule() {
                           content={member.name}
                           key={idx}
                           className="-ml-2"
+                          placement="bottom"
                         >
                           {member.profileImage ? (
                             <Image
@@ -324,6 +325,7 @@ export default function Schedule() {
                           content={member.name}
                           key={idx}
                           className="-ml-2"
+                          placement="bottom"
                         >
                           {member.profileImage ? (
                             <Image
@@ -423,6 +425,7 @@ export default function Schedule() {
                         content={member.name}
                         key={idx}
                         className="-ml-2"
+                        placement="bottom"
                       >
                         {member.profileImage ? (
                           <Image
