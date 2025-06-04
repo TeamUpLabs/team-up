@@ -199,7 +199,7 @@ export default function Select({
     }
 
     if (selectedValues.length === 0) {
-      return <span className="text-gray-500">{placeholder}</span>
+      return <span className="text-text-secondary">{placeholder}</span>
     }
 
     if (multiple) {
@@ -239,9 +239,8 @@ export default function Select({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={`
-          focus:outline-none focus:ring-0
+          w-full focus:outline-none focus:ring-0 text-left
           ${disabled ? "bg-gray-100 cursor-not-allowed" : "hover:border-gray-400 cursor-pointer"}
-          ${isOpen ? "ring-2 ring-blue-500 border-blue-500" : ""}
         `}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -250,7 +249,7 @@ export default function Select({
           <div className="flex-1 min-w-0">{renderDisplayValue()}</div>
           <div className="flex items-center gap-2">
             {clearable && selectedValues.length > 0 && (
-              <button type="button" onClick={handleClear} className="hover:bg-gray-200 rounded-full p-1">
+              <button type="button" onClick={handleClear} className="hover:bg-component-background rounded-full p-1">
                 <FontAwesomeIcon icon={faXmark} />
               </button>
             )}
@@ -261,16 +260,17 @@ export default function Select({
 
       {/* 드롭다운 옵션들 */}
       {isOpen && (
-        <div className="absolute z-50 min-w-full w-max mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+        <div className="absolute z-50 w-full mt-1 bg-component-background border border-component-border rounded-md shadow-lg left-1/2 -translate-x-1/2"
+            style={{ maxHeight: `${maxHeight}px` }}>
           {searchable && (
-            <div className="p-2 border-b border-gray-200">
+            <div className="p-2 border-b border-component-border">
               <input
                 ref={searchInputRef}
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="검색..."
-                className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-2 py-1 border border-component-border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           )}
@@ -282,7 +282,7 @@ export default function Select({
             role="listbox"
           >
             {filteredOptions.length === 0 ? (
-              <div className="px-3 py-2 text-gray-500 text-center">검색 결과가 없습니다</div>
+              <div className="px-3 py-2 text-text-secondary text-center">검색 결과가 없습니다</div>
             ) : (
               filteredOptions.map((option, index) => {
                 const isSelected = selectedValues.includes(option.value)
@@ -293,10 +293,10 @@ export default function Select({
                     key={option.value}
                     onClick={() => handleOptionSelect(option)}
                     className={`
-                      px-3 py-2 cursor-pointer flex items-center justify-between
-                      ${option.disabled ? "text-gray-400 cursor-not-allowed" : "hover:bg-gray-100"}
-                      ${isSelected ? "bg-blue-50 text-blue-700" : "bg-transparent text-text-primary"}
-                      ${isFocused ? "bg-gray-100" : ""}
+                      px-3 py-2 cursor-pointer
+                      ${option.disabled ? "text-text-secondary cursor-not-allowed" : "hover:bg-component-secondary-background"}
+                      ${isSelected ? "bg-component-secondary-background text-text-primary" : "bg-transparent text-text-primary"}
+                      ${isFocused ? "bg-component-secondary-background" : ""}
                     `}
                     role="option"
                     aria-selected={isSelected}
@@ -304,10 +304,10 @@ export default function Select({
                     {renderOption ? (
                       renderOption(option, isSelected)
                     ) : (
-                      <>
-                        <span>{option.label}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-text-primary">{option.label}</span>
                         {isSelected && <FontAwesomeIcon icon={faCheck} />}
-                      </>
+                      </div>
                     )}
                   </div>
                 )
