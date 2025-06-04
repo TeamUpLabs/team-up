@@ -344,7 +344,7 @@ export default function NotificationSidebar({
 
   return (
     <div
-      className={`fixed top-0 right-0 h-full z-[8400] border-l border-component-border bg-component-background transition-transform duration-300 ease-in-out w-full sm:w-80 md:w-96 transform ${
+      className={`fixed top-0 right-0 h-full z-[8400] border-l border-component-border bg-component-background transition-transform duration-300 ease-in-out w-72 transform ${
         isOpen ? "translate-x-0" : "translate-x-full"
       }`}
       aria-label="알림 목록"
