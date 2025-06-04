@@ -44,7 +44,7 @@ export default function TaskComponent({ task }: { task: Task }) {
               <Tooltip content={assi.name} key={assi.id} placement="bottom">
                 <div className="w-8 h-8 relative rounded-full bg-component-background border-2 border-component-border text-xs flex items-center justify-center">
                   {assi?.profileImage ? (
-                    <Image src={assi.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={32} height={32} />
+                    <Image src={assi.profileImage} alt="Profile" className="object-fit rounded-full" quality={100} width={32} height={32} />
                   ) : (
                     <p>{assi?.name.charAt(0)}</p>
                   )}
