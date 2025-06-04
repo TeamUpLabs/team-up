@@ -190,7 +190,7 @@ export default function TaskCreateModal({
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             placeholder="작업 이름을 입력하세요"
             required
           />
@@ -209,7 +209,7 @@ export default function TaskCreateModal({
             value={formData.description}
             onChange={handleChange}
             rows={3}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary resize-none hover:border-input-border-hover"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 resize-none hover:border-input-border-hover"
             placeholder="작업 설명을 입력하세요"
           />
         </div>
@@ -394,7 +394,7 @@ export default function TaskCreateModal({
             onKeyDown={(e) => handleKeyDown("subtasks", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             placeholder="하위 작업을 입력하고 Enter 키를 누르세요"
           />
           <div className="mt-2 flex flex-col gap-2">

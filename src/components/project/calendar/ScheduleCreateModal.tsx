@@ -290,7 +290,7 @@ export default function ScheduleCreateModal({
               name="title"
               value={formData.title}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
+              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
               placeholder="일정 제목을 입력하세요"
               required
             />
@@ -309,7 +309,7 @@ export default function ScheduleCreateModal({
               value={formData.description}
               onChange={handleChange}
               rows={3}
-              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover resize-none"
+              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover resize-none"
               placeholder="일정에 대한 설명을 입력하세요"
             />
           </div>
@@ -327,7 +327,7 @@ export default function ScheduleCreateModal({
               name="memo"
               value={formData.memo}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
+              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
               placeholder="메모를 입력하세요 (선택사항)"
             />
           </div>
@@ -474,7 +474,7 @@ export default function ScheduleCreateModal({
                     name="link"
                     value={formData.link}
                     onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
+                    className="w-full pl-10 pr-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     placeholder={
                       selectedPlatform === "zoom"
                         ? "Zoom 회의 링크를 입력하세요"
@@ -605,7 +605,7 @@ export default function ScheduleCreateModal({
             name="where"
             value={formData.where}
             onChange={handleChange}
-            className="w-full pl-10 pr-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
+            className="w-full pl-10 pr-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             placeholder="이벤트 장소"
           />
         </div>

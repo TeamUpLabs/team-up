@@ -50,7 +50,7 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
         onClick={handleSelectMilestone}
         className={`px-4 py-2 rounded-lg ${
           !selectedMilestone
-            ? "bg-blue-500/30 text-blue-300/70 cursor-not-allowed"
+            ? "bg-blue-600/50 text-white cursor-not-allowed"
             : "bg-blue-600 hover:bg-blue-700 text-white"
         } transition-colors flex items-center active:scale-95`}
       >
