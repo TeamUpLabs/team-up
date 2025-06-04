@@ -1,5 +1,5 @@
 import { Member } from "@/types/Member";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt, faStar, faShieldAlt, faUser } from "@fortawesome/free-solid-svg-icons";

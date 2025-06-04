@@ -7,7 +7,8 @@ import { createMilestone } from "@/hooks/getMilestoneData";
 import { useAuthStore } from "@/auth/authStore";
 import SubmitBtn from "@/components/SubmitBtn";
 import ModalTemplete from "@/components/ModalTemplete";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
+import Select from "@/components/ui/Select";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -100,6 +101,10 @@ export default function MilestoneCreateModal({
           );
       }
     }
+  };
+
+  const handleSelectChange = (name: string, value: string | string[]) => {
+    setFormData(prevData => ({ ...prevData, [name]: value }));
   };
 
   const handleChange = (
@@ -255,21 +260,16 @@ export default function MilestoneCreateModal({
           >
             상태 <span className="text-point-color-indigo ml-1">*</span>
           </label>
-          <select
-            id="status"
-            name="status"
+          <Select
+            options={[
+              { name: "status", value: "not-started", label: "준비" },
+              { name: "status", value: "in-progress", label: "진행중" },
+              { name: "status", value: "done", label: "완료" },
+            ]}
             value={formData.status}
-            onChange={handleChange}
-            className={`w-full px-4 py-3 rounded-lg bg-input-background border ${
-              statusError ? "border-red-500" : "border-input-border"
-            } text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover`}
-            required
-          >
-            <option value="">선택</option>
-            <option value="not-started">준비</option>
-            <option value="in-progress">진행중</option>
-            <option value="done">완료</option>
-          </select>
+            onChange={(value) => handleSelectChange("status", value as string)}
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+          />
           {statusError && (
             <p className="text-red-500 text-sm mt-2">상태를 선택해주세요.</p>
           )}
@@ -282,21 +282,16 @@ export default function MilestoneCreateModal({
           >
             우선순위 <span className="text-point-color-indigo ml-1">*</span>
           </label>
-          <select
-            id="priority"
-            name="priority"
+          <Select
+            options={[
+              { name: "priority", value: "low", label: "낮음" },
+              { name: "priority", value: "medium", label: "중간" },
+              { name: "priority", value: "high", label: "높음" },
+            ]}
             value={formData.priority}
-            onChange={handleChange}
-            className={`w-full px-4 py-3 rounded-lg bg-input-background border ${
-              priorityError ? "border-red-500" : "border-input-border"
-            } text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover`}
-            required
-          >
-            <option value="">선택</option>
-            <option value="low">낮음</option>
-            <option value="medium">중간</option>
-            <option value="high">높음</option>
-          </select>
+            onChange={(value) => handleSelectChange("priority", value as string)}
+            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+          />
           {priorityError && (
             <p className="text-red-500 text-sm mt-2">
               우선순위를 선택해주세요.
@@ -322,10 +317,10 @@ export default function MilestoneCreateModal({
                 <div
                   key={member.id}
                   onClick={() => toggleAssignee(member.id)}
-                  className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                  className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer border border-component-border transition-all duration-200 ${
                     isAssigned(member.id)
                       ? "bg-purple-500/20 border border-purple-500/50"
-                      : "bg-component-tertiary-background border border-transparent hover:bg-component-tertiary-background/60"
+                      : "bg-component-tertiary-background hover:bg-component-tertiary-background/60"
                   }`}
                 >
                   <div className="relative flex-shrink-0">

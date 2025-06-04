@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Member } from '@/types/Member';
 import SelectProjectModal from './SelectProjectModal';
 import ModalTemplete from '@/components/ModalTemplete';
-import Badge from '@/components/Badge';
+import Badge from '@/components/ui/Badge';
 
 interface MemberScoutDetailModalProps {
   member: Member;

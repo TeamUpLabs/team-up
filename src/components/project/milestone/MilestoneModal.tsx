@@ -9,10 +9,11 @@ import { useAuthStore } from "@/auth/authStore";
 import { useParams, useRouter } from "next/navigation";
 import { useProject } from "@/contexts/ProjectContext";
 import { useState } from "react";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
 import { Flag, InfoCircle, CalendarWeek, FileCheck, User, Tag, TrashBin } from "flowbite-react-icons/outline";
 import Accordion from "@/components/ui/Accordion";
 import { updateMilestone, deleteMilestone } from "@/hooks/getMilestoneData";
+import Select from "@/components/ui/Select";
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -79,6 +80,10 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const handleRemoveTag = (tagIndex: number) => {
     const updatedTags = milestoneData.tags.filter((_, index) => index !== tagIndex);
     setMilestoneData({ ...milestoneData, tags: updatedTags });
+  };
+
+  const handleSelectChange = (name: string, value: string | string[]) => {
+    setMilestoneData(prevData => ({ ...prevData, [name]: value }));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -219,16 +224,17 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
         </div>
         <div className="flex flex-wrap gap-2">
           {isEditing === "status" ? (
-            <select
-              name="status"
+            <Select
+              options={[
+                { name: "status", value: "not-started", label: "NOT STARTED" },
+                { name: "status", value: "in-progress", label: "IN PROGRESS" },
+                { name: "status", value: "done", label: "DONE" },
+              ]}
               value={milestoneData.status}
-              onChange={handleChange}
-              className="p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
-            >
-              <option value="not-started">준비</option>
-              <option value="in-progress">진행 중</option>
-              <option value="completed">완료</option>
-            </select>
+              onChange={(value) => handleSelectChange("status", value as string)}
+              color={getStatusColor(milestoneData.status)}
+              className="px-3 py-1 rounded-full text-sm"
+            />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
@@ -248,16 +254,17 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             </div>
           )}
           {isEditing === "priority" ? (
-            <select
-              name="priority"
+            <Select
+              options={[
+                { name: "priority", value: "high", label: "HIGH" },
+                { name: "priority", value: "medium", label: "MEDIUM" },
+                { name: "priority", value: "low", label: "LOW" },
+              ]}
               value={milestoneData.priority}
-              onChange={handleChange}
-              className="p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
-            >
-              <option value="high">HIGH</option>
-              <option value="medium">MEDIUM</option>
-              <option value="low">LOW</option>
-            </select>
+              onChange={(value) => handleSelectChange("priority", value as string)}
+              color={getPriorityColor(milestoneData.priority)}
+              className="px-3 py-1 rounded-full text-sm"
+            />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
@@ -317,10 +324,10 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
           aria-label="작업 삭제"
         >
           <TrashBin />
-        작업 삭제
-      </button>
-    </div>
-  ) : null;
+          작업 삭제
+        </button>
+      </div>
+    ) : null;
 
   return (
     <ModalTemplete
@@ -460,8 +467,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             <FileCheck />
             <span className="font-bold">
               Progress & Tasks (
-                {milestoneData.subtasks.filter(st => st.status === "done").length}/{
-              milestoneData.subtasks.length}
+              {milestoneData.subtasks.filter(st => st.status === "done").length}/{
+                milestoneData.subtasks.length}
               )
             </span>
           </div>

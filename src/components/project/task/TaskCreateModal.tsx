@@ -11,7 +11,8 @@ import { createTask } from "@/hooks/getTaskData";
 import { useAuthStore } from "@/auth/authStore";
 import SubmitBtn from "@/components/SubmitBtn";
 import ModalTemplete from "@/components/ModalTemplete";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
+import Select from "@/components/ui/Select";
 
 interface TaskCreateModalProps {
   isOpen: boolean;
@@ -55,6 +56,10 @@ export default function TaskCreateModal({
       setDateError(false);
     }
   }, [formData.startDate, formData.endDate]);
+
+  const handleSelectChange = (name: string, value: string | string[]) => {
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -257,18 +262,16 @@ export default function TaskCreateModal({
           >
             우선순위 <span className="text-point-color-purple ml-1">*</span>
           </label>
-          <select
-            id="priority"
-            name="priority"
+          <Select
+            options={[
+              { name: "priority", value: "low", label: "낮음" },
+              { name: "priority", value: "medium", label: "중간" },
+              { name: "priority", value: "high", label: "높음" },
+            ]}
             value={formData.priority}
-            onChange={handleChange}
+            onChange={(value) => handleSelectChange("priority", value as string)}
             className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            required
-          >
-            <option value="low">낮음</option>
-            <option value="medium">중간</option>
-            <option value="high">높음</option>
-          </select>
+          />
         </div>
 
         <div className="col-span-2">
@@ -289,11 +292,10 @@ export default function TaskCreateModal({
                 <div
                   key={member.id}
                   onClick={() => toggleAssignee(member.id)}
-                  className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${
-                    isAssigned(member.id)
+                  className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${isAssigned(member.id)
                       ? "bg-purple-500/20 border border-purple-500/50"
-                      : "bg-component-tertiary-background border border-transparent hover:bg-component-tertiary-background/60"
-                  }`}
+                      : "bg-component-tertiary-background border border-component-border hover:bg-component-tertiary-background/60"
+                    }`}
                 >
                   <div className="relative flex-shrink-0">
                     <div className="w-10 h-10 rounded-full bg-component-secondary-background border-2 border-component-border flex items-center justify-center overflow-hidden">
@@ -304,11 +306,10 @@ export default function TaskCreateModal({
                             alt={member.name}
                             width={50}
                             height={50}
-                            className={`absolute text-text-secondary transform transition-all duration-300 ${
-                              isAssigned(member.id)
+                            className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
                                 ? "opacity-0 rotate-90 scale-0"
                                 : "opacity-100 rotate-0 scale-100"
-                            }`}
+                              }`}
                             onError={(e) => {
                               e.currentTarget.src = "/DefaultProfile.jpg";
                             }}
@@ -316,20 +317,18 @@ export default function TaskCreateModal({
                         ) : (
                           <FontAwesomeIcon
                             icon={faUser}
-                            className={`absolute text-text-secondary transform transition-all duration-300 ${
-                              isAssigned(member.id)
+                            className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
                                 ? "opacity-0 rotate-90 scale-0"
                                 : "opacity-100 rotate-0 scale-100"
-                            }`}
+                              }`}
                           />
                         )}
                         <FontAwesomeIcon
                           icon={faCheck}
-                          className={`absolute text-text-secondary transform transition-all duration-300 ${
-                            isAssigned(member.id)
+                          className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
                               ? "opacity-100 rotate-0 scale-100"
                               : "opacity-0 -rotate-90 scale-0"
-                          }`}
+                            }`}
                         />
                       </div>
                     </div>

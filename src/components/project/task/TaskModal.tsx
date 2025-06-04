@@ -13,9 +13,10 @@ import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faBullseye, faXmark, faCheck, faHourglassStart, faHourglassEnd, faTrash, faPlus, faUser, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { InfoCircle, CalendarWeek, FileCheck, User, Flag, Tag, MessageDots, TrashBin } from "flowbite-react-icons/outline";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
 import Accordion from "@/components/ui/Accordion";
 import Image from "next/image";
+import Select from "@/components/ui/Select";
 
 
 interface TaskModalProps {
@@ -151,6 +152,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     } finally {
       setIsEditing("none");
     }
+  };
+
+  const handleSelectChange = (name: string, value: string | string[]) => {
+    setTaskData(prevData => ({ ...prevData, [name]: value }));
   };
 
   const handleChange = (
@@ -328,16 +333,17 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             />
           </div>
           {isEditing === "status" ? (
-            <select
-              name="status"
+            <Select
+              options={[
+                { name: "status", value: "not-started", label: "NOT STARTED" },
+                { name: "status", value: "in-progress", label: "IN PROGRESS" },
+                { name: "status", value: "done", label: "Done" },
+              ]}
               value={taskData.status}
-              onChange={handleChange}
-              className="p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
-            >
-              <option value="not-started">준비</option>
-              <option value="in-progress">진행 중</option>
-              <option value="completed">완료</option>
-            </select>
+              onChange={(value) => handleSelectChange("status", value as string)}
+              color={getStatusColor(taskData.status)}
+              className="px-3 py-1 rounded-full text-sm"
+            />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
@@ -357,16 +363,17 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             </div>
           )}
           {isEditing === "priority" ? (
-            <select
-              name="priority"
+            <Select
+              options={[
+                { name: "priority", value: "high", label: "HIGH" },
+                { name: "priority", value: "medium", label: "MEDIUM" },
+                { name: "priority", value: "low", label: "LOW" },
+              ]}
               value={taskData.priority}
-              onChange={handleChange}
-              className="p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
-            >
-              <option value="high">HIGH</option>
-              <option value="medium">MEDIUM</option>
-              <option value="low">LOW</option>
-            </select>
+              onChange={(value) => handleSelectChange("priority", value as string)}
+              color={getPriorityColor(taskData.priority)}
+              className="px-3 py-1 rounded-full text-sm"
+            />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge

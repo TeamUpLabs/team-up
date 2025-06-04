@@ -1,6 +1,6 @@
 // components/signup/SignupStep4.tsx
 import { useRef, useState } from "react";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
 
 interface SignupStep4Props {
   role: string;

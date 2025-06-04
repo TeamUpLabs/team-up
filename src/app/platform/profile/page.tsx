@@ -26,8 +26,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faLinkedin, faTwitter, faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { updateUserProfile, updateUserProfileImage } from "@/hooks/getMemberData";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
 import ImageCropModal from "@/components/platform/profile/ImageCropModal";
+import Select from "@/components/ui/Select";
 
 interface WorkingHours {
   start: string;
@@ -115,6 +116,10 @@ export default function ProfilePage() {
       setIsDataLoading(false);
     });
   }, [user]);
+
+  const handleSelectChange = (name: string, value: string | string[]) => {
+    setProfileData(prevData => ({ ...prevData, [name]: value }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -285,7 +290,7 @@ export default function ProfilePage() {
         profileImage: response
       });
     }
-    
+
     setShowCropModal(false);
     useAuthStore.getState().setAlert("프로필 이미지가 업데이트되었습니다.", "success");
     setIsLoading(false);
@@ -347,7 +352,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-component-background border border-component-border rounded-xl shadow-sm overflow-hidden mb-8">
+      <div className="bg-component-background border border-component-border rounded-xl shadow-sm mb-8">
         <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 h-32">
           <div className="absolute -bottom-12 left-8">
             <div className="relative">
@@ -470,16 +475,16 @@ export default function ProfilePage() {
                   {isDataLoading ? (
                     <SkeletonField />
                   ) : isEditing === "role" ? (
-                    <select
-                      name="role"
+                    <Select
+                      options={[
+                        { name: "role", value: "개발자", label: "개발자" },
+                        { name: "role", value: "디자이너", label: "디자이너" },
+                        { name: "role", value: "기획자", label: "기획자" },
+                      ]}
                       value={profileData.role}
-                      onChange={handleChange}
+                      onChange={(value) => handleSelectChange("role", value as string)}
                       className="w-full rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
-                    >
-                      <option value="개발자">개발자</option>
-                      <option value="디자이너">디자이너</option>
-                      <option value="기획자">기획자</option>
-                    </select>
+                    />
                   ) : (
                     <div className="flex items-center gap-2">
                       {profileData.role === "개발자" && <FontAwesomeIcon icon={faCode} className="text-text-secondary" size="sm" />}
@@ -660,7 +665,7 @@ export default function ProfilePage() {
                   <div className="space-y-3">
                     {isEditing === "socialLinks" && (
                       <div className="flex gap-2 items-center mb-2">
-                        <select
+                        {/* <select
                           name="newSocialLink.name"
                           value={newSocialLink.name}
                           onChange={handleChange}
@@ -673,7 +678,20 @@ export default function ProfilePage() {
                           <option value="facebook">Facebook</option>
                           <option value="instagram">Instagram</option>
                           <option value="website">Website</option>
-                        </select>
+                        </select> */}
+                        <Select
+                          options={[
+                            { name: "newSocialLink.name", value: "github", label: "GitHub" },
+                            { name: "newSocialLink.name", value: "linkedin", label: "LinkedIn" },
+                            { name: "newSocialLink.name", value: "twitter", label: "Twitter" },
+                            { name: "newSocialLink.name", value: "facebook", label: "Facebook" },
+                            { name: "newSocialLink.name", value: "instagram", label: "Instagram" },
+                            { name: "newSocialLink.name", value: "website", label: "Website" },
+                          ]}
+                          value={newSocialLink.name}
+                          onChange={(value) => setNewSocialLink(prev => ({ ...prev, name: value as string }))}
+                          className="rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
+                        />
                         <input
                           type="text"
                           name="newSocialLink.url"

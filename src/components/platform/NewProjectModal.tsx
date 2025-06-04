@@ -6,7 +6,8 @@ import { updateProjectMember } from '@/hooks/getMemberData';
 import { useAuthStore } from '@/auth/authStore';
 import SubmitBtn from '@/components/SubmitBtn';
 import ModalTemplete from '@/components/ModalTemplete';
-import Badge from '@/components/Badge';
+import Badge from '@/components/ui/Badge';
+import Select from '@/components/ui/Select';
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -45,6 +46,10 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
       setDateError(false);
     }
   }, [formData.startDate, formData.endDate]);
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -216,22 +221,19 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             <label htmlFor="projectType" className="block text-sm font-medium mb-1">
               프로젝트 카테고리 <span className="text-point-color-purple ml-1">*</span>
             </label>
-            <select
-              id="projectType"
-              name="projectType"
+            <Select
+              options={[
+                { name: "projectType", value: "웹 개발", label: "웹 개발" },
+                { name: "projectType", value: "모바일 개발", label: "모바일 개발" },
+                { name: "projectType", value: "디자인", label: "디자인" },
+                { name: "projectType", value: "마케팅", label: "마케팅" },
+                { name: "projectType", value: "비즈니스", label: "비즈니스" },
+                { name: "projectType", value: "토이", label: "토이 프로젝트" },
+              ]}
               value={formData.projectType}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors appearance-none"
-              required
-            >
-              <option value="">카테고리 선택</option>
-              <option value="웹 개발">웹 개발</option>
-              <option value="모바일 개발">모바일 개발</option>
-              <option value="디자인">디자인</option>
-              <option value="마케팅">마케팅</option>
-              <option value="비즈니스">비즈니스</option>
-              <option value="토이">토이 프로젝트</option>
-            </select>
+              onChange={(value) => handleSelectChange("projectType", value as string)}
+              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+            />
           </div>
         </div>
 

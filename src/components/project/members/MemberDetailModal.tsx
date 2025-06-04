@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/auth/authStore";
 import ModalTemplete from "@/components/ModalTemplete";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
 import { kickOutMemberFromProject } from "@/hooks/getProjectData";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
