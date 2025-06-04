@@ -269,6 +269,7 @@ export default function MilestoneCreateModal({
             value={formData.status}
             onChange={(value) => handleSelectChange("status", value as string)}
             className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+            dropDownClassName="!w-full"
           />
           {statusError && (
             <p className="text-red-500 text-sm mt-2">상태를 선택해주세요.</p>
@@ -291,6 +292,7 @@ export default function MilestoneCreateModal({
             value={formData.priority}
             onChange={(value) => handleSelectChange("priority", value as string)}
             className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+            dropDownClassName="!w-full"
           />
           {priorityError && (
             <p className="text-red-500 text-sm mt-2">

@@ -233,6 +233,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
               value={formData.projectType}
               onChange={(value) => handleSelectChange("projectType", value as string)}
               className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+              dropDownClassName="!w-full"
             />
           </div>
         </div>

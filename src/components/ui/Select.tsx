@@ -23,6 +23,7 @@ interface SelectProps {
   disabled?: boolean;
   clearable?: boolean;
   className?: string;
+  dropDownClassName?: string;
   maxHeight?: number;
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
   renderValue?: (value: string | string[]) => React.ReactNode;
@@ -41,6 +42,7 @@ export default function Select({
   disabled = false,
   clearable = false,
   className = "",
+  dropDownClassName = "",
   maxHeight = 200,
   renderOption,
   renderValue,
@@ -260,7 +262,7 @@ export default function Select({
 
       {/* 드롭다운 옵션들 */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-component-background border border-component-border rounded-md shadow-lg left-1/2 -translate-x-1/2"
+        <div className={`absolute z-50 w-max mt-1 bg-component-background border border-component-border rounded-md shadow-lg left-1/2 -translate-x-1/2 ${dropDownClassName}`}
             style={{ maxHeight: `${maxHeight}px` }}>
           {searchable && (
             <div className="p-2 border-b border-component-border">
@@ -318,7 +320,7 @@ export default function Select({
                     {renderOption ? (
                       renderOption(option, isSelected)
                     ) : (
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 justify-between">
                         <span className="text-text-primary">{option.label}</span>
                         {isSelected && <FontAwesomeIcon icon={faCheck} />}
                       </div>
