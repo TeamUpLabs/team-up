@@ -277,7 +277,7 @@ export default function Select({
 
           <div
             ref={optionsRef}
-            className="max-h-60 overflow-auto"
+            className="max-h-60 overflow-auto divide-y divide-component-border"
             style={{ maxHeight: `${maxHeight}px` }}
             role="listbox"
           >
@@ -288,15 +288,29 @@ export default function Select({
                 const isSelected = selectedValues.includes(option.value)
                 const isFocused = index === focusedIndex
 
+                let itemRoundedClass = "";
+                if (filteredOptions.length > 0) {
+                  if (filteredOptions.length === 1) {
+                    itemRoundedClass = "rounded-md";
+                  } else {
+                    if (index === 0) {
+                      itemRoundedClass = "rounded-t-md";
+                    } else if (index === filteredOptions.length - 1) {
+                      itemRoundedClass = "rounded-b-md";
+                    }
+                  }
+                }
+
                 return (
                   <div
                     key={option.value}
                     onClick={() => handleOptionSelect(option)}
                     className={`
-                      px-3 py-2 cursor-pointer
+                      px-3 py-2 cursor-pointer 
                       ${option.disabled ? "text-text-secondary cursor-not-allowed" : "hover:bg-component-secondary-background"}
                       ${isSelected ? "bg-component-secondary-background text-text-primary" : "bg-transparent text-text-primary"}
                       ${isFocused ? "bg-component-secondary-background" : ""}
+                      ${itemRoundedClass}
                     `}
                     role="option"
                     aria-selected={isSelected}
