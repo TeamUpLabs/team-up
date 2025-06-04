@@ -688,7 +688,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {project?.members.map((member) => {
+                {project?.milestones?.find((milestone) => taskData.milestone_id === milestone.id)?.assignee?.map((member) => {
                   const isSelected = taskData.assignee?.some(
                     (a) => a.id === member.id
                   );

@@ -289,7 +289,7 @@ export default function TaskCreateModal({
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {project?.members.map((member) => (
+              {project?.milestones?.find((milestone) => formData.milestone_id === milestone.id)?.assignee?.map((member) => (
                 <div
                   key={member.id}
                   onClick={() => toggleAssignee(member.id)}
