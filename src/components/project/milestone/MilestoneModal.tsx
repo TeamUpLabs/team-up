@@ -14,6 +14,8 @@ import { Flag, InfoCircle, CalendarWeek, FileCheck, User, Tag, TrashBin } from "
 import Accordion from "@/components/ui/Accordion";
 import { updateMilestone, deleteMilestone } from "@/hooks/getMilestoneData";
 import Select from "@/components/ui/Select";
+import { getStatusColorName } from "@/utils/getStatusColor";
+import { getPriorityColorName } from "@/utils/getPriorityColor";
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -174,24 +176,6 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'not-started': return 'gray'
-      case 'in-progress': return 'blue'
-      case 'done': return 'green'
-      default: return 'gray'
-    }
-  }
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'low': return 'green'
-      case 'medium': return 'yellow'
-      case 'high': return 'red'
-      default: return 'gray'
-    }
-  }
-
   const modalHeader = (
     <div className="flex items-start justify-between">
       <div className="space-y-2">
@@ -232,14 +216,14 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               ]}
               value={milestoneData.status}
               onChange={(value) => handleSelectChange("status", value as string)}
-              color={getStatusColor(milestoneData.status)}
+              color={getStatusColorName(milestoneData.status)}
               className="px-3 py-1 rounded-full text-sm"
             />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
                 content={milestoneData.status.replace('-', ' ').toUpperCase()}
-                color={getStatusColor(milestoneData.status)}
+                color={getStatusColorName(milestoneData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
               />
@@ -262,7 +246,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               ]}
               value={milestoneData.priority}
               onChange={(value) => handleSelectChange("priority", value as string)}
-              color={getPriorityColor(milestoneData.priority)}
+              color={getPriorityColorName(milestoneData.priority)}
               className="px-3 py-1 rounded-full text-sm"
             />
           ) : (
@@ -274,7 +258,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                     {milestoneData.priority.toUpperCase()}
                   </div>
                 }
-                color={getPriorityColor(milestoneData.priority)}
+                color={getPriorityColorName(milestoneData.priority)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
               />

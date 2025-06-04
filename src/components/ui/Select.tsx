@@ -29,7 +29,7 @@ interface SelectProps {
   renderValue?: (value: string | string[]) => React.ReactNode;
 }
 
-type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone";
+type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone" | "neutral" | "emerald";
 
 export default function Select({
   options,
@@ -192,6 +192,8 @@ export default function Select({
     zinc: "bg-zinc-100 text-zinc-800",
     teal: "bg-teal-100 text-teal-800",
     stone: "bg-stone-100 text-stone-800",
+    neutral: "bg-neutral-100 text-neutral-800",
+    emerald: "bg-emerald-100 text-emerald-800",
   };
 
   // 표시할 값 렌더링

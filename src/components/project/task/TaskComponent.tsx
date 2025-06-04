@@ -1,6 +1,9 @@
 import type { Task } from '@/types/Task';
 import Image from 'next/image';
 import Tooltip from '@/components/ui/Tooltip';
+import Badge from '@/components/ui/Badge';
+import { Flag } from 'flowbite-react-icons/outline';
+import { getPriorityColorName } from '@/utils/getPriorityColor';
 
 export default function TaskComponent({ task }: { task: Task }) {
   return (
@@ -12,9 +15,22 @@ export default function TaskComponent({ task }: { task: Task }) {
       draggable
     >
       <div className="flex flex-col gap-1 font-medium mb-2">
-        <span className="text-base text-text-primary">
-          {task?.title}
-        </span>
+        <div className="flex items-center justify-between">
+          <span className="text-base text-text-primary">
+            {task?.title}
+          </span>
+          <Badge
+            content={
+              <div className="flex items-center gap-1">
+                <Flag className="w-4 h-4" />
+                {task.priority.toUpperCase()}
+              </div>
+            }
+            color={getPriorityColorName(task.priority)}
+            isEditable={false}
+            className="!rounded-full !px-2 !py-0.5"
+          />
+        </div>
         {task?.description && (
           <span className="text-sm text-text-secondary">
             {task?.description}

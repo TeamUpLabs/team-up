@@ -17,6 +17,8 @@ import Badge from "@/components/ui/Badge";
 import Accordion from "@/components/ui/Accordion";
 import Image from "next/image";
 import Select from "@/components/ui/Select";
+import { getPriorityColorName } from "@/utils/getPriorityColor";
+import { getStatusColorName } from "@/utils/getStatusColor";
 
 
 interface TaskModalProps {
@@ -272,24 +274,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   // Calculate progress based on current subtasks state
   const progress = calculateProgress(taskData.subtasks);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'not-started': return 'gray'
-      case 'in-progress': return 'blue'
-      case 'done': return 'green'
-      default: return 'gray'
-    }
-  }
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'low': return 'green'
-      case 'medium': return 'yellow'
-      case 'high': return 'red'
-      default: return 'gray'
-    }
-  }
-
   const modalHeader = (
     <div className="flex items-start justify-between">
       <div className="space-y-2">
@@ -341,14 +325,14 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               ]}
               value={taskData.status}
               onChange={(value) => handleSelectChange("status", value as string)}
-              color={getStatusColor(taskData.status)}
+              color={getStatusColorName(taskData.status)}
               className="px-3 py-1 rounded-full text-sm"
             />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
                 content={taskData.status.replace('-', ' ').toUpperCase()}
-                color={getStatusColor(taskData.status)}
+                color={getStatusColorName(taskData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
               />
@@ -371,7 +355,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               ]}
               value={taskData.priority}
               onChange={(value) => handleSelectChange("priority", value as string)}
-              color={getPriorityColor(taskData.priority)}
+              color={getPriorityColorName(taskData.priority)}
               className="px-3 py-1 rounded-full text-sm"
             />
           ) : (
@@ -383,7 +367,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                     {taskData.priority.toUpperCase()}
                   </div>
                 }
-                color={getPriorityColor(taskData.priority)}
+                color={getPriorityColorName(taskData.priority)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
               />

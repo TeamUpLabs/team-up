@@ -8,3 +8,12 @@ export const getStatusColor = (status: string) => {
       return 'bg-emerald-500/20 text-emerald-500';
   }
 };
+
+export const getStatusColorName = (status: string) => {
+  switch (status) {
+    case 'not-started': return 'neutral';
+    case 'in-progress': return 'blue';
+    case 'done': return 'emerald';
+    default: return 'gray';
+  }
+};

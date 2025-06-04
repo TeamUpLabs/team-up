@@ -3,6 +3,7 @@ import MilestoneModal from '@/components/project/milestone/MilestoneModal';
 import { MileStone } from '@/types/MileStone';
 import Badge from '@/components/ui/Badge';
 import { Flag, ArrowRight, Users } from 'flowbite-react-icons/outline';
+import { getPriorityColorName } from '@/utils/getPriorityColor';
 
 export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,15 +14,6 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
       case 'in-progress': return 'bg-blue-500'
       case 'done': return 'bg-green-500'
       default: return 'bg-gray-500'
-    }
-  }
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'low': return 'green'
-      case 'medium': return 'yellow'
-      case 'high': return 'red'
-      default: return 'gray'
     }
   }
 
@@ -43,7 +35,7 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
                 {milestone.priority.toUpperCase()}
               </div>
             }
-            color={getPriorityColor(milestone.priority)}
+            color={getPriorityColorName(milestone.priority)}
             isEditable={false}
             className="!rounded-full !px-2 !py-0.5"
           />
