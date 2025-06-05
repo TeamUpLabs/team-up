@@ -110,13 +110,16 @@ const Calendar = ({
     for (let i = firstDayOfMonth - 1; i >= 0; i--) {
       const day = daysInPrevMonth - i
       const date = new Date(Date.UTC(prevYear, prevMonth, day))
+      const disabled = isDateDisabled(date, minDate, maxDate, disabledDates)
       days.push(
         <button
           type="button"
           key={`prev-${day}`}
-          className="h-9 w-9 text-sm text-text-secondary hover:bg-component-tertiary-background rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onClick={() => onDateSelect(date)}
-          disabled={isDateDisabled(date, minDate, maxDate, disabledDates)}
+          className={`h-9 w-9 text-sm text-text-secondary hover:bg-component-tertiary-background 
+            rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 
+            ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+          onClick={() => !disabled && onDateSelect(date)}
+          disabled={disabled}
         >
           {day}
         </button>,
@@ -134,7 +137,7 @@ const Calendar = ({
         <button
           type="button"
           key={day}
-          className={`h-9 w-9 text-sm rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${isSelected
+          className={`h-9 w-9 text-sm rounded-md transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500 ${isSelected
             ? "bg-blue-600 text-white"
             : isToday
               ? "bg-blue-100 text-blue-900 font-medium"
@@ -149,19 +152,24 @@ const Calendar = ({
     }
 
     // 다음 달의 첫 날짜들 (42칸을 채우기 위해)
-    const remainingCells = 42 - days.length
+    const remainingCells = 35 - days.length
     const nextMonth = month === 11 ? 0 : month + 1
     const nextYear = month === 11 ? year + 1 : year
 
     for (let day = 1; day <= remainingCells; day++) {
       const date = new Date(Date.UTC(nextYear, nextMonth, day))
+      const disabled = isDateDisabled(date, minDate, maxDate, disabledDates)
       days.push(
         <button
           type="button"
           key={`next-${day}`}
-          className="h-9 w-9 text-sm text-text-secondary hover:bg-component-tertiary-background rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onClick={() => onDateSelect(date)}
-          disabled={isDateDisabled(date, minDate, maxDate, disabledDates)}
+          className={`
+          h-9 w-9 text-sm text-text-secondary hover:bg-component-tertiary-background 
+          rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500
+          ${disabled ? "opacity-50 cursor-not-allowed" : ""}
+          `}
+          onClick={() => !disabled && onDateSelect(date)}
+          disabled={disabled}
         >
           {day}
         </button>,
@@ -310,7 +318,7 @@ export default function DatePicker({
         disabled={disabled}
         className={`
           w-full flex items-center justify-start px-3 py-2 text-left border border-input-border rounded-md bg-component-background 
-          transition-colors focus:outline-none focus:ring-1 focus:ring-point-color-indigo ${className}
+          transition-colors focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent ${className}
           ${disabled ? "opacity-50 cursor-not-allowed bg-gray-50" : "hover:border-input-border-hover"}
           ${!value ? "text-text-secondary" : "text-text-primary"}`}
       >

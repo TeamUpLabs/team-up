@@ -13,6 +13,7 @@ import SubmitBtn from "@/components/SubmitBtn";
 import ModalTemplete from "@/components/ModalTemplete";
 import Badge from "@/components/ui/Badge";
 import Select from "@/components/ui/Select";
+import DatePicker from "@/components/ui/DatePicker";
 
 interface TaskCreateModalProps {
   isOpen: boolean;
@@ -48,6 +49,44 @@ export default function TaskCreateModal({
     "idle" | "submitting" | "success"
   >("idle");
   const [dateError, setDateError] = useState(false);
+
+  // Helper to format Date to YYYY-MM-DD string
+  const formatDateToString = (date: Date | undefined): string => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // Helper to parse YYYY-MM-DD string to Date object (local timezone)
+  const parseStringToDate = (dateString: string): Date | undefined => {
+    if (!dateString) return undefined;
+    const parts = dateString.split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed for Date constructor
+      const day = parseInt(parts[2], 10);
+      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+        return new Date(year, month, day); // Interprets as local date
+      }
+    }
+    return undefined;
+  };
+  
+  const handleStartDateChange = (date: Date | undefined) => {
+    setFormData(prevData => ({
+      ...prevData,
+      startDate: date ? formatDateToString(date) : "",
+    }));
+  };
+
+  const handleEndDateChange = (date: Date | undefined) => {
+    setFormData(prevData => ({
+      ...prevData,
+      endDate: date ? formatDateToString(date) : "",
+    }));
+  };
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
@@ -201,7 +240,7 @@ export default function TaskCreateModal({
             htmlFor="description"
             className="flex items-center text-sm font-medium mb-2 text-text-secondary"
           >
-            설명 <span className="text-point-color-purple ml-1">*</span>
+            설명
           </label>
           <textarea
             id="description"
@@ -214,43 +253,43 @@ export default function TaskCreateModal({
           />
         </div>
 
-        <div className="relative">
+        {/* Start Date Picker */}
+        <div className="md:col-span-1">
           <label
             htmlFor="startDate"
             className="flex items-center text-sm font-medium mb-2 text-text-secondary"
           >
-            시작 일자 <span className="text-point-color-purple ml-1">*</span>
+            시작일 <span className="text-point-color-purple ml-1">*</span>
           </label>
-          <input
-            type="date"
-            id="startDate"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            required
+          <DatePicker
+            value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+            onChange={handleStartDateChange}
+            placeholder="시작일 선택"
+            className="w-full bg-input-background"
+            minDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.startDate || "") : undefined}
+            maxDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.endDate || "") : undefined}
           />
         </div>
 
-        <div className="relative">
+        {/* End Date Picker */}
+        <div className="md:col-span-1">
           <label
             htmlFor="endDate"
             className="flex items-center text-sm font-medium mb-2 text-text-secondary"
           >
-            종료 일자 <span className="text-point-color-purple ml-1">*</span>
+            종료일 <span className="text-point-color-purple ml-1">*</span>
           </label>
-          <input
-            type="date"
-            id="endDate"
-            name="endDate"
-            value={formData.endDate}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            required
+          <DatePicker
+            value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
+            onChange={handleEndDateChange}
+            placeholder="종료일 선택"
+            className="w-full bg-input-background"
+            minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+            maxDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.endDate || "") : undefined}
           />
           {dateError && (
-            <p className="text-red-500 text-sm mt-2">
-              종료일은 시작일 이후여야 합니다.
+            <p className="text-sm text-red-500 mt-1">
+              종료일은 시작일보다 빠를 수 없습니다.
             </p>
           )}
         </div>
@@ -294,8 +333,8 @@ export default function TaskCreateModal({
                   key={member.id}
                   onClick={() => toggleAssignee(member.id)}
                   className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${isAssigned(member.id)
-                      ? "bg-purple-500/20 border border-purple-500/50"
-                      : "bg-component-tertiary-background border border-component-border hover:bg-component-tertiary-background/60"
+                    ? "bg-purple-500/20 border border-purple-500/50"
+                    : "bg-component-tertiary-background border border-component-border hover:bg-component-tertiary-background/60"
                     }`}
                 >
                   <div className="relative flex-shrink-0">
@@ -308,8 +347,8 @@ export default function TaskCreateModal({
                             width={50}
                             height={50}
                             className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
-                                ? "opacity-0 rotate-90 scale-0"
-                                : "opacity-100 rotate-0 scale-100"
+                              ? "opacity-0 rotate-90 scale-0"
+                              : "opacity-100 rotate-0 scale-100"
                               }`}
                             onError={(e) => {
                               e.currentTarget.src = "/DefaultProfile.jpg";
@@ -319,16 +358,16 @@ export default function TaskCreateModal({
                           <FontAwesomeIcon
                             icon={faUser}
                             className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
-                                ? "opacity-0 rotate-90 scale-0"
-                                : "opacity-100 rotate-0 scale-100"
+                              ? "opacity-0 rotate-90 scale-0"
+                              : "opacity-100 rotate-0 scale-100"
                               }`}
                           />
                         )}
                         <FontAwesomeIcon
                           icon={faCheck}
                           className={`absolute text-text-secondary transform transition-all duration-300 ${isAssigned(member.id)
-                              ? "opacity-100 rotate-0 scale-100"
-                              : "opacity-0 -rotate-90 scale-0"
+                            ? "opacity-100 rotate-0 scale-100"
+                            : "opacity-0 -rotate-90 scale-0"
                             }`}
                         />
                       </div>

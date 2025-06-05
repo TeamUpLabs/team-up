@@ -9,6 +9,7 @@ import SubmitBtn from "@/components/SubmitBtn";
 import ModalTemplete from "@/components/ModalTemplete";
 import Badge from "@/components/ui/Badge";
 import Select from "@/components/ui/Select";
+import DatePicker from "@/components/ui/DatePicker";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -124,6 +125,44 @@ export default function MilestoneCreateModal({
     }
   };
 
+  // Helper to format Date to YYYY-MM-DD string
+  const formatDateToString = (date: Date | undefined): string => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // Helper to parse YYYY-MM-DD string to Date object (local timezone)
+  const parseStringToDate = (dateString: string): Date | undefined => {
+    if (!dateString) return undefined;
+    const parts = dateString.split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed for Date constructor
+      const day = parseInt(parts[2], 10);
+      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+        return new Date(year, month, day); // Interprets as local date
+      }
+    }
+    return undefined;
+  };
+  
+  const handleStartDateChange = (date: Date | undefined) => {
+    setFormData(prevData => ({
+      ...prevData,
+      startDate: date ? formatDateToString(date) : "",
+    }));
+  };
+
+  const handleEndDateChange = (date: Date | undefined) => {
+    setFormData(prevData => ({
+      ...prevData,
+      endDate: date ? formatDateToString(date) : "",
+    }));
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !isComposing) {
       e.preventDefault();
@@ -219,14 +258,11 @@ export default function MilestoneCreateModal({
           >
             시작일 <span className="text-point-color-indigo ml-1">*</span>
           </label>
-          <input
-            type="date"
-            id="startDate"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            required
+          <DatePicker
+            value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+            onChange={handleStartDateChange}
+            placeholder="시작일 선택"
+            className="w-full bg-input-background"
           />
         </div>
 
@@ -237,14 +273,12 @@ export default function MilestoneCreateModal({
           >
             종료일 <span className="text-point-color-indigo ml-1">*</span>
           </label>
-          <input
-            type="date"
-            id="endDate"
-            name="endDate"
-            value={formData.endDate}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            required
+          <DatePicker
+            value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
+            onChange={handleEndDateChange}
+            placeholder="종료일 선택"
+            className="w-full bg-input-background"
+            minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
           />
           {dateError && (
             <p className="text-red-500 text-sm mt-2">
