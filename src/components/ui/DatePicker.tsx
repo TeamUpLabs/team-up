@@ -114,7 +114,7 @@ const Calendar = ({
         <button
           type="button"
           key={`prev-${day}`}
-          className="h-9 w-9 text-sm text-gray-400 hover:bg-gray-100 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="h-9 w-9 text-sm text-text-secondary hover:bg-component-tertiary-background rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
           onClick={() => onDateSelect(date)}
           disabled={isDateDisabled(date, minDate, maxDate, disabledDates)}
         >
@@ -138,7 +138,7 @@ const Calendar = ({
             ? "bg-blue-600 text-white"
             : isToday
               ? "bg-blue-100 text-blue-900 font-medium"
-              : "hover:bg-gray-100"
+              : "hover:bg-component-tertiary-background"
             } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
           onClick={() => !disabled && onDateSelect(date)}
           disabled={disabled}
@@ -159,7 +159,7 @@ const Calendar = ({
         <button
           type="button"
           key={`next-${day}`}
-          className="h-9 w-9 text-sm text-gray-400 hover:bg-gray-100 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="h-9 w-9 text-sm text-text-secondary hover:bg-component-tertiary-background rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
           onClick={() => onDateSelect(date)}
           disabled={isDateDisabled(date, minDate, maxDate, disabledDates)}
         >
@@ -172,25 +172,25 @@ const Calendar = ({
   }
 
   return (
-    <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-lg">
+    <div className="p-3 bg-component-secondary-background border border-component-border rounded-lg shadow-lg">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <button
           type="button"
           onClick={handlePrevMonth}
-          className="h-8 w-8 flex items-center justify-center hover:bg-gray-100 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="h-8 w-8 flex items-center justify-center hover:bg-component-tertiary-background rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
 
-        <div className="font-semibold text-gray-900">
+        <div className="font-semibold text-text-primary">
           {getMonthName(month, locale)} {year}
         </div>
 
         <button
           type="button"
           onClick={handleNextMonth}
-          className="h-8 w-8 flex items-center justify-center hover:bg-gray-100 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="h-8 w-8 flex items-center justify-center hover:bg-component-tertiary-background rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -199,7 +199,7 @@ const Calendar = ({
       {/* Day names */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {dayNames.map((day, index) => (
-          <div key={index} className="h-9 flex items-center justify-center text-sm font-medium text-gray-500">
+          <div key={index} className="h-9 flex items-center justify-center text-sm font-medium text-text-primary">
             {day}
           </div>
         ))}
@@ -309,10 +309,10 @@ export default function DatePicker({
         onKeyDown={handleButtonKeyDown}
         disabled={disabled}
         className={`
-          w-full flex items-center justify-start px-3 py-2 text-left border border-gray-300 rounded-md bg-component-background 
-          transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 ${className}
-          ${disabled ? "opacity-50 cursor-not-allowed bg-gray-50" : "hover:border-gray-400"}
-          ${!value ? "text-gray-500" : "text-gray-900"}`}
+          w-full flex items-center justify-start px-3 py-2 text-left border border-input-border rounded-md bg-component-background 
+          transition-colors focus:outline-none focus:ring-1 focus:ring-point-color-indigo ${className}
+          ${disabled ? "opacity-50 cursor-not-allowed bg-gray-50" : "hover:border-input-border-hover"}
+          ${!value ? "text-text-secondary" : "text-text-primary"}`}
       >
         <CalendarMonth className="mr-2 h-5 w-5 text-gray-400" />
         {value ? formatDate(value) : placeholder}
