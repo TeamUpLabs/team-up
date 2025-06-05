@@ -29,6 +29,8 @@ import { updateUserProfile, updateUserProfileImage } from "@/hooks/getMemberData
 import Badge from "@/components/ui/Badge";
 import ImageCropModal from "@/components/platform/profile/ImageCropModal";
 import Select from "@/components/ui/Select";
+import DatePicker from "@/components/ui/DatePicker";
+import TimePicker from "@/components/ui/TimePicker";
 
 interface WorkingHours {
   start: string;
@@ -145,6 +147,57 @@ export default function ProfilePage() {
       setProfileData(prev => ({ ...prev, [name]: value }));
     }
   };
+
+  const handleStartTimeChange = (value: string) => {
+    setProfileData(prev => ({
+      ...prev,
+      workingHours: {
+        ...prev.workingHours,
+        start: value,
+      },
+    }));
+  };
+
+  const handleEndTimeChange = (value: string) => {
+    setProfileData(prev => ({
+      ...prev,
+      workingHours: {
+        ...prev.workingHours,
+        end: value,
+      },
+    }));
+  };
+
+  // Helper to format Date to YYYY-MM-DD string
+  const formatDateToString = (date: Date | undefined): string => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // Helper to parse YYYY-MM-DD string to Date object (local timezone)
+  const parseStringToDate = (dateString: string): Date | undefined => {
+    if (!dateString) return undefined;
+    const parts = dateString.split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed for Date constructor
+      const day = parseInt(parts[2], 10);
+      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+        return new Date(year, month, day); // Interprets as local date
+      }
+    }
+    return undefined;
+  };
+
+  const handleBirthDateChange = (date: Date | undefined) => {
+    setProfileData(prev => ({
+      ...prev,
+      birthDate: date ? formatDateToString(date): "",
+    }))
+  }
 
   const handleEdit = (name: string) => {
     if (name !== "none" && isEditing === "none") {
@@ -536,12 +589,11 @@ export default function ProfilePage() {
                   {isDataLoading ? (
                     <SkeletonField />
                   ) : isEditing === "birthDate" ? (
-                    <input
-                      type="date"
-                      name="birthDate"
-                      value={profileData.birthDate}
-                      onChange={handleChange}
-                      className="w-full rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
+                    <DatePicker
+                      value={parseStringToDate(profileData.birthDate)}
+                      onChange={handleBirthDateChange}
+                      disabled={isEditing !== "birthDate"}
+                      className="w-full"
                     />
                   ) : (
                     <div className="flex items-center gap-2">
@@ -570,12 +622,11 @@ export default function ProfilePage() {
                     {isDataLoading ? (
                       <SkeletonField />
                     ) : isEditing === "workingHours.start" ? (
-                      <input
-                        type="time"
-                        name="workingHours.start"
+                      <TimePicker
                         value={profileData.workingHours.start}
-                        onChange={handleChange}
-                        className="w-full rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
+                        onChange={(value) => handleStartTimeChange(value)}
+                        disabled={isEditing !== "workingHours.start"}
+                        className="w-full"
                       />
                     ) : (
                       <div className="flex items-center gap-2">
@@ -598,12 +649,11 @@ export default function ProfilePage() {
                     {isDataLoading ? (
                       <SkeletonField />
                     ) : isEditing === "workingHours.end" ? (
-                      <input
-                        type="time"
-                        name="workingHours.end"
+                      <TimePicker
                         value={profileData.workingHours.end}
-                        onChange={handleChange}
-                        className="w-full rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
+                        onChange={(value) => handleEndTimeChange(value)}
+                        disabled={isEditing !== "workingHours.end"}
+                        className="w-full"
                       />
                     ) : (
                       <div className="flex items-center gap-2">
@@ -665,20 +715,6 @@ export default function ProfilePage() {
                   <div className="space-y-3">
                     {isEditing === "socialLinks" && (
                       <div className="flex gap-2 items-center mb-2">
-                        {/* <select
-                          name="newSocialLink.name"
-                          value={newSocialLink.name}
-                          onChange={handleChange}
-                          className="w-1/4 rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
-                        >
-                          <option value="">소셜 선택</option>
-                          <option value="github">GitHub</option>
-                          <option value="linkedin">LinkedIn</option>
-                          <option value="twitter">Twitter</option>
-                          <option value="facebook">Facebook</option>
-                          <option value="instagram">Instagram</option>
-                          <option value="website">Website</option>
-                        </select> */}
                         <Select
                           options={[
                             { name: "newSocialLink.name", value: "github", label: "GitHub" },
@@ -990,7 +1026,7 @@ export default function ProfilePage() {
         <div className="flex justify-end mt-8 gap-4">
           <button
             onClick={handleCancelEdit}
-            className="px-4 py-2 rounded-lg border border-component-border text-white bg-cancel-button-background hover:bg-cancel-button-background-hover transition-colors"
+            className="px-4 py-2 rounded-lg border border-component-border text-text-primary bg-cancel-button-background hover:bg-cancel-button-background-hover transition-colors"
             disabled={isLoading}
           >
             취소
