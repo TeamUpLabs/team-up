@@ -714,7 +714,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       }}
                       className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${isSelected
                         ? "bg-purple-500/20 border border-purple-500/50"
-                        : "bg-component-tertiary-background border border-transparent hover:bg-component-tertiary-background/60"
+                        : "bg-component-tertiary-background border border-component-border hover:bg-component-tertiary-background/60"
                         }`}
                     >
                       <div className="relative flex-shrink-0">
