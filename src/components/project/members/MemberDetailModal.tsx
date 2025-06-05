@@ -1,5 +1,3 @@
-"use client";
-
 import { Member } from "@/types/Member";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";

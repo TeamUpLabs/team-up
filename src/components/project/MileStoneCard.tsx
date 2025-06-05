@@ -1,4 +1,3 @@
-"use client";
 import { useState, useEffect } from 'react';
 import { MileStone } from '@/types/MileStone';
 import { useProject } from '@/contexts/ProjectContext';

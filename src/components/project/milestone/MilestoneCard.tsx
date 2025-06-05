@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import MilestoneModal from '@/components/project/milestone/MilestoneModal';
 import { MileStone } from '@/types/MileStone';
