@@ -1,4 +1,4 @@
-import React, { useState, useRef, ReactNode } from 'react';
+import React, { useState, useRef, ReactNode, useEffect } from 'react';
 
 interface AccordionProps {
   title: string | ReactNode;
@@ -9,6 +9,12 @@ interface AccordionProps {
 const Accordion: React.FC<AccordionProps> = ({ title, children, defaultOpen = false }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  useEffect(() => {
+    if (isOpen && contentRef.current) {
+      contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px`;
+    }
+  }, [children, isOpen]);
 
   const toggleAccordion = () => {
     setIsOpen(!isOpen);
@@ -37,7 +43,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, defaultOpen = fa
       <div
         ref={contentRef}
         style={{ maxHeight: isOpen ? `${contentRef.current?.scrollHeight}px` : '0px' }}
-        className="overflow-hidden transition-[max-height] duration-300 ease-in-out border-b border-component-border"
+        className={`transition-[max-height] duration-300 ease-in-out border-b border-component-border ${isOpen ? 'overflow-visible' : 'overflow-hidden'}`}
       >
         <div className="pb-4 px-1">
           {children}

@@ -19,6 +19,7 @@ import Image from "next/image";
 import Select from "@/components/ui/Select";
 import { getPriorityColorName } from "@/utils/getPriorityColor";
 import { getStatusColorName } from "@/utils/getStatusColor";
+import DatePicker from "@/components/ui/DatePicker";
 
 
 interface TaskModalProps {
@@ -507,12 +508,14 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               />
             </div>
             {isEditing === "startDate" ? (
-              <input
-                type="date"
-                name="startDate"
-                value={taskData.startDate}
-                onChange={handleChange}
-                className="w-full p-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+              <DatePicker
+                value={taskData.startDate ? new Date(taskData.startDate) : undefined}
+                onChange={(date: Date | undefined) => {
+                  if (date) {
+                    setTaskData({ ...taskData, startDate: date ? date.toISOString().split("T")[0] : undefined });
+                  }
+                }}
+                className="text-sm"
               />
             ) : (
               <p className="text-sm text-muted-foreground">
@@ -536,12 +539,15 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               />
             </div>
             {isEditing === "endDate" ? (
-              <input
-                type="date"
-                name="endDate"
-                value={taskData.endDate}
-                onChange={handleChange}
-                className="w-full p-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+              <DatePicker
+                value={taskData.endDate ? new Date(taskData.endDate) : undefined}
+                onChange={(date: Date | undefined) => {
+                  if (date) {
+                    setTaskData({ ...taskData, endDate: date ? date.toISOString().split("T")[0] : undefined });
+                  }
+                }}
+                minDate={taskData.startDate ? new Date(taskData.startDate) : undefined}
+                className="text-sm"
               />
             ) : (
               <p className="text-sm text-muted-foreground">
@@ -723,8 +729,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                                   : "opacity-100 rotate-0 scale-100"
                                   }`}
                                 quality={100}
-                                width={40}
-                                height={40}
+                                width={60}
+                                height={60}
                                 onError={(e) => {
                                   e.currentTarget.src =
                                     "/DefaultProfile.jpg";

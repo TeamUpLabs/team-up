@@ -39,7 +39,7 @@ export default function ScheduleCreateModal({
   const [activeTab, setActiveTab] = useState<ScheduleType>("meeting");
   const [selectedPlatform, setSelectedPlatform] = useState<MeetingPlatform>();
   const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "submitting" | "success"
+    "idle" | "submitting" | "success" | "error"
   >("idle");
   const [dateError, setDateError] = useState(false);
   const [formData, setFormData] = useState({
@@ -88,18 +88,15 @@ export default function ScheduleCreateModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    let hasError = false;
-
+    
     if (dateError) {
-      hasError = true;
+      console.warn("Date validation error detected, preventing submission.");
+      return; 
     }
 
     if (formData.assignee_id.length === 0) {
-      useAuthStore
-        .getState()
-        .setAlert("참석자가 최소한 한명은 선택되어야 합니다.", "error");
-      hasError = true;
+      useAuthStore.getState().setAlert("참석자를 최소 한 명 이상 선택해주세요.", "error");
+      return; 
     }
 
     if (
@@ -107,57 +104,54 @@ export default function ScheduleCreateModal({
       formData.link === "" &&
       formData.type === "meeting"
     ) {
-      useAuthStore.getState().setAlert("링크를 입력해주세요.", "error");
-      hasError = true;
+      useAuthStore.getState().setAlert("외부 화상회의 또는 직접 링크 입력 시 링크를 입력해주세요.", "error");
+      return; 
     }
 
-    if (hasError) {
-      return;
+    if (!project?.id) {
+      console.error("Project ID is missing. Cannot create schedule.");
+      useAuthStore.getState().setAlert("프로젝트 정보를 찾을 수 없습니다. 페이지를 새로고침하거나 문제가 지속되면 관리자에게 문의해주세요.", "error");
+      return; 
     }
 
     setSubmitStatus("submitting");
+    try {
+      await createSchedule(project.id, formData);
+      setSubmitStatus("success");
+      useAuthStore.getState().setAlert("일정이 성공적으로 생성되었습니다.", "success");
 
-    console.log(formData);
+      setFormData({
+        project_id: project.id,
+        type: activeTab,
+        title: "",
+        description: "",
+        where: selectedPlatform || "",
+        link: "",
+        start_time: "",
+        end_time: "",
+        status: "not-started",
+        created_by: user?.id || 0,
+        updated_by: user?.id || 0,
+        memo: "",
+        assignee_id: [] as number[],
+      });
 
-    if (project?.id && hasError === false) {
-      try {
-        await createSchedule(project.id, formData);
-        setSubmitStatus("success");
-        useAuthStore
-          .getState()
-          .setAlert("일정이 성공적으로 생성되었습니다.", "success");
+      setTimeout(() => {
+        setSubmitStatus("idle");
+        onClose();
+      }, 1000);
 
-        setTimeout(() => {
-          setSubmitStatus("idle");
-          onClose();
-        }, 1000);
-      } catch (error) {
-        console.error(error);
-        useAuthStore
-          .getState()
-          .setAlert(
-            "일정 생성에 실패했습니다. 관리자에게 문의해주세요.",
-            "error"
-          );
+    } catch (error) {
+      console.error("Failed to create schedule:", error);
+      setSubmitStatus("error");
+      let errorMessage = "일정 생성에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      if (error instanceof Error && error.message) {
+          errorMessage = `일정 생성 중 오류가 발생했습니다. 입력값을 확인하거나 문제가 지속되면 관리자에게 문의해주세요. (상세: ${error.message})`;
+      } else {
+          errorMessage = "일정 생성 중 알 수 없는 오류가 발생했습니다. 입력값을 확인하거나 관리자에게 문의해주세요.";
       }
+      useAuthStore.getState().setAlert(errorMessage, "error");
     }
-    // Reset form and close modal
-    setFormData({
-      project_id: project?.id || "",
-      type: activeTab,
-      title: "",
-      description: "",
-      where: selectedPlatform || "",
-      link: "",
-      start_time: "",
-      end_time: "",
-      status: "not-started",
-      created_by: user?.id || 0,
-      updated_by: user?.id || 0,
-      memo: "",
-      assignee_id: [] as number[],
-    });
-    onClose();
   };
 
   const handleTabChange = (tabId: ScheduleType) => {
@@ -363,6 +357,7 @@ export default function ScheduleCreateModal({
             value={formData.end_time}
             onChange={handleChange}
             placeholder="종료 일시를 선택하세요"
+            minDate={formData.start_time}
             required
           />
           {dateError && (
