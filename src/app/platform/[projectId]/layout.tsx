@@ -20,7 +20,9 @@ import {
   CalendarMonth as CalendarMonthOutline, 
   Flag as FlagOutline, 
   Cog as CogOutline, 
-  ArrowRightToBracket as ArrowRightToBracketOutline } from "flowbite-react-icons/outline";
+  ArrowRightToBracket as ArrowRightToBracketOutline,
+  Bars as BarsOutline,
+ } from "flowbite-react-icons/outline";
 import { 
   Grid as GridSolid,
   Users as UsersSolid,
@@ -211,22 +213,10 @@ export default function ProjectLayout({
                     className="text-text-secondary lg:hidden mt-1"
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                   >
-                    <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 6h16M4 12h16M4 18h16"
-                      />
-                    </svg>
+                    <BarsOutline />
                   </button>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                    <p className="text-sm md:text-base text-text-secondary line-clamp-2 pr-2">
+                    <p className="text-sm md:text-base text-text-secondary line-clamp-1 pr-2">
                       {project.description}
                     </p>
                     <span className="px-2 py-0.5 text-xs font-semibold text-green-800 bg-green-100 rounded-full w-fit whitespace-nowrap">
