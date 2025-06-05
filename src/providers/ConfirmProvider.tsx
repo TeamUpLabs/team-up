@@ -71,7 +71,7 @@ export default function ConfirmProvider() {
                 <div className="flex justify-end space-x-3">
                   <button
                     onClick={handleConfirmClose}
-                    className="px-4 py-2 text-xs font-medium text-white bg-cancel-button-background hover:bg-cancel-button-background-hover rounded-lg transition-colors duration-150 flex items-center"
+                    className="px-4 py-2 text-xs font-medium text-text-primary border border-component-border bg-cancel-button-background hover:bg-cancel-button-background-hover rounded-lg transition-colors duration-150 flex items-center"
                   >
                     <FontAwesomeIcon icon={faTimes} className="w-3 h-3 mr-1.5" />
                     취소
