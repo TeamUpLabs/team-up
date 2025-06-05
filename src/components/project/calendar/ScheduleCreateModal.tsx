@@ -23,6 +23,8 @@ import { useAuthStore } from "@/auth/authStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { MiniLogo } from "@/components/logo";
 import { createSchedule } from "@/hooks/getScheduleData";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 
 type ScheduleType = "meeting" | "event";
 type MeetingPlatform = "zoom" | "google" | "teamup";
@@ -358,6 +360,7 @@ export default function ScheduleCreateModal({
             onChange={handleChange}
             placeholder="종료 일시를 선택하세요"
             minDate={formData.start_time}
+            minTime={formData.start_time ? format(new Date(formData.start_time), "hh:mm a", { locale: ko }) : undefined}
             required
           />
           {dateError && (
