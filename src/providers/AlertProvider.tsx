@@ -77,7 +77,7 @@ export default function AlertProvider() {
         >
           <div className="max-w-screen-md mx-auto px-4 py-3 mt-4">
             <div 
-              className={`${alertStyle.bgColor} backdrop-blur-sm text-text-primary px-6 py-4 rounded-xl flex items-center justify-between shadow-xl border transition-all`}
+              className={`${alertStyle.bgColor} text-text-primary px-6 py-4 rounded-xl flex items-center justify-between shadow-xl border transition-all`}
             >
               <div className="flex items-center space-x-3">
                 <FontAwesomeIcon icon={alertStyle.icon} className={`w-5 h-5 ${alertStyle.textColor}`} />
