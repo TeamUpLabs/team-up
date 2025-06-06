@@ -9,8 +9,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar, faShieldAlt, faUser } from "@fortawesome/free-solid-svg-icons";
-import { Envelope, Clock, ClipboardClean, ShieldCheck, Language, Link as LinkIcon, UserRemove } from "flowbite-react-icons/outline";
-import { Github, Linkedin, Twitter, Facebook, Instagram, Globe } from "flowbite-react-icons/solid";
+import { InfoCircle, Clock, ClipboardClean, ShieldCheck, Language, Link as LinkIcon, UserRemove, Globe } from "flowbite-react-icons/outline";
+import { Github, Linkedin, Twitter, Facebook, Instagram } from "flowbite-react-icons/solid";
 import { useProject } from "@/contexts/ProjectContext";
 import { formatRelativeTime } from "@/utils/dateUtils";
 import Accordion from "@/components/ui/Accordion";
@@ -155,7 +155,7 @@ export default function MemberDetailModal({
       <Accordion
         title={
           <div className="flex items-center gap-2 text-text-primary">
-            <Envelope />
+            <InfoCircle />
             <span className="font-bold">Information</span>
           </div>
         }
@@ -192,8 +192,11 @@ export default function MemberDetailModal({
         <div className="space-y-2">
           {member.workingHours ? (
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-medium">Timezone</h4>
+              <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Globe className="w-5 h-5" />
+                  <h4 className="font-medium">Timezone</h4>
+                </div>
                 <p className="text-muted-foreground">
                   {member.workingHours.timezone === "Asia/Seoul"
                     ? "한국 표준시 (KST)"
@@ -206,8 +209,11 @@ export default function MemberDetailModal({
                           : member.workingHours.timezone}
                 </p>
               </div>
-              <div>
-                <h4 className="font-medium">Time</h4>
+              <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  <h4 className="font-medium">Time</h4>
+                </div>
                 <p className="text-muted-foreground">
                   {member.workingHours.start} - {member.workingHours.end}
                 </p>

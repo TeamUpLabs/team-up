@@ -490,7 +490,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         }
       >
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2 bg-component-secondary-background p-3 rounded-lg">
+          <div className="space-y-2 bg-component-secondary-background border border-component-border p-3 rounded-lg">
             <div className="flex items-center gap-2 group relative">
               <div className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faHourglassStart} color="green" />
@@ -521,7 +521,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               </p>
             )}
           </div>
-          <div className="space-y-2 bg-component-secondary-background p-3 rounded-lg">
+          <div className="space-y-2 bg-component-secondary-background border border-component-border p-3 rounded-lg">
             <div className="flex items-center gap-2 group relative">
               <div className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faHourglassEnd} color="red" />
