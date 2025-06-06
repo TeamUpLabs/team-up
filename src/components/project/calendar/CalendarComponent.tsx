@@ -15,6 +15,7 @@ interface CalendarProps {
   onPreviousMonth: () => void;
   onNextMonth: () => void;
   onSelectTask: (task: Task) => void;
+  onSelectSchedule: (schedule: Schedule) => void;
 }
 
 export default function Calendar({
@@ -26,6 +27,7 @@ export default function Calendar({
   onPreviousMonth,
   onNextMonth,
   onSelectTask,
+  onSelectSchedule,
 }: CalendarProps) {
 
   return (
@@ -121,6 +123,7 @@ export default function Calendar({
                 {dayMeetings?.map(meeting => (
                   <Tooltip content="회의" key={meeting?.id}>
                     <div
+                      onClick={() => onSelectSchedule(meeting)}
                       className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("meeting")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
                     >
                       <p className="font-medium truncate">{meeting?.title}</p>
@@ -141,6 +144,7 @@ export default function Calendar({
                 {dayEvents?.map(event => (
                   <Tooltip content="이벤트" key={event?.id}>
                     <div
+                      onClick={() => onSelectSchedule(event)}
                       className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("event")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
                   >
                     <p className="font-medium truncate">{event?.title}</p>
