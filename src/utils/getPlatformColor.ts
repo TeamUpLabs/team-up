@@ -10,3 +10,16 @@ export const getPlatformColor = (platform: string) => {
             return "bg-component-secondary-background border border-component-border";
     }
 };
+
+export const getPlatformColorName = (platform: string) => {
+  switch (platform) {
+    case "Zoom":
+      return "blue";
+    case "Google Meet":
+      return "red";
+    case "TeamUp":
+      return "purple";
+    default:
+      return "gray";
+  }
+}
