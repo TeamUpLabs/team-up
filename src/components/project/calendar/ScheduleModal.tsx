@@ -188,12 +188,8 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
       header={headerContent}
     >
       <Accordion
-        title={
-          <div className="flex items-center gap-2">
-            <InfoCircle />
-            <span className="font-bold">Overview</span>
-          </div>
-        }
+        title="Overview"
+        icon={InfoCircle}
         defaultOpen
       >
         <div className="space-y-4">
@@ -241,12 +237,8 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
 
       {/* Timeline Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2">
-            <CalendarWeek />
-            <span className="font-bold">Timeline</span>
-          </div>
-        }
+        title="Timeline"
+        icon={CalendarWeek}
       >
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2 bg-component-secondary-background p-3 rounded-lg">
@@ -314,12 +306,8 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
 
       {/* Location Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <MapPin />
-            <span className="font-bold">Location</span>
-          </div>
-        }
+        title="Location"
+        icon={MapPin}
         defaultOpen
       >
         <div className="flex flex-col gap-2 space-y-2">
@@ -411,12 +399,8 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
 
       {/* Assignee Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <User />
-            <span className="font-bold">Assignees</span>
-          </div>
-        }
+        title="Assignees"
+        icon={User}
       >
         <div className="space-y-2">
           {isEditing === "assignee" ? (
@@ -588,12 +572,8 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
 
       {/* Memo Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2">
-            <Annotation />
-            <span className="font-bold">Memo</span>
-          </div>
-        }
+        title="Memo"
+        icon={Annotation}
       >
         {isEditing === "memo" ? (
           <textarea

@@ -153,12 +153,8 @@ export default function MemberDetailModal({
     >
       {/* Contact Information Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <InfoCircle />
-            <span className="font-bold">Information</span>
-          </div>
-        }
+        title="Information"
+        icon={InfoCircle}
         defaultOpen
       >
         <div className="space-y-4">
@@ -182,12 +178,8 @@ export default function MemberDetailModal({
 
       {/* working hours Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <Clock />
-            <span className="font-bold">Working Hours</span>
-          </div>
-        }
+        title="Working Hours"
+        icon={Clock}
       >
         <div className="space-y-2">
           {member.workingHours ? (
@@ -229,12 +221,8 @@ export default function MemberDetailModal({
 
       {/* Current Tasks Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <ClipboardClean />
-            <span className="font-bold">Current Tasks</span>
-          </div>
-        }
+        title="Current Tasks"
+        icon={ClipboardClean}
         defaultOpen
       >
         <div className="space-y-2">
@@ -260,12 +248,8 @@ export default function MemberDetailModal({
 
       {/* Skills Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <ShieldCheck />
-            <span className="font-bold">Skills</span>
-          </div>
-        }
+        title="Skills"
+        icon={ShieldCheck}
       >
         <div className="space-x-2">
           {member.skills && member.skills.length > 0 ? (
@@ -282,12 +266,8 @@ export default function MemberDetailModal({
 
       {/* Languages Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <Language />
-            <span className="font-bold">Languages</span>
-          </div>
-        }
+        title="Languages"
+        icon={Language}
       >
         <div className="space-x-2">
           {member.languages && member.languages.length > 0 ? (
@@ -304,12 +284,8 @@ export default function MemberDetailModal({
 
       {/* Social Links Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <LinkIcon />
-            <span className="font-bold">Social Links</span>
-          </div>
-        }
+        title="Social Links"
+        icon={LinkIcon}
       >
         <div className="flex flex-wrap gap-2">
           {member.socialLinks && member.socialLinks.length > 0 ? (

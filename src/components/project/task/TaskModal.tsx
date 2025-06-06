@@ -429,12 +429,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     >
       {/* Overview Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <InfoCircle />
-            <span className="font-bold">Overview</span>
-          </div>
-        }
+        title="Overview"
+        icon={InfoCircle}
         defaultOpen
       >
         <div className="space-y-4">
@@ -482,12 +478,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Timeline Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <CalendarWeek />
-            <span className="font-bold">Timeline</span>
-          </div>
-        }
+        title="Timeline"
+        icon={CalendarWeek}
       >
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2 bg-component-secondary-background border border-component-border p-3 rounded-lg">
@@ -558,12 +550,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Progress & Subtasks Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <FileCheck />
-            <span className="font-bold">Progress & Subtasks ({taskData.subtasks.filter(subtask => subtask.completed).length}/{taskData.subtasks.length})</span>
-          </div>
-        }
+        title={`Progress & Subtasks (${taskData.subtasks.filter(subtask => subtask.completed).length}/${taskData.subtasks.length})`}
+        icon={FileCheck}
         defaultOpen
       >
         <div className="space-y-4">
@@ -657,12 +645,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Assignee Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <User />
-            <span className="font-bold">Assignees</span>
-          </div>
-        }
+        title="Assignees"
+        icon={User}
       >
         <div className="space-y-2">
           {isEditing === "assignee" ? (
@@ -834,12 +818,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Tag Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <Tag />
-            <span className="font-bold">Tags & Labels</span>
-          </div>
-        }
+        title="Tags & Labels"
+        icon={Tag}
       >
         <div className="flex flex-wrap gap-2 py-1">
           {isEditing === "tags" ? (
@@ -886,12 +866,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Comment Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <MessageDots />
-            <span className="font-bold">Comments ({taskData?.comments?.length ?? 0})</span>
-          </div>
-        }
+        title={`Comments (${taskData?.comments?.length ?? 0})`}
+        icon={MessageDots}
       >
         <div className="flex flex-col gap-2">
           {taskData?.comments && taskData?.comments.length > 0 ? (

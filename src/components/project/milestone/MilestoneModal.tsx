@@ -322,12 +322,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     >
       {/* Overview Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <InfoCircle />
-            <span className="font-bold">Overview</span>
-          </div>
-        }
+        title="Overview"
+        icon={InfoCircle}
         defaultOpen
       >
         <div className="space-y-4">
@@ -375,12 +371,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Timeline Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <CalendarWeek />
-            <span className="font-bold">Timeline</span>
-          </div>
-        }
+        title="Timeline"
+        icon={CalendarWeek}
       >
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2 bg-component-secondary-background p-3 rounded-lg">
@@ -446,17 +438,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Progress & tasks Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <FileCheck />
-            <span className="font-bold">
-              Progress & Tasks (
-              {milestoneData.subtasks.filter(st => st.status === "done").length}/{
-                milestoneData.subtasks.length}
-              )
-            </span>
-          </div>
-        }
+        title={`Progress & Tasks (${milestoneData.subtasks.filter(st => st.status === "done").length}/${milestoneData.subtasks.length})`}
+        icon={FileCheck}
         defaultOpen
       >
         <div className="space-y-4">
@@ -521,12 +504,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Assignees Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <User />
-            <span className="font-bold">Assignees</span>
-          </div>
-        }
+        title="Assignees"
+        icon={User}
       >
         <div className="space-y-2">
           {isEditing === "assignee" ? (
@@ -698,12 +677,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Tags Accordian */}
       <Accordion
-        title={
-          <div className="flex items-center gap-2 text-text-primary">
-            <Tag />
-            <span className="font-bold">Tags & Labels</span>
-          </div>
-        }
+        title="Tags & Labels"
+        icon={Tag}
       >
         <div className="flex flex-wrap gap-2 py-1">
           {isEditing === "tags" ? (

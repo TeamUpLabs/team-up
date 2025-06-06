@@ -2,13 +2,15 @@ import React, { useState, useRef, ReactNode, useEffect } from 'react';
 
 interface AccordionProps {
   title: string | ReactNode;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   children: ReactNode;
   defaultOpen?: boolean;
 }
 
-const Accordion: React.FC<AccordionProps> = ({ title, children, defaultOpen = false }) => {
+const Accordion: React.FC<AccordionProps> = ({ title, icon, children, defaultOpen = false }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const IconComponent = icon;
 
   useEffect(() => {
     if (isOpen && contentRef.current) {
@@ -27,9 +29,10 @@ const Accordion: React.FC<AccordionProps> = ({ title, children, defaultOpen = fa
         className="group w-full flex justify-between items-center pb-2 focus:outline-none transition-colors duration-200 ease-in-out"
         aria-expanded={isOpen}
       >
-        <span className="font-medium text-text-primary group-hover:underline">
+        <div className="flex items-center gap-2 text-text-primary group-hover:underline font-bold">
+          <IconComponent />
           {title}
-        </span>
+        </div>
         <svg
           className={`w-5 h-5 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
