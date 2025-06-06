@@ -25,9 +25,10 @@ import { MiniLogo } from "@/components/logo";
 import { createSchedule } from "@/hooks/getScheduleData";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
+import { getPlatformColor } from "@/utils/getPlatformColor";
 
 type ScheduleType = "meeting" | "event";
-type MeetingPlatform = "zoom" | "google" | "teamup";
+type MeetingPlatform = "Zoom" | "Google Meet" | "TeamUp";
 
 export default function ScheduleCreateModal({
   isOpen,
@@ -84,7 +85,7 @@ export default function ScheduleCreateModal({
     setFormData((prev) => ({
       ...prev,
       where: platform,
-      link: platform === "teamup" ? "" : prev.link,
+      link: platform === "TeamUp" ? "" : prev.link,
     }));
   };
 
@@ -102,7 +103,7 @@ export default function ScheduleCreateModal({
     }
 
     if (
-      selectedPlatform !== "teamup" &&
+      selectedPlatform !== "TeamUp" &&
       formData.link === "" &&
       formData.type === "meeting"
     ) {
@@ -396,10 +397,10 @@ export default function ScheduleCreateModal({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
               {/* Zoom */}
               <div
-                onClick={() => handlePlatformSelect("zoom")}
+                onClick={() => handlePlatformSelect("Zoom")}
                 className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                  selectedPlatform === "zoom"
-                    ? "bg-blue-500/20 border border-blue-500/50"
+                  selectedPlatform === "Zoom"
+                    ? getPlatformColor("Zoom")
                     : "bg-component-secondary-background border border-component-border"
                 }`}
               >
@@ -413,10 +414,10 @@ export default function ScheduleCreateModal({
 
               {/* Google Meet */}
               <div
-                onClick={() => handlePlatformSelect("google")}
+                onClick={() => handlePlatformSelect("Google Meet")}
                 className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                  selectedPlatform === "google"
-                    ? "bg-red-500/20 border border-red-500/50"
+                  selectedPlatform === "Google Meet"
+                    ? getPlatformColor("Google Meet")
                     : "bg-component-secondary-background border border-component-border"
                 }`}
               >
@@ -432,10 +433,10 @@ export default function ScheduleCreateModal({
 
               {/* TeamUp */}
               <div
-                onClick={() => handlePlatformSelect("teamup")}
+                onClick={() => handlePlatformSelect("TeamUp")}
                 className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                  selectedPlatform === "teamup"
-                    ? "bg-purple-500/20 border border-purple-500/50"
+                  selectedPlatform === "TeamUp"
+                    ? getPlatformColor("TeamUp")
                     : "bg-component-secondary-background border border-component-border"
                 }`}
               >
@@ -450,7 +451,7 @@ export default function ScheduleCreateModal({
               </div>
             </div>
 
-            {selectedPlatform !== "teamup" && (
+            {selectedPlatform !== "TeamUp" && (
               <div>
                 <label
                   htmlFor="link"
@@ -474,9 +475,9 @@ export default function ScheduleCreateModal({
                     onChange={handleChange}
                     className="w-full pl-10 pr-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     placeholder={
-                      selectedPlatform === "zoom"
+                      selectedPlatform === "Zoom"
                         ? "Zoom 회의 링크를 입력하세요"
-                        : selectedPlatform === "google"
+                        : selectedPlatform === "Google Meet"
                         ? "Google Meet 링크를 입력하세요"
                         : "화상 회의 링크를 입력하세요"
                     }
