@@ -8,7 +8,7 @@ import { Schedule } from "@/types/Schedule";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullseye, faCheck, faPencil, faXmark, faHourglassStart, faHourglassEnd, faVideo, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { InfoCircle, CalendarWeek, MapPin, Link as LinkIcon, User, Annotation } from "flowbite-react-icons/outline";
+import { InfoCircle, CalendarWeek, MapPin, Link as LinkIcon, User, Annotation, TrashBin } from "flowbite-react-icons/outline";
 import { MiniLogo } from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
 import Badge from "@/components/ui/Badge";
@@ -22,6 +22,7 @@ import { ko } from "date-fns/locale";
 import { getPlatformColor, getPlatformColorName } from "@/utils/getPlatformColor";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { updateSchedule, deleteSchedule } from "@/hooks/getScheduleData";
 
 interface ScheduleModalProps {
   schedule: Schedule;
@@ -69,11 +70,6 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
     useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
   };
 
-  const handleSave = () => {
-    setIsEditing("none");
-    useAuthStore.getState().setAlert("스케줄이 수정되었습니다.", "success");
-  };
-
   const handleSelectChange = (name: string, value: string | string[]) => {
     setScheduleData(prevData => ({ ...prevData, [name]: value }));
   };
@@ -85,6 +81,47 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
     router.push(`/platform/${projectId}/members`);
 
     onClose();
+  };
+
+  const handleSave = async () => {
+    try {
+      await updateSchedule(project?.id ? String(project.id) : "0", schedule.id, {
+        ...scheduleData,
+        title: scheduleData.title ?? "",
+        description: scheduleData.description ?? "",
+        link: scheduleData.link ?? "",
+        start_time: scheduleData.start_time ?? "",
+        end_time: scheduleData.end_time ?? "",
+        assignee_id: scheduleData.assignee?.map((a) => a.id) ?? [],
+        where: scheduleData.where ?? "",
+        status: scheduleData.status ?? "",
+        memo: scheduleData.memo ?? "",
+      });
+
+      useAuthStore.getState().setAlert("스케줄 수정에 성공했습니다.", "success");
+      onClose();
+    } catch (error) {
+      console.error("Error updating schedule:", error);
+      useAuthStore.getState().setAlert("스케줄 수정에 실패했습니다.", "error");
+    } finally {
+      setIsEditing("none");
+    }
+  };
+
+  const handleDelete = () => {
+    useAuthStore.getState().setConfirm("스케줄을 삭제하시겠습니까?", async () => {
+      try {
+        await deleteSchedule(project?.id ?? "", schedule.id);
+        useAuthStore
+          .getState()
+          .setAlert("스케줄 삭제에 성공했습니다.", "success");
+        useAuthStore.getState().clearConfirm();
+        onClose();
+      } catch (error) {
+        console.error("Error deleting schedule:", error);
+        useAuthStore.getState().setAlert("스케줄 삭제에 실패했습니다.", "error");
+      }
+    });
   };
 
   const headerContent = (
@@ -181,11 +218,26 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
     </div>
   )
 
+  const modalFooter =
+    isEditing !== "none" ? (
+      <div className="flex gap-2 justify-end">
+        <button
+          onClick={handleDelete}
+          className="flex items-center gap-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-2 rounded-md transition-all duration-200 font-medium cursor-pointer"
+          aria-label="스케줄 삭제"
+        >
+          <TrashBin />
+          스케줄 삭제
+        </button>
+      </div>
+    ) : null;
+
   return (
     <ModalTemplete
       isOpen={isOpen}
       onClose={onClose}
       header={headerContent}
+      footer={modalFooter}
     >
       <Accordion
         title="Overview"
@@ -584,9 +636,17 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
           />
         ) : (
           scheduleData.memo ? (
-            <p className="text-sm text-text-secondary">
-              {scheduleData.memo}
-            </p>
+            <div className="flex items-center gap-2 group relative">
+              <p className="text-sm text-text-secondary">
+                {scheduleData.memo}
+              </p>
+              <FontAwesomeIcon
+                icon={faPencil}
+                size="xs"
+                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                onClick={() => handleEdit("memo")}
+              />
+            </div>
           ) : (
             <p className="text-sm text-text-secondary">메모가 없습니다.</p>
           )
