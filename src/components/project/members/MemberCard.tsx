@@ -3,6 +3,7 @@ import Badge from "@/components/ui/Badge";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt, faStar, faShieldAlt, faUser } from "@fortawesome/free-solid-svg-icons";
+import { getStatusInfo } from "@/utils/getStatusColor";
 
 interface MemberCardProps {
   member: Member;
@@ -29,29 +30,6 @@ export default function MemberCard({
     if (contributionScore > 50) return { level: "활발한 기여자", class: "text-blue-600 bg-blue-100" };
     if (contributionScore > 20) return { level: "정기 기여자", class: "text-green-600 bg-green-100" };
     return { level: "신규 기여자", class: "text-gray-600 bg-gray-100" };
-  };
-
-  const getStatusInfo = (status: string) => {
-    switch (status) {
-      case "활성":
-        return { 
-          indicator: "bg-green-500", 
-          label: "온라인",
-          ringColor: "ring-green-500"
-        };
-      case "자리비움":
-        return { 
-          indicator: "bg-yellow-400", 
-          label: "자리비움",
-          ringColor: "ring-yellow-400"
-        };
-      default:
-        return { 
-          indicator: "bg-gray-400", 
-          label: "오프라인",
-          ringColor: "ring-gray-400"
-        };
-    }
   };
 
   const getRoleInfo = () => {

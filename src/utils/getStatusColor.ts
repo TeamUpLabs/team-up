@@ -17,3 +17,26 @@ export const getStatusColorName = (status: string) => {
     default: return 'gray';
   }
 };
+
+export const getStatusInfo = (status: string) => {
+  switch (status) {
+    case "활성":
+      return { 
+        indicator: "bg-green-500", 
+        label: "온라인",
+        ringColor: "ring-green-500"
+      };
+    case "자리비움":
+      return { 
+        indicator: "bg-yellow-400", 
+        label: "자리비움",
+        ringColor: "ring-yellow-400"
+      };
+    default:
+      return { 
+        indicator: "bg-gray-400", 
+        label: "오프라인",
+        ringColor: "ring-gray-400"
+      };
+  }
+};
