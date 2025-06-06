@@ -27,6 +27,7 @@ interface SelectProps {
   maxHeight?: number;
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
   renderValue?: (value: string | string[]) => React.ReactNode;
+  dropdownAlign?: "start" | "center" | "end";
 }
 
 type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone" | "neutral" | "emerald";
@@ -46,6 +47,7 @@ export default function Select({
   maxHeight = 200,
   renderOption,
   renderValue,
+  dropdownAlign = "center",
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
@@ -264,8 +266,14 @@ export default function Select({
 
       {/* 드롭다운 옵션들 */}
       {isOpen && (
-        <div className={`absolute z-50 w-max mt-1 bg-component-background border border-component-border rounded-md shadow-lg left-1/2 -translate-x-1/2 ${dropDownClassName}`}
-            style={{ maxHeight: `${maxHeight}px` }}>
+        <div
+          className={`absolute z-50 w-max mt-1 bg-component-background border border-component-border rounded-md shadow-lg ${(() => {
+            if (dropdownAlign === 'center') return 'left-1/2 -translate-x-1/2';
+            if (dropdownAlign === 'end') return 'right-0';
+            return 'left-0';
+          })()} ${dropDownClassName}`}
+          style={{ maxHeight: `${maxHeight}px` }}
+        >
           {searchable && (
             <div className="p-2 border-b border-component-border">
               <input
