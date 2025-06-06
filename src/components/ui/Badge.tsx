@@ -1,18 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
-type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone" | "neutral" | "emerald";
+type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone" | "neutral" | "emerald" | "none";
 
 interface BadgeProps {
   content: string | React.ReactNode;
-  color?: BadgeColor;
+  color: BadgeColor;
   isEditable?: boolean;
   onRemove?: () => void;
   onClick?: () => void;
   className?: string;
 }
 
-export default function Badge({ content, color = "gray", isEditable = false, onRemove, onClick, className }: BadgeProps) {
+export default function Badge({ content, color, isEditable = false, onRemove, onClick, className }: BadgeProps) {
 
   const badgeColors = {
     gray: "bg-gray-100 text-gray-800",
@@ -28,6 +28,7 @@ export default function Badge({ content, color = "gray", isEditable = false, onR
     stone: "bg-stone-100 text-stone-800",
     neutral: "bg-neutral-100 text-neutral-800",
     emerald: "bg-emerald-100 text-emerald-800",
+    none: "bg-transparent text-text-primary"
   };
 
   const badgeXmarkColors = {
@@ -44,6 +45,7 @@ export default function Badge({ content, color = "gray", isEditable = false, onR
     stone: "text-stone-800 hover:text-stone-600",
     neutral: "text-neutral-800 hover:text-neutral-600",
     emerald: "text-emerald-800 hover:text-emerald-600",
+    none: "text-text-primary"
   };
 
   return (
