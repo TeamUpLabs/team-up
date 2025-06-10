@@ -32,7 +32,7 @@ export default function ProjectProgressCard() {
 
   if (isLoading) {
     return (
-      <ProjectProgressCardSkeleton />
+      <ProjectProgressCardSkeleton isPreview={false} />
     );
   }
 

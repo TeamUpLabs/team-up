@@ -88,15 +88,17 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
       <div className="flex flex-col h-full">
         <div>
           <div className="flex items-center justify-center py-5 px-6 transition-all duration-300">
-            {(!isMinimized || isMobile) ? (
-              <Link href={titleHref} className={`block transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
-                <h1 className="text-xl font-bold text-text-primary text-center whitespace-nowrap">{title}</h1>
-              </Link>
-            ) : (
-              <Link href={titleHref} className="block">
-                <h1 className="text-xl font-bold text-text-primary text-center">{miniTitle}</h1>
-              </Link>
-            )}
+            {!title ? (
+              <div className="h-8 bg-component-tertiary-background rounded w-16"></div>
+            ) : (!isMinimized || isMobile) ? (
+                <Link href={titleHref} className={`block transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
+                  <h1 className="text-xl font-bold text-text-primary text-center whitespace-nowrap">{title}</h1>
+                </Link>
+              ) : (
+                <Link href={titleHref} className="block">
+                  <h1 className="text-xl font-bold text-text-primary text-center">{miniTitle}</h1>
+                </Link>
+              )}
           </div>
           <nav className="space-y-2">
             {regularItems.map((item, index) => {

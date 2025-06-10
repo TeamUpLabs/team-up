@@ -40,7 +40,7 @@ export default function MileStoneCard() {
 
   if (isLoading) {
     return (
-      <MilestoneCardSkeleton />
+      <MilestoneCardSkeleton isPreview={false} />
     );
   }
 

@@ -39,7 +39,7 @@ export default function Schedule() {
   }, [project]);
 
   if (isLoading) {
-    return <ScheduleSkeleton />;
+    return <ScheduleSkeleton isPreview={false} />;
   }
 
   return (

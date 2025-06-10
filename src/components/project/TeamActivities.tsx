@@ -14,7 +14,7 @@ export default function TeamActivities() {
   }, [project]);
 
   if (isLoading) {
-    return <TeamActivitiesSkeleton />;
+    return <TeamActivitiesSkeleton isPreview={false} />;
   }
 
   return (
