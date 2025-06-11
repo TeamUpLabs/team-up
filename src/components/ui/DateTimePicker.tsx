@@ -266,7 +266,7 @@ export default function DateTimePicker({
                       handleDateChange(date)
                     }
                   }}
-                  minDate={minDate ? new Date(minDate) : undefined}
+                  minDate={minDate ? new Date(new Date(minDate).setHours(0, 0, 0, 0)) : undefined}
                   className="w-full rounded-lg text-text-secondary"
                 />
               </motion.div>
