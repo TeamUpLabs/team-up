@@ -1,17 +1,13 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faUser } from "@fortawesome/free-solid-svg-icons";
+import { AngleLeft, AngleRight, InfoCircle, CalendarWeek, Flag, Tag, Users } from "flowbite-react-icons/outline";
 import { useProject } from "@/contexts/ProjectContext";
 import { createMilestone } from "@/hooks/getMilestoneData";
 import { useAuthStore } from "@/auth/authStore";
-import SubmitBtn from "@/components/SubmitBtn";
 import ModalTemplete from "@/components/ModalTemplete";
 import Badge from "@/components/ui/Badge";
 import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
+import AssigneeSelect from "@/components/project/AssigneeSelect";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -22,6 +18,14 @@ export default function MilestoneCreateModal({
   isOpen,
   onClose,
 }: MilestoneCreateModalProps) {
+  const [step, setStep] = useState(1);
+
+  const totalSteps = 5
+  const progress = (step / totalSteps) * 100
+
+  const stepIcons = [InfoCircle, CalendarWeek, Flag, Tag, Users]
+  const stepTitles = ["Basic Info", "Timeline", "Status & Priority", "Tags & Labels", "Assignee"]
+
   const { project } = useProject();
   const user = useAuthStore((state) => state.user);
   const [formData, setFormData] = useState({
@@ -42,9 +46,6 @@ export default function MilestoneCreateModal({
   const [dateError, setDateError] = useState(false);
   const [statusError, setStatusError] = useState(false);
   const [priorityError, setPriorityError] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "submitting" | "success"
-  >("idle");
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
@@ -54,10 +55,7 @@ export default function MilestoneCreateModal({
     }
   }, [formData.startDate, formData.endDate]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitStatus("submitting");
-
+  const handleSubmit = async () => {
     let hasError = false;
 
     if (dateError) {
@@ -82,16 +80,21 @@ export default function MilestoneCreateModal({
       return;
     }
 
+    if (formData.assignee_id.length === 0) {
+      useAuthStore
+        .getState()
+        .setAlert("최소 한 명의 담당자는 필요합니다.", "error");
+      return;
+    }
+
     if (project?.id) {
       try {
         await createMilestone(project.id, formData);
-        setSubmitStatus("success");
         useAuthStore
           .getState()
           .setAlert("마일스톤이 성공적으로 생성되었습니다.", "success");
 
         setTimeout(() => {
-          setSubmitStatus("idle");
           onClose();
         }, 1000);
       } catch (error) {
@@ -150,7 +153,7 @@ export default function MilestoneCreateModal({
     }
     return undefined;
   };
-  
+
   const handleStartDateChange = (date: Date | undefined) => {
     setFormData(prevData => ({
       ...prevData,
@@ -165,7 +168,7 @@ export default function MilestoneCreateModal({
     }));
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (type: "tags", e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !isComposing) {
       e.preventDefault();
 
@@ -202,6 +205,36 @@ export default function MilestoneCreateModal({
     return formData.assignee_id.includes(memberId);
   };
 
+  const moveNextStep = (step: number) => {
+    switch (step) {
+      case 1:
+        if (!formData.title) {
+          useAuthStore
+            .getState()
+            .setAlert("마일스톤 이름을 입력해주세요.", "error");
+          return;
+        }
+        break;
+      case 2:
+        if (!formData.startDate || !formData.endDate) {
+          useAuthStore
+            .getState()
+            .setAlert("시작일과 종료일을 입력해주세요.", "error");
+          return;
+        }
+        break;
+      case 3:
+        if (!formData.status || !formData.priority) {
+          useAuthStore
+            .getState()
+            .setAlert("상태와 우선순위를 선택해주세요.", "error");
+          return;
+        }
+        break;
+    }
+    setStep(step + 1);
+  };
+
   // Header content for the modal
   const headerContent = (
     <div className="flex items-center space-x-4">
@@ -211,248 +244,291 @@ export default function MilestoneCreateModal({
     </div>
   );
 
+  const footerContent = (
+    <div className="flex justify-between">
+      <button
+        type="button"
+        className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg"
+        onClick={() => setStep(step - 1)}
+        disabled={step === 1}
+      >
+        <AngleLeft className="h-4 w-4" />
+        Previous
+      </button>
+
+      {step < totalSteps ? (
+        <button
+          type="button"
+          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg"
+          onClick={() => moveNextStep(step)}
+          disabled={step === totalSteps}
+        >
+          Next
+          <AngleRight className="h-4 w-4" />
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg"
+          onClick={handleSubmit}
+        >Create Task</button>
+      )}
+    </div>
+  )
+
   // Form content for the modal
   const formContent = (
-    <form onSubmit={handleSubmit} className="space-y-7">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="col-span-2">
-          <label
-            htmlFor="title"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            마일스톤 이름{" "}
-            <span className="text-point-color-indigo ml-1">*</span>
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            placeholder="마일스톤 이름을 입력하세요"
-            required
-          />
+    <div className="flex flex-col">
+      <div className="space-y-2">
+        <div className="w-full h-4 bg-component-secondary-background rounded-full">
+          <div className="h-full bg-point-color-indigo rounded-full" style={{ width: `${progress}%` }} />
         </div>
-
-        <div className="col-span-2">
-          <label
-            htmlFor="description"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            설명 <span className="text-point-color-indigo ml-1">*</span>
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={3}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover resize-none"
-            placeholder="마일스톤에 대한 설명을 입력하세요"
-          />
+        <div className="flex justify-between text-sm text-text-secondary">
+          {stepTitles.map((title, index) => {
+            const Icon = stepIcons[index]
+            return (
+              <div
+                key={title}
+                className={`flex items-center gap-1 ${step === index + 1 ? "text-text-primary font-medium" : ""}`}
+              >
+                <Icon className="h-4 w-4" />
+                {title}
+              </div>
+            )
+          })}
         </div>
+      </div>
 
-        <div className="col-span-1">
-          <label
-            htmlFor="startDate"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            시작일 <span className="text-point-color-indigo ml-1">*</span>
-          </label>
-          <DatePicker
-            value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
-            onChange={handleStartDateChange}
-            placeholder="시작일 선택"
-            className="w-full bg-input-background"
-          />
-        </div>
-
-        <div className="col-span-1">
-          <label
-            htmlFor="endDate"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            종료일 <span className="text-point-color-indigo ml-1">*</span>
-          </label>
-          <DatePicker
-            value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
-            onChange={handleEndDateChange}
-            placeholder="종료일 선택"
-            className="w-full bg-input-background"
-            minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
-          />
-          {dateError && (
-            <p className="text-red-500 text-sm mt-2">
-              종료일은 시작일 이후여야 합니다.
-            </p>
-          )}
-        </div>
-
-        <div className="col-span-1">
-          <label
-            htmlFor="status"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            상태 <span className="text-point-color-indigo ml-1">*</span>
-          </label>
-          <Select
-            options={[
-              { name: "status", value: "not-started", label: "준비" },
-              { name: "status", value: "in-progress", label: "진행중" },
-              { name: "status", value: "done", label: "완료" },
-            ]}
-            value={formData.status}
-            onChange={(value) => handleSelectChange("status", value as string)}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            dropDownClassName="!w-full"
-          />
-          {statusError && (
-            <p className="text-red-500 text-sm mt-2">상태를 선택해주세요.</p>
-          )}
-        </div>
-
-        <div className="col-span-1">
-          <label
-            htmlFor="priority"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            우선순위 <span className="text-point-color-indigo ml-1">*</span>
-          </label>
-          <Select
-            options={[
-              { name: "priority", value: "low", label: "낮음" },
-              { name: "priority", value: "medium", label: "중간" },
-              { name: "priority", value: "high", label: "높음" },
-            ]}
-            value={formData.priority}
-            onChange={(value) => handleSelectChange("priority", value as string)}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            dropDownClassName="!w-full"
-          />
-          {priorityError && (
-            <p className="text-red-500 text-sm mt-2">
-              우선순위를 선택해주세요.
-            </p>
-          )}
-        </div>
-
-        <div className="col-span-2">
-          <label className="flex items-center text-sm font-medium mb-2 text-text-secondary">
-            담당자 <span className="text-point-color-indigo ml-1">*</span>
-          </label>
-          <div className="border border-component-border rounded-lg p-3 bg-component-secondary-background hover:border-input-border-hover transition-all">
-            <div className="mb-3">
-              <p className="text-sm text-text-secondary">
-                선택된 담당자:{" "}
-                {formData.assignee_id.length > 0
-                  ? `${formData.assignee_id.length}명`
-                  : "없음"}
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {project?.members.map((member) => (
-                <div
-                  key={member.id}
-                  onClick={() => toggleAssignee(member.id)}
-                  className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer border border-component-border transition-all duration-200 ${
-                    isAssigned(member.id)
-                      ? "bg-purple-500/20 border border-purple-500/50"
-                      : "bg-component-tertiary-background hover:bg-component-tertiary-background/60"
-                  }`}
+      <div className="py-6 min-h-[300px]">
+        <div className="space-y-6">
+          {step === 1 && (
+            <div className="space-y-4">
+              <div className="text-center mb-6">
+                <InfoCircle className="h-12 w-12 mx-auto text-primary mb-2" />
+                <h3 className="text-lg font-semibold">Basic Information</h3>
+                <p className="text-text-secondary">Let&apos;s start with the essentials</p>
+              </div>
+              <div className="space-y-2">
+                <label
+                  htmlFor="title"
+                  className="flex items-center text-sm font-medium mb-2 text-text-secondary"
                 >
-                  <div className="relative flex-shrink-0">
-                    <div className="w-10 h-10 rounded-full bg-component-secondary-background border-2 border-component-border flex items-center justify-center overflow-hidden">
-                      <div className="relative w-full h-full flex items-center justify-center">
-                        {member.profileImage ? (
-                          <Image
-                            src={member.profileImage}
-                            alt={member.name}
-                            width={50}
-                            height={50}
-                            className={`absolute text-text-secondary transform transition-all duration-300 ${
-                              isAssigned(member.id)
-                                ? "opacity-0 rotate-90 scale-0"
-                                : "opacity-100 rotate-0 scale-100"
-                            }`}
-                            onError={(e) => {
-                              e.currentTarget.src = "/DefaultProfile.jpg";
-                            }}
-                          />
-                        ) : (
-                          <FontAwesomeIcon
-                            icon={faUser}
-                            className={`absolute text-text-secondary transform transition-all duration-300 ${
-                              isAssigned(member.id)
-                                ? "opacity-0 rotate-90 scale-0"
-                                : "opacity-100 rotate-0 scale-100"
-                            }`}
-                          />
-                        )}
-                        <FontAwesomeIcon
-                          icon={faCheck}
-                          className={`absolute text-text-secondary transform transition-all duration-300 ${
-                            isAssigned(member.id)
-                              ? "opacity-100 rotate-0 scale-100"
-                              : "opacity-0 -rotate-90 scale-0"
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="text-sm font-medium text-text-primary">
-                      {member.name}
-                    </p>
-                    <p className="text-xs text-text-secondary">{member.role}</p>
-                  </div>
-                </div>
-              ))}
+                  마일스톤 이름 <span className="text-point-color-purple ml-1">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                  placeholder="마일스톤 이름을 입력하세요"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <label
+                  htmlFor="description"
+                  className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                >
+                  설명
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={3}
+                  className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                  placeholder="마일스톤 설명을 입력하세요"
+                />
+              </div>
             </div>
-          </div>
-        </div>
+          )}
 
-        <div className="col-span-2">
-          <label
-            htmlFor="tags"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            태그
-          </label>
-          <input
-            type="text"
-            id="tags"
-            name="tags"
-            value={tagsInput}
-            onChange={(e) => setTagsInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onCompositionStart={() => setIsComposing(true)}
-            onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            placeholder="태그을 입력하고 Enter 키를 누르세요"
-          />
-          <div className="mt-2 flex flex-wrap gap-2">
-            {formData.tags.map((tag, index) => (
-              <Badge
-                key={index}
-                content={tag}
-                color="teal"
-                isEditable={true}
-                onRemove={() => handleRemoveTag(tag)}
-              />
-            ))}
-          </div>
+          {step === 2 && (
+            <div className="space-y-4">
+              <div className="text-center mb-6">
+                <CalendarWeek className="h-12 w-12 mx-auto text-primary mb-2" />
+                <h3 className="text-lg font-semibold">Timeline</h3>
+                <p className="text-text-secondary">When will this milestone happen?</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="startDate"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    시작일 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <DatePicker
+                    value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                    onChange={handleStartDateChange}
+                    placeholder="시작일 선택"
+                    className="w-full bg-input-background"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="endDate"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    종료일 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <DatePicker
+                    value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
+                    onChange={handleEndDateChange}
+                    placeholder="종료일 선택"
+                    className="w-full bg-input-background"
+                    minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                  />
+                  {dateError && (
+                    <p className="text-sm text-red-500 mt-1">
+                      종료일은 시작일보다 빠를 수 없습니다.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-4">
+              <div className="text-center mb-6">
+                <Flag className="h-12 w-12 mx-auto text-primary mb-2" />
+                <h3 className="text-lg font-semibold">Status & Priority</h3>
+                <p className="text-text-secondary">Select status and priority to this milestone</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="status"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    상태 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <Select
+                    options={[
+                      { name: "status", value: "not-started", label: "준비" },
+                      { name: "status", value: "in-progress", label: "진행중" },
+                      { name: "status", value: "done", label: "완료" },
+                    ]}
+                    value={formData.status}
+                    onChange={(value) => handleSelectChange("status", value as string)}
+                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    dropDownClassName="!w-full"
+                    placeholder="상태를 선택해주세요"
+                  />
+                  {statusError && (
+                    <p className="text-red-500 text-sm mt-2">상태를 선택해주세요.</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="priority"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    우선순위 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <Select
+                    options={[
+                      { name: "priority", value: "low", label: "낮음" },
+                      { name: "priority", value: "medium", label: "중간" },
+                      { name: "priority", value: "high", label: "높음" },
+                    ]}
+                    value={formData.priority}
+                    onChange={(value) => handleSelectChange("priority", value as string)}
+                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    dropDownClassName="!w-full"
+                    placeholder="우선순위를 선택해주세요"
+                  />
+                  {priorityError && (
+                    <p className="text-red-500 text-sm mt-2">
+                      우선순위를 선택해주세요.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="space-y-4">
+              <div className="text-center mb-6">
+                <Tag className="h-12 w-12 mx-auto text-primary mb-2" />
+                <h3 className="text-lg font-semibold">Tag</h3>
+                <p className="text-text-secondary">Add tags</p>
+              </div>
+              <div className="space-y-2">
+                <label
+                  htmlFor="tags"
+                  className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                >
+                  태그
+                </label>
+                <input
+                  type="text"
+                  id="tags"
+                  name="tags"
+                  value={tagsInput}
+                  onChange={(e) => setTagsInput(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown("tags", e)}
+                  onCompositionStart={() => setIsComposing(true)}
+                  onCompositionEnd={() => setIsComposing(false)}
+                  className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                  placeholder="태그를 입력하고 Enter 키를 누르세요"
+                />
+
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {formData.tags.map((tag, index) => (
+                    <Badge
+                      key={index}
+                      content={tag}
+                      color="pink"
+                      isEditable={true}
+                      onRemove={() => handleRemoveTag(tag)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {step === 5 && (
+            <div className="space-y-4">
+              <div className="text-center mb-6">
+                <Users className="h-12 w-12 mx-auto text-primary mb-2" />
+                <h3 className="text-lg font-semibold">Assignee</h3>
+                <p className="text-text-secondary">Assign this task to a team member</p>
+              </div>
+              <div className="space-y-2 p-1">
+                <label
+                  htmlFor="assignee"
+                  className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                >
+                  담당자 <span className="text-point-color-purple ml-1">*</span>
+                </label>
+                <AssigneeSelect
+                  selectedAssignee={formData.assignee_id}
+                  assignee={project?.members || []}
+                  toggleAssignee={toggleAssignee}
+                  isAssigned={isAssigned}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      <div className="mt-6">
-        <SubmitBtn submitStatus={submitStatus} />
-      </div>
-    </form>
+    </div>
   );
 
   return (
-    <ModalTemplete isOpen={isOpen} onClose={onClose} header={headerContent}>
+    <ModalTemplete
+      isOpen={isOpen}
+      onClose={onClose}
+      header={headerContent}
+      footer={footerContent}
+    >
       {formContent}
     </ModalTemplete>
   );
