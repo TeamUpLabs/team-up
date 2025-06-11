@@ -455,7 +455,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 placeholder="작업의 설명을 작성하세요"
               />
             ) : (
-              <p className="text-muted-foreground leading-relaxed">{taskData.description}</p>
+              taskData.description ? (
+                <p className="text-muted-foreground leading-relaxed">{taskData.description}</p>
+              ) : (
+                <p className="text-text-secondary">작업의 설명이 없습니다.</p>
+              )
             )}
           </div>
 
@@ -848,9 +852,13 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             </>
           ) : (
             <div className="flex items-center gap-2 group relative">
-              {taskData?.tags.map((tag, index) => (
-                <Badge key={index} content={tag} color="pink" />
-              ))}
+              {taskData?.tags.length === 0 ? (
+                <p className="text-text-secondary">태그가 없습니다.</p>
+              ) : (
+                taskData?.tags.map((tag, index) => (
+                  <Badge key={index} content={tag} color="pink" />
+                ))
+              )}
               <FontAwesomeIcon
                 icon={faPencil}
                 size="xs"
