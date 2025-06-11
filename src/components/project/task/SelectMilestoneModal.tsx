@@ -4,6 +4,7 @@ import { MileStone } from '@/types/MileStone';
 import TaskCreateModal from '@/components/project/task/TaskCreateModal';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/ui/Badge';
+import NewTaskCreateModal from '@/components/project/task/NewTaskCreateModal';
 
 interface SelectMilestoneModalProps {
   isOpen: boolean;
@@ -116,7 +117,12 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
       </ModalTemplete>
 
       {isCreateTaskModalOpen && (
-        <TaskCreateModal
+        // <TaskCreateModal
+        //   isOpen={isCreateTaskModalOpen}
+        //   onClose={() => setIsCreateTaskModalOpen(false)}
+        //   milestone_id={selectedMilestone?.id ?? null}
+        // />
+        <NewTaskCreateModal
           isOpen={isCreateTaskModalOpen}
           onClose={() => setIsCreateTaskModalOpen(false)}
           milestone_id={selectedMilestone?.id ?? null}
