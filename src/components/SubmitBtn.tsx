@@ -5,11 +5,13 @@ interface SubmitBtnProps {
   submitStatus: 'idle' | 'submitting' | 'success' | 'error';
   onClick?: () => void;
   buttonText?: string; // Optional custom text for idle state
+  className?: string;
+  fit?: boolean;
 }
 
-export default function SubmitBtn({ submitStatus, onClick, buttonText = "제출" }: SubmitBtnProps) {
+export default function SubmitBtn({ submitStatus, onClick, buttonText = "제출", className, fit }: SubmitBtnProps) {
   return (
-    <div className="w-full">
+    <div className={`${fit ? "w-full" : "w-fit"}`}>
       <button
         type="submit"
         disabled={submitStatus === 'submitting' || submitStatus === 'error'}
@@ -23,6 +25,7 @@ export default function SubmitBtn({ submitStatus, onClick, buttonText = "제출"
           ? 'bg-point-color-green hover:bg-point-color-green-hover' 
           : 'bg-point-color-indigo hover:bg-point-color-indigo-hover'}
         text-white
+        ${className}
       `}
         onClick={onClick}
       >
