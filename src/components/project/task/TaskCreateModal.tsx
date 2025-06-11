@@ -244,11 +244,44 @@ export default function TaskCreateModal({
     </div>
   )
 
+  const modalFooter = (
+    <div className="flex justify-between">
+      <button
+        type="button"
+        className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg"
+        onClick={() => setStep(step - 1)}
+        disabled={step === 1}
+      >
+        <AngleLeft className="h-4 w-4" />
+        Previous
+      </button>
+
+      {step < totalSteps ? (
+        <button
+          type="button"
+          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg"
+          onClick={() => moveNextStep(step)}
+          disabled={step === totalSteps}
+        >
+          Next
+          <AngleRight className="h-4 w-4" />
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg"
+          onClick={handleSubmit}
+        >Create Task</button>
+      )}
+    </div>
+  )
+
   return (
     <ModalTemplete
       isOpen={isOpen}
       onClose={onClose}
       header={modalHeader}
+      footer={modalFooter}
     >
       <div className="flex flex-col">
         <div className="space-y-2">
@@ -505,35 +538,6 @@ export default function TaskCreateModal({
                 </div>
               </div>
             )}
-            <div className="flex justify-between">
-              <button
-                type="button"
-                className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg"
-                onClick={() => setStep(step - 1)}
-                disabled={step === 1}
-              >
-                <AngleLeft className="h-4 w-4" />
-                Previous
-              </button>
-
-              {step < totalSteps ? (
-                <button
-                  type="button"
-                  className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg"
-                  onClick={() => moveNextStep(step)}
-                  disabled={step === totalSteps}
-                >
-                  Next
-                  <AngleRight className="h-4 w-4" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg"
-                  onClick={handleSubmit}
-                >Create Task</button>
-              )}
-            </div>
           </div>
         </div>
       </div>
