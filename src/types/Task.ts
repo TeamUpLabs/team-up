@@ -19,6 +19,7 @@ export interface Task {
   status: 'not-started' | 'in-progress' | 'done';
   priority: 'low' | 'medium' | 'high';
   assignee?: Member[];
+  assignee_id?: number[];
   startDate?: string;
   endDate?: string;
   tags: string[];
