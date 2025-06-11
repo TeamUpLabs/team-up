@@ -286,7 +286,7 @@ export default function TaskCreateModal({
       <div className="flex flex-col">
         <div className="space-y-2">
           <div className="w-full h-4 bg-component-secondary-background rounded-full">
-            <div className="h-full bg-point-color-indigo rounded-full" style={{ width: `${progress}%` }} />
+            <div className="h-full bg-point-color-indigo rounded-full transition-all duration-200" style={{ width: `${progress}%` }} />
           </div>
           <div className="flex justify-between text-sm text-text-secondary">
             {stepTitles.map((title, index) => {
@@ -304,7 +304,7 @@ export default function TaskCreateModal({
           </div>
         </div>
 
-        <div className="py-6 min-h-[300px]">
+        <div className="flex flex-col justify-center min-h-[300px] py-6">
           <div className="space-y-6">
             {step === 1 && (
               <div className="space-y-4">
