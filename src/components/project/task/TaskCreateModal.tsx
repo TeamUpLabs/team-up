@@ -457,7 +457,7 @@ export default function TaskCreateModal({
             {step === 4 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
-                  <FileLines className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <Tag className="h-12 w-12 mx-auto text-primary mb-2" />
                   <h3 className="text-lg font-semibold">Tags & Priority</h3>
                   <p className="text-text-secondary">Add tags and set priority</p>
                 </div>
@@ -518,7 +518,7 @@ export default function TaskCreateModal({
             {step === 5 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
-                  <FileLines className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <Users className="h-12 w-12 mx-auto text-primary mb-2" />
                   <h3 className="text-lg font-semibold">Assignee</h3>
                   <p className="text-text-secondary">Assign this task to a team member</p>
                 </div>
