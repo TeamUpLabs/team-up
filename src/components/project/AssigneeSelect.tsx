@@ -26,7 +26,7 @@ export default function AssigneeSelect({
         className: "bg-yellow-100 text-yellow-700 border-yellow-200"
       };
     }
-    if (project?.manager.filter((manager) => manager.id === assignee_id)) {
+    if (project?.manager?.some((manager) => manager.id === assignee_id)) {
       return {
         text: "관리자",
         className: "bg-blue-100 text-blue-700 border-blue-200"
