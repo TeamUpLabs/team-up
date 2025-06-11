@@ -293,7 +293,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
         icon={CalendarWeek}
       >
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2 bg-component-secondary-background p-3 rounded-lg">
+          <div className="space-y-2 bg-component-secondary-background p-3 rounded-lg border border-component-border">
             <div className="flex items-center gap-2 group relative">
               <div className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faHourglassStart} color="green" />
@@ -322,7 +322,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
               </p>
             )}
           </div>
-          <div className="space-y-2 bg-component-secondary-background p-3 rounded-lg">
+          <div className="space-y-2 bg-component-secondary-background p-3 rounded-lg border border-component-border">
             <div className="flex items-center gap-2 group relative">
               <div className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faHourglassEnd} color="red" />
