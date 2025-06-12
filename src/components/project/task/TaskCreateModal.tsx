@@ -1,17 +1,23 @@
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCheck,
-  faCircleXmark,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { useProject } from "@/contexts/ProjectContext";
-import { createTask } from "@/hooks/getTaskData";
-import { useAuthStore } from "@/auth/authStore";
-import SubmitBtn from "@/components/SubmitBtn";
 import ModalTemplete from "@/components/ModalTemplete";
-import Badge from "@/components/Badge";
+import { useState, useEffect } from "react";
+import { 
+  ClipboardList,
+  AngleLeft, 
+  AngleRight, 
+  InfoCircle, 
+  CalendarWeek, 
+  Users, 
+  Tag, 
+  FileLines 
+} from "flowbite-react-icons/outline";
+import { CloseCircle } from "flowbite-react-icons/solid";
+import { useProject } from "@/contexts/ProjectContext";
+import { useAuthStore } from "@/auth/authStore";
+import { createTask } from "@/hooks/getTaskData";
+import DatePicker from "@/components/ui/DatePicker";
+import Select from "@/components/ui/Select";
+import Badge from "@/components/ui/Badge";
+import AssigneeSelect from "@/components/project/AssigneeSelect";
 
 interface TaskCreateModalProps {
   isOpen: boolean;
@@ -24,6 +30,14 @@ export default function TaskCreateModal({
   onClose,
   milestone_id,
 }: TaskCreateModalProps) {
+  const [step, setStep] = useState(1);
+
+  const totalSteps = 5
+  const progress = (step / totalSteps) * 100
+
+  const stepIcons = [InfoCircle, CalendarWeek, FileLines, Tag, Users]
+  const stepTitles = ["Basic Info", "Timeline", "Subtasks", "Tags & Priority", "Assignee"]
+
   const { project } = useProject();
   const [formData, setFormData] = useState({
     project_id: project?.id,
@@ -43,10 +57,45 @@ export default function TaskCreateModal({
   const [tagsInput, setTagsInput] = useState("");
   const [subtasksInput, setSubtasksInput] = useState("");
   const [isComposing, setIsComposing] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "submitting" | "success"
-  >("idle");
   const [dateError, setDateError] = useState(false);
+
+  // Helper to format Date to YYYY-MM-DD string
+  const formatDateToString = (date: Date | undefined): string => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // Helper to parse YYYY-MM-DD string to Date object (local timezone)
+  const parseStringToDate = (dateString: string): Date | undefined => {
+    if (!dateString) return undefined;
+    const parts = dateString.split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed for Date constructor
+      const day = parseInt(parts[2], 10);
+      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+        return new Date(year, month, day); // Interprets as local date
+      }
+    }
+    return undefined;
+  };
+
+  const handleStartDateChange = (date: Date | undefined) => {
+    setFormData(prevData => ({
+      ...prevData,
+      startDate: date ? formatDateToString(date) : "",
+    }));
+  };
+
+  const handleEndDateChange = (date: Date | undefined) => {
+    setFormData(prevData => ({
+      ...prevData,
+      endDate: date ? formatDateToString(date) : "",
+    }));
+  };
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
@@ -55,6 +104,10 @@ export default function TaskCreateModal({
       setDateError(false);
     }
   }, [formData.startDate, formData.endDate]);
+
+  const handleSelectChange = (name: string, value: string | string[]) => {
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -65,9 +118,7 @@ export default function TaskCreateModal({
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     let hasError = false;
 
     if (dateError) {
@@ -78,7 +129,12 @@ export default function TaskCreateModal({
       return;
     }
 
-    setSubmitStatus("submitting");
+    if (formData.assignee_id.length === 0) {
+      useAuthStore
+        .getState()
+        .setAlert("최소 한 명의 담당자는 필요합니다.", "error");
+      return;
+    }
 
     if (project?.id) {
       try {
@@ -87,13 +143,11 @@ export default function TaskCreateModal({
           project_id: project.id,
           milestone_id: milestone_id ?? 0,
         });
-        setSubmitStatus("success");
         useAuthStore
           .getState()
           .setAlert("작업이 성공적으로 생성되었습니다.", "success");
 
         setTimeout(() => {
-          setSubmitStatus("idle");
           onClose();
         }, 1000);
       } catch (error) {
@@ -163,275 +217,351 @@ export default function TaskCreateModal({
     return formData.assignee_id.includes(memberId);
   };
 
+  const moveNextStep = (step: number) => {
+    switch (step) {
+      case 1:
+        if (!formData.title) {
+          useAuthStore
+            .getState()
+            .setAlert("작업 이름을 입력해주세요.", "error");
+          return;
+        }
+        break;
+      case 2:
+        if (!formData.startDate || !formData.endDate) {
+          useAuthStore
+            .getState()
+            .setAlert("시작일과 종료일을 입력해주세요.", "error");
+          return;
+        }
+        break;
+      case 4:
+        if (!formData.priority) {
+          useAuthStore
+            .getState()
+            .setAlert("우선순위를 선택해주세요.", "error");
+          return;
+        }
+        break;
+    }
+    setStep(step + 1);
+  };
+
   const modalHeader = (
-    <div className="flex items-center space-x-4">
-      <h3 className="text-xl font-bold text-text-primary">새로운 작업 생성</h3>
+    <div className="flex items-center space-x-3">
+      <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
+        <ClipboardList
+          className="text-primary-600 text-lg"
+        />
+      </div>
+      <div>
+        <h3 className="text-xl font-bold text-text-primary">
+          새로운 작업 추가
+        </h3>
+        <p className="text-sm text-text-tertiary mt-0.5">
+          프로젝트 작업을 관리하세요
+        </p>
+      </div>
     </div>
-  );
+  )
 
-  const formContent = (
-    <form onSubmit={handleSubmit} className="space-y-7">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="col-span-2">
-          <label
-            htmlFor="title"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            작업 이름 <span className="text-point-color-purple ml-1">*</span>
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
-            placeholder="작업 이름을 입력하세요"
-            required
-          />
-        </div>
+  const modalFooter = (
+    <div className="flex justify-between">
+      <button
+        type="button"
+        className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+        onClick={() => setStep(step - 1)}
+        disabled={step === 1}
+      >
+        <AngleLeft className="h-4 w-4" />
+        Previous
+      </button>
 
-        <div className="col-span-2">
-          <label
-            htmlFor="description"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            설명 <span className="text-point-color-purple ml-1">*</span>
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={3}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary resize-none hover:border-input-border-hover"
-            placeholder="작업 설명을 입력하세요"
-          />
-        </div>
+      {step < totalSteps ? (
+        <button
+          type="button"
+          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+          onClick={() => moveNextStep(step)}
+          disabled={step === totalSteps}
+        >
+          Next
+          <AngleRight className="h-4 w-4" />
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+          onClick={handleSubmit}
+        >Create Task</button>
+      )}
+    </div>
+  )
 
-        <div className="relative">
-          <label
-            htmlFor="startDate"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            시작 일자 <span className="text-point-color-purple ml-1">*</span>
-          </label>
-          <input
-            type="date"
-            id="startDate"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            required
-          />
-        </div>
-
-        <div className="relative">
-          <label
-            htmlFor="endDate"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            종료 일자 <span className="text-point-color-purple ml-1">*</span>
-          </label>
-          <input
-            type="date"
-            id="endDate"
-            name="endDate"
-            value={formData.endDate}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            required
-          />
-          {dateError && (
-            <p className="text-red-500 text-sm mt-2">
-              종료일은 시작일 이후여야 합니다.
-            </p>
-          )}
-        </div>
-
-        <div className="col-span-2">
-          <label
-            htmlFor="priority"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            우선순위 <span className="text-point-color-purple ml-1">*</span>
-          </label>
-          <select
-            id="priority"
-            name="priority"
-            value={formData.priority}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            required
-          >
-            <option value="low">낮음</option>
-            <option value="medium">중간</option>
-            <option value="high">높음</option>
-          </select>
-        </div>
-
-        <div className="col-span-2">
-          <label className="flex items-center text-sm font-medium mb-2 text-text-secondary">
-            담당자 <span className="text-point-color-purple ml-1">*</span>
-          </label>
-          <div className="border border-component-border rounded-lg p-3 bg-component-secondary-background hover:border-component-border-hover transition-all">
-            <div className="mb-3">
-              <p className="text-sm text-text-secondary">
-                선택된 담당자:{" "}
-                {formData.assignee_id.length > 0
-                  ? `${formData.assignee_id.length}명`
-                  : "없음"}
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {project?.members.map((member) => (
+  return (
+    <ModalTemplete
+      isOpen={isOpen}
+      onClose={onClose}
+      header={modalHeader}
+      footer={modalFooter}
+    >
+      <div className="flex flex-col">
+        <div className="space-y-2">
+          <div className="w-full h-4 bg-component-secondary-background rounded-full">
+            <div className="h-full bg-point-color-indigo rounded-full transition-all duration-200" style={{ width: `${progress}%` }} />
+          </div>
+          <div className="flex justify-between text-sm text-text-secondary">
+            {stepTitles.map((title, index) => {
+              const Icon = stepIcons[index]
+              return (
                 <div
-                  key={member.id}
-                  onClick={() => toggleAssignee(member.id)}
-                  className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${
-                    isAssigned(member.id)
-                      ? "bg-purple-500/20 border border-purple-500/50"
-                      : "bg-component-tertiary-background border border-transparent hover:bg-component-tertiary-background/60"
-                  }`}
+                  key={title}
+                  className={`flex items-center gap-1 ${step === index + 1 ? "text-text-primary font-medium" : ""}`}
                 >
-                  <div className="relative flex-shrink-0">
-                    <div className="w-10 h-10 rounded-full bg-component-secondary-background border-2 border-component-border flex items-center justify-center overflow-hidden">
-                      <div className="relative w-full h-full flex items-center justify-center">
-                        {member.profileImage ? (
-                          <Image
-                            src={member.profileImage}
-                            alt={member.name}
-                            width={50}
-                            height={50}
-                            className={`absolute text-text-secondary transform transition-all duration-300 ${
-                              isAssigned(member.id)
-                                ? "opacity-0 rotate-90 scale-0"
-                                : "opacity-100 rotate-0 scale-100"
-                            }`}
-                            onError={(e) => {
-                              e.currentTarget.src = "/DefaultProfile.jpg";
-                            }}
-                          />
-                        ) : (
-                          <FontAwesomeIcon
-                            icon={faUser}
-                            className={`absolute text-text-secondary transform transition-all duration-300 ${
-                              isAssigned(member.id)
-                                ? "opacity-0 rotate-90 scale-0"
-                                : "opacity-100 rotate-0 scale-100"
-                            }`}
-                          />
-                        )}
-                        <FontAwesomeIcon
-                          icon={faCheck}
-                          className={`absolute text-text-secondary transform transition-all duration-300 ${
-                            isAssigned(member.id)
-                              ? "opacity-100 rotate-0 scale-100"
-                              : "opacity-0 -rotate-90 scale-0"
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="text-sm font-medium text-text-primary">
-                      {member.name}
-                    </p>
-                    <p className="text-xs text-text-secondary">{member.role}</p>
-                  </div>
+                  <Icon className="h-4 w-4" />
+                  {title}
                 </div>
-              ))}
-            </div>
+              )
+            })}
           </div>
         </div>
 
-        <div className="col-span-2">
-          <label
-            htmlFor="tags"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            태그
-          </label>
-          <input
-            type="text"
-            id="tags"
-            name="tags"
-            value={tagsInput}
-            onChange={(e) => setTagsInput(e.target.value)}
-            onKeyDown={(e) => handleKeyDown("tags", e)}
-            onCompositionStart={() => setIsComposing(true)}
-            onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            placeholder="태그을 입력하고 Enter 키를 누르세요"
-          />
-          <div className="mt-2 flex flex-wrap gap-2">
-            {formData.tags.map((tag, index) => (
-              <Badge
-                key={index}
-                content={tag}
-                color="pink"
-                isEditable={true}
-                onRemove={() => handleRemoveTag(tag)}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="col-span-2">
-          <label
-            htmlFor="subtasks"
-            className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-          >
-            하위 작업
-          </label>
-          <input
-            type="text"
-            id="subtasks"
-            name="subtasks"
-            value={subtasksInput}
-            onChange={(e) => setSubtasksInput(e.target.value)}
-            onKeyDown={(e) => handleKeyDown("subtasks", e)}
-            onCompositionStart={() => setIsComposing(true)}
-            onCompositionEnd={() => setIsComposing(false)}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 placeholder:text-text-secondary hover:border-input-border-hover"
-            placeholder="하위 작업을 입력하고 Enter 키를 누르세요"
-          />
-          <div className="mt-2 flex flex-col gap-2">
-            {formData.subtasks.map((subtask, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between gap-2 bg-point-color-indigo/20 p-3 rounded-lg"
-              >
-                <div className="flex items-center gap-2">
+        <div className="flex flex-col justify-center min-h-[300px] py-6">
+          <div className="space-y-6">
+            {step === 1 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <InfoCircle className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">Basic Information</h3>
+                  <p className="text-text-secondary">Let&apos;s start with the essentials</p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="title"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    작업 이름 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
                   <input
-                    type="checkbox"
-                    checked={false}
-                    readOnly
-                    className="rounded"
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    placeholder="작업 이름을 입력하세요"
+                    required
                   />
-                  <span className="text-text-secondary">{subtask}</span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveSubtask(subtask)}
-                  className="text-point-color-indigo hover:text-point-color-indigo-hover ml-1 focus:outline-none"
-                >
-                  <FontAwesomeIcon icon={faCircleXmark} />
-                </button>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="description"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    설명
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows={3}
+                    className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    placeholder="작업 설명을 입력하세요"
+                  />
+                </div>
               </div>
-            ))}
+            )}
+
+            {step === 2 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <CalendarWeek className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">Timeline</h3>
+                  <p className="text-text-secondary">When will this milestone happen?</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="startDate"
+                      className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                    >
+                      시작일 <span className="text-point-color-purple ml-1">*</span>
+                    </label>
+                    <DatePicker
+                      value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                      onChange={handleStartDateChange}
+                      placeholder="시작일 선택"
+                      className="w-full bg-input-background"
+                      minDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.startDate || "") : undefined}
+                      maxDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.endDate || "") : undefined}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="endDate"
+                      className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                    >
+                      종료일 <span className="text-point-color-purple ml-1">*</span>
+                    </label>
+                    <DatePicker
+                      value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
+                      onChange={handleEndDateChange}
+                      placeholder="종료일 선택"
+                      className="w-full bg-input-background"
+                      minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                      maxDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.endDate || "") : undefined}
+                    />
+                    {dateError && (
+                      <p className="text-sm text-red-500 mt-1">
+                        종료일은 시작일보다 빠를 수 없습니다.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <FileLines className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">SubTasks</h3>
+                  <p className="text-text-secondary">Add subtasks to this task</p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="subtasks"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    하위 작업
+                  </label>
+                  <input
+                    type="text"
+                    id="subtasks"
+                    name="subtasks"
+                    value={subtasksInput}
+                    onChange={(e) => setSubtasksInput(e.target.value)}
+                    onKeyDown={(e) => handleKeyDown("subtasks", e)}
+                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    placeholder="하위 작업을 입력하고 Enter 키를 누르세요"
+                  />
+
+                  <div className="mt-2 flex flex-col gap-2">
+                    {formData.subtasks.map((subtask, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between gap-2 bg-point-color-indigo/20 px-3 py-2 rounded-lg"
+                      >
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={false}
+                            readOnly
+                            className="rounded"
+                          />
+                          <span className="text-text-secondary">{subtask}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSubtask(subtask)}
+                          className="text-point-color-indigo hover:text-point-color-indigo-hover ml-1 focus:outline-none"
+                        >
+                          <CloseCircle />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {step === 4 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <Tag className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">Tags & Priority</h3>
+                  <p className="text-text-secondary">Add tags and set priority</p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="tags"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    태그
+                  </label>
+                  <input
+                    type="text"
+                    id="tags"
+                    name="tags"
+                    value={tagsInput}
+                    onChange={(e) => setTagsInput(e.target.value)}
+                    onKeyDown={(e) => handleKeyDown("tags", e)}
+                    onCompositionStart={() => setIsComposing(true)}
+                    onCompositionEnd={() => setIsComposing(false)}
+                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    placeholder="태그를 입력하고 Enter 키를 누르세요"
+                  />
+
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {formData.tags.map((tag, index) => (
+                      <Badge
+                        key={index}
+                        content={tag}
+                        color="pink"
+                        isEditable={true}
+                        onRemove={() => handleRemoveTag(tag)}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="priority"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    우선순위 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <Select
+                    options={[
+                      { name: "priority", value: "low", label: "낮음" },
+                      { name: "priority", value: "medium", label: "중간" },
+                      { name: "priority", value: "high", label: "높음" },
+                    ]}
+                    value={formData.priority}
+                    onChange={(value) => handleSelectChange("priority", value as string)}
+                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    dropDownClassName="!w-full"
+                  />
+                </div>
+              </div>
+            )}
+
+            {step === 5 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <Users className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">Assignee</h3>
+                  <p className="text-text-secondary">Assign this task to a team member</p>
+                </div>
+                <div className="space-y-2 p-1">
+                  <label
+                    htmlFor="assignee"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    담당자 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <AssigneeSelect
+                    selectedAssignee={formData.assignee_id}
+                    assignee={project?.milestones?.find((milestone) => formData.milestone_id === milestone.id)?.assignee || []}
+                    toggleAssignee={toggleAssignee}
+                    isAssigned={isAssigned}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      <SubmitBtn submitStatus={submitStatus} />
-    </form>
-  );
-
-  return (
-    <ModalTemplete isOpen={isOpen} onClose={onClose} header={modalHeader}>
-      {formContent}
     </ModalTemplete>
-  );
+  )
 }

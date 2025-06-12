@@ -1,65 +1,78 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import ModalTemplete from "@/components/ModalTemplete";
-import { MileStone } from "@/types/MileStone";
+import { Schedule } from "@/types/Schedule";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullseye, faPencil, faCheck, faXmark, faHourglassStart, faHourglassEnd, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBullseye, faCheck, faPencil, faXmark, faHourglassStart, faHourglassEnd, faVideo, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { InfoCircle, CalendarWeek, MapPin, Link as LinkIcon, User, Annotation, TrashBin } from "flowbite-react-icons/outline";
+import { MiniLogo } from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
-import { useParams, useRouter } from "next/navigation";
-import { useProject } from "@/contexts/ProjectContext";
-import { useState } from "react";
 import Badge from "@/components/ui/Badge";
-import { Flag, InfoCircle, CalendarWeek, FileCheck, User, Tag, TrashBin } from "flowbite-react-icons/outline";
-import Accordion from "@/components/ui/Accordion";
-import { updateMilestone, deleteMilestone } from "@/hooks/getMilestoneData";
 import Select from "@/components/ui/Select";
+import Accordion from "@/components/ui/Accordion";
 import { getStatusColorName } from "@/utils/getStatusColor";
-import { getPriorityColorName } from "@/utils/getPriorityColor";
+import { useProject } from "@/contexts/ProjectContext";
+import DateTimePicker from "@/components/ui/DateTimePicker";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import { getPlatformColor, getPlatformColorName } from "@/utils/getPlatformColor";
+import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { updateSchedule, deleteSchedule } from "@/hooks/getScheduleData";
 
-interface MilestoneModalProps {
-  milestone: MileStone;
+interface ScheduleModalProps {
+  schedule: Schedule;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function MilestoneModal({ milestone, isOpen, onClose }: MilestoneModalProps) {
+export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleModalProps) {
   const user = useAuthStore.getState().user;
-  const params = useParams();
   const { project } = useProject();
+  const params = useParams();
   const router = useRouter();
-  const [milestoneData, setMilestoneData] = useState<MileStone>(milestone);
   const [isEditing, setIsEditing] = useState<string>("none");
-  const [newTag, setNewTag] = useState('');
-  const [isComposing, setIsComposing] = useState(false);
+  const [scheduleData, setScheduleData] = useState<Schedule>(schedule);
 
-  if (!isOpen) return null;
+  const isUserAssignee = user && schedule?.assignee?.some((assi) => assi.id === user?.id);
 
-  const calculateProgress = () => {
-    let totalTasks = 0;
-    let completedTasks = 0;
-
-    milestoneData?.subtasks.forEach(task => {
-      // Count the main task
-      totalTasks++;
-      if (task.status === 'done') {
-        completedTasks++;
-      }
-
-      // Count subtasks
-      if (task.subtasks.length > 0) {
-        totalTasks += task.subtasks.length;
-        completedTasks += task.subtasks.filter(st => st.completed).length;
-      }
-    });
-
-    return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  const handleChange = (
+    e:
+      | React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+      | { target: { name: string; value: string } }
+  ) => {
+    const { name, value } = e.target;
+    setScheduleData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const progressPercentage = calculateProgress();
+  const handleEdit = (name: string) => {
+    if (user && schedule?.assignee?.some((assi) => assi.id === user?.id)) {
+      setIsEditing(name);
+      if (name !== "none") {
+        useAuthStore.getState().setAlert("편집 모드로 전환되었습니다.", "info");
+      } else {
+        useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
+      }
+    } else {
+      useAuthStore.getState().setAlert("스케줄을 수정할 권한이 없습니다.", "error");
+    }
+  };
 
-  // Calculate if user is assignee inside the component body to ensure it's always up-to-date
-  const isUserAssignee = user && milestoneData?.assignee?.some(assi => assi.id === user.id);
+  const handleCancelEdit = () => {
+    setIsEditing("none");
+    setScheduleData(schedule);
+    useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
+  };
+
+  const handleSelectChange = (name: string, value: string | string[]) => {
+    setScheduleData(prevData => ({ ...prevData, [name]: value }));
+  };
 
   const handleAssigneeClick = (assiId: number) => {
     localStorage.setItem('selectedAssiId', assiId.toString());
@@ -70,113 +83,48 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     onClose();
   };
 
-  const handleTaskClick = (taskId: number) => {
-    localStorage.setItem('selectedTaskId', taskId.toString());
-
-    const projectId = params?.projectId ? String(params.projectId) : 'default';
-    router.push(`/platform/${projectId}/tasks`);
-
-    onClose();
-  };
-
-  const handleRemoveTag = (tagIndex: number) => {
-    const updatedTags = milestoneData.tags.filter((_, index) => index !== tagIndex);
-    setMilestoneData({ ...milestoneData, tags: updatedTags });
-  };
-
-  const handleSelectChange = (name: string, value: string | string[]) => {
-    setMilestoneData(prevData => ({ ...prevData, [name]: value }));
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-
-    // Validate end date is not earlier than start date
-    if (name === 'endDate') {
-      const startDate = milestoneData.startDate;
-      if (startDate && value && new Date(value) < new Date(startDate)) {
-        useAuthStore.getState().setAlert("종료일은 시작일보다 빠를 수 없습니다.", "warning");
-        setMilestoneData({ ...milestoneData, [name]: milestoneData[name] });
-        return;
-      }
-    }
-
-    // Validate start date is not later than end date
-    if (name === 'startDate') {
-      const endDate = milestoneData.endDate;
-      if (endDate && value && new Date(endDate) < new Date(value)) {
-        useAuthStore.getState().setAlert("시작일은 종료일보다 늦을 수 없습니다.", "warning");
-        setMilestoneData({ ...milestoneData, [name]: milestoneData[name] });
-        return;
-      }
-    }
-
-    setMilestoneData({ ...milestoneData, [name]: value });
-  };
-
-  const handleDelete = () => {
-    useAuthStore.getState().setConfirm("마일스톤을 삭제하시겠습니까?", async () => {
-      try {
-        await deleteMilestone(project?.id ?? "", milestone.id);
-        useAuthStore.getState().setAlert("마일스톤 삭제에 성공했습니다.", "success");
-        useAuthStore.getState().clearConfirm();
-        onClose();
-      } catch (error) {
-        console.error("Error deleting milestone:", error);
-        useAuthStore.getState().setAlert("마일스톤 삭제에 실패했습니다.", "error");
-      }
-    });
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !isComposing) {
-      e.preventDefault();
-      if (newTag.trim() !== '') {
-        setMilestoneData({
-          ...milestoneData,
-          tags: [...milestoneData.tags, newTag.trim()]
-        });
-        setNewTag('');
-      }
-    }
-  };
-
-  const handleEdit = (name: string) => {
-    if (user && milestoneData.assignee?.some(a => a.id === user?.id)) {
-      setIsEditing(name);
-      if (name !== "none") {
-        useAuthStore.getState().setAlert("편집 모드로 전환되었습니다.", "info");
-      } else {
-        useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
-      }
-    } else {
-      useAuthStore.getState().setAlert("담당자가 아니므로 수정할 수 없습니다.", "warning");
-    }
-  };
-
-  const handleSaveEdit = async () => {
+  const handleSave = async () => {
     try {
-      await updateMilestone(params?.projectId ? String(params.projectId) : 'default', milestone.id, {
-        ...milestoneData,
-        assignee_id: milestoneData.assignee.map(a => a.id)
+      await updateSchedule(project?.id ? String(project.id) : "0", schedule.id, {
+        ...scheduleData,
+        title: scheduleData.title ?? "",
+        description: scheduleData.description ?? "",
+        link: scheduleData.link ?? "",
+        start_time: scheduleData.start_time ?? "",
+        end_time: scheduleData.end_time ?? "",
+        assignee_id: scheduleData.assignee?.map((a) => a.id) ?? [],
+        where: scheduleData.where ?? "",
+        status: scheduleData.status ?? "",
+        memo: scheduleData.memo ?? "",
       });
-      useAuthStore.getState().setAlert("마일스톤이 성공적으로 수정되었습니다.", "success");
-      setIsEditing("none");
+
+      useAuthStore.getState().setAlert("스케줄 수정에 성공했습니다.", "success");
+      onClose();
     } catch (error) {
-      console.error("Error updating milestone:", error);
-      useAuthStore.getState().setAlert("마일스톤 수정에 실패했습니다.", "error");
+      console.error("Error updating schedule:", error);
+      useAuthStore.getState().setAlert("스케줄 수정에 실패했습니다.", "error");
     } finally {
       setIsEditing("none");
     }
   };
 
-  const handleCancelEdit = () => {
-    setMilestoneData(milestone);
-    setIsEditing("none");
-    useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
+  const handleDelete = () => {
+    useAuthStore.getState().setConfirm("스케줄을 삭제하시겠습니까?", async () => {
+      try {
+        await deleteSchedule(project?.id ?? "", schedule.id);
+        useAuthStore
+          .getState()
+          .setAlert("스케줄 삭제에 성공했습니다.", "success");
+        useAuthStore.getState().clearConfirm();
+        onClose();
+      } catch (error) {
+        console.error("Error deleting schedule:", error);
+        useAuthStore.getState().setAlert("스케줄 삭제에 실패했습니다.", "error");
+      }
+    });
   };
 
-  const modalHeader = (
+  const headerContent = (
     <div className="flex items-start justify-between">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
@@ -185,91 +133,63 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             <input
               type="text"
               name="title"
-              value={milestoneData?.title}
+              value={scheduleData?.title}
               onChange={handleChange}
-              className="text-xl font-semibold py-1 px-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
-              placeholder="작업 제목을 입력하세요"
+              className="text-lg font-semibold py-1 px-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+              placeholder={`${schedule.type === "meeting" ? "회의" : "이벤트"} 제목을 입력하세요`}
             />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <span className="text-xl font-semibold text-text-primary">
-                {milestoneData?.title}
+                {scheduleData?.title}
               </span>
-              <FontAwesomeIcon
-                icon={faPencil}
-                size="xs"
-                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() =>
-                  isEditing === "title" ? handleEdit("none") : handleEdit("title")
-                }
-              />
+              {isUserAssignee && (
+                <FontAwesomeIcon
+                  icon={faPencil}
+                  size="xs"
+                  className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  onClick={() => handleEdit("title")}
+                />
+              )}
             </div>
           )}
         </div>
+
         <div className="flex flex-wrap gap-2">
+          <Badge
+            content={scheduleData?.type === "meeting" ? "회의" : "이벤트"}
+            color="teal"
+            isEditable={false}
+            className="!rounded-full !px-2 !py-0.5"
+          />
           {isEditing === "status" ? (
             <Select
               options={[
                 { name: "status", value: "not-started", label: "NOT STARTED" },
                 { name: "status", value: "in-progress", label: "IN PROGRESS" },
-                { name: "status", value: "done", label: "DONE" },
+                { name: "status", value: "done", label: "Done" },
               ]}
-              value={milestoneData.status}
+              value={scheduleData.status}
               onChange={(value) => handleSelectChange("status", value as string)}
-              color={getStatusColorName(milestoneData.status)}
+              color={getStatusColorName(scheduleData.status)}
               className="px-3 py-1 rounded-full text-sm"
             />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
-                content={milestoneData.status.replace('-', ' ').toUpperCase()}
-                color={getStatusColorName(milestoneData.status)}
+                content={scheduleData.status.replace('-', ' ').toUpperCase()}
+                color={getStatusColorName(scheduleData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
               />
-              <FontAwesomeIcon
-                icon={faPencil}
-                size="xs"
-                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() =>
-                  isEditing === "status" ? handleEdit("none") : handleEdit("status")
-                }
-              />
-            </div>
-          )}
-          {isEditing === "priority" ? (
-            <Select
-              options={[
-                { name: "priority", value: "high", label: "HIGH" },
-                { name: "priority", value: "medium", label: "MEDIUM" },
-                { name: "priority", value: "low", label: "LOW" },
-              ]}
-              value={milestoneData.priority}
-              onChange={(value) => handleSelectChange("priority", value as string)}
-              color={getPriorityColorName(milestoneData.priority)}
-              className="px-3 py-1 rounded-full text-sm"
-            />
-          ) : (
-            <div className="flex items-center gap-2 group relative">
-              <Badge
-                content={
-                  <div className="flex items-center gap-1">
-                    <Flag className="w-4 h-4" />
-                    {milestoneData.priority.toUpperCase()}
-                  </div>
-                }
-                color={getPriorityColorName(milestoneData.priority)}
-                isEditable={false}
-                className="!rounded-full !px-2 !py-0.5"
-              />
-              <FontAwesomeIcon
-                icon={faPencil}
-                size="xs"
-                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() =>
-                  isEditing === "priority" ? handleEdit("none") : handleEdit("priority")
-                }
-              />
+              {isUserAssignee && (
+                <FontAwesomeIcon
+                  icon={faPencil}
+                  size="xs"
+                  className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  onClick={() => handleEdit("status")}
+                />
+              )}
             </div>
           )}
         </div>
@@ -286,7 +206,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             </button>
 
             <button
-              onClick={handleSaveEdit}
+              onClick={handleSave}
               className="flex items-center gap-1.5 text-sm bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-md transition-all duration-200 font-medium"
             >
               <FontAwesomeIcon icon={faCheck} />
@@ -298,29 +218,27 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     </div>
   )
 
-  // Footer content (conditionally rendered)
   const modalFooter =
     isEditing !== "none" ? (
       <div className="flex gap-2 justify-end">
         <button
           onClick={handleDelete}
           className="flex items-center gap-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-2 rounded-md transition-all duration-200 font-medium cursor-pointer"
-          aria-label="작업 삭제"
+          aria-label="스케줄 삭제"
         >
           <TrashBin />
-          작업 삭제
+          스케줄 삭제
         </button>
       </div>
     ) : null;
 
   return (
     <ModalTemplete
-      header={modalHeader}
-      footer={modalFooter}
       isOpen={isOpen}
       onClose={onClose}
+      header={headerContent}
+      footer={modalFooter}
     >
-      {/* Overview Accordian */}
       <Accordion
         title="Overview"
         icon={InfoCircle}
@@ -342,16 +260,16 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             {isEditing === "description" ? (
               <textarea
                 name="description"
-                value={milestoneData.description}
+                value={scheduleData.description}
                 onChange={handleChange}
                 className="w-full p-3 rounded-lg m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
-                placeholder="마일스톤의 설명을 작성하세요"
+                placeholder="스케줄의 설명을 작성하세요"
               />
             ) : (
-              milestoneData.description ? (
-                <p className="text-muted-foreground leading-relaxed">{milestoneData.description}</p>
+              scheduleData.description ? (
+                <p className="text-muted-foreground leading-relaxed">{scheduleData.description}</p>
               ) : (
-                <p className="text-text-secondary">마일스톤의 설명이 없습니다.</p>
+                <p className="text-text-secondary">스케줄의 설명이 없습니다.</p>
               )
             )}
           </div>
@@ -360,13 +278,13 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             <div className="space-y-2">
               <h4 className="font-medium">Created</h4>
               <p className="text-sm text-muted-foreground">
-                {new Date(milestone.createdAt).toLocaleDateString()} by {project?.members.find((member) => member.id === milestone.createdBy)?.name}
+                {new Date(scheduleData?.created_at).toLocaleDateString()} by {project?.members.find((member) => member.id === scheduleData?.created_by)?.name}
               </p>
             </div>
             <div className="space-y-2">
               <h4 className="font-medium">Last Updated</h4>
               <p className="text-sm text-muted-foreground">
-                {new Date(milestone.updatedAt).toLocaleDateString()} by {project?.members.find((member) => member.id === milestone.updatedBy)?.name}
+                {new Date(scheduleData?.updated_at).toLocaleDateString()} by {project?.members.find((member) => member.id === scheduleData?.updated_by)?.name}
               </p>
             </div>
           </div>
@@ -395,16 +313,16 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               />
             </div>
             {isEditing === "startDate" ? (
-              <input
-                type="date"
-                name="startDate"
-                value={milestoneData.startDate}
+              <DateTimePicker
+                id="start_time"
+                name="start_time"
+                value={scheduleData.start_time}
                 onChange={handleChange}
-                className="w-full p-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                className="text-sm"
               />
             ) : (
               <p className="text-sm text-muted-foreground">
-                {milestoneData.startDate}
+                {format(new Date(scheduleData.start_time), "yyyy년 MM월 dd일 a hh:mm", { locale: ko })}
               </p>
             )}
           </div>
@@ -424,89 +342,138 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               />
             </div>
             {isEditing === "endDate" ? (
-              <input
-                type="date"
-                name="endDate"
-                value={milestoneData.endDate}
+              <DateTimePicker
+                id="end_time"
+                name="end_time"
+                value={scheduleData.end_time}
                 onChange={handleChange}
-                className="w-full p-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                minDate={scheduleData.start_time}
+                minTime={scheduleData.start_time ? format(new Date(scheduleData.start_time), "hh:mm a", { locale: ko }) : undefined}
+                className="text-sm"
               />
             ) : (
               <p className="text-sm text-muted-foreground">
-                {milestoneData.endDate}
+                {format(new Date(scheduleData.end_time), "yyyy년 MM월 dd일 a hh:mm", { locale: ko })}
               </p>
             )}
           </div>
         </div>
       </Accordion>
 
-      {/* Progress & tasks Accordian */}
+      {/* Location Accordian */}
       <Accordion
-        title={`Progress & Tasks (${milestoneData.subtasks.filter(st => st.status === "done").length}/${milestoneData.subtasks.length})`}
-        icon={FileCheck}
+        title="Location"
+        icon={MapPin}
         defaultOpen
       >
-        <div className="space-y-4">
-          <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
-            <div className="flex items-center justify-between">
-              <span className="font-medium">Overall Progress</span>
-              <span className="text-sm font-medium">{progressPercentage}%</span>
+        <div className="flex flex-col gap-2 space-y-2">
+          {scheduleData.type === "meeting" && isEditing === "location" ? (
+            <Select
+              options={[
+                { name: "where", value: "Zoom", label: "Zoom" },
+                { name: "where", value: "Google Meet", label: "Google Meet" },
+                { name: "where", value: "TeamUp", label: "TeamUp" },
+              ]}
+              value={scheduleData?.where}
+              color={getPlatformColorName(scheduleData.where)}
+              onChange={(value) => handleSelectChange("where", value as string)}
+              className="w-fit px-3 py-1 rounded-md"
+              dropdownAlign="start"
+            />
+          ) : scheduleData.type === "event" && isEditing === "location" ? (
+            <input
+              type="text"
+              id="where"
+              name="where"
+              value={scheduleData.where}
+              onChange={handleChange}
+              className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+              placeholder="이벤트 장소를 입력해주세요"
+              required
+            />
+          ) : (
+            <div className="flex items-center gap-2 group relative">
+              <Badge
+                content={
+                  <div className={`flex items-center gap-2 px-3 py-1 rounded-md ${getPlatformColor(scheduleData.where)}`}>
+                    {scheduleData.type === "meeting" && scheduleData.where === "Zoom" ? (
+                      <FontAwesomeIcon icon={faVideo} />
+                    ) : scheduleData.type === "meeting" && scheduleData.where === "Google Meet" ? (
+                      <FontAwesomeIcon icon={faGoogle} />
+                    ) : scheduleData.type === "meeting" && scheduleData.where === "TeamUp" ? (
+                      <MiniLogo className="text-xs!" />
+                    ) : scheduleData.type === "event" ? (
+                      <MapPin className="h-5 w-5" />
+                    ) : (
+                      <MiniLogo className="text-xs!" />
+                    )}
+                    <span>{scheduleData.where}</span>
+                  </div>
+                }
+                color="none"
+                isEditable={false}
+                className={`!p-0 w-fit`}
+              />
+              <FontAwesomeIcon
+                icon={faPencil}
+                size="xs"
+                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                onClick={() =>
+                  isEditing === "location" ? handleEdit("none") : handleEdit("location")
+                }
+              />
             </div>
-            <div className="w-full h-2 bg-gray-200 rounded-full">
-              <div className="h-2 bg-point-color-indigo rounded-full" style={{ width: `${progressPercentage}%` }} />
+          )}
+          {isEditing === "link" ? (
+            <div className="flex items-center gap-2">
+              <LinkIcon className="text-text-secondary" />
+              <input
+                type="url"
+                value={scheduleData.link}
+                onChange={(e) => handleSelectChange("link", e.target.value)}
+                className="w-full border border-component-border rounded-lg p-2 focus:outline-none focus:border-component-border-hover"
+                placeholder="링크를 입력해주세요"
+              />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            {milestoneData.subtasks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-6">
-                <span className="text-text-secondary">하위 작업이 없습니다.</span>
+          ) : (
+            <div className="flex items-center gap-2 group relative">
+              <div className="flex items-center gap-2">
+                <LinkIcon className="text-text-secondary" />
+                <p className="text-sm text-muted-foreground">
+                  {scheduleData.where === "TeamUp" ? (
+                    <span className="text-text-secondary">TeamUp의 화상통화를 이용하세요.</span>
+                  ) : scheduleData.type === "event" ? (
+                    <span className="text-text-secondary">이벤트는 링크가 없습니다.</span>
+                  ) : (
+                    scheduleData.link ? (
+                      <Link
+                        href={scheduleData.link || ""}
+                        target="_blank"
+                        className="text-blue-500 hover:underline"
+                      >
+                        {scheduleData.link}
+                      </Link>
+                    ) : (
+                      <span className="text-text-secondary">링크가 없습니다.</span>
+                    ))}
+                </p>
               </div>
-            ) : (
-              milestoneData.subtasks.map((subtask) => (
-                <div key={subtask.id} className="flex flex-col bg-component-secondary-background border border-component-border p-3 rounded-lg">
-                  <div className="flex gap-2">
-                    <input
-                      type="checkbox"
-                      readOnly
-                      checked={
-                        subtask.subtasks.length > 0 &&
-                        subtask.subtasks.every((st) => st.completed) ||
-                        subtask.status === 'done'
-                      }
-                      className='rounded bg-component-secondary-background border-component-border'
-                    />
-                    <span className={`text-sm cursor-pointer hover:text-blue-400 ${subtask.subtasks.length > 0 && subtask.subtasks.every(st => st.completed) || subtask.status === 'done' ?
-                      'text-text-secondary line-through' : 'text-text-primary'
-                      }`}
-                      onClick={() => handleTaskClick(subtask.id)}
-                    >
-                      {subtask.title}
-                    </span>
-                  </div>
-                  <div className="ml-8 mt-2">
-                    {
-                      subtask.subtasks.map((sub, idx) => (
-                        <div key={idx} className='space-x-2'>
-                          <input
-                            type="checkbox"
-                            readOnly
-                            checked={sub.completed}
-                            className='rounded bg-component-secondary-background border-component-border'
-                          />
-                          <span className={`text-sm ${sub.completed ? 'text-text-secondary line-through' : 'text-text-primary'}`}>{sub.title}</span>
-                        </div>
-                      ))
-                    }
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+              {scheduleData.where !== "TeamUp" && (
+                <FontAwesomeIcon
+                  icon={faPencil}
+                  size="xs"
+                  className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  onClick={() =>
+                    isEditing === "link" ? handleEdit("none") : handleEdit("link")
+                  }
+                />
+              )}
+            </div>
+          )}
         </div>
       </Accordion>
 
-      {/* Assignees Accordian */}
+      {/* Assignee Accordian */}
       <Accordion
         title="Assignees"
         icon={User}
@@ -517,14 +484,14 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               <div className="mb-3">
                 <p className="text-sm text-text-secondary">
                   선택된 담당자:{" "}
-                  {milestoneData.assignee?.length ?? 0 > 0
-                    ? `${milestoneData.assignee?.length}명`
+                  {scheduleData.assignee?.length ?? 0 > 0
+                    ? `${scheduleData.assignee?.length}명`
                     : "없음"}
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {project?.members.map((member) => {
-                  const isSelected = milestoneData.assignee?.some(
+                {project?.members?.map((member) => {
+                  const isSelected = scheduleData.assignee?.some(
                     (a) => a.id === member.id
                   );
                   return (
@@ -533,12 +500,12 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                       onClick={() => {
                         if (isSelected) {
                           if (
-                            milestoneData.assignee?.length &&
-                            milestoneData.assignee?.length > 1
+                            scheduleData.assignee?.length &&
+                            scheduleData.assignee?.length > 1
                           ) {
-                            setMilestoneData({
-                              ...milestoneData,
-                              assignee: milestoneData.assignee?.filter(
+                            setScheduleData({
+                              ...scheduleData,
+                              assignee: scheduleData.assignee?.filter(
                                 (a) => a.id !== member.id
                               ),
                             });
@@ -551,9 +518,9 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                               );
                           }
                         } else {
-                          setMilestoneData({
-                            ...milestoneData,
-                            assignee: [...(milestoneData.assignee ?? []), member],
+                          setScheduleData({
+                            ...scheduleData,
+                            assignee: [...(scheduleData.assignee ?? []), member],
                           });
                         }
                       }}
@@ -574,8 +541,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                                   : "opacity-100 rotate-0 scale-100"
                                   }`}
                                 quality={100}
-                                width={40}
-                                height={40}
+                                width={60}
+                                height={60}
                                 onError={(e) => {
                                   e.currentTarget.src =
                                     "/DefaultProfile.jpg";
@@ -618,8 +585,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               <div className="flex items-center gap-2 group relative">
                 <p className="text-sm text-text-secondary">
                   담당자:{" "}
-                  {milestoneData.assignee?.length ?? 0 > 0
-                    ? `${milestoneData.assignee?.length}명`
+                  {scheduleData.assignee?.length ?? 0 > 0
+                    ? `${scheduleData.assignee?.length}명`
                     : "없음"}
                 </p>
                 <FontAwesomeIcon
@@ -632,7 +599,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {milestoneData?.assignee?.map((assi) => (
+                {scheduleData?.assignee?.map((assi) => (
                   <div
                     key={assi?.id}
                     className="flex items-center gap-3 p-2 rounded-lg bg-component-tertiary-background border border-component-border transform transition-all duration-300 hover:bg-component-tertiary-background/60 hover:border-point-color-indigo cursor-pointer"
@@ -679,54 +646,36 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
         </div>
       </Accordion>
 
-      {/* Tags Accordian */}
+      {/* Memo Accordian */}
       <Accordion
-        title="Tags & Labels"
-        icon={Tag}
+        title="Memo"
+        icon={Annotation}
       >
-        <div className="flex flex-wrap gap-2 py-1">
-          {isEditing === "tags" ? (
-            <>
-              {milestoneData.tags.map((tag, index) => (
-                <Badge
-                  key={index}
-                  content={tag}
-                  color="pink"
-                  isEditable={true}
-                  onRemove={() => handleRemoveTag(index)}
-                />
-              ))}
-              <div className="flex">
-                <input
-                  type="text"
-                  value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  onCompositionStart={() => setIsComposing(true)}
-                  onCompositionEnd={() => setIsComposing(false)}
-                  placeholder="새 태그 추가"
-                  className="px-2 rounded-md bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
-                />
-              </div>
-            </>
-          ) : (
+        {isEditing === "memo" ? (
+          <textarea
+            value={scheduleData.memo}
+            onChange={(e) => handleSelectChange("memo", e.target.value)}
+            className="w-full border border-component-border rounded-lg p-2 focus:outline-none focus:border-component-border-hover resize-none"
+            placeholder="메모를 입력해주세요"
+          />
+        ) : (
+          scheduleData.memo ? (
             <div className="flex items-center gap-2 group relative">
-              {milestoneData?.tags.map((tag, index) => (
-                <Badge key={index} content={tag} color="pink" />
-              ))}
+              <p className="text-sm text-text-secondary">
+                {scheduleData.memo}
+              </p>
               <FontAwesomeIcon
                 icon={faPencil}
                 size="xs"
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                onClick={() =>
-                  isEditing === "tags" ? handleEdit("none") : handleEdit("tags")
-                }
+                onClick={() => handleEdit("memo")}
               />
             </div>
-          )}
-        </div>
+          ) : (
+            <p className="text-sm text-text-secondary">메모가 없습니다.</p>
+          )
+        )}
       </Accordion>
     </ModalTemplete>
   );
 }
-

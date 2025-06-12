@@ -39,7 +39,7 @@ export default function UserDropdown() {
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 relative rounded-full flex items-center justify-center bg-component-tertiary-background border border-component-secondary-border text-text-primary">
             {user?.profileImage ? (
-              <Image src={user.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={32} height={32} />
+              <Image src={user.profileImage} alt="Profile" className="object-fit rounded-full" quality={100} width={32} height={32} />
             ) : (
               <p>{user?.name.charAt(0)}</p>
             )}

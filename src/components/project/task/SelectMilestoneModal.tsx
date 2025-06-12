@@ -3,6 +3,7 @@ import { useProject } from '@/contexts/ProjectContext';
 import { MileStone } from '@/types/MileStone';
 import TaskCreateModal from '@/components/project/task/TaskCreateModal';
 import ModalTemplete from '@/components/ModalTemplete';
+import Badge from '@/components/ui/Badge';
 
 interface SelectMilestoneModalProps {
   isOpen: boolean;
@@ -49,7 +50,7 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
         onClick={handleSelectMilestone}
         className={`px-4 py-2 rounded-lg ${
           !selectedMilestone
-            ? "bg-blue-500/30 text-blue-300/70 cursor-not-allowed"
+            ? "bg-blue-600/50 text-white cursor-not-allowed"
             : "bg-blue-600 hover:bg-blue-700 text-white"
         } transition-colors flex items-center active:scale-95`}
       >
@@ -105,9 +106,7 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
                 <div className="mt-2 text-sm text-text-secondary">{milestone.description}</div>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {milestone.tags.map((tag, idx) => (
-                    <span key={idx} className="px-2 py-1 rounded-md text-xs bg-component-secondary-background text-text-secondary">
-                      {tag}
-                    </span>
+                    <Badge key={idx} content={tag} color="red" className="text-xs" />
                   ))}
                 </div>
               </div>

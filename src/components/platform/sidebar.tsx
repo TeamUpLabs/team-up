@@ -1,13 +1,12 @@
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { useState, useEffect } from "react";
-import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
+import { ChevronDown, ChevronUp, ArrowRightToBracket } from 'flowbite-react-icons/outline';
 import { useProject } from "@/contexts/ProjectContext";
 
 interface NavItem {
-  icon: IconDefinition;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  activeIcon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
   href: string;
   isActive?: boolean;
@@ -34,13 +33,13 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
   const [showLabels, setShowLabels] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { project } = useProject();
-  
+
   useEffect(() => {
     if (onMinimizeChange) {
       onMinimizeChange(isMinimized);
     }
   }, [isMinimized, onMinimizeChange]);
-  
+
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (!isMinimized) {
@@ -52,18 +51,18 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
     }
     return () => clearTimeout(timer);
   }, [isMinimized]);
-  
+
   // Check if we're on mobile
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024); // 1024px is the lg breakpoint in Tailwind
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-  
+
   // 임시 채널 데이터
   const channels: Channel[] = [
     { id: 'general', name: '일반' },
@@ -73,49 +72,51 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
 
   // 참여 요청이 있는지 확인 (프로젝트 컨텍스트가 있는 경우)
   const hasParticipationRequests = project?.participationRequestMembers && project.participationRequestMembers.length > 0;
-  
+
   // 나가기 항목과 다른 항목 분리
   const exitItem = navItems.find(item => item.label === "나가기");
   const regularItems = navItems.filter(item => item.label !== "나가기");
 
   return (
-    <div 
-      className={`fixed h-full border-r border-component-border z-[8500] bg-component-background transition-all duration-300 lg:translate-x-0 ${
-        isMobile ? 'w-64' : (isMinimized ? 'w-16' : 'w-64')
-      } ${
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}
+    <div
+      className={`fixed h-full border-r border-component-border z-[8500] bg-component-background transition-all duration-300 lg:translate-x-0 ${isMobile ? 'w-64' : (isMinimized ? 'w-16' : 'w-64')
+        } ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       onMouseEnter={() => !isMobile && setIsMinimized(false)}
       onMouseLeave={() => !isMobile && setIsMinimized(true)}
     >
       <div className="flex flex-col h-full">
         <div>
           <div className="flex items-center justify-center py-5 px-6 transition-all duration-300">
-            {(!isMinimized || isMobile) ? (
-              <Link href={titleHref} className={`block transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
-                <h1 className="text-xl font-bold text-text-primary text-center whitespace-nowrap">{title}</h1>
-              </Link>
-            ) : (
-              <Link href={titleHref} className="block">
-                <h1 className="text-xl font-bold text-text-primary text-center">{miniTitle}</h1>
-              </Link>
-            )}
+            {!title ? (
+              <div className="h-8 bg-component-tertiary-background rounded w-16"></div>
+            ) : (!isMinimized || isMobile) ? (
+                <Link href={titleHref} className={`block transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
+                  <h1 className="text-xl font-bold text-text-primary text-center whitespace-nowrap">{title}</h1>
+                </Link>
+              ) : (
+                <Link href={titleHref} className="block">
+                  <h1 className="text-xl font-bold text-text-primary text-center">{miniTitle}</h1>
+                </Link>
+              )}
           </div>
           <nav className="space-y-2">
             {regularItems.map((item, index) => {
               if (item.label === "채팅") {
+                const IconComponent = item.icon;
+                const ActiveIconComponent = item.activeIcon;
                 return (
                   <div key={index} className="mx-2">
-                    <button 
+                    <button
                       onClick={() => setIsChatOpen(!isChatOpen)}
-                      className={`flex items-center px-4 py-2 rounded-lg w-full transition-all duration-300 ${
-                        item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
-                      } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${
-                        (isMinimized && !isMobile) ? 'justify-center' : 'justify-between'
-                      }`}
+                      className={`flex items-center px-4 py-2 rounded-lg w-full transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
+                        } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center' : 'justify-between'
+                        }`}
                     >
                       <div className="flex items-center">
-                        <FontAwesomeIcon icon={item.icon} className={`w-5 ${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />
+                        {item.isActive ?
+                          <ActiveIconComponent className={`${(isMinimized && !isMobile) ? '' : 'mr-3'}`} /> :
+                          <IconComponent className={`${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />}
                         {(!isMinimized || isMobile) && (
                           <span className={`transition-opacity duration-200 whitespace-nowrap ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
                             {item.label}
@@ -123,10 +124,9 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                         )}
                       </div>
                       {(!isMinimized || isMobile) && (
-                        <FontAwesomeIcon 
-                          icon={isChatOpen ? faChevronUp : faChevronDown} 
-                          className={`w-3 transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}
-                        />
+                        isChatOpen ?
+                          <ChevronUp className={`transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`} /> :
+                          <ChevronDown className={`transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`} />
                       )}
                     </button>
                     {isChatOpen && (!isMinimized || isMobile) && (showLabels || isMobile) && (
@@ -145,28 +145,31 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                   </div>
                 );
               }
-              
+
               // 프로젝트 레이아웃에서 설정 메뉴에 알림 표시 추가
               if (item.label === "설정" && (hasParticipationRequests || item.hasNotification)) {
+                const IconComponent = item.icon;
+                const ActiveIconComponent = item.activeIcon;
                 const notificationCount = project?.participationRequestMembers?.length || '';
-                
+
                 return (
-                  <Link 
-                    key={index} 
-                    href={item.href} 
-                    className={`flex items-center mx-2 px-4 py-2 rounded-lg transition-all duration-300 ${
-                      item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
-                    } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${
-                      (isMinimized && !isMobile) ? 'justify-center' : ''
-                    }`}
+                  <Link
+                    key={index}
+                    href={item.href}
+                    className={`flex items-center mx-2 rounded-lg transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
+                      } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
+                      }`}
+                    title={(isMinimized && !isMobile) ? item.label : ''}
                   >
-                    <FontAwesomeIcon icon={item.icon} className={`w-5 ${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />
+                    {item.isActive ?
+                      <ActiveIconComponent className={`${(isMinimized && !isMobile) ? '' : 'mr-3'}`} /> :
+                      <IconComponent className={`${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />}
                     {(!isMinimized || isMobile) && (
                       <span className={`transition-opacity duration-200 whitespace-nowrap ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
                         {item.label}
                       </span>
                     )}
-                    <span className={`${(isMinimized && !isMobile) ? 'absolute right-2' : 'absolute right-4'} flex h-5 w-5`}>
+                    <span className={`${(isMinimized && !isMobile) ? 'absolute right-2 -translate-y-1/2' : 'absolute right-4'} flex h-5 w-5`}>
                       <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-100"></span>
                       <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
                         {notificationCount}
@@ -175,19 +178,21 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                   </Link>
                 );
               }
-              
+
+              const IconComponent = item.icon;
+              const ActiveIconComponent = item.activeIcon;
               return (
-                <Link 
-                  key={index} 
-                  href={item.href} 
-                  className={`flex items-center mx-2 px-4 py-2 rounded-lg transition-all duration-300 ${
-                    item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
-                  } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${
-                    (isMinimized && !isMobile) ? 'justify-center' : ''
-                  }`}
+                <Link
+                  key={index}
+                  href={item.href}
+                  className={`flex items-center mx-2 rounded-lg transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
+                    } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
+                    }`}
                   title={(isMinimized && !isMobile) ? item.label : ''}
                 >
-                  <FontAwesomeIcon icon={item.icon} className={`w-5 ${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />
+                  {item.isActive ?
+                    <ActiveIconComponent className={`${(isMinimized && !isMobile) ? '' : 'mr-3'}`} /> :
+                    <IconComponent className={`${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />}
                   {(!isMinimized || isMobile) && (
                     <span className={`transition-opacity duration-200 whitespace-nowrap ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
                       {item.label}
@@ -198,20 +203,18 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
             })}
           </nav>
         </div>
-        
+
         {/* 나가기 버튼을 맨 아래 배치 */}
         <div className="mt-auto mb-4">
           {exitItem && (
-            <Link 
-              href={exitItem.href} 
-              className={`flex items-center mx-2 px-4 py-2 rounded-lg transition-all duration-300 ${
-                exitItem.isActive ? 'text-red-500 bg-red-500/10' : 'text-text-secondary'
-              } hover:bg-red-500/10 hover:text-red-500 ${
-                (isMinimized && !isMobile) ? 'justify-center' : ''
-              }`}
+            <Link
+              key="exit"
+              href={exitItem.href}
+              className={`flex items-center mx-2 rounded-lg transition-all duration-300 text-text-secondary hover:bg-red-500/10 hover:text-red-500 ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
+                }`}
               title={(isMinimized && !isMobile) ? exitItem.label : ''}
             >
-              <FontAwesomeIcon icon={exitItem.icon} className={`w-5 ${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />
+              <ArrowRightToBracket className={`${(isMinimized && !isMobile) ? '' : 'mr-3'}`} />
               {(!isMinimized || isMobile) && (
                 <span className={`transition-opacity duration-200 whitespace-nowrap ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
                   {exitItem.label}

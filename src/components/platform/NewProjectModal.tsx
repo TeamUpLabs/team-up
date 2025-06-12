@@ -1,20 +1,27 @@
-"use client";
-
-import { useState, KeyboardEvent, useEffect } from 'react';
+import ModalTemplete from "@/components/ModalTemplete";
+import { useState, KeyboardEvent, useEffect } from "react";
+import { InfoCircle, CalendarWeek, Layers, UsersGroup, MapPin, AngleLeft, AngleRight } from "flowbite-react-icons/outline";
+import { useAuthStore } from "@/auth/authStore";
+import DatePicker from "@/components/ui/DatePicker";
+import Select from "@/components/ui/Select";
+import Badge from "@/components/ui/Badge";
 import { createProject } from '@/hooks/getProjectData';
 import { updateProjectMember } from '@/hooks/getMemberData';
-import { useAuthStore } from '@/auth/authStore';
-import SubmitBtn from '@/components/SubmitBtn';
-import ModalTemplete from '@/components/ModalTemplete';
-import Badge from '@/components/Badge';
 
 interface NewProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-
 export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProps) {
+  const [step, setStep] = useState(1);
+
+  const totalSteps = 5
+  const progress = (step / totalSteps) * 100
+
+  const stepIcons = [InfoCircle, CalendarWeek, Layers, UsersGroup, MapPin]
+  const stepTitles = ["Basic Info", "Timeline", "Category", "Team", "Presence"]
+
   const user = useAuthStore((state) => state.user);
   const [formData, setFormData] = useState({
     title: '',
@@ -29,13 +36,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     endDate: '',
   });
 
-  // Add state for role and tech stack inputs
   const [roleInput, setRoleInput] = useState('');
   const [techStackInput, setTechStackInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
-
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
-
   const [dateError, setDateError] = useState(false);
 
   useEffect(() => {
@@ -45,6 +48,48 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
       setDateError(false);
     }
   }, [formData.startDate, formData.endDate]);
+
+  // Helper to format Date to YYYY-MM-DD string
+  const formatDateToString = (date: Date | undefined): string => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // Helper to parse YYYY-MM-DD string to Date object (local timezone)
+  const parseStringToDate = (dateString: string): Date | undefined => {
+    if (!dateString) return undefined;
+    const parts = dateString.split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed for Date constructor
+      const day = parseInt(parts[2], 10);
+      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+        return new Date(year, month, day); // Interprets as local date
+      }
+    }
+    return undefined;
+  };
+
+  const handleStartDateChange = (date: Date | undefined) => {
+    setFormData(prevData => ({
+      ...prevData,
+      startDate: date ? formatDateToString(date) : "",
+    }));
+  };
+
+  const handleEndDateChange = (date: Date | undefined) => {
+    setFormData(prevData => ({
+      ...prevData,
+      endDate: date ? formatDateToString(date) : "",
+    }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -92,9 +137,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     setFormData({ ...formData, techStack: updatedTechStack });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     let hasError = false;
 
     if (dateError) {
@@ -105,21 +148,13 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
       return;
     }
 
-    if (formData.title === '' || formData.description === '' || formData.projectType === '' || formData.endDate === '' || formData.roles.length === 0 || formData.techStack.length === 0 || formData.location === '' || formData.teamSize === 0) {
-      useAuthStore.getState().setAlert("모든 필드를 입력해주세요.", "error");
-      return;
-    }
-    setSubmitStatus('submitting');
-
     if (user?.id) {
       try {
         const projectId = await createProject({ ...formData, leader_id: user.id });
         await updateProjectMember(projectId, user.id);
-        setSubmitStatus('success');
         useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
 
         setTimeout(() => {
-          setSubmitStatus('idle');
           onClose();
           window.location.reload();
         }, 1000);
@@ -130,10 +165,50 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     }
   };
 
-  const handleButtonClick = () => {
-    // Create a synthetic form event
-    const syntheticEvent = { preventDefault: () => { } } as React.FormEvent<HTMLFormElement>;
-    handleSubmit(syntheticEvent);
+  const moveNextStep = (step: number) => {
+    switch (step) {
+      case 1:
+        if (!formData.title) {
+          useAuthStore
+            .getState()
+            .setAlert("프로젝트 이름을 입력해주세요.", "error");
+          return;
+        }
+        break;
+      case 2:
+        if (!formData.startDate || !formData.endDate) {
+          useAuthStore
+            .getState()
+            .setAlert("시작일과 종료일을 입력해주세요.", "error");
+          return;
+        }
+        break;
+      case 3:
+        if (!formData.projectType) {
+          useAuthStore
+            .getState()
+            .setAlert("프로젝트 유형을 선택해주세요.", "error");
+          return;
+        }
+        break;
+      case 4:
+        if (!formData.roles.length || !formData.techStack.length) {
+          useAuthStore
+            .getState()
+            .setAlert("역할과 기술 스택을 입력해주세요.", "error");
+          return;
+        }
+        break;
+      case 5:
+        if (!formData.location || !formData.teamSize) {
+          useAuthStore
+            .getState()
+            .setAlert("위치와 팀 규모를 입력해주세요.", "error");
+          return;
+        }
+        break;
+    }
+    setStep(step + 1);
   };
 
   const modalHeader = (
@@ -143,198 +218,300 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     </div>
   );
 
-  const modalContent = (
-    <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
-      <div className="space-y-6 mb-1">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium mb-1">
-            프로젝트 이름 <span className="text-point-color-purple ml-1">*</span>
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
-            placeholder="프로젝트 이름을 입력하세요"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium mb-1">
-            프로젝트 설명 <span className="text-point-color-purple ml-1">*</span>
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            rows={3}
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors resize-none"
-            placeholder="프로젝트에 대한 간략한 설명을 입력하세요"
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <div>
-            <label htmlFor="startDate" className="block text-sm font-medium mb-1">
-              프로젝트 시작일 <span className="text-point-color-purple ml-1">*</span>
-            </label>
-            <input
-              type="date"
-              id="startDate"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="endDate" className="block text-sm font-medium mb-1">
-              프로젝트 종료일 <span className="text-point-color-purple ml-1">*</span>
-            </label>
-            <input
-              type="date"
-              id="endDate"
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
-              required
-            />
-            {dateError && (
-              <p className="text-red-500 text-sm mt-2">종료일은 시작일 이후여야 합니다.</p>
-            )}
-          </div>
-
-          <div className="col-span-2">
-            <label htmlFor="projectType" className="block text-sm font-medium mb-1">
-              프로젝트 카테고리 <span className="text-point-color-purple ml-1">*</span>
-            </label>
-            <select
-              id="projectType"
-              name="projectType"
-              value={formData.projectType}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors appearance-none"
-              required
-            >
-              <option value="">카테고리 선택</option>
-              <option value="웹 개발">웹 개발</option>
-              <option value="모바일 개발">모바일 개발</option>
-              <option value="디자인">디자인</option>
-              <option value="마케팅">마케팅</option>
-              <option value="비즈니스">비즈니스</option>
-              <option value="토이">토이 프로젝트</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="space-y-5">
-          <h4 className="text-text-primary font-medium border-b border-component-border pb-2">팀 구성 정보</h4>
-
-          <div>
-            <label htmlFor="roles" className="block text-sm font-medium mb-1">
-              필요한 역할 <span className="text-point-color-purple ml-1">*</span>
-            </label>
-            <input
-              type="text"
-              id="roles"
-              name="roles"
-              value={roleInput}
-              onChange={handleRoleInput}
-              onKeyDown={(e) => handleKeyDown("role", e)}
-              onCompositionStart={() => setIsComposing(true)}
-              onCompositionEnd={() => setIsComposing(false)}
-              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
-              placeholder="역할을 입력하고 Enter 키를 누르세요"
-            />
-            <div className="mt-2 flex flex-wrap gap-2">
-              {formData.roles.map((role, index) => (
-                <Badge key={index} content={role} color="purple" isEditable={true} onRemove={() => handleRemoveRole(role)} />
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="techStack" className="block text-sm font-medium mb-1">
-              필요한 기술 <span className="text-point-color-purple ml-1">*</span>
-            </label>
-            <input
-              type="text"
-              id="techStack"
-              name="techStack"
-              value={techStackInput}
-              onChange={handleTechStackInput}
-              onKeyDown={(e) => handleKeyDown("techStack", e)}
-              onCompositionStart={() => setIsComposing(true)}
-              onCompositionEnd={() => setIsComposing(false)}
-              className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
-              placeholder="기술을 입력하고 Enter 키를 누르세요"
-            />
-            <div className="mt-2 flex flex-wrap gap-2">
-              {formData.techStack.map((tech, index) => (
-                <Badge key={index} content={tech} color="orange" isEditable={true} onRemove={() => handleRemoveTechStack(tech)} />
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <div>
-              <label htmlFor="location" className="block text-sm font-medium mb-1">
-                위치 <span className="text-point-color-purple ml-1">*</span>
-              </label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
-                placeholder="원격, 서울"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="teamSize" className="block text-sm font-medium mb-1">
-                팀 규모 <span className="text-point-color-purple ml-1">*</span>
-              </label>
-              <input
-                type="number"
-                id="teamSize"
-                name="teamSize"
-                value={formData.teamSize}
-                onChange={handleChange}
-                onWheel={(e) => e.currentTarget.blur()}
-                className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors placeholder:text-text-secondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                placeholder="5"
-                required
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-  );
-
   const modalFooter = (
-    <SubmitBtn submitStatus={submitStatus} onClick={handleButtonClick} />
-  );
+    <div className="flex justify-between">
+      <button
+        type="button"
+        className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+        onClick={() => setStep(step - 1)}
+        disabled={step === 1}
+      >
+        <AngleLeft className="h-4 w-4" />
+        Previous
+      </button>
+
+      {step < totalSteps ? (
+        <button
+          type="button"
+          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+          onClick={() => moveNextStep(step)}
+          disabled={step === totalSteps}
+        >
+          Next
+          <AngleRight className="h-4 w-4" />
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+          onClick={handleSubmit}
+        >Create Project</button>
+      )}
+    </div>
+  )
 
   return (
     <ModalTemplete
-      header={modalHeader}
-      footer={modalFooter}
       isOpen={isOpen}
       onClose={onClose}
+      header={modalHeader}
+      footer={modalFooter}
     >
-      {modalContent}
+      <div className="flex flex-col">
+        <div className="space-y-2">
+          <div className="w-full h-4 bg-component-secondary-background rounded-full">
+            <div className="h-full bg-point-color-indigo rounded-full transition-all duration-200" style={{ width: `${progress}%` }} />
+          </div>
+          <div className="flex justify-between text-sm text-text-secondary">
+            {stepTitles.map((title, index) => {
+              const Icon = stepIcons[index]
+              return (
+                <div
+                  key={title}
+                  className={`flex items-center gap-1 ${step === index + 1 ? "text-text-primary font-medium" : ""}`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {title}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="flex flex-col justify-center min-h-[300px] py-6">
+          <div className="space-y-6">
+            {step === 1 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <InfoCircle className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">Basic Information</h3>
+                  <p className="text-text-secondary">Let&apos;s start with the essentials</p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="title"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    프로젝트 이름 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    placeholder="작업 이름을 입력하세요"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="description"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    프로젝트 설명
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows={3}
+                    className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    placeholder="작업 설명을 입력하세요"
+                  />
+                </div>
+              </div>
+            )}
+
+            {step === 2 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <CalendarWeek className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">Timeline</h3>
+                  <p className="text-text-secondary">When will this milestone happen?</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="startDate"
+                      className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                    >
+                      시작일 <span className="text-point-color-purple ml-1">*</span>
+                    </label>
+                    <DatePicker
+                      value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                      onChange={handleStartDateChange}
+                      placeholder="시작일 선택"
+                      className="w-full bg-input-background"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="endDate"
+                      className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                    >
+                      종료일 <span className="text-point-color-purple ml-1">*</span>
+                    </label>
+                    <DatePicker
+                      value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
+                      onChange={handleEndDateChange}
+                      placeholder="종료일 선택"
+                      className="w-full bg-input-background"
+                      minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                    />
+                    {dateError && (
+                      <p className="text-sm text-red-500 mt-1">
+                        종료일은 시작일보다 빠를 수 없습니다.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <Layers className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">Category</h3>
+                  <p className="text-text-secondary">What is this project about?</p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="projectType"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    프로젝트 유형 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <Select
+                    value={formData.projectType}
+                    onChange={(value) => handleSelectChange("projectType", value as string)}
+                    options={[
+                      { name: "projectType", value: "웹 개발", label: "웹 개발" },
+                      { name: "projectType", value: "프론트엔드 개발", label: "프론트엔드 개발" },
+                      { name: "projectType", value: "백엔드 개발", label: "백엔드 개발" },
+                      { name: "projectType", value: "모바일 개발", label: "모바일 개발" },
+                      { name: "projectType", value: "AI", label: "AI" },
+                      { name: "projectType", value: "IoT", label: "IoT" },
+                      { name: "projectType", value: "토이", label: "토이 프로젝트" },
+                      { name: "projectType", value: "기타", label: "기타" },
+                    ]}
+                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+                    dropDownClassName="!w-full"
+                  />
+                </div>
+              </div>
+            )}
+
+            {step === 4 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <UsersGroup className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">Team</h3>
+                  <p className="text-text-secondary">Who is on this project?</p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="roles"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    필요한 역할 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="roles"
+                    name="roles"
+                    value={roleInput}
+                    onChange={handleRoleInput}
+                    onKeyDown={(e) => handleKeyDown("role", e)}
+                    onCompositionStart={() => setIsComposing(true)}
+                    onCompositionEnd={() => setIsComposing(false)}
+                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+                    placeholder="역할을 입력하고 Enter 키를 누르세요"
+                  />
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {formData.roles.map((role, index) => (
+                      <Badge key={index} content={role} color="purple" isEditable={true} onRemove={() => handleRemoveRole(role)} />
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="techStack"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    필요한 기술 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="techStack"
+                    name="techStack"
+                    value={techStackInput}
+                    onChange={handleTechStackInput}
+                    onKeyDown={(e) => handleKeyDown("techStack", e)}
+                    onCompositionStart={() => setIsComposing(true)}
+                    onCompositionEnd={() => setIsComposing(false)}
+                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+                    placeholder="기술을 입력하고 Enter 키를 누르세요"
+                  />
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {formData.techStack.map((tech, index) => (
+                      <Badge key={index} content={tech} color="orange" isEditable={true} onRemove={() => handleRemoveTechStack(tech)} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {step === 5 && (
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <MapPin className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">Presence</h3>
+                  <p className="text-text-secondary">Where will this project happen?</p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="location"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    위치 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+                    placeholder="예) 원격, 서울"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="teamSize"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    인원 수 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="teamSize"
+                    name="teamSize"
+                    value={formData.teamSize}
+                    onChange={handleChange}
+                    onWheel={(e) => e.currentTarget.blur()}
+                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors placeholder:text-text-secondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    placeholder="5"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </ModalTemplete>
-  )
+  );
 }

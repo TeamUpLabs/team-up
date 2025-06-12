@@ -31,7 +31,7 @@ export default function RecentTask() {
 
   if (isLoading) {
     return (
-      <RecentTaskSkeleton />
+      <RecentTaskSkeleton isPreview={false} />
     );
   }
 
@@ -69,7 +69,7 @@ export default function RecentTask() {
               <div className="flex items-center justify-between text-sm text-text-secondary">
                 <div className="flex -space-x-2">
                   {task.assignee?.map((assignee, i) => (
-                    <Tooltip content={assignee.name} key={assignee.id}>
+                    <Tooltip content={assignee.name} key={assignee.id} placement="bottom">
                       <Image
                         className="w-6 h-6 border-2 border-component-border rounded-full"
                         src={assignee.profileImage}

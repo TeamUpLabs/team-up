@@ -109,7 +109,7 @@ export default function Activity() {
   }, [project]);
 
   if (isLoading) {
-    return <ActivitySkeleton />;
+    return <ActivitySkeleton isPreview={false} />;
   } 
 
   return (

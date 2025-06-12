@@ -4,7 +4,7 @@ import { updateProject } from "@/hooks/getProjectData";
 import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faPencil } from "@fortawesome/free-solid-svg-icons";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
 
 interface GeneralSettingTabProps {
   project: Project;

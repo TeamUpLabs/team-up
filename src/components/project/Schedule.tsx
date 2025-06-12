@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { useProject } from "@/contexts/ProjectContext";
@@ -41,7 +39,7 @@ export default function Schedule() {
   }, [project]);
 
   if (isLoading) {
-    return <ScheduleSkeleton />;
+    return <ScheduleSkeleton isPreview={false} />;
   }
 
   return (
@@ -221,6 +219,7 @@ export default function Schedule() {
                           content={member.name}
                           key={idx}
                           className="-ml-2"
+                          placement="bottom"
                         >
                           {member.profileImage ? (
                             <Image
@@ -324,6 +323,7 @@ export default function Schedule() {
                           content={member.name}
                           key={idx}
                           className="-ml-2"
+                          placement="bottom"
                         >
                           {member.profileImage ? (
                             <Image
@@ -423,6 +423,7 @@ export default function Schedule() {
                         content={member.name}
                         key={idx}
                         className="-ml-2"
+                        placement="bottom"
                       >
                         {member.profileImage ? (
                           <Image

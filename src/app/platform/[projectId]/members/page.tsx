@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
-import MemberDetailModal from '@/components/project/members/MemberDetailModal';
-import MemberCard from '@/components/project/members/MemberCard';
-import { Member } from '@/types/Member';
+import { useState, useEffect, useRef } from "react";
+import MemberDetailModal from "@/components/project/members/MemberDetailModal";
+import MemberCard from "@/components/project/members/MemberCard";
+import { Member } from "@/types/Member";
 import { useProject } from "@/contexts/ProjectContext";
 
 export default function MembersPage() {
   const { project } = useProject();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [allTeamMembers, setAllTeamMembers] = useState<Member[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,21 +16,23 @@ export default function MembersPage() {
 
   useEffect(() => {
     setAllTeamMembers(project?.members);
-  }, [project])
+  }, [project]);
 
   useEffect(() => {
-    const selectedAssiId = localStorage.getItem('selectedAssiId');
-    const memberCount = project?.members?.length ?? 0
-    
+    const selectedAssiId = localStorage.getItem("selectedAssiId");
+    const memberCount = project?.members?.length ?? 0;
+
     if (selectedAssiId && memberCount > 0) {
-      const memberToOpen = project?.members.find(member => member.id === Number(selectedAssiId));
-      
+      const memberToOpen = project?.members.find(
+        (member) => member.id === Number(selectedAssiId)
+      );
+
       if (memberToOpen) {
         setSelectedMember(memberToOpen);
         setIsModalOpen(true);
       }
-    
-      localStorage.removeItem('selectedAssiId');
+
+      localStorage.removeItem("selectedAssiId");
     }
   }, [project]);
 
@@ -38,8 +40,8 @@ export default function MembersPage() {
   useEffect(() => {
     const handleHeaderSearch = (event: Event) => {
       const customEvent = event as CustomEvent;
-      const searchValue = customEvent.detail || '';
-      
+      const searchValue = customEvent.detail || "";
+
       // Only update if value is different
       if (searchValue !== searchQuery) {
         setSearchQuery(searchValue);
@@ -47,10 +49,10 @@ export default function MembersPage() {
     };
 
     // Add event listener
-    window.addEventListener('headerSearch', handleHeaderSearch);
-    
+    window.addEventListener("headerSearch", handleHeaderSearch);
+
     return () => {
-      window.removeEventListener('headerSearch', handleHeaderSearch);
+      window.removeEventListener("headerSearch", handleHeaderSearch);
     };
   }, [searchQuery]);
 
@@ -62,17 +64,22 @@ export default function MembersPage() {
     };
   }, []);
 
-  const filteredMembers = (allTeamMembers ?? []).filter(member => {
-    const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.currentTask?.every((task) => task.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredMembers = (allTeamMembers ?? [])
+    .filter((member) => {
+      const matchesSearch =
+        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.currentTask?.every((task) =>
+          task.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
 
-    return matchesSearch;
-  }).sort((a, b) => {
-    if (a.id === project?.leader.id) return -1;
-    if (b.id === project?.leader.id) return 1;
-    return 0;
-  });
+      return matchesSearch;
+    })
+    .sort((a, b) => {
+      if (a.id === project?.leader.id) return -1;
+      if (b.id === project?.leader.id) return 1;
+      return 0;
+    });
 
   const handleMemberClick = (member: Member) => {
     setSelectedMember(member);
@@ -89,7 +96,9 @@ export default function MembersPage() {
       <div className="flex justify-between items-center mb-6 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">팀원</h1>
-          <p className="text-text-secondary mt-2">프로젝트의 팀원을 관리하세요</p>
+          <p className="text-text-secondary mt-2">
+            프로젝트의 팀원을 관리하세요
+          </p>
         </div>
       </div>
       {filteredMembers.length === 0 && (
@@ -103,7 +112,10 @@ export default function MembersPage() {
             key={member.id}
             member={member}
             isLeader={member.id === project?.leader.id}
-            isManager={(project?.manager.some(manager => manager.id === member.id)) || false}
+            isManager={
+              project?.manager.some((manager) => manager.id === member.id) ||
+              false
+            }
             onClick={() => handleMemberClick(member)}
           />
         ))}
@@ -114,7 +126,11 @@ export default function MembersPage() {
           member={selectedMember}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          leader_id={project?.leader.id}
+          isLeader={selectedMember.id === project?.leader.id}
+          isManager={
+            project?.manager.some((manager) => manager.id === selectedMember.id) ||
+            false
+          }
         />
       )}
     </div>

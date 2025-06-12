@@ -1,4 +1,3 @@
-"use client";
 import { useState, useEffect } from 'react';
 import { MileStone } from '@/types/MileStone';
 import { useProject } from '@/contexts/ProjectContext';
@@ -41,7 +40,7 @@ export default function MileStoneCard() {
 
   if (isLoading) {
     return (
-      <MilestoneCardSkeleton />
+      <MilestoneCardSkeleton isPreview={false} />
     );
   }
 

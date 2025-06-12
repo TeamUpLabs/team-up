@@ -26,8 +26,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faLinkedin, faTwitter, faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { updateUserProfile, updateUserProfileImage } from "@/hooks/getMemberData";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
 import ImageCropModal from "@/components/platform/profile/ImageCropModal";
+import Select from "@/components/ui/Select";
+import DatePicker from "@/components/ui/DatePicker";
+import TimePicker from "@/components/ui/TimePicker";
 
 interface WorkingHours {
   start: string;
@@ -116,6 +119,10 @@ export default function ProfilePage() {
     });
   }, [user]);
 
+  const handleSelectChange = (name: string, value: string | string[]) => {
+    setProfileData(prevData => ({ ...prevData, [name]: value }));
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
@@ -140,6 +147,57 @@ export default function ProfilePage() {
       setProfileData(prev => ({ ...prev, [name]: value }));
     }
   };
+
+  const handleStartTimeChange = (value: string) => {
+    setProfileData(prev => ({
+      ...prev,
+      workingHours: {
+        ...prev.workingHours,
+        start: value,
+      },
+    }));
+  };
+
+  const handleEndTimeChange = (value: string) => {
+    setProfileData(prev => ({
+      ...prev,
+      workingHours: {
+        ...prev.workingHours,
+        end: value,
+      },
+    }));
+  };
+
+  // Helper to format Date to YYYY-MM-DD string
+  const formatDateToString = (date: Date | undefined): string => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // Helper to parse YYYY-MM-DD string to Date object (local timezone)
+  const parseStringToDate = (dateString: string): Date | undefined => {
+    if (!dateString) return undefined;
+    const parts = dateString.split("-");
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed for Date constructor
+      const day = parseInt(parts[2], 10);
+      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+        return new Date(year, month, day); // Interprets as local date
+      }
+    }
+    return undefined;
+  };
+
+  const handleBirthDateChange = (date: Date | undefined) => {
+    setProfileData(prev => ({
+      ...prev,
+      birthDate: date ? formatDateToString(date): "",
+    }))
+  }
 
   const handleEdit = (name: string) => {
     if (name !== "none" && isEditing === "none") {
@@ -285,7 +343,7 @@ export default function ProfilePage() {
         profileImage: response
       });
     }
-    
+
     setShowCropModal(false);
     useAuthStore.getState().setAlert("프로필 이미지가 업데이트되었습니다.", "success");
     setIsLoading(false);
@@ -347,7 +405,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-component-background border border-component-border rounded-xl shadow-sm overflow-hidden mb-8">
+      <div className="bg-component-background border border-component-border rounded-xl shadow-sm mb-8">
         <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 h-32">
           <div className="absolute -bottom-12 left-8">
             <div className="relative">
@@ -470,16 +528,16 @@ export default function ProfilePage() {
                   {isDataLoading ? (
                     <SkeletonField />
                   ) : isEditing === "role" ? (
-                    <select
-                      name="role"
+                    <Select
+                      options={[
+                        { name: "role", value: "개발자", label: "개발자" },
+                        { name: "role", value: "디자이너", label: "디자이너" },
+                        { name: "role", value: "기획자", label: "기획자" },
+                      ]}
                       value={profileData.role}
-                      onChange={handleChange}
+                      onChange={(value) => handleSelectChange("role", value as string)}
                       className="w-full rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
-                    >
-                      <option value="개발자">개발자</option>
-                      <option value="디자이너">디자이너</option>
-                      <option value="기획자">기획자</option>
-                    </select>
+                    />
                   ) : (
                     <div className="flex items-center gap-2">
                       {profileData.role === "개발자" && <FontAwesomeIcon icon={faCode} className="text-text-secondary" size="sm" />}
@@ -531,12 +589,11 @@ export default function ProfilePage() {
                   {isDataLoading ? (
                     <SkeletonField />
                   ) : isEditing === "birthDate" ? (
-                    <input
-                      type="date"
-                      name="birthDate"
-                      value={profileData.birthDate}
-                      onChange={handleChange}
-                      className="w-full rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
+                    <DatePicker
+                      value={parseStringToDate(profileData.birthDate)}
+                      onChange={handleBirthDateChange}
+                      disabled={isEditing !== "birthDate"}
+                      className="w-full"
                     />
                   ) : (
                     <div className="flex items-center gap-2">
@@ -565,12 +622,11 @@ export default function ProfilePage() {
                     {isDataLoading ? (
                       <SkeletonField />
                     ) : isEditing === "workingHours.start" ? (
-                      <input
-                        type="time"
-                        name="workingHours.start"
+                      <TimePicker
                         value={profileData.workingHours.start}
-                        onChange={handleChange}
-                        className="w-full rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
+                        onChange={(value) => handleStartTimeChange(value)}
+                        disabled={isEditing !== "workingHours.start"}
+                        className="w-full"
                       />
                     ) : (
                       <div className="flex items-center gap-2">
@@ -593,12 +649,11 @@ export default function ProfilePage() {
                     {isDataLoading ? (
                       <SkeletonField />
                     ) : isEditing === "workingHours.end" ? (
-                      <input
-                        type="time"
-                        name="workingHours.end"
+                      <TimePicker
                         value={profileData.workingHours.end}
-                        onChange={handleChange}
-                        className="w-full rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
+                        onChange={(value) => handleEndTimeChange(value)}
+                        disabled={isEditing !== "workingHours.end"}
+                        className="w-full"
                       />
                     ) : (
                       <div className="flex items-center gap-2">
@@ -660,20 +715,19 @@ export default function ProfilePage() {
                   <div className="space-y-3">
                     {isEditing === "socialLinks" && (
                       <div className="flex gap-2 items-center mb-2">
-                        <select
-                          name="newSocialLink.name"
+                        <Select
+                          options={[
+                            { name: "newSocialLink.name", value: "github", label: "GitHub" },
+                            { name: "newSocialLink.name", value: "linkedin", label: "LinkedIn" },
+                            { name: "newSocialLink.name", value: "twitter", label: "Twitter" },
+                            { name: "newSocialLink.name", value: "facebook", label: "Facebook" },
+                            { name: "newSocialLink.name", value: "instagram", label: "Instagram" },
+                            { name: "newSocialLink.name", value: "website", label: "Website" },
+                          ]}
                           value={newSocialLink.name}
-                          onChange={handleChange}
-                          className="w-1/4 rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
-                        >
-                          <option value="">소셜 선택</option>
-                          <option value="github">GitHub</option>
-                          <option value="linkedin">LinkedIn</option>
-                          <option value="twitter">Twitter</option>
-                          <option value="facebook">Facebook</option>
-                          <option value="instagram">Instagram</option>
-                          <option value="website">Website</option>
-                        </select>
+                          onChange={(value) => setNewSocialLink(prev => ({ ...prev, name: value as string }))}
+                          className="rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
+                        />
                         <input
                           type="text"
                           name="newSocialLink.url"
@@ -972,7 +1026,7 @@ export default function ProfilePage() {
         <div className="flex justify-end mt-8 gap-4">
           <button
             onClick={handleCancelEdit}
-            className="px-4 py-2 rounded-lg border border-component-border text-white bg-cancel-button-background hover:bg-cancel-button-background-hover transition-colors"
+            className="px-4 py-2 rounded-lg border border-component-border text-text-primary bg-cancel-button-background hover:bg-cancel-button-background-hover transition-colors"
             disabled={isLoading}
           >
             취소

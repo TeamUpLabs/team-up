@@ -40,9 +40,9 @@ export default function MilestonePage() {
 
   return (
     <div className="py-20 px-4">
-      <div>
+      <div className="space-y-6">
         {/* Header Section */}
-        <div className="flex justify-between items-center mb-6 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
+        <div className="flex justify-between items-center bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
           <div>
             <h1 className="text-2xl font-bold text-text-primary">마일스톤</h1>
             <p className="text-text-secondary mt-2">프로젝트의 주요 이정표를 관리하세요</p>
@@ -57,41 +57,85 @@ export default function MilestonePage() {
         </div>
 
         {/* Filter Section */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-2 bg-component-secondary-background w-fit rounded-lg border border-component-border p-1">
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'all' ? 'bg-point-color-indigo text-white' : 'text-text-secondary hover:bg-point-color-indigo/20'
-              }`}
+            className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out flex items-center justify-center
+                        ${filter === 'all'
+                          ? 'bg-point-color-indigo text-white'
+                          : 'text-text-secondary hover:bg-component-background hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-point-color-indigo/50'
+                        }`}
             onClick={() => setFilter('all')}
           >
             <span>전체</span>
-            <span>{project?.milestones.length}</span>
+            <span
+              className={`ml-2 text-xs font-semibold px-2 py-0.5 rounded-full
+                          ${filter === 'all'
+                            ? 'bg-white/20 text-white'
+                            : 'bg-gray-700 text-gray-200'
+                          }`}
+            >
+              {project?.milestones.length}
+            </span>
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'not-started' ? 'bg-point-color-indigo text-white' : 'text-text-secondary hover:bg-point-color-indigo/20'
-              }`}
+            className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out flex items-center justify-center
+                        ${filter === 'not-started'
+                          ? 'bg-point-color-indigo text-white shadow-md'
+                          : 'text-text-secondary hover:bg-component-background hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-point-color-indigo/50'
+                        }`}
             onClick={() => setFilter('not-started')}
           >
             <span>시작 전</span>
-            <span>{project?.milestones.filter(m => m.status === 'not-started').length}</span>
+            <span
+              className={`ml-2 text-xs font-semibold px-2 py-0.5 rounded-full
+                          ${filter === 'not-started'
+                            ? 'bg-white/20 text-white'
+                            : 'bg-gray-700 text-gray-200'
+                          }`}
+            >
+              {project?.milestones.filter(m => m.status === 'not-started').length}
+            </span>
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'in-progress' ? 'bg-point-color-indigo text-white' : 'text-text-secondary hover:bg-point-color-indigo/20'
-              }`}
+            className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out flex items-center justify-center
+                        ${filter === 'in-progress'
+                          ? 'bg-point-color-indigo text-white shadow-md'
+                          : 'text-text-secondary hover:bg-component-background hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-point-color-indigo/50'
+                        }`}
             onClick={() => setFilter('in-progress')}
           >
             <span>진행중</span>
-            <span>{project?.milestones.filter(m => m.status === 'in-progress').length}</span>
+            <span
+              className={`ml-2 text-xs font-semibold px-2 py-0.5 rounded-full
+                          ${filter === 'in-progress'
+                            ? 'bg-white/20 text-white'
+                            : 'bg-gray-700 text-gray-200'
+                          }`}
+            >
+              {project?.milestones.filter(m => m.status === 'in-progress').length}
+            </span>
           </button>
 
           <button
-            className={`px-4 py-2 rounded-lg transition-colors space-x-1 ${filter === 'done' ? 'bg-point-color-indigo text-white' : 'text-text-secondary hover:bg-point-color-indigo/20'
-              }`}
+            className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-150 ease-in-out flex items-center justify-center
+                        ${filter === 'done'
+                          ? 'bg-point-color-indigo text-white shadow-md'
+                          : 'text-text-secondary hover:bg-component-background hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-point-color-indigo/50'
+                        }`}
             onClick={() => setFilter('done')}
           >
             <span>완료</span>
-            <span>{project?.milestones.filter(m => m.status === 'done').length}</span>
+            <span
+              className={`ml-2 text-xs font-semibold px-2 py-0.5 rounded-full
+                          ${filter === 'done'
+                            ? 'bg-white/20 text-white'
+                            : 'bg-gray-700 text-gray-200'
+                          }`}
+            >
+              {project?.milestones.filter(m => m.status === 'done').length}
+            </span>
           </button>
         </div>
 

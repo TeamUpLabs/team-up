@@ -6,3 +6,13 @@ export const getPriorityColor = (priority: string) => {
     default: return 'bg-gray-500/20 text-gray-500';
   }
 };
+
+export const getPriorityColorName = (priority: string) => {
+  switch (priority) {
+    case 'high': return 'red';
+    case 'medium': return 'yellow';
+    case 'low': return 'green';
+    default: return 'gray';
+  }
+};
+  

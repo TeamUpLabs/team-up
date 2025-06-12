@@ -16,11 +16,14 @@ import Calendar from '@/components/project/calendar/CalendarComponent';
 import ScheduleStatus from '@/components/project/calendar/ScheduleStatus';
 import { useProject } from "@/contexts/ProjectContext";
 import ScheduleCreateModal from '@/components/project/calendar/ScheduleCreateModal';
+import { Schedule } from '@/types/Schedule';
+import ScheduleModal from '@/components/project/calendar/ScheduleModal';
 
 export default function CalendarPage() {
   const { project } = useProject();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -36,6 +39,11 @@ export default function CalendarPage() {
 
   const handleSelectTask = (task: Task) => {
     setSelectedTask(task);
+    setIsModalOpen(true);
+  };
+
+  const handleSelectSchedule = (schedule: Schedule) => {
+    setSelectedSchedule(schedule);
     setIsModalOpen(true);
   };
 
@@ -65,6 +73,7 @@ export default function CalendarPage() {
         onPreviousMonth={previousMonth}
         onNextMonth={nextMonth}
         onSelectTask={handleSelectTask}
+        onSelectSchedule={handleSelectSchedule}
       />
 
       <ScheduleStatus 
@@ -85,6 +94,17 @@ export default function CalendarPage() {
           onClose={() => {
             setIsModalOpen(false);
             setSelectedTask(null);
+          }}
+        />
+      )}
+
+      {selectedSchedule && (
+        <ScheduleModal
+          schedule={selectedSchedule}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedSchedule(null);
           }}
         />
       )}

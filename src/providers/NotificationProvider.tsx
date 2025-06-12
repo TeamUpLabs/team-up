@@ -149,43 +149,48 @@ export function NotificationProvider({
         try {
           const eventData = JSON.parse(event.data);
           
-          if (!eventData || !Array.isArray(eventData.notifications)) {
-            console.warn(
-              "Received unexpected data structure from SSE:",
-              eventData
-            );
-            if (Array.isArray(eventData)) {
-              setNotifications(eventData);
-              const newNotifications = eventData.filter(
-                (n: Notification) => !lastProcessedNotificationIds.current.has(n.id)
-              );
-
-              if (newNotifications.length > 0) {
-                const mostRecentNewNotification = newNotifications.sort(
-                  (a, b) =>
-                    new Date(b.timestamp).getTime() -
-                    new Date(a.timestamp).getTime()
-                )[0];
-
-                if (initialNotificationsHydrated.current && mostRecentNewNotification && mostRecentNewNotification.id !== lastAlertedNotificationId.current) {
-                  setNotificationAlert(
-                    mostRecentNewNotification,
-                    mostRecentNewNotification.type || "info"
-                  );
-                  lastAlertedNotificationId.current = mostRecentNewNotification.id;
-                }
-                eventData.forEach((n: Notification) =>
-                  lastProcessedNotificationIds.current.add(n.id)
-                );
-              }
-            }
+          if (!eventData) {
+            console.warn("Received empty SSE data");
             return;
           }
 
-          const receivedNotifications: Notification[] = eventData.notifications;
-          setNotifications(receivedNotifications);
+          // Handle both formats: { notifications: [] } and []
+          const notifications = Array.isArray(eventData.notifications) 
+            ? eventData.notifications 
+            : Array.isArray(eventData) 
+              ? eventData 
+              : [];
 
-          const newNotifications = receivedNotifications.filter(
+          if (!Array.isArray(notifications)) {
+            console.error("Invalid notifications data format:", typeof notifications);
+            return;
+          }
+
+          // Validate each notification
+          const validNotifications = notifications.filter((n): n is Notification => {
+            if (!n || typeof n !== 'object') return false;
+            
+            const hasRequiredFields = 
+              typeof n.id === 'number' && 
+              typeof n.timestamp === 'string' && 
+              typeof n.isRead === 'boolean';
+
+            if (!hasRequiredFields) {
+              console.warn(`Skipping invalid notification:`, n);
+              return false;
+            }
+            
+            return true;
+          });
+
+          if (validNotifications.length === 0) {
+            console.log("No valid notifications received");
+            return;
+          }
+
+          setNotifications(validNotifications);
+
+          const newNotifications = validNotifications.filter(
             (n: Notification) => !lastProcessedNotificationIds.current.has(n.id)
           );
 
@@ -203,32 +208,55 @@ export function NotificationProvider({
               );
               lastAlertedNotificationId.current = mostRecentNewNotification.id;
             }
-            receivedNotifications.forEach((n: Notification) =>
+            validNotifications.forEach((n: Notification) =>
               lastProcessedNotificationIds.current.add(n.id)
             );
           }
         } catch (error) {
           console.error(
-            "Error parsing SSE data or processing notifications:",
+            "Error processing SSE data:",
             error,
             "Raw data:", event.data
           );
+          // Reset connection after parsing error
+          if (eventSourceRef.current === newEventSource) {
+            eventSourceRef.current.close();
+            eventSourceRef.current = null;
+            connect();
+          }
         }
       };
 
       newEventSource.onerror = (event: Event) => {
         console.error("SSE connection error:", event);
+        
+        // Check error type
+        const errorEvent = event as MessageEvent;
+        if (errorEvent.data) {
+          console.error("SSE error data:", errorEvent.data);
+        }
+
         if (eventSourceRef.current === newEventSource) {
           eventSourceRef.current.close();
           eventSourceRef.current = null;
-          console.log(
-            "SSE error. Attempting to reconnect in 5 seconds..."
-          );
-          setTimeout(() => {
-            if (user?.id) {
-              connect();
-            }
-          }, 5000);
+          
+          // Only attempt reconnection if we're still authenticated
+          if (user?.id) {
+            // Exponential backoff for reconnection attempts
+            let retryAttempts = 0;
+            const backoffTime = Math.min(5000 * Math.pow(2, retryAttempts), 30000); // Max 30s
+            retryAttempts++;
+            
+            console.log(
+              `SSE error. Attempting to reconnect in ${backoffTime}ms... (Attempt ${retryAttempts})`
+            );
+            
+            setTimeout(() => {
+              if (user?.id) {
+                connect();
+              }
+            }, backoffTime);
+          }
         }
       };
     };
@@ -250,6 +278,14 @@ export function NotificationProvider({
     if (!user?.id) return;
 
     const originalNotifications = [...notifications];
+    const notificationIndex = originalNotifications.findIndex(n => n.id === id);
+    
+    if (notificationIndex === -1) {
+      console.error(`Notification with id ${id} not found`);
+      return;
+    }
+
+    // Optimistically update state
     setNotifications((prevNotifications) =>
       prevNotifications.map((notification) =>
         notification.id === id
@@ -257,7 +293,6 @@ export function NotificationProvider({
           : notification
       )
     );
-    lastProcessedNotificationIds.current.add(id);
 
     try {
       const res = await server.put(`/member/${user.id}/notification/${id}`, {
@@ -265,12 +300,16 @@ export function NotificationProvider({
       });
 
       if (res.status !== 200) {
-        setNotifications(originalNotifications);
-        console.error("Failed to update notification status on server:", res);
+        throw new Error(`Server returned status ${res.status}`);
       }
+      
+      lastProcessedNotificationIds.current.add(id);
     } catch (error) {
-      setNotifications(originalNotifications);
       console.error("Failed to update notification:", error);
+      // Only revert if the error is not a 404 (notification not found)
+      if (error instanceof Error && !error.message.includes('404')) {
+        setNotifications(originalNotifications);
+      }
     }
   };
 

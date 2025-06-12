@@ -3,7 +3,7 @@ import { Project } from "@/types/Project";
 import Link from "next/link";
 import { useAuthStore } from "@/auth/authStore";
 import { sendParticipationRequest, cancelParticipationRequest } from "@/hooks/getMemberData";
-import Badge from "@/components/Badge";
+import Badge from "@/components/ui/Badge";
 interface ProjectCardProps {
   project: Project;
   isExplore?: boolean;

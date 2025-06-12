@@ -13,8 +13,8 @@ export interface Schedule {
     status: "not-started" | "in-progress" | "completed";
     created_at: string;
     updated_at: string;
-    created_by: string;
-    updated_by: string;
+    created_by: number;
+    updated_by: number;
     memo?: string;
     assignee_id: number[];
     assignee?: Member[];

@@ -6,7 +6,16 @@ import NotificationSidebar from "@/components/platform/NotificationSidebar";
 import { Logo, MiniLogo } from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
 import { usePathname } from "next/navigation";
-import { faHouse, faFolder, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
+import { 
+  Home as HomeOutline,
+  Folder as FolderOutline,
+  UsersGroup as UsersGroupOutline,
+} from "flowbite-react-icons/outline";
+import { 
+  Home as HomeSolid,
+  Folder as FolderSolid,
+  UsersGroup as UsersGroupSolid,
+} from "flowbite-react-icons/solid";
 import UserDropdown from "@/components/platform/UserDropdown";
 import NewProjectModal from "@/components/platform/NewProjectModal";
 import NotificationDropdown from "@/components/platform/NotificationDropdown";
@@ -66,9 +75,9 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
   }
 
   const mainNavItems = [
-      { icon: faHouse, label: "내 프로젝트", href: "/platform", isActive: pathname === "/platform" },
-      { icon: faFolder, label: "프로젝트 찾기", href: "/platform/projects", isActive: pathname === "/platform/projects" },
-      { icon: faPeopleGroup, label: "팀원 찾기", href: "/platform/members", isActive: pathname === "/platform/members" },
+      { icon: HomeOutline, activeIcon: HomeSolid, label: "내 프로젝트", href: "/platform", isActive: pathname === "/platform" },
+      { icon: FolderOutline, activeIcon: FolderSolid, label: "프로젝트 찾기", href: "/platform/projects", isActive: pathname === "/platform/projects" },
+      { icon: UsersGroupOutline, activeIcon: UsersGroupSolid, label: "팀원 찾기", href: "/platform/members", isActive: pathname === "/platform/members" },
     ];
   return (
     <NotificationProvider>
