@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import ModalTemplete from "@/components/ModalTemplete";
 import {
+  CalendarMonth,
   CalendarWeek,
   UsersGroup,
   CalendarPlus,
@@ -244,7 +245,7 @@ export default function ScheduleCreateModal({
   const modalHeader = (
     <div className="flex items-center space-x-3">
       <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
-        <CalendarWeek
+        <CalendarMonth
           className="text-primary-600 text-lg"
         />
       </div>

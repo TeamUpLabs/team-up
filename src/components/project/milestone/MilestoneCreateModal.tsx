@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { AngleLeft, AngleRight, InfoCircle, CalendarWeek, Flag, Tag, Users } from "flowbite-react-icons/outline";
+import { 
+  AngleLeft, 
+  AngleRight, 
+  InfoCircle, 
+  CalendarWeek, 
+  Flag, 
+  Star,
+  Tag, 
+  Users } from "flowbite-react-icons/outline";
 import { useProject } from "@/contexts/ProjectContext";
 import { createMilestone } from "@/hooks/getMilestoneData";
 import { useAuthStore } from "@/auth/authStore";
@@ -23,7 +31,7 @@ export default function MilestoneCreateModal({
   const totalSteps = 5
   const progress = (step / totalSteps) * 100
 
-  const stepIcons = [InfoCircle, CalendarWeek, Flag, Tag, Users]
+  const stepIcons = [InfoCircle, CalendarWeek, Star, Tag, Users]
   const stepTitles = ["Basic Info", "Timeline", "Status & Priority", "Tags & Labels", "Assignee"]
 
   const { project } = useProject();
@@ -237,10 +245,20 @@ export default function MilestoneCreateModal({
 
   // Header content for the modal
   const headerContent = (
-    <div className="flex items-center space-x-4">
-      <h3 className="text-xl font-bold text-text-primary">
-        새로운 마일스톤 생성
-      </h3>
+    <div className="flex items-center space-x-3">
+      <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
+        <Flag
+          className="text-primary-600 text-lg"
+        />
+      </div>
+      <div>
+        <h3 className="text-xl font-bold text-text-primary">
+          새로운 마일스톤 추가
+        </h3>
+        <p className="text-sm text-text-tertiary mt-0.5">
+          프로젝트 마일스톤을 관리하세요
+        </p>
+      </div>
     </div>
   );
 

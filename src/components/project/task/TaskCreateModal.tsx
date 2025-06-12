@@ -1,6 +1,15 @@
 import ModalTemplete from "@/components/ModalTemplete";
 import { useState, useEffect } from "react";
-import { AngleLeft, AngleRight, InfoCircle, CalendarWeek, Users, Tag, FileLines } from "flowbite-react-icons/outline";
+import { 
+  ClipboardList,
+  AngleLeft, 
+  AngleRight, 
+  InfoCircle, 
+  CalendarWeek, 
+  Users, 
+  Tag, 
+  FileLines 
+} from "flowbite-react-icons/outline";
 import { CloseCircle } from "flowbite-react-icons/solid";
 import { useProject } from "@/contexts/ProjectContext";
 import { useAuthStore } from "@/auth/authStore";
@@ -239,8 +248,20 @@ export default function TaskCreateModal({
   };
 
   const modalHeader = (
-    <div className="flex items-center space-x-4">
-      <h3 className="text-xl font-bold text-text-primary">새로운 작업 생성</h3>
+    <div className="flex items-center space-x-3">
+      <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
+        <ClipboardList
+          className="text-primary-600 text-lg"
+        />
+      </div>
+      <div>
+        <h3 className="text-xl font-bold text-text-primary">
+          새로운 작업 추가
+        </h3>
+        <p className="text-sm text-text-tertiary mt-0.5">
+          프로젝트 작업을 관리하세요
+        </p>
+      </div>
     </div>
   )
 
