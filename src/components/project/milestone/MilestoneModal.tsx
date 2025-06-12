@@ -348,7 +348,11 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 placeholder="마일스톤의 설명을 작성하세요"
               />
             ) : (
-              <p className="text-muted-foreground leading-relaxed">{milestoneData.description}</p>
+              milestoneData.description ? (
+                <p className="text-muted-foreground leading-relaxed">{milestoneData.description}</p>
+              ) : (
+                <p className="text-text-secondary">마일스톤의 설명이 없습니다.</p>
+              )
             )}
           </div>
 

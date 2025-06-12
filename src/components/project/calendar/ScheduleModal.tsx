@@ -266,7 +266,11 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                 placeholder="스케줄의 설명을 작성하세요"
               />
             ) : (
-              <p className="text-muted-foreground leading-relaxed">{scheduleData.description}</p>
+              scheduleData.description ? (
+                <p className="text-muted-foreground leading-relaxed">{scheduleData.description}</p>
+              ) : (
+                <p className="text-text-secondary">스케줄의 설명이 없습니다.</p>
+              )
             )}
           </div>
 
@@ -363,7 +367,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
         defaultOpen
       >
         <div className="flex flex-col gap-2 space-y-2">
-          {isEditing === "location" ? (
+          {scheduleData.type === "meeting" && isEditing === "location" ? (
             <Select
               options={[
                 { name: "where", value: "Zoom", label: "Zoom" },
@@ -376,15 +380,30 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
               className="w-fit px-3 py-1 rounded-md"
               dropdownAlign="start"
             />
+          ) : scheduleData.type === "event" && isEditing === "location" ? (
+            <input
+              type="text"
+              id="where"
+              name="where"
+              value={scheduleData.where}
+              onChange={handleChange}
+              className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+              placeholder="이벤트 장소를 입력해주세요"
+              required
+            />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
                 content={
                   <div className={`flex items-center gap-2 px-3 py-1 rounded-md ${getPlatformColor(scheduleData.where)}`}>
-                    {scheduleData.where === "Zoom" ? (
+                    {scheduleData.type === "meeting" && scheduleData.where === "Zoom" ? (
                       <FontAwesomeIcon icon={faVideo} />
-                    ) : scheduleData.where === "Google Meet" ? (
+                    ) : scheduleData.type === "meeting" && scheduleData.where === "Google Meet" ? (
                       <FontAwesomeIcon icon={faGoogle} />
+                    ) : scheduleData.type === "meeting" && scheduleData.where === "TeamUp" ? (
+                      <MiniLogo className="text-xs!" />
+                    ) : scheduleData.type === "event" ? (
+                      <MapPin className="h-5 w-5" />
                     ) : (
                       <MiniLogo className="text-xs!" />
                     )}
@@ -423,15 +442,20 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                 <p className="text-sm text-muted-foreground">
                   {scheduleData.where === "TeamUp" ? (
                     <span className="text-text-secondary">TeamUp의 화상통화를 이용하세요.</span>
+                  ) : scheduleData.type === "event" ? (
+                    <span className="text-text-secondary">이벤트는 링크가 없습니다.</span>
                   ) : (
-                    <Link
-                      href={scheduleData.link || ""}
-                      target="_blank"
-                      className="text-blue-500 hover:underline"
-                    >
-                      {scheduleData.link}
-                    </Link>
-                  )}
+                    scheduleData.link ? (
+                      <Link
+                        href={scheduleData.link || ""}
+                        target="_blank"
+                        className="text-blue-500 hover:underline"
+                      >
+                        {scheduleData.link}
+                      </Link>
+                    ) : (
+                      <span className="text-text-secondary">링크가 없습니다.</span>
+                    ))}
                 </p>
               </div>
               {scheduleData.where !== "TeamUp" && (
