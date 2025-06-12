@@ -248,7 +248,7 @@ export default function MilestoneCreateModal({
     <div className="flex justify-between">
       <button
         type="button"
-        className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg"
+        className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
         onClick={() => setStep(step - 1)}
         disabled={step === 1}
       >
@@ -259,7 +259,7 @@ export default function MilestoneCreateModal({
       {step < totalSteps ? (
         <button
           type="button"
-          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg"
+          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
           onClick={() => moveNextStep(step)}
           disabled={step === totalSteps}
         >
@@ -269,7 +269,7 @@ export default function MilestoneCreateModal({
       ) : (
         <button
           type="button"
-          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg"
+          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
           onClick={handleSubmit}
         >Create Task</button>
       )}
