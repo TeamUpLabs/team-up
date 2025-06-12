@@ -160,17 +160,29 @@ export default function MemberDetailModal({
         <div className="space-y-4">
           <div className="space-y-2">
             <h4 className="font-medium">Introduction</h4>
-            <p className="text-muted-foreground leading-relaxed">{member.introduction}</p>
+            {member.introduction ? (
+              <p className="text-muted-foreground leading-relaxed">{member.introduction}</p>
+            ) : (
+              <p className="text-text-secondary">소개글이 없습니다.</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <h4 className="font-medium">Email</h4>
-              <p className="text-muted-foreground">{member.email}</p>
+              {member.email ? (
+                <p className="text-muted-foreground">{member.email}</p>
+              ) : (
+                <p className="text-text-secondary">이메일이 없습니다.</p>
+              )}
             </div>
             <div>
               <h4 className="font-medium">Phone Number</h4>
-              <p className="text-muted-foreground">{member.contactNumber}</p>
+              {member.contactNumber ? (
+                <p className="text-muted-foreground">{member.contactNumber}</p>
+              ) : (
+                <p className="text-text-secondary">연락처가 없습니다.</p>
+              )}
             </div>
           </div>
         </div>
