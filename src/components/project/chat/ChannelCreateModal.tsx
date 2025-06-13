@@ -112,15 +112,15 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
           setError(null)
           onClose()
         }}
-        className="text-text-secondary hover:text-text-primary transition-all"
+        className="text-text-secondary hover:text-text-primary bg-cancel-button-background hover:bg-cancel-button-background-hover transition-all px-4 py-2 text-text-primary rounded-lg transition-colors border border-component-border"
       >
         취소
       </button>
       <button
-        className="px-4 py-2 bg-component-tertiary-background hover:bg-component-tertiary-background/60 text-text-primary rounded-lg transition-colors border border-component-border"
+        className="px-4 py-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white rounded-lg transition-colors"
         onClick={handleSubmit}
       >
-        생성
+        채널 생성
       </button>
     </div>
   )
