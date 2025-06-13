@@ -6,6 +6,7 @@ import { FilePen, Star, Users, Thumbtack, Bell, Search } from "flowbite-react-ic
 import { Channel } from "@/types/Channel";
 import { useAuthStore } from "@/auth/authStore";
 import ChannelEditModal from "@/components/project/chat/ChannelEditModal";
+import ChannelMemberEditModal from "@/components/project/chat/ChannelMemberEditModal";
 
 interface ChannelSettingsDropdownProps {
   channel: Channel;
@@ -22,6 +23,7 @@ export default function ChannelSettingsDropdown({
   const [isPinned, setIsPinned] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isMemnerEditModalOpen, setIsMemnerEditModalOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -59,6 +61,14 @@ export default function ChannelSettingsDropdown({
     }
   }
 
+  const handleMemberEditModalOpen = () => {
+    if (isOwner) {
+      setIsMemnerEditModalOpen(true)
+    } else {
+      useAuthStore.getState().setAlert("채널 구성원 수정은 채널 개설자만 가능합니다.", "error")
+    }
+  }
+
   return (
     <div className="relative flex" ref={dropdownRef}>
       <button
@@ -86,7 +96,7 @@ export default function ChannelSettingsDropdown({
                   <FilePen className="h-4 w-4" />
                   <span>채널 정보 수정</span>
                 </MenuItem>
-                <MenuItem>
+                <MenuItem onClick={handleMemberEditModalOpen}>
                   <Users className="h-4 w-4" />
                   <span>멤버 관리</span>
                 </MenuItem>
@@ -120,6 +130,10 @@ export default function ChannelSettingsDropdown({
 
       {isEditModalOpen && (
         <ChannelEditModal channel={channel} isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} />
+      )}
+
+      {isMemnerEditModalOpen && (
+        <ChannelMemberEditModal channel={channel} isOpen={isMemnerEditModalOpen} onClose={() => setIsMemnerEditModalOpen(false)} />
       )}
     </div>
   );

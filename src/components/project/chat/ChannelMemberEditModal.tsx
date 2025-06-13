@@ -1,39 +1,46 @@
 import ModalTemplete from "@/components/ModalTemplete";
 import { Channel } from "@/types/Channel";
-import { FilePen } from "flowbite-react-icons/outline";
-import { useState } from "react";
+import AssigneeSelect from "@/components/project/AssigneeSelect";
 import { useProject } from "@/contexts/ProjectContext";
+import { Users } from "flowbite-react-icons/outline";
 import { useAuthStore } from "@/auth/authStore";
 import { updateChannel } from "@/hooks/getChannelData";
+import { useState } from "react";
 
-
-interface ChannelEditModalProps {
+interface ChannelMemberEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   channel: Channel;
 }
 
-export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEditModalProps) {
+export default function ChannelMemberEditModal({ isOpen, onClose, channel }: ChannelMemberEditModalProps) {
   const { project } = useProject();
   const [formData, setFormData] = useState({
     channelName: channel.channelName,
     channelDescription: channel.channelDescription,
-    isPublic: channel.isPublic,
-    member_id: channel.member_id,
+    isPublic: channel.isPublic as boolean,
+    member_id: channel.member_id as number[],
   });
-  const [error, setError] = useState<string | null>(null)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const toggleAssignee = (memberId: number) => {
+    setFormData((prev) => {
+      if (prev.member_id.includes(memberId)) {
+        return {
+          ...prev,
+          member_id: prev.member_id.filter((id) => id !== memberId),
+        };
+      } else {
+        return {
+          ...prev,
+          member_id: [...prev.member_id, memberId],
+        };
+      }
+    });
   };
 
   const handleSubmit = async () => {
-    if (!formData.channelName.trim()) {
-      setError("채널 이름을 입력해주세요.")
+    if (!formData.isPublic && formData.member_id.length === 0) {
+      useAuthStore.getState().setAlert("공개 채널이 아닐 경우 최소 한 명의 구성원을 선택해주세요.", "error")
       return;
     }
 
@@ -43,8 +50,14 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
       return;
     }
 
+    if (formData.isPublic) {
+      formData.member_id = project?.members?.map((member) => member.id) || [];
+    }
+
     try {
-      await updateChannel(channel.projectId, channel.channelId, formData);
+      await updateChannel(channel.projectId, channel.channelId, {
+        ...formData,
+      });
       useAuthStore.getState().setAlert("채널이 성공적으로 수정되었습니다.", "success");
 
       setTimeout(() => {
@@ -62,19 +75,20 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
     }
   };
 
+
   const modelHeader = (
     <div className="flex items-center space-x-3">
       <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
-        <FilePen
+        <Users
           className="text-primary-600 text-lg"
         />
       </div>
       <div>
         <h3 className="text-xl font-bold text-text-primary">
-          채널 정보 수정
+          채널 구성원 수정
         </h3>
         <p className="text-sm text-text-tertiary mt-0.5">
-          채널 정보를 수정하세요
+          채널 구성원을 수정하세요
         </p>
       </div>
     </div>
@@ -84,7 +98,6 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
     <div className="flex justify-end gap-2">
       <button
         onClick={() => {
-          setError(null)
           onClose()
         }}
         className="text-text-secondary hover:text-text-primary bg-cancel-button-background hover:bg-cancel-button-background-hover transition-all px-4 py-2 text-text-primary rounded-lg transition-colors border border-component-border"
@@ -95,53 +108,37 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
         className="px-4 py-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white rounded-lg transition-colors"
         onClick={handleSubmit}
       >
-        채널 수정
+        구성원 수정
       </button>
     </div>
   )
 
   return (
     <ModalTemplete header={modelHeader} footer={modalFooter} isOpen={isOpen} onClose={onClose}>
-      <div className="flex flex-col space-y-4">
-        <div className="flex flex-col space-y-2">
-          <label
-            className="text-sm font-medium text-text-secondary"
-            htmlFor="channelName"
-          >
-            채널 이름 <span className="text-point-color-purple ml-1">*</span>
-          </label>
-          <div className="flex items-center gap-2">
-            <span className="text-text-secondary font-bold">#</span>
-            <input
-              type="text"
-              id="channelName"
-              name="channelName"
-              value={formData.channelName}
-              onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-              placeholder="채널 이름을 입력하세요"
-              required
-            />
+      <div className="flex flex-col space-y-2">
+        <div className="flex items-center justify-between p-4 bg-component-secondary-background rounded-lg border border-component-border transition-all hover:border-component-border-hover">
+          <div>
+            <h3 className="text-text-primary font-medium">공개</h3>
+            <p className="text-text-secondary text-sm mt-1">공개 채널은 모든 프로젝트 구성원이 볼 수 있습니다.</p>
           </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
-        </div>
-        <div className="flex flex-col space-y-2">
-          <label
-            className="text-sm font-medium text-text-secondary"
-            htmlFor="channelDescription"
-          >
-            채널 설명
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" className="sr-only peer" defaultChecked onChange={(e) => {
+              setFormData({ ...formData, isPublic: e.target.checked });
+            }} />
+            <div className="w-11 h-6 bg-component-tertiary-background rounded-full peer peer-checked:bg-point-color-indigo peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
           </label>
-          <textarea
-            id="channelDescription"
-            name="channelDescription"
-            value={formData.channelDescription}
-            onChange={handleChange}
-            className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            placeholder="채널 설명을 입력하세요"
-          />
         </div>
+        {!formData.isPublic && (
+          <AssigneeSelect
+            selectedAssignee={formData.member_id}
+            assignee={project?.members || []}
+            toggleAssignee={toggleAssignee}
+            isAssigned={(memberId) => formData.member_id.includes(memberId)}
+            label="선택된 구성원"
+            className="px-1"
+          />
+        )}
       </div>
     </ModalTemplete>
-  );
+  )
 }
