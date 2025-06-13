@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, use } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -10,7 +10,7 @@ import MessageList from '@/components/project/chat/MessageList';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { getCurrentKoreanTime } from '@/utils/dateUtils';
 import { useAuthStore } from '@/auth/authStore';
-import { getChannel } from '@/hooks/getChannelData';
+import { useProject } from '@/contexts/ProjectContext';
 
 interface PageProps {
   params: Promise<{
@@ -18,33 +18,16 @@ interface PageProps {
   }>;
 }
 
-import { Channel } from '@/types/Channel';
 
 export default function ChatPage({ params }: PageProps) {
+  const { project } = useProject();
   const user = useAuthStore((state) => state.user);
   const [message, setMessage] = useState('');
-  const [channel, setChannel] = useState<Channel | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
   const { projectId } = use(params);
   const channelId = searchParams?.get('channel') || 'general';
+  const channel = project?.channels?.find((c) => c.channelId === channelId);
   const { messages, sendMessage, isConnected } = useWebSocket(projectId, channelId);
-
-  useEffect(() => {
-    const loadChannel = async () => {
-      try {
-        setIsLoading(true);
-        const channelData = await getChannel(projectId, channelId);
-        setChannel(channelData);
-      } catch (error) {
-        console.error('Failed to load channel:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadChannel();
-  }, [projectId, channelId]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,9 +51,7 @@ export default function ChatPage({ params }: PageProps) {
     <div className="flex flex-col h-screen pt-16">
       {/* 채널 헤더 - 고정 */}
       <div className="top-0 bg-background">
-        {isLoading ? (
-          <div className="p-4">채널을 불러오는 중...</div>
-        ) : channel ? (
+        {channel ? (
           <>
             <ChannelHeader channel={channel} />
             {/* Connection Status */}
@@ -81,7 +62,7 @@ export default function ChatPage({ params }: PageProps) {
             )}
           </>
         ) : (
-          <div className="p-4 text-red-500">채널을 불러오는데 실패했습니다.</div>
+          <div className="p-4 text-red-500">채널을 찾을 수 없습니다.</div>
         )}
       </div>
 
