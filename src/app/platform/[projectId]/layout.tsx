@@ -313,9 +313,12 @@ export default function ProjectLayout({
   if (!project) {
     return (
       <div className="flex min-h-screen bg-background">
-        {defaultLayout(children)}
+        <VoiceCallProvider>
+          {defaultLayout(children)}
+          <VoiceCallContainer />
+        </VoiceCallProvider>
       </div>
-    )
+    );
   }
 
   return (
@@ -323,7 +326,7 @@ export default function ProjectLayout({
       <VoiceCallProvider>
         <div className="flex min-h-screen bg-background">
           {defaultLayout(children)}
-
+          
           {/* Voice Call Container always present but conditionally rendered */}
           <VoiceCallContainer />
           <NotificationSidebar
