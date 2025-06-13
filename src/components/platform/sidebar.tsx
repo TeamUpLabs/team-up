@@ -101,7 +101,7 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                     <button
                       onClick={() => setIsChatOpen(!isChatOpen)}
                       className={`flex items-center px-4 py-2 rounded-lg w-full transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
-                        } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center' : 'justify-between'
+                        } hover:bg-point-color-indigo/20 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center' : 'justify-between'
                         }`}
                     >
                       <div className="flex items-center">
@@ -151,7 +151,7 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                     key={index}
                     href={item.href}
                     className={`flex items-center mx-2 rounded-lg transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
-                      } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
+                      } hover:bg-point-color-indigo/20 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
                       }`}
                     title={(isMinimized && !isMobile) ? item.label : ''}
                   >
@@ -180,7 +180,7 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                   key={index}
                   href={item.href}
                   className={`flex items-center mx-2 rounded-lg transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
-                    } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
+                    } hover:bg-point-color-indigo/20 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
                     }`}
                   title={(isMinimized && !isMobile) ? item.label : ''}
                 >

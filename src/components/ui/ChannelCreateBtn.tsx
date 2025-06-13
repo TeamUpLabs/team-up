@@ -11,7 +11,7 @@ export default function CreateChannelButton() {
     <>
       <button
         type="button"
-        className="flex items-center justify-between border border-point-color-indigo text-point-color-indigo px-3 py-2 rounded-lg mx-auto w-full hover:bg-point-color-indigo/20 active:scale-95 transition-all duration-200 cursor-pointer"
+        className="flex items-center justify-between bg-point-color-indigo text-white px-3 py-2 rounded-lg mx-auto w-full hover:bg-point-color-indigo-hover active:scale-95 transition-all duration-200 cursor-pointer"
         onClick={() => setIsModalOpen(true)}
       >
         <span className="text-sm">채널 추가</span>
