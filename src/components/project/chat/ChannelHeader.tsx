@@ -4,8 +4,9 @@ import { useState } from 'react';
 import VideoCall from '@/components/project/chat/VideoCall';
 import { useAuthStore } from '@/auth/authStore';
 import { useVoiceCall } from '@/contexts/VoiceCallContext';
+import { Channel } from '@/types/Channel';
 
-export default function ChannelHeader({ channelId }: { channelId: string }) {
+export default function ChannelHeader({ channel }: { channel: Channel }) {
   const [showVideoCall, setShowVideoCall] = useState(false);
   const userId = useAuthStore.getState().user?.id.toString() || 'anonymous';
   const { startVoiceCall } = useVoiceCall();
@@ -19,13 +20,13 @@ export default function ChannelHeader({ channelId }: { channelId: string }) {
   };
 
   const handleStartVoiceCall = () => {
-    startVoiceCall(channelId, userId);
+    startVoiceCall(channel.channelId, userId);
   };
   
   return (
     <div>
       <div className="flex justify-between px-6 py-4 border-b border-component-border">
-        <h2 className="text-xl font-semibold"># {channelId}</h2>
+        <h2 className="text-xl font-semibold"># {channel.channelName}</h2>
         <div className="space-x-5 self-center">
           <FontAwesomeIcon 
             icon={faPhone} 
@@ -43,7 +44,7 @@ export default function ChannelHeader({ channelId }: { channelId: string }) {
       
       {showVideoCall && (
         <VideoCall
-          channelId={channelId}
+          channelId={channel.channelId}
           userId={userId}
           onClose={endVideoCall}
         />

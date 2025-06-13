@@ -14,11 +14,6 @@ interface NavItem {
   hasNotification?: boolean;
 }
 
-interface Channel {
-  id: string;
-  name: string;
-}
-
 interface SidebarProps {
   isSidebarOpen: boolean;
   title?: string | React.ReactNode;
@@ -63,13 +58,6 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-  // 임시 채널 데이터
-  const channels: Channel[] = [
-    { id: 'general', name: '일반' },
-    { id: 'announcement', name: '공지사항' },
-    { id: 'free-chat', name: '자유채팅' },
-  ];
 
   // 참여 요청이 있는지 확인 (프로젝트 컨텍스트가 있는 경우)
   const hasParticipationRequests = project?.participationRequestMembers && project.participationRequestMembers.length > 0;
@@ -134,13 +122,13 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                       <div className="mt-2">
                         <CreateChannelButton />
                         <div className="ml-8 mt-2 space-y-2 transition-opacity duration-200">
-                          {channels.map((channel) => (
+                          {project?.channels?.map((channel) => (
                             <Link
-                              key={channel.id}
-                              href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.id}`}
+                              key={channel.channelId}
+                              href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.channelId}`}
                             className="block text-sm text-text-secondary hover:text-text-primary whitespace-nowrap"
                           >
-                            # {channel.name}
+                            # {channel.channelName}
                           </Link>
                         ))}
                       </div>
