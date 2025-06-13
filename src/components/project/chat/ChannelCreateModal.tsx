@@ -105,6 +105,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
       </div>
     </div>
   )
+
   const modalFooter = (
     <div className="flex justify-end gap-2">
       <button
@@ -124,6 +125,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
       </button>
     </div>
   )
+  
   return (
     <ModalTemplete header={modalHeader} footer={modalFooter} isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col space-y-4">
