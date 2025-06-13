@@ -4,6 +4,7 @@ import React from "react";
 import { ChevronDown, ChevronUp, ArrowRightToBracket } from 'flowbite-react-icons/outline';
 import { useProject } from "@/contexts/ProjectContext";
 import CreateChannelButton from "@/components/ui/ChannelCreateBtn";
+import { useAuthStore } from "@/auth/authStore";
 
 interface NavItem {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -29,6 +30,7 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
   const [showLabels, setShowLabels] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { project } = useProject();
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (onMinimizeChange) {
@@ -122,7 +124,7 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                       <div className="mt-2">
                         <CreateChannelButton />
                         <div className="ml-8 mt-2 space-y-2 transition-opacity duration-200">
-                          {project?.channels?.map((channel) => (
+                          {project?.channels?.filter((channel) => channel.member_id.includes(user?.id || 0)).map((channel) => (
                             <Link
                               key={channel.channelId}
                               href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.channelId}`}
