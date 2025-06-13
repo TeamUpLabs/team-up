@@ -582,7 +582,7 @@ export default function ScheduleCreateModal({
                   <h3 className="text-lg font-semibold">Assignee</h3>
                   <p className="text-text-secondary">Assign this task to a team member</p>
                 </div>
-                <div className="space-y-2 p-1">
+                <div className="space-y-2 px-1">
                   <label
                     htmlFor="assignee"
                     className="flex items-center text-sm font-medium mb-2 text-text-secondary"
@@ -594,6 +594,7 @@ export default function ScheduleCreateModal({
                     assignee={project?.members || []}
                     toggleAssignee={toggleAssignee}
                     isAssigned={isAssigned}
+                    label="선택된 담당자"
                   />
                 </div>
               </div>

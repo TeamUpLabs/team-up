@@ -9,6 +9,8 @@ interface AssigneeSelectProps {
   assignee: Member[];
   toggleAssignee: (memberId: number) => void;
   isAssigned: (memberId: number) => boolean;
+  className?: string;
+  label?: string;
 }
 
 export default function AssigneeSelect({
@@ -16,6 +18,8 @@ export default function AssigneeSelect({
   assignee,
   toggleAssignee,
   isAssigned,
+  className,
+  label
 }: AssigneeSelectProps) {
   const { project } = useProject();
 
@@ -51,10 +55,10 @@ export default function AssigneeSelect({
   }
 
   return (
-    <div>
+    <div className={className}>
       <div className="mb-3">
         <p className="text-sm text-text-secondary">
-          선택된 담당자: {selectedAssignee.length > 0 ? `${selectedAssignee.length}명` : "없음"}
+          {label} : {selectedAssignee.length > 0 ? `${selectedAssignee.length}명` : "없음"}
         </p>
       </div>
       <div className="grid grid-cols-2 gap-4">
