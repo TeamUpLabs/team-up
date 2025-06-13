@@ -13,7 +13,7 @@ import { useAuthStore } from '@/auth/authStore';
 import { useProject } from '@/contexts/ProjectContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import PipControls from '@/components/project/chat/PipView';
+import PipControls from '@/components/project/VoiceCall/PipView';
 import { useVoiceCall } from '@/contexts/VoiceCallContext';
 
 interface VoiceCallProps {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +10,7 @@ import MessageList from '@/components/project/chat/MessageList';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { getCurrentKoreanTime } from '@/utils/dateUtils';
 import { useAuthStore } from '@/auth/authStore';
+import { useProject } from '@/contexts/ProjectContext';
 
 interface PageProps {
   params: Promise<{
@@ -17,13 +18,45 @@ interface PageProps {
   }>;
 }
 
+
 export default function ChatPage({ params }: PageProps) {
+  const { project } = useProject();
   const user = useAuthStore((state) => state.user);
   const [message, setMessage] = useState('');
   const searchParams = useSearchParams();
   const { projectId } = use(params);
   const channelId = searchParams?.get('channel') || 'general';
+  const channel = project?.channels?.find((c) => c.channelId === channelId);
   const { messages, sendMessage, isConnected } = useWebSocket(projectId, channelId);
+  const [searchQuery, setSearchQuery] = useState("");
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    const handleHeaderSearch = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const searchValue = customEvent.detail || "";
+
+      // Only update if value is different
+      if (searchValue !== searchQuery) {
+        setSearchQuery(searchValue);
+      }
+    };
+
+    // Add event listener
+    window.addEventListener("headerSearch", handleHeaderSearch);
+
+    return () => {
+      window.removeEventListener("headerSearch", handleHeaderSearch);
+    };
+  }, [searchQuery]);
+
+  // Set mounted flag
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +70,7 @@ export default function ChatPage({ params }: PageProps) {
         message: message,
         timestamp: getCurrentKoreanTime(),
       };
-      
+
       sendMessage(messageData);
       setMessage('');
     }
@@ -47,19 +80,24 @@ export default function ChatPage({ params }: PageProps) {
     <div className="flex flex-col h-screen pt-16">
       {/* 채널 헤더 - 고정 */}
       <div className="top-0 bg-background">
-        <ChannelHeader channelId={channelId} />
-        
-        {/* Connection Status */}
-        {!isConnected && (
-          <div className="bg-red-500 text-white px-4 py-2 text-center">
-            연결이 끊어졌습니다. 재연결 시도중...
-          </div>
+        {channel ? (
+          <>
+            <ChannelHeader channel={channel} />
+            {/* Connection Status */}
+            {!isConnected && (
+              <div className="bg-red-500 text-white px-4 py-2 text-center">
+                연결이 끊어졌습니다. 재연결 시도중...
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="p-4 text-red-500">채널을 찾을 수 없습니다.</div>
         )}
       </div>
 
       {/* 메시지 리스트 - 스크롤 */}
       <div className="flex-1 overflow-y-auto">
-        <MessageList messages={messages} />
+        <MessageList messages={messages} searchQuery={searchQuery} />
       </div>
 
       {/* 메시지 입력 - 고정 */}

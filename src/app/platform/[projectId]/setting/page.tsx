@@ -6,7 +6,6 @@ import { useState } from "react";
 import GeneralSettingTab from "@/components/project/setting/GeneralSettingTab";
 import TeamSettingTab from "@/components/project/setting/TeamSettingTab";
 import NotificationsSettingTab from "@/components/project/setting/NotificationsSettingTab";
-import PrivacySettingTab from "@/components/project/setting/PrivacySettingTab";
 import DangerSettingTab from "@/components/project/setting/DangerSettingTab";
 
 export default function SettingsPage() {
@@ -63,14 +62,6 @@ export default function SettingsPage() {
         >
           알림
         </button>
-        <button
-          onClick={() => setActiveTab("privacy")}
-          className={`px-4 py-2 font-medium ${
-            activeTab === "privacy" ? "text-blue-500 border-b-2 border-blue-500" : "text-text-secondary"
-          }`}
-        >
-          개인정보 보호
-        </button>
         {isLeader && (
           <button
             onClick={() => setActiveTab("danger")}
@@ -93,10 +84,6 @@ export default function SettingsPage() {
 
       {activeTab === "notifications" && (
         <NotificationsSettingTab />
-      )}
-
-      {activeTab === "privacy" && (
-        <PrivacySettingTab />
       )}
 
       {activeTab === "danger" && isLeader && (

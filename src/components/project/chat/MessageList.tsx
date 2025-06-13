@@ -4,9 +4,10 @@ import { useAuthStore } from '@/auth/authStore';
 
 interface MessageListProps {
   messages: Message[];
+  searchQuery: string;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ messages }) => {
+const MessageList: React.FC<MessageListProps> = ({ messages, searchQuery }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const currentUser = useAuthStore(state => state.user);
 
@@ -20,9 +21,16 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
     new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
   );
 
+  const filteredMessages = sortedMessages.filter((msg) => {
+    const matchesSearch =
+      msg.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      msg.user.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  });
+
   return (
     <div className="flex-1 overflow-y-auto p-6 space-y-4">
-      {sortedMessages.map((msg, index) => {
+      {filteredMessages.map((msg, index) => {
         const isCurrentUser = msg.userId === currentUser?.id;
         const isSystemMessage = msg.type === 'system';
 

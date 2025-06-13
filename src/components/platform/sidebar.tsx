@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import React from "react";
 import { ChevronDown, ChevronUp, ArrowRightToBracket } from 'flowbite-react-icons/outline';
 import { useProject } from "@/contexts/ProjectContext";
+import CreateChannelButton from "@/components/ui/ChannelCreateBtn";
+import { useAuthStore } from "@/auth/authStore";
 
 interface NavItem {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -11,11 +13,6 @@ interface NavItem {
   href: string;
   isActive?: boolean;
   hasNotification?: boolean;
-}
-
-interface Channel {
-  id: string;
-  name: string;
 }
 
 interface SidebarProps {
@@ -33,6 +30,7 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
   const [showLabels, setShowLabels] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { project } = useProject();
+  const user = useAuthStore((state) => state.user);
 
   useEffect(() => {
     if (onMinimizeChange) {
@@ -63,13 +61,6 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // 임시 채널 데이터
-  const channels: Channel[] = [
-    { id: 'general', name: '일반' },
-    { id: 'announcement', name: '공지사항' },
-    { id: 'free-chat', name: '자유채팅' },
-  ];
-
   // 참여 요청이 있는지 확인 (프로젝트 컨텍스트가 있는 경우)
   const hasParticipationRequests = project?.participationRequestMembers && project.participationRequestMembers.length > 0;
 
@@ -91,14 +82,14 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
             {!title ? (
               <div className="h-8 bg-component-tertiary-background rounded w-16"></div>
             ) : (!isMinimized || isMobile) ? (
-                <Link href={titleHref} className={`block transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
-                  <h1 className="text-xl font-bold text-text-primary text-center whitespace-nowrap">{title}</h1>
-                </Link>
-              ) : (
-                <Link href={titleHref} className="block">
-                  <h1 className="text-xl font-bold text-text-primary text-center">{miniTitle}</h1>
-                </Link>
-              )}
+              <Link href={titleHref} className={`block transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
+                <h1 className="text-xl font-bold text-text-primary text-center whitespace-nowrap">{title}</h1>
+              </Link>
+            ) : (
+              <Link href={titleHref} className="block">
+                <h1 className="text-xl font-bold text-text-primary text-center">{miniTitle}</h1>
+              </Link>
+            )}
           </div>
           <nav className="space-y-2">
             {regularItems.map((item, index) => {
@@ -109,8 +100,8 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                   <div key={index} className="mx-2">
                     <button
                       onClick={() => setIsChatOpen(!isChatOpen)}
-                      className={`flex items-center px-4 py-2 rounded-lg w-full transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
-                        } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center' : 'justify-between'
+                      className={`flex items-center px-4 py-2 rounded-lg w-full transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/20' : 'text-text-secondary'
+                        } hover:bg-point-color-indigo/20 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center' : 'justify-between'
                         }`}
                     >
                       <div className="flex items-center">
@@ -130,16 +121,19 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                       )}
                     </button>
                     {isChatOpen && (!isMinimized || isMobile) && (showLabels || isMobile) && (
-                      <div className="ml-8 mt-2 space-y-2 transition-opacity duration-200">
-                        {channels.map((channel) => (
-                          <Link
-                            key={channel.id}
-                            href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.id}`}
+                      <div className="mt-2">
+                        <CreateChannelButton />
+                        <div className="ml-8 mt-2 space-y-2 transition-opacity duration-200">
+                          {project?.channels?.filter((channel) => channel.member_id.includes(user?.id || 0)).map((channel) => (
+                            <Link
+                              key={channel.channelId}
+                              href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.channelId}`}
                             className="block text-sm text-text-secondary hover:text-text-primary whitespace-nowrap"
                           >
-                            # {channel.name}
+                            # {channel.channelName}
                           </Link>
                         ))}
+                      </div>
                       </div>
                     )}
                   </div>
@@ -156,8 +150,8 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                   <Link
                     key={index}
                     href={item.href}
-                    className={`flex items-center mx-2 rounded-lg transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
-                      } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
+                    className={`flex items-center mx-2 rounded-lg transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/20' : 'text-text-secondary'
+                      } hover:bg-point-color-indigo/20 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
                       }`}
                     title={(isMinimized && !isMobile) ? item.label : ''}
                   >
@@ -185,8 +179,8 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                 <Link
                   key={index}
                   href={item.href}
-                  className={`flex items-center mx-2 rounded-lg transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/10' : 'text-text-secondary'
-                    } hover:bg-point-color-indigo/10 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
+                  className={`flex items-center mx-2 rounded-lg transition-all duration-300 ${item.isActive ? 'text-point-color-indigo bg-point-color-indigo/20' : 'text-text-secondary'
+                    } hover:bg-point-color-indigo/20 hover:text-point-color-indigo ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
                     }`}
                   title={(isMinimized && !isMobile) ? item.label : ''}
                 >

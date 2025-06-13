@@ -16,7 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import type { SharedFile } from '@/components/project/chat/VideoCall';
+import type { SharedFile } from '@/components/project/VideoCall/VideoCall';
 
 interface FilePreviewModalProps {
   file: SharedFile | null;
