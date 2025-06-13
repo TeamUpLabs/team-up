@@ -55,4 +55,31 @@ export const getChannel = async (project_id: string, channel_id: string) => {
   }
 };
 
+interface ChannelUpdateData {
+  channelName: string;
+  channelDescription: string;
+  isPublic: boolean;
+  member_id: number[];
+}
+
+export const updateChannel = async (projectId: string, channelId: string, channelData: ChannelUpdateData) => {
+  try {
+    const res = await server.put(`/project/${projectId}/channel/${channelId}`, {
+      channelName: channelData.channelName,
+      channelDescription: channelData.channelDescription,
+      isPublic: channelData.isPublic,
+      member_id: channelData.member_id,
+    });
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to update channel");
+    }
+  } catch (error) {
+    console.error("Error updating channel:", error);
+    throw error;
+  }
+};
+
+
   
