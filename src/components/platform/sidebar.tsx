@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import React from "react";
 import { ChevronDown, ChevronUp, ArrowRightToBracket } from 'flowbite-react-icons/outline';
 import { useProject } from "@/contexts/ProjectContext";
+import CreateChannelButton from "@/components/ui/ChannelCreateBtn";
 
 interface NavItem {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -91,14 +92,14 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
             {!title ? (
               <div className="h-8 bg-component-tertiary-background rounded w-16"></div>
             ) : (!isMinimized || isMobile) ? (
-                <Link href={titleHref} className={`block transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
-                  <h1 className="text-xl font-bold text-text-primary text-center whitespace-nowrap">{title}</h1>
-                </Link>
-              ) : (
-                <Link href={titleHref} className="block">
-                  <h1 className="text-xl font-bold text-text-primary text-center">{miniTitle}</h1>
-                </Link>
-              )}
+              <Link href={titleHref} className={`block transition-opacity duration-200 ${(showLabels || isMobile) ? 'opacity-100' : 'opacity-0'}`}>
+                <h1 className="text-xl font-bold text-text-primary text-center whitespace-nowrap">{title}</h1>
+              </Link>
+            ) : (
+              <Link href={titleHref} className="block">
+                <h1 className="text-xl font-bold text-text-primary text-center">{miniTitle}</h1>
+              </Link>
+            )}
           </div>
           <nav className="space-y-2">
             {regularItems.map((item, index) => {
@@ -130,16 +131,19 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
                       )}
                     </button>
                     {isChatOpen && (!isMinimized || isMobile) && (showLabels || isMobile) && (
-                      <div className="ml-8 mt-2 space-y-2 transition-opacity duration-200">
-                        {channels.map((channel) => (
-                          <Link
-                            key={channel.id}
-                            href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.id}`}
+                      <div className="mt-2">
+                        <CreateChannelButton />
+                        <div className="ml-8 mt-2 space-y-2 transition-opacity duration-200">
+                          {channels.map((channel) => (
+                            <Link
+                              key={channel.id}
+                              href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.id}`}
                             className="block text-sm text-text-secondary hover:text-text-primary whitespace-nowrap"
                           >
                             # {channel.name}
                           </Link>
                         ))}
+                      </div>
                       </div>
                     )}
                   </div>
