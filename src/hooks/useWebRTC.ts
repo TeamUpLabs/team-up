@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useProject } from '@/contexts/ProjectContext';
-import type { SharedFile } from '@/components/project/chat/VideoCall';
+import type { SharedFile } from '@/components/project/VideoCall/VideoCall';
 
 interface UseWebRTCProps {
   channelId: string;

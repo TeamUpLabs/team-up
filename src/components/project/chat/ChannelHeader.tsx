@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVideo, faPhone, faGear } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import VideoCall from '@/components/project/chat/VideoCall';
+import VideoCall from '@/components/project/VideoCall/VideoCall';
 import { useAuthStore } from '@/auth/authStore';
 import { useVoiceCall } from '@/contexts/VoiceCallContext';
 import { Channel } from '@/types/Channel';

@@ -11,7 +11,7 @@ import UserDropdown from "@/components/platform/UserDropdown";
 import NotificationDropdown from "@/components/platform/NotificationDropdown";
 import NotificationSidebar from "@/components/platform/NotificationSidebar";
 import { VoiceCallProvider } from "@/contexts/VoiceCallContext";
-import VoiceCallContainer from "@/components/project/chat/VoiceCallContainer";
+import VoiceCallContainer from "@/components/project/VoiceCall/VoiceCallContainer";
 import {
   Grid as GridOutline,
   Users as UsersOutline,

@@ -15,13 +15,13 @@ import useWebRTC from '@/hooks/useWebRTC';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Import separated components
-import RemoteVideo from '@/components/project/chat/RemoteVideo';
-import LocalVideo from '@/components/project/chat/LocalVideo';
-import VideoControls from '@/components/project/chat/VideoControls';
-import VideoParticipantList from '@/components/project/chat/VideoParticipantList';
-import VideoOptionsMenu from '@/components/project/chat/VideoOptionsMenu';
-import VideoSettings from '@/components/project/chat/VideoSettings';
-import ScreenShareControls from '@/components/project/chat/ScreenShareControls';
+import RemoteVideo from '@/components/project/VideoCall/RemoteVideo';
+import LocalVideo from '@/components/project/VideoCall/LocalVideo';
+import VideoControls from '@/components/project/VideoCall/VideoControls';
+import VideoParticipantList from '@/components/project/VideoCall/VideoParticipantList';
+import VideoOptionsMenu from '@/components/project/VideoCall/VideoOptionsMenu';
+import VideoSettings from '@/components/project/VideoCall/VideoSettings';
+import ScreenShareControls from '@/components/project/VideoCall/ScreenShareControls';
 
 // Import layout utilities
 import {
@@ -32,8 +32,8 @@ import {
 } from '@/utils/videoLayoutUtils';
 
 // Import new components
-import FilePreviewModal from '@/components/project/chat/FilePreviewModal';
-import SharedFilesDialog from '@/components/project/chat/SharedFilesDialog';
+import FilePreviewModal from '@/components/project/VideoCall/FilePreviewModal';
+import SharedFilesDialog from '@/components/project/VideoCall/SharedFilesDialog';
 
 // Define file type for shared files
 export interface SharedFile {
