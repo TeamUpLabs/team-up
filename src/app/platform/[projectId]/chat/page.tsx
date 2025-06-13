@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -28,6 +28,35 @@ export default function ChatPage({ params }: PageProps) {
   const channelId = searchParams?.get('channel') || 'general';
   const channel = project?.channels?.find((c) => c.channelId === channelId);
   const { messages, sendMessage, isConnected } = useWebSocket(projectId, channelId);
+  const [searchQuery, setSearchQuery] = useState("");
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    const handleHeaderSearch = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const searchValue = customEvent.detail || "";
+
+      // Only update if value is different
+      if (searchValue !== searchQuery) {
+        setSearchQuery(searchValue);
+      }
+    };
+
+    // Add event listener
+    window.addEventListener("headerSearch", handleHeaderSearch);
+
+    return () => {
+      window.removeEventListener("headerSearch", handleHeaderSearch);
+    };
+  }, [searchQuery]);
+
+  // Set mounted flag
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +70,7 @@ export default function ChatPage({ params }: PageProps) {
         message: message,
         timestamp: getCurrentKoreanTime(),
       };
-      
+
       sendMessage(messageData);
       setMessage('');
     }
@@ -68,7 +97,7 @@ export default function ChatPage({ params }: PageProps) {
 
       {/* 메시지 리스트 - 스크롤 */}
       <div className="flex-1 overflow-y-auto">
-        <MessageList messages={messages} />
+        <MessageList messages={messages} searchQuery={searchQuery} />
       </div>
 
       {/* 메시지 입력 - 고정 */}

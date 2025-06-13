@@ -96,12 +96,12 @@ export default function ChannelSettingsDropdown({
                   <FilePen className="h-4 w-4" />
                   <span>채널 정보 수정</span>
                 </MenuItem>
-                <MenuItem onClick={handleMemberEditModalOpen}>
+                <MenuItem onClick={handleMemberEditModalOpen} className="rounded-b-md">
                   <Users className="h-4 w-4" />
                   <span>멤버 관리</span>
                 </MenuItem>
 
-                <MenuItem onClick={toggleStar}>
+                {/* <MenuItem onClick={toggleStar}>
                   <Star className={`h-4 w-4 ${isStarred ? "fill-yellow-400" : ""}`} />
                   <span>{isStarred ? "즐겨찾기 해제" : "즐겨찾기 추가"}</span>
                 </MenuItem>
@@ -109,10 +109,10 @@ export default function ChannelSettingsDropdown({
                 <MenuItem onClick={togglePin}>
                   <Thumbtack className={`h-4 w-4 ${isPinned ? "fill-red-500" : ""}`} />
                   <span>{isPinned ? "고정 해제" : "채널 고정"}</span>
-                </MenuItem>
+                </MenuItem> */}
               </div>
 
-              <div>
+              {/* <div>
                 <MenuItem onClick={toggleMute}>
                   <Bell className="h-4 w-4" />
                   <span>{isMuted ? "알림 켜기" : "알림 끄기"}</span>
@@ -122,7 +122,7 @@ export default function ChannelSettingsDropdown({
                   <Search className="h-4 w-4" />
                   <span>채널 내 검색</span>
                 </MenuItem>
-              </div>
+              </div> */}
             </div>
           </motion.div>
         )}
