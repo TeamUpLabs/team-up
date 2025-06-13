@@ -2,7 +2,14 @@ import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
-import { FilePen, Star, Users, Thumbtack, Bell, Search } from "flowbite-react-icons/outline";
+import {
+  FilePen,
+  Star,
+  Users,
+  Thumbtack,
+  Bell,
+  BellRing,
+} from "flowbite-react-icons/outline";
 import { Channel } from "@/types/Channel";
 import { useAuthStore } from "@/auth/authStore";
 import ChannelEditModal from "@/components/project/chat/ChannelEditModal";
@@ -39,35 +46,39 @@ export default function ChannelSettingsDropdown({
   }, []);
 
   const toggleStar = () => {
-    setIsStarred(!isStarred)
+    setIsStarred(!isStarred);
     // 실제 구현에서는 서버에 상태 저장
-  }
+  };
 
   const togglePin = () => {
-    setIsPinned(!isPinned)
+    setIsPinned(!isPinned);
     // 실제 구현에서는 서버에 상태 저장
-  }
+  };
 
   const toggleMute = () => {
-    setIsMuted(!isMuted)
+    setIsMuted(!isMuted);
     // 실제 구현에서는 서버에 상태 저장
-  }
+  };
 
   const handleEditModalOpen = () => {
     if (isOwner) {
-      setIsEditModalOpen(true)
+      setIsEditModalOpen(true);
     } else {
-      useAuthStore.getState().setAlert("채널 정보 수정은 채널 개설자만 가능합니다.", "error")
+      useAuthStore
+        .getState()
+        .setAlert("채널 정보 수정은 채널 개설자만 가능합니다.", "error");
     }
-  }
+  };
 
   const handleMemberEditModalOpen = () => {
     if (isOwner) {
-      setIsMemnerEditModalOpen(true)
+      setIsMemnerEditModalOpen(true);
     } else {
-      useAuthStore.getState().setAlert("채널 구성원 수정은 채널 개설자만 가능합니다.", "error")
+      useAuthStore
+        .getState()
+        .setAlert("채널 구성원 수정은 채널 개설자만 가능합니다.", "error");
     }
-  }
+  };
 
   return (
     <div className="relative flex" ref={dropdownRef}>
@@ -75,7 +86,10 @@ export default function ChannelSettingsDropdown({
         onClick={() => setIsOpen(!isOpen)}
         className="font-semibold text-sm cursor-pointer"
       >
-        <FontAwesomeIcon icon={faGear} className="text-text-secondary cursor-pointer hover:text-text-primary" />
+        <FontAwesomeIcon
+          icon={faGear}
+          className="text-text-secondary cursor-pointer hover:text-text-primary"
+        />
       </button>
 
       <AnimatePresence>
@@ -96,44 +110,58 @@ export default function ChannelSettingsDropdown({
                   <FilePen className="h-4 w-4" />
                   <span>채널 정보 수정</span>
                 </MenuItem>
-                <MenuItem onClick={handleMemberEditModalOpen} className="rounded-b-md">
+                <MenuItem
+                  onClick={handleMemberEditModalOpen}
+                  className="rounded-b-md"
+                >
                   <Users className="h-4 w-4" />
                   <span>멤버 관리</span>
                 </MenuItem>
 
-                {/* <MenuItem onClick={toggleStar}>
-                  <Star className={`h-4 w-4 ${isStarred ? "fill-yellow-400" : ""}`} />
+                <MenuItem onClick={toggleStar}>
+                  <Star
+                    className={`h-4 w-4 ${isStarred ? "fill-yellow-400" : ""}`}
+                  />
                   <span>{isStarred ? "즐겨찾기 해제" : "즐겨찾기 추가"}</span>
                 </MenuItem>
 
                 <MenuItem onClick={togglePin}>
-                  <Thumbtack className={`h-4 w-4 ${isPinned ? "fill-red-500" : ""}`} />
+                  <Thumbtack
+                    className={`h-4 w-4 ${isPinned ? "fill-red-500" : ""}`}
+                  />
                   <span>{isPinned ? "고정 해제" : "채널 고정"}</span>
-                </MenuItem> */}
+                </MenuItem>
               </div>
 
-              {/* <div>
+              <div>
                 <MenuItem onClick={toggleMute}>
-                  <Bell className="h-4 w-4" />
+                  {isMuted ? (
+                    <Bell className="h-4 w-4" />
+                  ) : (
+                    <BellRing className="h-4 w-4 fill-yellow-400" />
+                  )}
                   <span>{isMuted ? "알림 켜기" : "알림 끄기"}</span>
                 </MenuItem>
-
-                <MenuItem className="rounded-b-md">
-                  <Search className="h-4 w-4" />
-                  <span>채널 내 검색</span>
-                </MenuItem>
-              </div> */}
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {isEditModalOpen && (
-        <ChannelEditModal channel={channel} isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} />
+        <ChannelEditModal
+          channel={channel}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+        />
       )}
 
       {isMemnerEditModalOpen && (
-        <ChannelMemberEditModal channel={channel} isOpen={isMemnerEditModalOpen} onClose={() => setIsMemnerEditModalOpen(false)} />
+        <ChannelMemberEditModal
+          channel={channel}
+          isOpen={isMemnerEditModalOpen}
+          onClose={() => setIsMemnerEditModalOpen(false)}
+        />
       )}
     </div>
   );
@@ -146,11 +174,18 @@ interface MenuItemProps {
   disabled?: boolean;
 }
 
-function MenuItem({ children, onClick, className = "", disabled = false }: MenuItemProps) {
+function MenuItem({
+  children,
+  onClick,
+  className = "",
+  disabled = false,
+}: MenuItemProps) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-4 py-2 flex items-center gap-2 text-sm ${disabled ? "" : "hover:bg-component-secondary-background"} ${className}`}
+      className={`w-full text-left px-4 py-2 flex items-center gap-2 text-sm ${
+        disabled ? "" : "hover:bg-component-secondary-background"
+      } ${className}`}
     >
       {children}
     </button>
