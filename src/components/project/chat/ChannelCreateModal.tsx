@@ -99,7 +99,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
         <h3 className="text-xl font-bold text-text-primary">
           새 채널 생성
         </h3>
-        <p className="text-sm text-text-tertiary mt-0.5">
+        <p className="text-sm text-point-color-indigo mt-0.5">
           프로젝트 채널을 관리하세요
         </p>
       </div>

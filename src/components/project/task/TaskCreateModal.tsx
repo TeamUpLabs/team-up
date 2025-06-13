@@ -258,7 +258,7 @@ export default function TaskCreateModal({
         <h3 className="text-xl font-bold text-text-primary">
           새로운 작업 추가
         </h3>
-        <p className="text-sm text-text-tertiary mt-0.5">
+        <p className="text-sm text-point-color-indigo mt-0.5">
           프로젝트 작업을 관리하세요
         </p>
       </div>

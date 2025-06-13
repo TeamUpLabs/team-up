@@ -255,7 +255,7 @@ export default function MilestoneCreateModal({
         <h3 className="text-xl font-bold text-text-primary">
           새로운 마일스톤 추가
         </h3>
-        <p className="text-sm text-text-tertiary mt-0.5">
+        <p className="text-sm text-point-color-indigo mt-0.5">
           프로젝트 마일스톤을 관리하세요
         </p>
       </div>

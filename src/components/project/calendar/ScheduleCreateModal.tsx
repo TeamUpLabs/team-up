@@ -253,7 +253,7 @@ export default function ScheduleCreateModal({
         <h3 className="text-xl font-bold text-text-primary">
           새로운 일정 추가
         </h3>
-        <p className="text-sm text-text-tertiary mt-0.5">
+        <p className="text-sm text-point-color-indigo mt-0.5">
           프로젝트 일정을 관리하세요
         </p>
       </div>
