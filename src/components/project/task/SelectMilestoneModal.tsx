@@ -4,7 +4,7 @@ import { MileStone } from '@/types/MileStone';
 import TaskCreateModal from '@/components/project/task/TaskCreateModal';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/ui/Badge';
-import CancelBtn from '@/components/ui/CancelBtn';
+import CancelBtn from '@/components/ui/button/CancelBtn';
 
 
 interface SelectMilestoneModalProps {

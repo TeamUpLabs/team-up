@@ -12,7 +12,7 @@ import { updateTask, addComment, updateSubtask, deleteTask } from "@/hooks/getTa
 import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faBullseye, faCheck, faHourglassStart, faHourglassEnd, faTrash, faPlus, faUser, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { InfoCircle, CalendarWeek, FileCheck, User, Flag, Tag, MessageDots, TrashBin } from "flowbite-react-icons/outline";
+import { InfoCircle, CalendarWeek, FileCheck, User, Flag, Tag, MessageDots } from "flowbite-react-icons/outline";
 import Badge from "@/components/ui/Badge";
 import Accordion from "@/components/ui/Accordion";
 import Image from "next/image";
@@ -20,8 +20,9 @@ import Select from "@/components/ui/Select";
 import { getPriorityColorName } from "@/utils/getPriorityColor";
 import { getStatusColorName } from "@/utils/getStatusColor";
 import DatePicker from "@/components/ui/DatePicker";
-import CancelBtn from "@/components/ui/CancelBtn";
-import SubmitBtn from "@/components/ui/SubmitBtn";
+import CancelBtn from "@/components/ui/button/CancelBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import DeleteBtn from "@/components/ui/button/DeleteBtn";
 
 
 interface TaskModalProps {
@@ -393,22 +394,20 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       </div>
       {(isUserAssignee && isEditing !== "none") && (
         <div className="flex items-center gap-2">
-          <>
-            <CancelBtn 
-              handleCancel={handleCancelEdit} 
-              className="!text-sm"
-              withIcon 
-            />
-            <SubmitBtn
-              onClick={handleSave}
-              submitStatus={submitStatus}
-              buttonText="저장"
-              successText="저장 완료"
-              errorText="오류 발생"
-              className="!text-sm"
-              withIcon
-            />
-          </>
+          <CancelBtn
+            handleCancel={handleCancelEdit}
+            className="!text-sm"
+            withIcon
+          />
+          <SubmitBtn
+            onClick={handleSave}
+            submitStatus={submitStatus}
+            buttonText="저장"
+            successText="저장 완료"
+            errorText="오류 발생"
+            className="!text-sm"
+            withIcon
+          />
         </div>
       )}
     </div>
@@ -416,16 +415,12 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
   const modalFooter =
     isEditing !== "none" ? (
-      <div className="flex gap-2 justify-end">
-        <button
-          onClick={handleDelete}
-          className="flex items-center gap-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-2 rounded-md transition-all duration-200 font-medium cursor-pointer"
-          aria-label="작업 삭제"
-        >
-          <TrashBin />
-          작업 삭제
-        </button>
-      </div>
+      <DeleteBtn
+        handleDelete={handleDelete}
+        className="!text-sm justify-self-end"
+        text="작업 삭제"
+        withIcon
+      />
     ) : null;
 
   return (

@@ -18,7 +18,7 @@ import DatePicker from "@/components/ui/DatePicker";
 import Select from "@/components/ui/Select";
 import Badge from "@/components/ui/Badge";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
-import SubmitBtn from "@/components/ui/SubmitBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
 
 interface TaskCreateModalProps {
   isOpen: boolean;

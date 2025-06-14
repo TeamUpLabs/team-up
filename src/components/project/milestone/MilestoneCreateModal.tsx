@@ -16,7 +16,7 @@ import Badge from "@/components/ui/Badge";
 import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
-import SubmitBtn from "@/components/ui/SubmitBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;

@@ -1,13 +1,14 @@
 import ModalTemplete from "@/components/ModalTemplete";
 import { Channel } from "@/types/Channel";
-import { FilePen, TrashBin } from "flowbite-react-icons/outline";
+import { FilePen } from "flowbite-react-icons/outline";
 import { useState } from "react";
 import { useProject } from "@/contexts/ProjectContext";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/auth/authStore";
 import { updateChannel, deleteChannel } from "@/hooks/getChannelData";
-import CancelBtn from "@/components/ui/CancelBtn";
-import SubmitBtn from "@/components/ui/SubmitBtn";
+import CancelBtn from "@/components/ui/button/CancelBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import DeleteBtn from "@/components/ui/button/DeleteBtn";
 
 
 interface ChannelEditModalProps {
@@ -112,16 +113,15 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
 
   const modalFooter = (
     <div className="flex items-center justify-between">
-      <button
-        onClick={() => {
+      <DeleteBtn
+        handleDelete={() => {
           setError(null)
           handleDelete()
         }}
-        className="flex items-center gap-1.5 text-red-400 bg-red-500/20 hover:bg-red-500/30 transition-all px-4 py-2 rounded-lg transition-colors cursor-pointer"
-      >
-        <TrashBin />
-        채널 삭제
-      </button>
+        className="!text-sm"
+        text="채널 삭제"
+        withIcon
+      />
       <div className="flex items-center gap-2">
         <CancelBtn
           handleCancel={() => {

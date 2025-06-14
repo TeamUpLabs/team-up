@@ -5,8 +5,8 @@ import AssigneeSelect from "@/components/project/AssigneeSelect";
 import { useProject } from "@/contexts/ProjectContext";
 import { useAuthStore } from "@/auth/authStore";
 import { createChannel } from "@/hooks/getChannelData";
-import CancelBtn from "@/components/ui/CancelBtn";
-import SubmitBtn from "@/components/ui/SubmitBtn";
+import CancelBtn from "@/components/ui/button/CancelBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
 
 interface ChannelCreateModalProps {
   isOpen: boolean;

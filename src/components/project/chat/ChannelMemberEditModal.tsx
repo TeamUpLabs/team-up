@@ -6,8 +6,8 @@ import { Users } from "flowbite-react-icons/outline";
 import { useAuthStore } from "@/auth/authStore";
 import { updateChannel } from "@/hooks/getChannelData";
 import { useState } from "react";
-import CancelBtn from "@/components/ui/CancelBtn";
-import SubmitBtn from "@/components/ui/SubmitBtn";
+import CancelBtn from "@/components/ui/button/CancelBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
 
 interface ChannelMemberEditModalProps {
   isOpen: boolean;

@@ -27,7 +27,7 @@ import { ko } from "date-fns/locale";
 import { getPlatformColor } from "@/utils/getPlatformColor";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import { createSchedule } from "@/hooks/getScheduleData";
-import SubmitBtn from "@/components/ui/SubmitBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
 
 type ScheduleType = "meeting" | "event";
 type MeetingPlatform = "Zoom" | "Google Meet" | "TeamUp";

@@ -3,8 +3,8 @@ import { faUserShield, faUser, faCheck } from '@fortawesome/free-solid-svg-icons
 import { Member } from '@/types/Member';
 import { Project } from '@/types/Project';
 import ModalTemplete from '@/components/ModalTemplete';
-import CancelBtn from '@/components/ui/CancelBtn';
-import SubmitBtn from '@/components/ui/SubmitBtn';
+import CancelBtn from '@/components/ui/button/CancelBtn';
+import SubmitBtn from '@/components/ui/button/SubmitBtn';
 
 
 interface PermissionChangeModalProps {

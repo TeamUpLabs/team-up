@@ -7,7 +7,7 @@ import Select from "@/components/ui/Select";
 import Badge from "@/components/ui/Badge";
 import { createProject } from '@/hooks/getProjectData';
 import { updateProjectMember } from '@/hooks/getMemberData';
-import SubmitBtn from "@/components/ui/SubmitBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
 
 interface NewProjectModalProps {
   isOpen: boolean;

@@ -8,7 +8,7 @@ import { Schedule } from "@/types/Schedule";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBullseye, faCheck, faPencil, faHourglassStart, faHourglassEnd, faVideo, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { InfoCircle, CalendarWeek, MapPin, Link as LinkIcon, User, Annotation, TrashBin } from "flowbite-react-icons/outline";
+import { InfoCircle, CalendarWeek, MapPin, Link as LinkIcon, User, Annotation } from "flowbite-react-icons/outline";
 import { MiniLogo } from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
 import Badge from "@/components/ui/Badge";
@@ -23,8 +23,9 @@ import { getPlatformColor, getPlatformColorName } from "@/utils/getPlatformColor
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { updateSchedule, deleteSchedule } from "@/hooks/getScheduleData";
-import CancelBtn from "@/components/ui/CancelBtn";
-import SubmitBtn from "@/components/ui/SubmitBtn";
+import CancelBtn from "@/components/ui/button/CancelBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import DeleteBtn from "@/components/ui/button/DeleteBtn";
 
 interface ScheduleModalProps {
   schedule: Schedule;
@@ -203,22 +204,20 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
       </div>
       {(isUserAssignee && isEditing !== "none") && (
         <div className="flex items-center gap-2">
-          <>
-            <CancelBtn
-              handleCancel={handleCancelEdit}
-              className="!text-sm"
-              withIcon
-            />
-            <SubmitBtn
-              onClick={handleSave}
-              submitStatus={submitStatus}
-              buttonText="저장"
-              successText="저장 완료"
-              errorText="오류 발생"
-              className="!text-sm"
-              withIcon
-            />
-          </>
+          <CancelBtn
+            handleCancel={handleCancelEdit}
+            className="!text-sm"
+            withIcon
+          />
+          <SubmitBtn
+            onClick={handleSave}
+            submitStatus={submitStatus}
+            buttonText="저장"
+            successText="저장 완료"
+            errorText="오류 발생"
+            className="!text-sm"
+            withIcon
+          />
         </div>
       )}
     </div>
@@ -226,16 +225,12 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
 
   const modalFooter =
     isEditing !== "none" ? (
-      <div className="flex gap-2 justify-end">
-        <button
-          onClick={handleDelete}
-          className="flex items-center gap-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-2 rounded-md transition-all duration-200 font-medium cursor-pointer"
-          aria-label="스케줄 삭제"
-        >
-          <TrashBin />
-          스케줄 삭제
-        </button>
-      </div>
+      <DeleteBtn
+        handleDelete={handleDelete}
+        className="!text-sm justify-self-end"
+        text="스케줄 삭제"
+        withIcon
+      />
     ) : null;
 
   return (

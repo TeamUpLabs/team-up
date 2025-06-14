@@ -24,14 +24,14 @@
   --input-border-hover: #5b42e0;
 
   --cancel-button-background: #ffffff;
-  --cancel-button-background-hover: #f4f6fa;
+  --cancel-button-background-hover: #ebebeb;
   
   --point-color-purple: #7e22ce;
   --point-color-purple-hover: #6b21a8;
   --point-color-green: #059669;
   --point-color-green-hover: #047857;
   --point-color-indigo: #4f46e5;
-  --point-color-indigo-hover: #4338ca;
+  --point-color-indigo-hover: #3d38a8;
 }
 
 .dark {
@@ -57,15 +57,15 @@
   --input-secondary-border: #4A5565;
   --input-border-hover: #432DD7;
 
-  --cancel-button-background: #0D1119;
-  --cancel-button-background-hover: #161C29;
+  --cancel-button-background: #1a1b26;
+  --cancel-button-background-hover: #2d2f3f;
   
   --point-color-purple: #AD47FF;
   --point-color-purple-hover: #9856D6;
   --point-color-green: #06DF73;
   --point-color-green-hover: #05C462;
   --point-color-indigo: #432DD7;
-  --point-color-indigo-hover: #3122A8;
+  --point-color-indigo-hover: #3d38a8;
   
   --section-spacing: 6rem;
 }

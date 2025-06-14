@@ -5,8 +5,8 @@ import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence } from 'framer-motion';
-import SubmitBtn from "@/components/ui/SubmitBtn";
-import CancelBtn from "@/components/ui/CancelBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import CancelBtn from "@/components/ui/button/CancelBtn";
 
 export default function ConfirmProvider() {
   const confirm = useAuthStore((state) => state.confirm);
