@@ -137,7 +137,7 @@ export default function MemberDetailModal({
       <button
         onClick={handleKickOutMember}
         className="w-full px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400
-          rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2"
+          rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 cursor-pointer"
       >
         <UserRemove className="w-5 h-5" />
         <span>팀원 퇴출</span>
