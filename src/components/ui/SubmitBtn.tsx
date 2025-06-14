@@ -1,12 +1,14 @@
 interface SubmitBtnProps {
   submitStatus: 'idle' | 'submitting' | 'success' | 'error';
   onClick?: () => void;
-  buttonText?: string; // Optional custom text for idle state
+  buttonText?: string;
+  successText?: string;
+  errorText?: string;
   className?: string;
   fit?: boolean;
 }
 
-export default function SubmitBtn({ submitStatus, onClick, buttonText = "제출", className, fit }: SubmitBtnProps) {
+export default function SubmitBtn({ submitStatus, onClick, buttonText = "제출", successText = "제출 완료", errorText = "오류 발생", className, fit }: SubmitBtnProps) {
   return (
     <div className={`${fit ? "w-full" : "w-fit"}`}>
       <button
@@ -71,7 +73,7 @@ export default function SubmitBtn({ submitStatus, onClick, buttonText = "제출"
           >
             <path d="M20 6 9 17l-5-5"></path>
           </svg>
-          제출 완료
+          {successText}
         </>
       )}
       {submitStatus === 'error' && (
@@ -81,7 +83,7 @@ export default function SubmitBtn({ submitStatus, onClick, buttonText = "제출"
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
           </svg>
-          오류 발생
+          {errorText}
         </>
       )}
       </button>
