@@ -6,6 +6,7 @@ import { Users } from "flowbite-react-icons/outline";
 import { useAuthStore } from "@/auth/authStore";
 import { updateChannel } from "@/hooks/getChannelData";
 import { useState } from "react";
+import SubmitBtn from "@/components/ui/SubmitBtn";
 
 interface ChannelMemberEditModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
     isPublic: channel.isPublic as boolean,
     member_id: channel.member_id as number[],
   });
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const toggleAssignee = (memberId: number) => {
     setFormData((prev) => {
@@ -55,11 +57,13 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
     }
 
     try {
+      setSubmitStatus('submitting');
       await updateChannel(channel.projectId, channel.channelId, {
         ...formData,
       });
       useAuthStore.getState().setAlert("채널이 성공적으로 수정되었습니다.", "success");
-
+      setSubmitStatus('success');
+      
       setTimeout(() => {
         onClose();
       }, 1000);
@@ -72,6 +76,7 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
         errorMessage = "채널 수정 중 알 수 없는 오류가 발생했습니다. 입력값을 확인하거나 관리자에게 문의해주세요.";
       }
       useAuthStore.getState().setAlert(errorMessage, "error");
+      setSubmitStatus('error');
     }
   };
 
@@ -104,12 +109,13 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
       >
         취소
       </button>
-      <button
-        className="px-4 py-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white rounded-lg transition-colors"
+      <SubmitBtn
+        submitStatus={submitStatus}
         onClick={handleSubmit}
-      >
-        구성원 수정
-      </button>
+        buttonText="구성원 수정"
+        successText="수정 완료"
+        errorText="수정 실패"
+      />
     </div>
   )
 
