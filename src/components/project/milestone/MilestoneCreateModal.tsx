@@ -339,14 +339,20 @@ export default function MilestoneCreateModal({
                 <p className="text-text-secondary">When will this milestone happen?</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <DatePicker
-                  label="시작일"
-                  isRequired
-                  value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
-                  onChange={handleStartDateChange}
-                  placeholder="시작일 선택"
-                  className="w-full bg-input-background"
-                />
+                <div className="space-y-2">
+                  <label
+                    htmlFor="startDate"
+                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
+                  >
+                    시작일 <span className="text-point-color-purple ml-1">*</span>
+                  </label>
+                  <DatePicker
+                    value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                    onChange={handleStartDateChange}
+                    placeholder="시작일 선택"
+                    className="w-full bg-input-background"
+                  />
+                </div>
                 <div className="space-y-2">
                   <DatePicker
                     label="종료일"
@@ -356,6 +362,7 @@ export default function MilestoneCreateModal({
                     placeholder="종료일 선택"
                     className="w-full bg-input-background"
                     minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                    maxDate={project?.endDate ? parseStringToDate(project.endDate) : undefined}
                   />
                   {dateError && (
                     <p className="text-sm text-red-500 mt-1">
