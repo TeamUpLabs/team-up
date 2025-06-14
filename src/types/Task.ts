@@ -7,6 +7,7 @@ export interface SubTask {
 }
 
 export interface Comment {
+  id: number;
   author_id: number;
   content: string;
   createdAt: string;

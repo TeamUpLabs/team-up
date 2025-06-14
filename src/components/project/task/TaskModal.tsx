@@ -8,7 +8,7 @@ import { useAuthStore } from "@/auth/authStore";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { SubTask } from "@/types/Task";
-import { updateTask, addComment, updateSubtask, deleteTask } from "@/hooks/getTaskData";
+import { updateTask, addComment, updateSubtask, deleteTask, deleteComment } from "@/hooks/getTaskData";
 import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faBullseye, faCheck, faHourglassStart, faHourglassEnd, faTrash, faPlus, faUser, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
@@ -49,6 +49,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   // Update taskData when the task prop changes
   useEffect(() => {
     setTaskData(task);
+    console.log(task);
   }, [task]);
 
   const calculateProgress = (subtasksList: SubTask[]) => {
@@ -260,6 +261,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     }
 
     const newComment: Comment = {
+      id: Date.now() + Math.floor(Math.random() * 10000),
       author_id: user?.id ?? 0,
       content: commentContent,
       createdAt: getCurrentKoreanTimeDate(),
@@ -288,6 +290,28 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       useAuthStore.getState().setAlert("댓글 추가에 실패했습니다.", "error");
     } finally {
       setCommentSubmitStatus('idle');
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+    console.log(commentId);
+    try {
+      useAuthStore.getState().setConfirm("댓글을 삭제하시겠습니까?", async () => {
+        try {
+          await deleteComment(project?.id ? String(project.id) : "0", task.id, commentId);
+          useAuthStore.getState().setAlert("댓글이 성공적으로 삭제되었습니다.", "success");
+          setTaskData((prev) => ({
+            ...prev,
+            comments: prev.comments.filter((comment) => comment.id !== commentId),
+          }));
+        } catch (error) {
+          console.error("Error deleting comment:", error);
+          useAuthStore.getState().setAlert("댓글 삭제에 실패했습니다.", "error");
+        }
+      });
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      useAuthStore.getState().setAlert("댓글 삭제에 실패했습니다.", "error");
     }
   };
 
@@ -930,7 +954,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                         alt="Profile"
                         className="w-full h-full object-fit rounded-full"
                         quality={100}
-                        fill
+                        width={40}
+                        height={40}
                       />
                     ) : (
                       <p>
@@ -962,7 +987,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       </div>
                       {comment?.author_id === user?.id && (
                         <button
-                          className="text-text-secondary hover:text-red-400 p-1.5 transition-all"
+                          type="button"
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="text-text-secondary hover:text-red-400 p-1.5 transition-all cursor-pointer"
                           aria-label="댓글 삭제"
                         >
                           <FontAwesomeIcon icon={faTrash} size="sm" />
@@ -995,7 +1022,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                     alt="Profile"
                     className="w-full h-full object-fit rounded-full"
                     quality={100}
-                    fill
+                    width={40}
+                    height={40}
                   />
                 ) : (
                   <p>{user?.name.charAt(0)}</p>

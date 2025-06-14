@@ -145,3 +145,18 @@ export const addComment = async (project_id: string, task_id: number, comment: C
     throw error;
   }
 }
+
+export const deleteComment = async (project_id: string, task_id: number, comment_id: number) => {
+  try {
+    const res = await server.delete(`/project/${project_id}/task/${task_id}/comment/${comment_id}`);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to delete comment");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+  
