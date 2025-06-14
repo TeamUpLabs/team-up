@@ -51,8 +51,10 @@ export const useWebSocket = (projectId: string, channelId: string) => {
         return;
       }
 
+      const socketProtocol = SERVER_URL?.startsWith('https://') ? 'wss' : 'ws';
+
       console.log(`채널 ${channelId}에 웹소켓 연결 시도...`);
-      const ws = new WebSocket(`wss://${SERVER_URL?.replace('http://', '').replace('https://', '')}/ws/chat/${projectId}/${channelId}?user_id=${user.id.toString()}`);
+      const ws = new WebSocket(`${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/ws/chat/${projectId}/${channelId}?user_id=${user.id.toString()}`);
       
       // 이벤트 리스너 등록 전에 소켓 참조 저장
       socketRef.current = ws;
