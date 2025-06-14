@@ -31,7 +31,10 @@ export default function DeleteProjectConfirmModal({ isOpen, onClose }: DeletePro
   }
 
   const header = (
-    <h3 className="text-xl font-bold text-text-primary">프로젝트 삭제</h3>
+    <div className="flex flex-col space-y-1">
+      <h3 className="text-xl font-bold text-text-primary">프로젝트 삭제</h3>
+      <p className="text-sm text-point-color-indigo mt-0.5">정말로 삭제하시겠습니까?</p>
+    </div>
   );
 
   const footer = (
@@ -43,7 +46,7 @@ export default function DeleteProjectConfirmModal({ isOpen, onClose }: DeletePro
         취소
       </button>
       <button 
-        className={`px-4 py-2 ${isDeleteEnabled ? 'bg-red-600 hover:bg-red-700' : 'bg-red-600/50 cursor-not-allowed'} text-white rounded-lg transition-colors`}
+        className={`px-4 py-2 ${isDeleteEnabled ? 'bg-red-600 hover:bg-red-700 cursor-pointer' : 'bg-red-600/50 cursor-not-allowed'} text-white rounded-lg transition-colors`}
         disabled={!isDeleteEnabled}
         onClick={handleDelete}
       >
@@ -60,7 +63,6 @@ export default function DeleteProjectConfirmModal({ isOpen, onClose }: DeletePro
       footer={footer}
     >
       <div>
-        <p className="text-text-secondary text-sm mb-3">정말로 삭제하시겠습니까?</p>
         <p className="text-text-secondary text-sm mb-3">프로젝트와 모든 관련 데이터가 영구적으로 삭제됩니다.</p>
         <input 
           type="text" 

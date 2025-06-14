@@ -23,15 +23,13 @@ interface PermissionChangeModalProps {
 export default function PermissionChangeModal({ submitStatus, selectedMember, isOpen, onClose, selectedRole, setSelectedRole, setShowRoleModal, handlePermissionChange, roleDescriptions }: PermissionChangeModalProps) {
 
   const header = (
-    <div className="flex items-center space-x-3">
-      <div>
-        <h3 className="text-xl font-bold text-text-primary">
-          권한 변경: {selectedMember.name}
-        </h3>
-        <p className="text-sm text-point-color-indigo mt-0.5">
-          권한을 변경하면 팀원의 프로젝트 접근 권한이 변경됩니다.
-        </p>
-      </div>
+    <div className="flex flex-col space-y-1">
+      <h3 className="text-xl font-bold text-text-primary">
+        권한 변경: {selectedMember.name}
+      </h3>
+      <p className="text-sm text-point-color-indigo mt-0.5">
+        권한을 변경하면 팀원의 프로젝트 접근 권한이 변경됩니다.
+      </p>
     </div>
   );
 
