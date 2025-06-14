@@ -5,6 +5,7 @@ import AssigneeSelect from "@/components/project/AssigneeSelect";
 import { useProject } from "@/contexts/ProjectContext";
 import { useAuthStore } from "@/auth/authStore";
 import { createChannel } from "@/hooks/getChannelData";
+import CancelBtn from "@/components/ui/CancelBtn";
 import SubmitBtn from "@/components/ui/SubmitBtn";
 
 interface ChannelCreateModalProps {
@@ -113,21 +114,22 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
 
   const modalFooter = (
     <div className="flex justify-end gap-2">
-      <button
-        onClick={() => {
+      <CancelBtn
+        handleCancel={() => {
           setError(null)
           onClose()
         }}
-        className="text-text-secondary hover:text-text-primary bg-cancel-button-background hover:bg-cancel-button-background-hover transition-all px-4 py-2 text-text-primary rounded-lg transition-colors border border-component-border"
-      >
-        취소
-      </button>
+        className="!text-sm"
+        withIcon
+      />
       <SubmitBtn
         submitStatus={submitStatus}
         onClick={handleSubmit}
         buttonText="채널 생성"
         successText="생성 완료"
         errorText="생성 실패"
+        className="!text-sm"
+        withIcon
       />
     </div>
   )

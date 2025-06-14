@@ -6,6 +6,7 @@ import { useProject } from "@/contexts/ProjectContext";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/auth/authStore";
 import { updateChannel, deleteChannel } from "@/hooks/getChannelData";
+import CancelBtn from "@/components/ui/CancelBtn";
 import SubmitBtn from "@/components/ui/SubmitBtn";
 
 
@@ -122,21 +123,22 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
         채널 삭제
       </button>
       <div className="flex items-center gap-2">
-        <button
-          onClick={() => {
+        <CancelBtn
+          handleCancel={() => {
             setError(null)
             onClose()
           }}
-          className="text-text-secondary hover:text-text-primary bg-cancel-button-background hover:bg-cancel-button-background-hover transition-all px-4 py-2 text-text-primary rounded-lg transition-colors border border-component-border"
-        >
-          취소
-        </button>
+          className="!text-sm"
+          withIcon
+        />
         <SubmitBtn
           submitStatus={submitStatus}
           onClick={handleSubmit}
           buttonText="채널 수정"
           successText="수정 완료"
           errorText="수정 실패"
+          className="!text-sm"
+          withIcon
         />
       </div>
     </div>

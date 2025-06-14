@@ -6,7 +6,7 @@ import Image from "next/image";
 import ModalTemplete from "@/components/ModalTemplete";
 import { Schedule } from "@/types/Schedule";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullseye, faCheck, faPencil, faXmark, faHourglassStart, faHourglassEnd, faVideo, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBullseye, faCheck, faPencil, faHourglassStart, faHourglassEnd, faVideo, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { InfoCircle, CalendarWeek, MapPin, Link as LinkIcon, User, Annotation, TrashBin } from "flowbite-react-icons/outline";
 import { MiniLogo } from "@/components/logo";
@@ -23,6 +23,8 @@ import { getPlatformColor, getPlatformColorName } from "@/utils/getPlatformColor
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { updateSchedule, deleteSchedule } from "@/hooks/getScheduleData";
+import CancelBtn from "@/components/ui/CancelBtn";
+import SubmitBtn from "@/components/ui/SubmitBtn";
 
 interface ScheduleModalProps {
   schedule: Schedule;
@@ -37,6 +39,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
   const router = useRouter();
   const [isEditing, setIsEditing] = useState<string>("none");
   const [scheduleData, setScheduleData] = useState<Schedule>(schedule);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const isUserAssignee = user && schedule?.assignee?.some((assi) => assi.id === user?.id);
 
@@ -84,6 +87,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
   };
 
   const handleSave = async () => {
+    setSubmitStatus('submitting');
     try {
       await updateSchedule(project?.id ? String(project.id) : "0", schedule.id, {
         ...scheduleData,
@@ -99,12 +103,17 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
       });
 
       useAuthStore.getState().setAlert("스케줄 수정에 성공했습니다.", "success");
-      onClose();
+      setSubmitStatus('success');
+      setTimeout(() => {
+        onClose();
+      }, 1000);
     } catch (error) {
       console.error("Error updating schedule:", error);
+      setSubmitStatus('error');
       useAuthStore.getState().setAlert("스케줄 수정에 실패했습니다.", "error");
     } finally {
       setIsEditing("none");
+      setSubmitStatus('idle');
     }
   };
 
@@ -112,9 +121,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
     useAuthStore.getState().setConfirm("스케줄을 삭제하시겠습니까?", async () => {
       try {
         await deleteSchedule(project?.id ?? "", schedule.id);
-        useAuthStore
-          .getState()
-          .setAlert("스케줄 삭제에 성공했습니다.", "success");
+        useAuthStore.getState().setAlert("스케줄 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
         onClose();
       } catch (error) {
@@ -197,21 +204,20 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
       {(isUserAssignee && isEditing !== "none") && (
         <div className="flex items-center gap-2">
           <>
-            <button
-              onClick={handleCancelEdit}
-              className="flex items-center gap-1.5 text-sm border border-component-border hover:bg-can text-text-primary px-4 py-2 rounded-md transition-all duration-200 font-medium"
-            >
-              <FontAwesomeIcon icon={faXmark} />
-              취소
-            </button>
-
-            <button
+            <CancelBtn
+              handleCancel={handleCancelEdit}
+              className="!text-sm"
+              withIcon
+            />
+            <SubmitBtn
               onClick={handleSave}
-              className="flex items-center gap-1.5 text-sm bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-md transition-all duration-200 font-medium"
-            >
-              <FontAwesomeIcon icon={faCheck} />
-              저장
-            </button>
+              submitStatus={submitStatus}
+              buttonText="저장"
+              successText="저장 완료"
+              errorText="오류 발생"
+              className="!text-sm"
+              withIcon
+            />
           </>
         </div>
       )}

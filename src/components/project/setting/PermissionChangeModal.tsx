@@ -3,8 +3,12 @@ import { faUserShield, faUser, faCheck } from '@fortawesome/free-solid-svg-icons
 import { Member } from '@/types/Member';
 import { Project } from '@/types/Project';
 import ModalTemplete from '@/components/ModalTemplete';
+import CancelBtn from '@/components/ui/CancelBtn';
+import SubmitBtn from '@/components/ui/SubmitBtn';
+
 
 interface PermissionChangeModalProps {
+  submitStatus: 'idle' | 'submitting' | 'success' | 'error';
   selectedMember: Member;
   isOpen: boolean;
   onClose: () => void;
@@ -16,7 +20,7 @@ interface PermissionChangeModalProps {
   project: Project;
 }
 
-export default function PermissionChangeModal({ selectedMember, isOpen, onClose, selectedRole, setSelectedRole, setShowRoleModal, handlePermissionChange, roleDescriptions }: PermissionChangeModalProps) {
+export default function PermissionChangeModal({ submitStatus, selectedMember, isOpen, onClose, selectedRole, setSelectedRole, setShowRoleModal, handlePermissionChange, roleDescriptions }: PermissionChangeModalProps) {
 
   const header = (
     <div className="flex items-center space-x-4">
@@ -26,18 +30,20 @@ export default function PermissionChangeModal({ selectedMember, isOpen, onClose,
 
   const footer = (
     <div className="flex justify-end gap-3">
-      <button
-        className="px-4 py-2 text-text-secondary hover:text-white rounded-lg transition-colors"
-        onClick={() => setShowRoleModal(false)}
-      >
-        취소
-      </button>
-      <button
-        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+      <CancelBtn
+        handleCancel={() => setShowRoleModal(false)}
+        className="!text-sm"
+        withIcon
+      />
+      <SubmitBtn
+        submitStatus={submitStatus}
         onClick={handlePermissionChange}
-      >
-        변경 저장
-      </button>
+        buttonText="변경 저장"
+        successText="변경 완료"
+        errorText="변경 실패"
+        className="!text-sm !bg-blue-600 hover:!bg-blue-700"
+        withIcon
+      />
     </div>
   );
 

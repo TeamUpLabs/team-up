@@ -4,6 +4,8 @@ import { MileStone } from '@/types/MileStone';
 import TaskCreateModal from '@/components/project/task/TaskCreateModal';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/ui/Badge';
+import CancelBtn from '@/components/ui/CancelBtn';
+
 
 interface SelectMilestoneModalProps {
   isOpen: boolean;
@@ -37,21 +39,19 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
 
   const footer = (
     <div className="flex justify-end gap-3">
-      <button
-        type="button"
-        onClick={onClose}
-        className="px-4 py-2 rounded-lg border border-component-border text-text-secondary hover:bg-component-secondary-background transition-colors"
-      >
-        취소
-      </button>
+      <CancelBtn
+        handleCancel={onClose}
+        className="!text-sm"
+        withIcon
+      />
       <button
         type="button"
         disabled={!selectedMilestone}
         onClick={handleSelectMilestone}
-        className={`px-4 py-2 rounded-lg ${
+        className={`px-4 py-2 rounded-lg text-sm ${
           !selectedMilestone
             ? "bg-blue-600/50 text-white cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700 text-white"
+            : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
         } transition-colors flex items-center active:scale-95`}
       >
         선택하기

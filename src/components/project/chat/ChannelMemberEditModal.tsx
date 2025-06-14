@@ -6,6 +6,7 @@ import { Users } from "flowbite-react-icons/outline";
 import { useAuthStore } from "@/auth/authStore";
 import { updateChannel } from "@/hooks/getChannelData";
 import { useState } from "react";
+import CancelBtn from "@/components/ui/CancelBtn";
 import SubmitBtn from "@/components/ui/SubmitBtn";
 
 interface ChannelMemberEditModalProps {
@@ -101,20 +102,19 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
 
   const modalFooter = (
     <div className="flex justify-end gap-2">
-      <button
-        onClick={() => {
-          onClose()
-        }}
-        className="text-text-secondary hover:text-text-primary bg-cancel-button-background hover:bg-cancel-button-background-hover transition-all px-4 py-2 text-text-primary rounded-lg transition-colors border border-component-border"
-      >
-        취소
-      </button>
+      <CancelBtn
+        handleCancel={onClose}
+        className="!text-sm"
+        withIcon
+      />
       <SubmitBtn
         submitStatus={submitStatus}
         onClick={handleSubmit}
         buttonText="구성원 수정"
         successText="수정 완료"
         errorText="수정 실패"
+        className="!text-sm"
+        withIcon
       />
     </div>
   )

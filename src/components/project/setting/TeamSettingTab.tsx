@@ -29,9 +29,9 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [selectedRole, setSelectedRole] = useState<string>("");
-  const [isCurrentUserLeaderOrManager, setIsCurrentUserLeaderOrManager] =
-    useState(false);
+  const [isCurrentUserLeaderOrManager, setIsCurrentUserLeaderOrManager] = useState(false);
   const { user } = useAuthStore();
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   // Check if current user is leader or manager
   useEffect(() => {
@@ -92,6 +92,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
 
   const handlePermissionChange = async () => {
     if (selectedMember) {
+      setSubmitStatus('submitting');
       try {
         await updateProjectMemberPermission(
           project.id,
@@ -106,9 +107,15 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
             }로 변경되었습니다.`,
             "success"
           );
+          setSubmitStatus('success');
       } catch (error) {
         console.error("Error updating project member permission:", error);
         useAuthStore.getState().setAlert("권한 변경에 실패했습니다.", "error");
+        setSubmitStatus('error');
+      } finally {
+        setShowRoleModal(false);
+        setSelectedMember(null);
+        setSubmitStatus('idle');
       }
     }
     // Close modal and reset state
@@ -443,6 +450,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
         {/* Role Change Modal */}
         {showRoleModal && selectedMember && (
           <PermissionChangeModal
+            submitStatus={submitStatus}
             selectedMember={selectedMember}
             isOpen={showRoleModal}
             onClose={() => setShowRoleModal(false)}

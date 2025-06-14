@@ -11,7 +11,7 @@ import { SubTask } from "@/types/Task";
 import { updateTask, addComment, updateSubtask, deleteTask } from "@/hooks/getTaskData";
 import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencil, faBullseye, faXmark, faCheck, faHourglassStart, faHourglassEnd, faTrash, faPlus, faUser, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faBullseye, faCheck, faHourglassStart, faHourglassEnd, faTrash, faPlus, faUser, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { InfoCircle, CalendarWeek, FileCheck, User, Flag, Tag, MessageDots, TrashBin } from "flowbite-react-icons/outline";
 import Badge from "@/components/ui/Badge";
 import Accordion from "@/components/ui/Accordion";
@@ -20,6 +20,8 @@ import Select from "@/components/ui/Select";
 import { getPriorityColorName } from "@/utils/getPriorityColor";
 import { getStatusColorName } from "@/utils/getStatusColor";
 import DatePicker from "@/components/ui/DatePicker";
+import CancelBtn from "@/components/ui/CancelBtn";
+import SubmitBtn from "@/components/ui/SubmitBtn";
 
 
 interface TaskModalProps {
@@ -37,6 +39,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const [taskData, setTaskData] = useState<Task>(task);
   const [newTag, setNewTag] = useState("");
   const [isComposing, setIsComposing] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   // Update taskData when the task prop changes
   useEffect(() => {
@@ -131,6 +134,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   };
 
   const handleSave = async () => {
+    setSubmitStatus('submitting');
     try {
       await updateTask(project?.id ? String(project.id) : "0", task.id, {
         ...taskData,
@@ -148,12 +152,17 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       });
 
       useAuthStore.getState().setAlert("작업 수정에 성공했습니다.", "success");
-      onClose();
+      setSubmitStatus('success');
+      setTimeout(() => {
+        onClose();
+      }, 1000);
     } catch (error) {
       console.error("Error updating task:", error);
+      setSubmitStatus('error');
       useAuthStore.getState().setAlert("작업 수정에 실패했습니다.", "error");
     } finally {
       setIsEditing("none");
+      setSubmitStatus('idle');
     }
   };
 
@@ -385,21 +394,20 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       {(isUserAssignee && isEditing !== "none") && (
         <div className="flex items-center gap-2">
           <>
-            <button
-              onClick={handleCancelEdit}
-              className="flex items-center gap-1.5 text-sm border border-component-border hover:bg-can text-text-primary px-4 py-2 rounded-md transition-all duration-200 font-medium"
-            >
-              <FontAwesomeIcon icon={faXmark} />
-              취소
-            </button>
-
-            <button
+            <CancelBtn 
+              handleCancel={handleCancelEdit} 
+              className="!text-sm"
+              withIcon 
+            />
+            <SubmitBtn
               onClick={handleSave}
-              className="flex items-center gap-1.5 text-sm bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-md transition-all duration-200 font-medium"
-            >
-              <FontAwesomeIcon icon={faCheck} />
-              저장
-            </button>
+              submitStatus={submitStatus}
+              buttonText="저장"
+              successText="저장 완료"
+              errorText="오류 발생"
+              className="!text-sm"
+              withIcon
+            />
           </>
         </div>
       )}

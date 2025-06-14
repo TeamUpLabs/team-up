@@ -222,7 +222,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
         disabled={step === 1}
       >
         <AngleLeft className="h-4 w-4" />
-        Previous
+        이전
       </button>
 
       {step < totalSteps ? (
@@ -232,7 +232,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
           onClick={() => moveNextStep(step)}
           disabled={step === totalSteps}
         >
-          Next
+          다음
           <AngleRight className="h-4 w-4" />
         </button>
       ) : (
@@ -242,6 +242,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
           buttonText="프로젝트 생성"
           successText="생성 완료"
           errorText="생성 실패"
+          withIcon
         />
       )}
     </div>

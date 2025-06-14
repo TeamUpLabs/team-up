@@ -4,7 +4,7 @@ import Image from "next/image";
 import ModalTemplete from "@/components/ModalTemplete";
 import { MileStone } from "@/types/MileStone";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBullseye, faPencil, faCheck, faXmark, faHourglassStart, faHourglassEnd, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBullseye, faPencil, faCheck, faHourglassStart, faHourglassEnd, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useAuthStore } from "@/auth/authStore";
 import { useParams, useRouter } from "next/navigation";
 import { useProject } from "@/contexts/ProjectContext";
@@ -16,6 +16,8 @@ import { updateMilestone, deleteMilestone } from "@/hooks/getMilestoneData";
 import Select from "@/components/ui/Select";
 import { getStatusColorName } from "@/utils/getStatusColor";
 import { getPriorityColorName } from "@/utils/getPriorityColor";
+import CancelBtn from "@/components/ui/CancelBtn";
+import SubmitBtn from "@/components/ui/SubmitBtn";
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -32,6 +34,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const [isEditing, setIsEditing] = useState<string>("none");
   const [newTag, setNewTag] = useState('');
   const [isComposing, setIsComposing] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   if (!isOpen) return null;
 
@@ -155,18 +158,25 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   };
 
   const handleSaveEdit = async () => {
+    setSubmitStatus('submitting');
     try {
       await updateMilestone(params?.projectId ? String(params.projectId) : 'default', milestone.id, {
         ...milestoneData,
         assignee_id: milestoneData.assignee.map(a => a.id)
       });
       useAuthStore.getState().setAlert("마일스톤이 성공적으로 수정되었습니다.", "success");
+      setSubmitStatus('success');
       setIsEditing("none");
+      setTimeout(() => {
+        onClose();
+      }, 1000);
     } catch (error) {
       console.error("Error updating milestone:", error);
+      setSubmitStatus('error');
       useAuthStore.getState().setAlert("마일스톤 수정에 실패했습니다.", "error");
     } finally {
       setIsEditing("none");
+      setSubmitStatus('idle');
     }
   };
 
@@ -277,21 +287,20 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
       {(isUserAssignee && isEditing !== "none") && (
         <div className="flex items-center gap-2">
           <>
-            <button
-              onClick={handleCancelEdit}
-              className="flex items-center gap-1.5 text-sm border border-component-border hover:bg-can text-text-primary px-4 py-2 rounded-md transition-all duration-200 font-medium"
-            >
-              <FontAwesomeIcon icon={faXmark} />
-              취소
-            </button>
-
-            <button
+            <CancelBtn
+              handleCancel={handleCancelEdit}
+              className="!text-sm"
+              withIcon
+            />
+            <SubmitBtn
               onClick={handleSaveEdit}
-              className="flex items-center gap-1.5 text-sm bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-md transition-all duration-200 font-medium"
-            >
-              <FontAwesomeIcon icon={faCheck} />
-              저장
-            </button>
+              submitStatus={submitStatus}
+              buttonText="저장"
+              successText="저장 완료"
+              errorText="오류 발생"
+              className="!text-sm"
+              withIcon
+            />
           </>
         </div>
       )}

@@ -86,10 +86,14 @@ export default function ConfirmProvider() {
                 </div>
               </div>
               <div className="mt-5 flex justify-end items-center gap-3">
-                <CancelBtn handleCancel={handleCancel} withIcon />
+                <CancelBtn 
+                  handleCancel={handleCancel}
+                  className="!text-sm"
+                  withIcon
+                />
                 <SubmitBtn
                   onClick={handleConfirm}
-                  className="!px-4 !py-2 !text-sm !font-medium !text-white !bg-blue-600 hover:!bg-blue-700 !rounded-lg !transition-colors !duration-150"
+                  className="!text-sm !bg-blue-600 hover:!bg-blue-700"
                   submitStatus={submitStatus}
                   buttonText="확인"
                   successText="완료"
