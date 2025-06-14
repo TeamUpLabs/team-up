@@ -3,7 +3,7 @@ import { Check } from "flowbite-react-icons/outline";
 interface SubmitBtnProps {
   submitStatus: 'idle' | 'submitting' | 'success' | 'error';
   onClick?: () => void;
-  buttonText?: string;
+  buttonText?: string | React.ReactNode;
   successText?: string;
   errorText?: string;
   className?: string;
