@@ -26,7 +26,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   const stepTitles = ["Basic Info", "Timeline", "Category", "Team", "Presence"]
 
   const user = useAuthStore((state) => state.user);
-  const [formData, setFormData] = useState({
+  const initialFormData = () => ({
     title: '',
     description: '',
     leader_id: user?.id,
@@ -38,6 +38,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     startDate: '',
     endDate: '',
   });
+  const [formData, setFormData] = useState(initialFormData);
 
   const [roleInput, setRoleInput] = useState('');
   const [techStackInput, setTechStackInput] = useState('');
@@ -153,21 +154,23 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     }
 
     if (user?.id) {
+      setSubmitStatus('submitting');
       try {
-        setSubmitStatus('submitting');
         const projectId = await createProject({ ...formData, leader_id: user.id });
         await updateProjectMember(projectId, user.id);
-        useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
         setSubmitStatus('success');
-
-        setTimeout(() => {
-          onClose();
-          window.location.reload();
-        }, 1000);
+        useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
       } catch (error) {
         console.error(error);
-        useAuthStore.getState().setAlert("프로젝트 생성에 실패했습니다. 관리자에게 문의해주세요.", "error");
         setSubmitStatus('error');
+        useAuthStore.getState().setAlert("프로젝트 생성에 실패했습니다. 관리자에게 문의해주세요.", "error");
+      } finally {
+        setTimeout(() => {
+          onClose();
+          setFormData(initialFormData);
+          setSubmitStatus('idle');
+          window.location.reload();
+        }, 1000);
       }
     }
   };

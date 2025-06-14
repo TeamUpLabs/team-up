@@ -18,13 +18,14 @@ interface ChannelCreateModalProps {
 export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateModalProps) {
   const { project } = useProject();
   const { user } = useAuthStore();
-  const [formData, setFormData] = useState({
+  const initialFormData = () => ({
     channelName: '',
     channelDescription: '',
     isPublic: true as boolean,
     member_id: [] as number[],
     created_by: user?.id || 0,
   });
+  const [formData, setFormData] = useState(initialFormData);
   const [error, setError] = useState<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
@@ -74,26 +75,30 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
       formData.member_id = project?.members?.map((member) => member.id) || [];
     }
 
-    try {
+    if (project?.id) {
       setSubmitStatus('submitting');
-      await createChannel(project.id, formData);
-      useAuthStore.getState().setAlert("채널이 성공적으로 생성되었습니다.", "success");
-      setSubmitStatus('success');
-
-      setTimeout(() => {
-        onClose();
-      }, 1000);
-    } catch (error) {
-      console.error("Failed to create channel:", error);
-      let errorMessage = "채널 생성에 실패했습니다. 잠시 후 다시 시도해주세요.";
-      if (error instanceof Error && error.message) {
-        errorMessage = `채널 생성 중 오류가 발생했습니다. 입력값을 확인하거나 문제가 지속되면 관리자에게 문의해주세요. (상세: ${error.message})`;
-      } else {
-        errorMessage = "채널 생성 중 알 수 없는 오류가 발생했습니다. 입력값을 확인하거나 관리자에게 문의해주세요.";
+      try {
+        await createChannel(project.id, formData);
+        setSubmitStatus('success');
+        useAuthStore.getState().setAlert("채널이 성공적으로 생성되었습니다.", "success");
+      } catch (error) {
+        console.error("Failed to create channel:", error);
+        let errorMessage = "채널 생성에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        if (error instanceof Error && error.message) {
+          errorMessage = `채널 생성 중 오류가 발생했습니다. 입력값을 확인하거나 문제가 지속되면 관리자에게 문의해주세요. (상세: ${error.message})`;
+        } else {
+          errorMessage = "채널 생성 중 알 수 없는 오류가 발생했습니다. 입력값을 확인하거나 관리자에게 문의해주세요.";
+        }
+        setSubmitStatus('error');
+        useAuthStore.getState().setAlert(errorMessage, "error");
+      } finally {
+        setTimeout(() => {
+          onClose();
+          setFormData(initialFormData);
+          setSubmitStatus('idle');
+        }, 1000);
       }
-      useAuthStore.getState().setAlert(errorMessage, "error");
-      setSubmitStatus('error');
-    }
+    };
   };
 
   const modalHeader = (

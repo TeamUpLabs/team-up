@@ -44,7 +44,7 @@ export default function TaskCreateModal({
   const stepTitles = ["Basic Info", "Timeline", "Subtasks", "Tags & Priority", "Assignee"]
 
   const { project } = useProject();
-  const [formData, setFormData] = useState({
+  const initialFormData = () => ({
     project_id: project?.id,
     title: "",
     description: "",
@@ -59,6 +59,7 @@ export default function TaskCreateModal({
     createdBy: useAuthStore.getState().user?.id || 0,
     updatedBy: useAuthStore.getState().user?.id || 0,
   });
+  const [formData, setFormData] = useState(initialFormData);
   const [tagsInput, setTagsInput] = useState("");
   const [subtasksInput, setSubtasksInput] = useState("");
   const [isComposing, setIsComposing] = useState(false);
@@ -147,18 +148,20 @@ export default function TaskCreateModal({
     }
 
     if (project?.id) {
+      setSubmitStatus('submitting');
       try {
+<<<<<<< HEAD
         setSubmitStatus('submitting');
 
+=======
+>>>>>>> 2694b27 (Refactor form data initialization and submission handling in project modals)
         await createTask(project.id, {
           ...formData,
           project_id: project.id,
           milestone_id: milestone_id ?? 0,
         });
-        useAuthStore.getState().setAlert("작업이 성공적으로 생성되었습니다.", "success");
-
         setSubmitStatus('success');
-
+        useAuthStore.getState().setAlert("작업이 성공적으로 생성되었습니다.", "success");
         setTimeout(() => {
           onClose();
         }, 1000);
@@ -166,6 +169,13 @@ export default function TaskCreateModal({
         console.error(error);
         setSubmitStatus('error');
         useAuthStore.getState().setAlert("작업 생성에 실패했습니다. 관리자에게 문의해주세요.", "error");
+      } finally {
+        setTimeout(() => {
+          onClose();
+          setFormData(initialFormData);
+          setStep(1);
+          setSubmitStatus('idle');
+        }, 1000);
       }
     }
   };

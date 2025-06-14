@@ -45,18 +45,7 @@ export default function ScheduleCreateModal({
 }: ScheduleCreateModalProps) {
   const user = useAuthStore((state) => state.user);
   const { project } = useProject();
-  const [step, setStep] = useState(1);
-
-  const totalSteps = 6
-  const progress = (step / totalSteps) * 100
-
-  const stepIcons = [Layers, InfoCircle, CalendarWeek, MapPin, Users, FilePen];
-  const stepTitles = ["Type", "Basic Info", "Timeline", "Platform", "Assignee", "Memo"];
-
-  const [selectedPlatform, setSelectedPlatform] = useState<MeetingPlatform>();
-  const [activeTab, setActiveTab] = useState<ScheduleType>("meeting");
-  const [dateError, setDateError] = useState(false);
-  const [formData, setFormData] = useState({
+  const initialFormData = () => ({
     project_id: project?.id || "",
     type: activeTab,
     title: "",
@@ -71,6 +60,18 @@ export default function ScheduleCreateModal({
     memo: "",
     assignee_id: [] as number[],
   });
+  const [step, setStep] = useState(1);
+
+  const totalSteps = 6
+  const progress = (step / totalSteps) * 100
+
+  const stepIcons = [Layers, InfoCircle, CalendarWeek, MapPin, Users, FilePen];
+  const stepTitles = ["Type", "Basic Info", "Timeline", "Platform", "Assignee", "Memo"];
+
+  const [selectedPlatform, setSelectedPlatform] = useState<MeetingPlatform>();
+  const [activeTab, setActiveTab] = useState<ScheduleType>("meeting");
+  const [dateError, setDateError] = useState(false);
+  const [formData, setFormData] = useState(initialFormData);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   useEffect(() => {
@@ -126,42 +127,30 @@ export default function ScheduleCreateModal({
       return;
     }
 
-    try {
+    if (project?.id) {
       setSubmitStatus('submitting');
-      await createSchedule(project.id, formData);
-      useAuthStore.getState().setAlert("일정이 성공적으로 생성되었습니다.", "success");
-      setSubmitStatus('success');
-
-      setFormData({
-        project_id: project.id,
-        type: activeTab,
-        title: "",
-        description: "",
-        where: selectedPlatform || "",
-        link: "",
-        start_time: "",
-        end_time: "",
-        status: "not-started",
-        created_by: user?.id || 0,
-        updated_by: user?.id || 0,
-        memo: "",
-        assignee_id: [] as number[],
-      });
-
-      setTimeout(() => {
-        onClose();
-      }, 1000);
-
-    } catch (error) {
-      console.error("Failed to create schedule:", error);
-      let errorMessage = "일정 생성에 실패했습니다. 잠시 후 다시 시도해주세요.";
-      if (error instanceof Error && error.message) {
-        errorMessage = `일정 생성 중 오류가 발생했습니다. 입력값을 확인하거나 문제가 지속되면 관리자에게 문의해주세요. (상세: ${error.message})`;
-      } else {
-        errorMessage = "일정 생성 중 알 수 없는 오류가 발생했습니다. 입력값을 확인하거나 관리자에게 문의해주세요.";
+      try {
+        await createSchedule(project.id, formData);
+        setSubmitStatus('success');
+        useAuthStore.getState().setAlert("일정이 성공적으로 생성되었습니다.", "success");
+      } catch (error) {
+        console.error("Failed to create schedule:", error);
+        let errorMessage = "일정 생성에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        if (error instanceof Error && error.message) {
+          errorMessage = `일정 생성 중 오류가 발생했습니다. 입력값을 확인하거나 문제가 지속되면 관리자에게 문의해주세요. (상세: ${error.message})`;
+        } else {
+          errorMessage = "일정 생성 중 알 수 없는 오류가 발생했습니다. 입력값을 확인하거나 관리자에게 문의해주세요.";
+        }
+        setSubmitStatus('error');
+        useAuthStore.getState().setAlert(errorMessage, "error");
+      } finally {
+        setTimeout(() => {
+          onClose();
+          setFormData(initialFormData);
+          setStep(1);
+          setSubmitStatus('idle');
+        }, 1000);
       }
-      setSubmitStatus('error');
-      useAuthStore.getState().setAlert(errorMessage, "error");
     }
   };
 

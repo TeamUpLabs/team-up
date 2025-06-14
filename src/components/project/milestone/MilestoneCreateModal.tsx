@@ -43,7 +43,7 @@ export default function MilestoneCreateModal({
 
   const { project } = useProject();
   const user = useAuthStore((state) => state.user);
-  const [formData, setFormData] = useState({
+  const initialFormData = () => ({
     project_id: project?.id || "",
     title: "",
     description: "",
@@ -56,6 +56,7 @@ export default function MilestoneCreateModal({
     createdBy: user?.id || 0,
     updatedBy: user?.id || 0,
   });
+  const [formData, setFormData] = useState(initialFormData);
   const [tagsInput, setTagsInput] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [dateError, setDateError] = useState(false);
@@ -108,22 +109,23 @@ export default function MilestoneCreateModal({
     }
 
     if (project?.id) {
+      setSubmitStatus('submitting');
       try {
-        setSubmitStatus('submitting');
         await createMilestone(project.id, formData);
-        useAuthStore.getState().setAlert("마일스톤이 성공적으로 생성되었습니다.", "success");
         setSubmitStatus('success');
-
-        setTimeout(() => {
-          onClose();
-        }, 1000);
+        useAuthStore.getState().setAlert("마일스톤이 성공적으로 생성되었습니다.", "success");
       } catch (error) {
         console.error(error);
         setSubmitStatus('error');
         useAuthStore.getState().setAlert("마일스톤 생성에 실패했습니다. 관리자에게 문의해주세요.", "error");
       } finally {
         setTimeout(() => {
-          setSubmitStatus('idle');
+          setTimeout(() => {
+            onClose();
+            setFormData(initialFormData);
+            setStep(1);
+            setSubmitStatus('idle');
+          }, 1000);
         }, 1000);
       }
     }
