@@ -34,6 +34,7 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
+  const { isDark } = useTheme();
   const { project } = useProject();
   const user = useAuthStore.getState().user;
   const router = useRouter();
@@ -43,7 +44,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const [newTag, setNewTag] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const { isDark } = useTheme();
+  const [commentSubmitStatus, setCommentSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   // Update taskData when the task prop changes
   useEffect(() => {
@@ -264,12 +265,17 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       createdAt: getCurrentKoreanTimeDate(),
     };
 
+    setCommentSubmitStatus('submitting');
+
     try {
       await addComment(
         project?.id ? String(project.id) : "0",
         task.id,
         newComment
       );
+      setCommentSubmitStatus('success');
+      useAuthStore.getState().setAlert("댓글이 성공적으로 추가되었습니다.", "success");
+
       commentInput.value = "";
 
       setTaskData((prev) => ({
@@ -278,7 +284,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       }));
     } catch (error) {
       console.error("Error adding comment:", error);
+      setCommentSubmitStatus('error');
       useAuthStore.getState().setAlert("댓글 추가에 실패했습니다.", "error");
+    } finally {
+      setCommentSubmitStatus('idle');
     }
   };
 
@@ -999,14 +1008,19 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   className="w-full p-3 rounded-md bg-component-secondary-background border border-component-border text-text-primary hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent resize-none"
                   rows={3}
                 />
-                <div className="flex justify-end mt-2">
-                  <button
-                    type="submit"
-                    className="bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-md transition-all duration-200 font-medium text-sm flex items-center gap-1.5"
-                  >
-                    <FontAwesomeIcon icon={faCircleArrowUp} />
-                    댓글 등록
-                  </button>
+                <div className="flex items-center justify-end mt-2">
+                  <SubmitBtn
+                    submitStatus={commentSubmitStatus}
+                    buttonText={
+                      <div className="flex items-center gap-1">
+                        <FontAwesomeIcon icon={faCircleArrowUp} />
+                        댓글 등록
+                      </div>
+                    }
+                    successText="등록 완료"
+                    errorText="등록 실패"
+                    className="!text-sm !px-4 !py-2"
+                  />
                 </div>
               </div>
             </div>
