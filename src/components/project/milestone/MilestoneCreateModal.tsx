@@ -16,6 +16,7 @@ import Badge from "@/components/ui/Badge";
 import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
+import SubmitBtn from "@/components/ui/SubmitBtn";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -54,6 +55,7 @@ export default function MilestoneCreateModal({
   const [dateError, setDateError] = useState(false);
   const [statusError, setStatusError] = useState(false);
   const [priorityError, setPriorityError] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
@@ -89,30 +91,30 @@ export default function MilestoneCreateModal({
     }
 
     if (formData.assignee_id.length === 0) {
-      useAuthStore
-        .getState()
-        .setAlert("최소 한 명의 담당자는 필요합니다.", "error");
+      useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "error");
+      return;
+    }
+
+    if (!project?.id) {
+      console.error("Project ID is missing. Cannot create milestone.")
+      useAuthStore.getState().setAlert("프로젝트 정보를 찾을 수 없습니다. 페이지를 새로고침하거나 문제가 지속되면 관리자에게 문의해주세요.", "error")
       return;
     }
 
     if (project?.id) {
       try {
+        setSubmitStatus('submitting');
         await createMilestone(project.id, formData);
-        useAuthStore
-          .getState()
-          .setAlert("마일스톤이 성공적으로 생성되었습니다.", "success");
+        useAuthStore.getState().setAlert("마일스톤이 성공적으로 생성되었습니다.", "success");
+        setSubmitStatus('success');
 
         setTimeout(() => {
           onClose();
         }, 1000);
       } catch (error) {
         console.error(error);
-        useAuthStore
-          .getState()
-          .setAlert(
-            "마일스톤 생성에 실패했습니다. 관리자에게 문의해주세요.",
-            "error"
-          );
+        setSubmitStatus('error');
+        useAuthStore.getState().setAlert("마일스톤 생성에 실패했습니다. 관리자에게 문의해주세요.", "error");
       }
     }
   };
@@ -217,25 +219,19 @@ export default function MilestoneCreateModal({
     switch (step) {
       case 1:
         if (!formData.title) {
-          useAuthStore
-            .getState()
-            .setAlert("마일스톤 이름을 입력해주세요.", "error");
+          useAuthStore.getState().setAlert("마일스톤 이름을 입력해주세요.", "error");
           return;
         }
         break;
       case 2:
         if (!formData.startDate || !formData.endDate) {
-          useAuthStore
-            .getState()
-            .setAlert("시작일과 종료일을 입력해주세요.", "error");
+          useAuthStore.getState().setAlert("시작일과 종료일을 입력해주세요.", "error");
           return;
         }
         break;
       case 3:
         if (!formData.status || !formData.priority) {
-          useAuthStore
-            .getState()
-            .setAlert("상태와 우선순위를 선택해주세요.", "error");
+          useAuthStore.getState().setAlert("상태와 우선순위를 선택해주세요.", "error");
           return;
         }
         break;
@@ -271,7 +267,7 @@ export default function MilestoneCreateModal({
         disabled={step === 1}
       >
         <AngleLeft className="h-4 w-4" />
-        Previous
+        이전
       </button>
 
       {step < totalSteps ? (
@@ -281,15 +277,17 @@ export default function MilestoneCreateModal({
           onClick={() => moveNextStep(step)}
           disabled={step === totalSteps}
         >
-          Next
+          다음
           <AngleRight className="h-4 w-4" />
         </button>
       ) : (
-        <button
-          type="button"
-          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+        <SubmitBtn
+          submitStatus={submitStatus}
           onClick={handleSubmit}
-        >Create Task</button>
+          buttonText="마일스톤 생성"
+          successText="생성 완료"
+          errorText="생성 실패"
+        />
       )}
     </div>
   )

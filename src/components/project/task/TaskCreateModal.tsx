@@ -18,6 +18,7 @@ import DatePicker from "@/components/ui/DatePicker";
 import Select from "@/components/ui/Select";
 import Badge from "@/components/ui/Badge";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
+import SubmitBtn from "@/components/ui/SubmitBtn";
 
 interface TaskCreateModalProps {
   isOpen: boolean;
@@ -58,6 +59,7 @@ export default function TaskCreateModal({
   const [subtasksInput, setSubtasksInput] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [dateError, setDateError] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   // Helper to format Date to YYYY-MM-DD string
   const formatDateToString = (date: Date | undefined): string => {
@@ -130,34 +132,36 @@ export default function TaskCreateModal({
     }
 
     if (formData.assignee_id.length === 0) {
-      useAuthStore
-        .getState()
-        .setAlert("최소 한 명의 담당자는 필요합니다.", "error");
+      useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "error");
+      return;
+    }
+
+    if (!project?.id) {
+      console.error("Project ID is missing. Cannot create task.")
+      useAuthStore.getState().setAlert("프로젝트 정보를 찾을 수 없습니다. 페이지를 새로고침하거나 문제가 지속되면 관리자에게 문의해주세요.", "error")
       return;
     }
 
     if (project?.id) {
       try {
+        setSubmitStatus('submitting');
+        
         await createTask(project.id, {
           ...formData,
           project_id: project.id,
           milestone_id: milestone_id ?? 0,
         });
-        useAuthStore
-          .getState()
-          .setAlert("작업이 성공적으로 생성되었습니다.", "success");
+        useAuthStore.getState().setAlert("작업이 성공적으로 생성되었습니다.", "success");
+
+        setSubmitStatus('success');
 
         setTimeout(() => {
           onClose();
         }, 1000);
       } catch (error) {
         console.error(error);
-        useAuthStore
-          .getState()
-          .setAlert(
-            "작업 생성에 실패했습니다. 관리자에게 문의해주세요.",
-            "error"
-          );
+        setSubmitStatus('error');
+        useAuthStore.getState().setAlert("작업 생성에 실패했습니다. 관리자에게 문의해주세요.", "error");
       }
     }
   };
@@ -274,7 +278,7 @@ export default function TaskCreateModal({
         disabled={step === 1}
       >
         <AngleLeft className="h-4 w-4" />
-        Previous
+        이전
       </button>
 
       {step < totalSteps ? (
@@ -284,15 +288,17 @@ export default function TaskCreateModal({
           onClick={() => moveNextStep(step)}
           disabled={step === totalSteps}
         >
-          Next
+          다음
           <AngleRight className="h-4 w-4" />
         </button>
       ) : (
-        <button
-          type="button"
-          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+        <SubmitBtn
+          submitStatus={submitStatus}
           onClick={handleSubmit}
-        >Create Task</button>
+          buttonText="작업 생성"
+          successText="생성 완료"
+          errorText="생성 실패"
+        />
       )}
     </div>
   )

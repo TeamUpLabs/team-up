@@ -5,6 +5,7 @@ import AssigneeSelect from "@/components/project/AssigneeSelect";
 import { useProject } from "@/contexts/ProjectContext";
 import { useAuthStore } from "@/auth/authStore";
 import { createChannel } from "@/hooks/getChannelData";
+import SubmitBtn from "@/components/ui/SubmitBtn";
 
 interface ChannelCreateModalProps {
   isOpen: boolean;
@@ -21,7 +22,8 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
     member_id: [] as number[],
     created_by: user?.id || 0,
   });
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -70,8 +72,10 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
     }
 
     try {
+      setSubmitStatus('submitting');
       await createChannel(project.id, formData);
       useAuthStore.getState().setAlert("채널이 성공적으로 생성되었습니다.", "success");
+      setSubmitStatus('success');
 
       setTimeout(() => {
         onClose();
@@ -85,6 +89,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
         errorMessage = "채널 생성 중 알 수 없는 오류가 발생했습니다. 입력값을 확인하거나 관리자에게 문의해주세요.";
       }
       useAuthStore.getState().setAlert(errorMessage, "error");
+      setSubmitStatus('error');
     }
   };
 
@@ -117,12 +122,13 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
       >
         취소
       </button>
-      <button
-        className="px-4 py-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white rounded-lg transition-colors"
+      <SubmitBtn
+        submitStatus={submitStatus}
         onClick={handleSubmit}
-      >
-        채널 생성
-      </button>
+        buttonText="채널 생성"
+        successText="생성 완료"
+        errorText="생성 실패"
+      />
     </div>
   )
   

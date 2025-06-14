@@ -27,6 +27,7 @@ import { ko } from "date-fns/locale";
 import { getPlatformColor } from "@/utils/getPlatformColor";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import { createSchedule } from "@/hooks/getScheduleData";
+import SubmitBtn from "@/components/ui/SubmitBtn";
 
 type ScheduleType = "meeting" | "event";
 type MeetingPlatform = "Zoom" | "Google Meet" | "TeamUp";
@@ -68,6 +69,7 @@ export default function ScheduleCreateModal({
     memo: "",
     assignee_id: [] as number[],
   });
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     if (formData.start_time && formData.end_time) {
@@ -96,9 +98,7 @@ export default function ScheduleCreateModal({
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     if (dateError) {
       console.warn("Date validation error detected, preventing submission.");
       return;
@@ -125,8 +125,10 @@ export default function ScheduleCreateModal({
     }
 
     try {
+      setSubmitStatus('submitting');
       await createSchedule(project.id, formData);
       useAuthStore.getState().setAlert("일정이 성공적으로 생성되었습니다.", "success");
+      setSubmitStatus('success');
 
       setFormData({
         project_id: project.id,
@@ -156,6 +158,7 @@ export default function ScheduleCreateModal({
       } else {
         errorMessage = "일정 생성 중 알 수 없는 오류가 발생했습니다. 입력값을 확인하거나 관리자에게 문의해주세요.";
       }
+      setSubmitStatus('error');
       useAuthStore.getState().setAlert(errorMessage, "error");
     }
   };
@@ -199,42 +202,32 @@ export default function ScheduleCreateModal({
     switch (step) {
       case 1:
         if (!formData.type) {
-          useAuthStore
-            .getState()
-            .setAlert("일정 유형을 선택해주세요.", "error");
+          useAuthStore.getState().setAlert("일정 유형을 선택해주세요.", "error");
           return;
         }
         break;
       case 2:
         if (!formData.title) {
-          useAuthStore
-            .getState()
-            .setAlert("일정 이름을 입력해주세요.", "error");
+          useAuthStore.getState().setAlert("일정 이름을 입력해주세요.", "error");
           return;
         }
         break;
       case 3:
         if (!formData.start_time || !formData.end_time || dateError) {
-          useAuthStore
-            .getState()
-            .setAlert("시작일과 종료일을 입력해주세요.", "error");
+          useAuthStore.getState().setAlert("시작일과 종료일을 입력해주세요.", "error");
           return;
         }
         break;
       case 4:
         if ((formData.type === "meeting" && formData.where !== "TeamUp" && formData.link === "") ||
           (formData.type === "event" && formData.where === "")) {
-          useAuthStore
-            .getState()
-            .setAlert("위치를 입력해주세요.", "error");
+          useAuthStore.getState().setAlert("위치를 입력해주세요.", "error");
           return;
         }
         break;
       case 5:
         if (formData.assignee_id.length === 0) {
-          useAuthStore
-            .getState()
-            .setAlert("최소 한 명의 담당자는 필요합니다.", "error");
+          useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "error");
           return;
         }
         break;
@@ -269,7 +262,7 @@ export default function ScheduleCreateModal({
         disabled={step === 1}
       >
         <AngleLeft className="h-4 w-4" />
-        Previous
+        이전
       </button>
 
       {step < totalSteps ? (
@@ -279,15 +272,17 @@ export default function ScheduleCreateModal({
           onClick={() => moveNextStep(step)}
           disabled={step === totalSteps}
         >
-          Next
+          다음
           <AngleRight className="h-4 w-4" />
         </button>
       ) : (
-        <button
-          type="button"
-          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+        <SubmitBtn
+          submitStatus={submitStatus}
           onClick={handleSubmit}
-        >Create Schedule</button>
+          buttonText="일정 생성"
+          successText="생성 완료"
+          errorText="생성 실패"
+        />
       )}
     </div>
   )

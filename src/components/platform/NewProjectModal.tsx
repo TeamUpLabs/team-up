@@ -7,6 +7,7 @@ import Select from "@/components/ui/Select";
 import Badge from "@/components/ui/Badge";
 import { createProject } from '@/hooks/getProjectData';
 import { updateProjectMember } from '@/hooks/getMemberData';
+import SubmitBtn from "@/components/ui/SubmitBtn";
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -40,6 +41,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   const [techStackInput, setTechStackInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [dateError, setDateError] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
@@ -150,9 +152,11 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
 
     if (user?.id) {
       try {
+        setSubmitStatus('submitting');
         const projectId = await createProject({ ...formData, leader_id: user.id });
         await updateProjectMember(projectId, user.id);
         useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
+        setSubmitStatus('success');
 
         setTimeout(() => {
           onClose();
@@ -161,6 +165,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
       } catch (error) {
         console.error(error);
         useAuthStore.getState().setAlert("프로젝트 생성에 실패했습니다. 관리자에게 문의해주세요.", "error");
+        setSubmitStatus('error');
       }
     }
   };
@@ -169,41 +174,31 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     switch (step) {
       case 1:
         if (!formData.title) {
-          useAuthStore
-            .getState()
-            .setAlert("프로젝트 이름을 입력해주세요.", "error");
+          useAuthStore.getState().setAlert("프로젝트 이름을 입력해주세요.", "error");
           return;
         }
         break;
       case 2:
         if (!formData.startDate || !formData.endDate) {
-          useAuthStore
-            .getState()
-            .setAlert("시작일과 종료일을 입력해주세요.", "error");
+          useAuthStore.getState().setAlert("시작일과 종료일을 입력해주세요.", "error");
           return;
         }
         break;
       case 3:
         if (!formData.projectType) {
-          useAuthStore
-            .getState()
-            .setAlert("프로젝트 유형을 선택해주세요.", "error");
+          useAuthStore.getState().setAlert("프로젝트 유형을 선택해주세요.", "error");
           return;
         }
         break;
       case 4:
         if (!formData.roles.length || !formData.techStack.length) {
-          useAuthStore
-            .getState()
-            .setAlert("역할과 기술 스택을 입력해주세요.", "error");
+          useAuthStore.getState().setAlert("역할과 기술 스택을 입력해주세요.", "error");
           return;
         }
         break;
       case 5:
         if (!formData.location || !formData.teamSize) {
-          useAuthStore
-            .getState()
-            .setAlert("위치와 팀 규모를 입력해주세요.", "error");
+          useAuthStore.getState().setAlert("위치와 팀 규모를 입력해주세요.", "error");
           return;
         }
         break;
@@ -241,11 +236,13 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
           <AngleRight className="h-4 w-4" />
         </button>
       ) : (
-        <button
-          type="button"
-          className="flex items-center gap-2 bg-point-color-indigo text-white px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+        <SubmitBtn
+          submitStatus={submitStatus}
           onClick={handleSubmit}
-        >Create Project</button>
+          buttonText="프로젝트 생성"
+          successText="생성 완료"
+          errorText="생성 실패"
+        />
       )}
     </div>
   )

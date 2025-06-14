@@ -6,6 +6,7 @@ import { useProject } from "@/contexts/ProjectContext";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/auth/authStore";
 import { updateChannel, deleteChannel } from "@/hooks/getChannelData";
+import SubmitBtn from "@/components/ui/SubmitBtn";
 
 
 interface ChannelEditModalProps {
@@ -23,7 +24,8 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
     isPublic: channel.isPublic,
     member_id: channel.member_id,
   });
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -46,8 +48,10 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
     }
 
     try {
+      setSubmitStatus('submitting');
       await updateChannel(channel.projectId, channel.channelId, formData);
       useAuthStore.getState().setAlert("채널이 성공적으로 수정되었습니다.", "success");
+      setSubmitStatus('success');
 
       setTimeout(() => {
         onClose();
@@ -61,6 +65,7 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
         errorMessage = "채널 수정 중 알 수 없는 오류가 발생했습니다. 입력값을 확인하거나 관리자에게 문의해주세요.";
       }
       useAuthStore.getState().setAlert(errorMessage, "error");
+      setSubmitStatus('error');
     }
   };
 
@@ -126,12 +131,13 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
         >
           취소
         </button>
-        <button
-          className="px-4 py-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white rounded-lg transition-colors"
+        <SubmitBtn
+          submitStatus={submitStatus}
           onClick={handleSubmit}
-        >
-          채널 수정
-        </button>
+          buttonText="채널 수정"
+          successText="수정 완료"
+          errorText="수정 실패"
+        />
       </div>
     </div>
   )
