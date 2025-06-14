@@ -1,4 +1,6 @@
-# 💻 TeamUp
+# 💻 TeamUp  
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/2e8fcf47-6b5c-467c-bf92-1ba9c92b8e2b/deploy-status)](https://app.netlify.com/projects/team-up-service/deploys)
 
 **TeamUp**은 개발자, 디자이너, 기획자 등 다양한 역할을 가진 사람들이 모여  
 **토이 프로젝트를 비대면으로 협업**할 수 있도록 돕는 플랫폼입니다.
