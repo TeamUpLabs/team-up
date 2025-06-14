@@ -1,10 +1,11 @@
 import ModalTemplete from "@/components/ModalTemplete";
 import { Channel } from "@/types/Channel";
-import { FilePen } from "flowbite-react-icons/outline";
+import { FilePen, TrashBin } from "flowbite-react-icons/outline";
 import { useState } from "react";
 import { useProject } from "@/contexts/ProjectContext";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/auth/authStore";
-import { updateChannel } from "@/hooks/getChannelData";
+import { updateChannel, deleteChannel } from "@/hooks/getChannelData";
 
 
 interface ChannelEditModalProps {
@@ -15,6 +16,7 @@ interface ChannelEditModalProps {
 
 export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEditModalProps) {
   const { project } = useProject();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     channelName: channel.channelName,
     channelDescription: channel.channelDescription,
@@ -62,6 +64,28 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
     }
   };
 
+  const handleDelete = () => {
+    useAuthStore.getState().setConfirm("채널을 삭제하시겠습니까?", async () => {
+      try {
+        await deleteChannel(channel.projectId, channel.channelId);
+        useAuthStore.getState().setAlert("채널이 성공적으로 삭제되었습니다.", "success");
+        router.push(`/platform/${channel.projectId}`)
+        setTimeout(() => {
+          onClose();
+        }, 1000);
+      } catch (error) {
+        console.error("Failed to delete channel:", error);
+        let errorMessage = "채널 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.";
+        if (error instanceof Error && error.message) {
+          errorMessage = `채널 삭제 중 오류가 발생했습니다. 입력값을 확인하거나 문제가 지속되면 관리자에게 문의해주세요. (상세: ${error.message})`;
+        } else {
+          errorMessage = "채널 삭제 중 알 수 없는 오류가 발생했습니다. 입력값을 확인하거나 관리자에게 문의해주세요.";
+        }
+        useAuthStore.getState().setAlert(errorMessage, "error");
+      }
+    });
+  };
+
   const modelHeader = (
     <div className="flex items-center space-x-3">
       <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
@@ -81,22 +105,34 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
   )
 
   const modalFooter = (
-    <div className="flex justify-end gap-2">
+    <div className="flex items-center justify-between">
       <button
         onClick={() => {
           setError(null)
-          onClose()
+          handleDelete()
         }}
-        className="text-text-secondary hover:text-text-primary bg-cancel-button-background hover:bg-cancel-button-background-hover transition-all px-4 py-2 text-text-primary rounded-lg transition-colors border border-component-border"
+        className="flex items-center gap-1.5 text-red-400 bg-red-500/20 hover:bg-red-500/30 transition-all px-4 py-2 rounded-lg transition-colors cursor-pointer"
       >
-        취소
+        <TrashBin />
+        채널 삭제
       </button>
-      <button
-        className="px-4 py-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white rounded-lg transition-colors"
-        onClick={handleSubmit}
-      >
-        채널 수정
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => {
+            setError(null)
+            onClose()
+          }}
+          className="text-text-secondary hover:text-text-primary bg-cancel-button-background hover:bg-cancel-button-background-hover transition-all px-4 py-2 text-text-primary rounded-lg transition-colors border border-component-border"
+        >
+          취소
+        </button>
+        <button
+          className="px-4 py-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white rounded-lg transition-colors"
+          onClick={handleSubmit}
+        >
+          채널 수정
+        </button>
+      </div>
     </div>
   )
 

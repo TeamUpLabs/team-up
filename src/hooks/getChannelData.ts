@@ -81,5 +81,18 @@ export const updateChannel = async (projectId: string, channelId: string, channe
   }
 };
 
+export const deleteChannel = async (projectId: string, channelId: string) => {
+  try {
+    const res = await server.delete(`/project/${projectId}/channel/${channelId}`);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to delete channel");
+    }
+  } catch (error) {
+    console.error("Error deleting channel:", error);
+    throw error;
+  }
+};
 
   
