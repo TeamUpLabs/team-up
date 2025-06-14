@@ -3,25 +3,25 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleQuestion, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import { motion, AnimatePresence } from 'framer-motion';
+import SubmitBtn from "@/components/ui/SubmitBtn";
+import CancelBtn from "@/components/ui/CancelBtn";
 
 export default function ConfirmProvider() {
   const confirm = useAuthStore((state) => state.confirm);
   const clearConfirm = useAuthStore((state) => state.clearConfirm);
-  const [confirmVisible, setConfirmVisible] = useState(false);
   const [progress, setProgress] = useState(100);
   const TIMEOUT_DURATION = 5000; // 5 seconds timeout
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     if (confirm) {
-      setConfirmVisible(true);
       setProgress(100);
 
       const timer = setTimeout(() => {
-        setConfirmVisible(false);
-        setTimeout(() => {
-          clearConfirm();
-        }, 300); // After fade out animation
+        // This will trigger the exit animation in AnimatePresence
+        clearConfirm();
       }, TIMEOUT_DURATION);
 
       // Progress bar animation
@@ -43,63 +43,72 @@ export default function ConfirmProvider() {
     }
   }, [confirm, clearConfirm]);
 
-  const handleConfirmClose = () => {
-    setConfirmVisible(false);
-    setTimeout(() => {
-      clearConfirm();
-    }, 300);
+  const handleConfirm = () => {
+    setSubmitStatus('submitting');
+    if (confirm?.onConfirm) {
+      confirm.onConfirm();
+      setSubmitStatus('success');
+    } else {
+      setSubmitStatus('error');
+    }
+    clearConfirm();
+  };
+
+  const handleCancel = () => {
+    clearConfirm();
   };
 
   return (
-    <>
+    <AnimatePresence>
       {confirm && (
-        <div
-          className={`fixed top-0 left-0 right-0 z-[10001] transition-all duration-300 ease-out ${confirmVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-            }`}
+        <motion.div
+          initial={{ opacity: 0, y: -50, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -50, scale: 0.9 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          className="fixed top-5 left-1/2 -translate-x-1/2 w-full max-w-lg z-[10001]"
         >
-          <div className="max-w-2xl mx-auto px-4 py-3 mt-4">
-            <div
-              className="bg-component-background border border-component-border rounded-xl shadow-lg backdrop-blur-xl transition-all relative overflow-hidden"
-            >
-              <div className="p-5">
-                <h3 className="text-sm font-medium text-text-primary mb-3 flex items-center">
-                  <FontAwesomeIcon icon={faCircleQuestion} className="w-4 h-4 mr-2 text-emerald-400" />
-                  확인
-                </h3>
-                <p className="text-text-primary text-sm mb-5">{confirm.message}</p>
-
-                <div className="flex justify-end space-x-3">
-                  <button
-                    onClick={handleConfirmClose}
-                    className="px-4 py-2 text-xs font-medium text-text-primary border border-component-border bg-cancel-button-background hover:bg-cancel-button-background-hover rounded-lg transition-colors duration-150 flex items-center"
-                  >
-                    <FontAwesomeIcon icon={faTimes} className="w-3 h-3 mr-1.5" />
-                    취소
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (confirm.onConfirm) confirm.onConfirm();
-                      handleConfirmClose();
-                    }}
-                    className="px-4 py-2 text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors duration-150 flex items-center"
-                  >
-                    <FontAwesomeIcon icon={faCheck} className="w-3 h-3 mr-1.5" />
-                    확인
-                  </button>
+          <div
+            className="relative bg-component-background rounded-2xl shadow-lg border border-component-secondary-border overflow-hidden"
+          >
+            <div className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                  <FontAwesomeIcon icon={faCircleCheck} className="w-5 h-5 text-blue-500" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-semibold text-text-primary">
+                    작업 확인
+                  </h3>
+                  <p className="mt-1 text-sm text-text-secondary">
+                    {confirm.message}
+                  </p>
                 </div>
               </div>
-
-              {/* Progress bar */}
-              <div className="absolute bottom-0 left-0 h-1 w-full bg-slate-800">
-                <div
-                  className="h-full bg-emerald-400 transition-all duration-100 ease-linear"
-                  style={{ width: `${progress}%` }}
-                ></div>
+              <div className="mt-5 flex justify-end items-center gap-3">
+                <CancelBtn handleCancel={handleCancel} withIcon />
+                <SubmitBtn
+                  onClick={handleConfirm}
+                  className="!px-4 !py-2 !text-sm !font-medium !text-white !bg-blue-600 hover:!bg-blue-700 !rounded-lg !transition-colors !duration-150"
+                  submitStatus={submitStatus}
+                  buttonText="확인"
+                  successText="완료"
+                  errorText="오류"
+                  withIcon
+                />
               </div>
             </div>
+
+            {/* Progress bar */}
+            <motion.div
+              className="absolute bottom-0 left-0 h-1 bg-blue-500"
+              style={{ width: `${progress}%` }}
+              transition={{ duration: 0.1, ease: "linear" }}
+            />
           </div>
-        </div>
+        </motion.div>
       )}
-    </>
+    </AnimatePresence>
   );
+
 }

@@ -1,29 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faCheckCircle, faExclamationTriangle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AlertProvider() {
   const alert = useAuthStore((state) => state.alert);
   const clearAlert = useAuthStore((state) => state.clearAlert);
-  const [alertVisible, setAlertVisible] = useState(false);
 
   useEffect(() => {
     if (alert) {
-      setAlertVisible(true);
       const timer = setTimeout(() => {
-        setAlertVisible(false);
-        setTimeout(() => {
-          clearAlert();
-        }, 300); // After fade out animation
+        clearAlert();
       }, 3000);
       return () => clearTimeout(timer);
     }
   }, [alert, clearAlert]);
 
-  // Get the appropriate styling based on alert type
   const getAlertStyle = () => {
     if (!alert) return {
       icon: faCheckCircle,
@@ -68,31 +63,33 @@ export default function AlertProvider() {
   const alertStyle = getAlertStyle();
 
   return (
-    <>
+    <AnimatePresence>
       {alert && (
-        <div
-          className={`fixed top-0 left-0 right-0 z-[10001] transition-all duration-300 ease-out ${
-            alertVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-          }`}
+        <motion.div
+          initial={{ opacity: 0, y: -50, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -50, scale: 0.9 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          className="fixed top-0 left-0 right-0 z-[10001]"
         >
           <div className="max-w-screen-md mx-auto px-4 py-3 mt-4">
             <div 
-              className={`${alertStyle.bgColor} text-text-primary px-6 py-4 rounded-xl flex items-center justify-between shadow-xl border transition-all`}
+              className={`${alertStyle.bgColor} text-text-primary px-6 py-4 rounded-xl flex items-center justify-between shadow-xl border`}
             >
               <div className="flex items-center space-x-3">
                 <FontAwesomeIcon icon={alertStyle.icon} className={`w-5 h-5 ${alertStyle.textColor}`} />
                 <span className="text-text-primary font-medium">{alert.message}</span>
               </div>
               <button 
-                onClick={() => setAlertVisible(false)} 
+                onClick={clearAlert} 
                 className="text-text-secondary hover:text-text-primary transition-all duration-200"
               >
                 <FontAwesomeIcon icon={faXmark} className="w-4 h-4" />
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
-    </>
+    </AnimatePresence>
   );
 } 
