@@ -92,7 +92,7 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
         <h3 className="text-xl font-bold text-text-primary">
           채널 구성원 수정
         </h3>
-        <p className="text-sm text-text-tertiary mt-0.5">
+        <p className="text-sm text-point-color-indigo mt-0.5">
           채널 구성원을 수정하세요
         </p>
       </div>

@@ -102,7 +102,7 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
         <h3 className="text-xl font-bold text-text-primary">
           채널 정보 수정
         </h3>
-        <p className="text-sm text-text-tertiary mt-0.5">
+        <p className="text-sm text-point-color-indigo mt-0.5">
           채널 정보를 수정하세요
         </p>
       </div>
