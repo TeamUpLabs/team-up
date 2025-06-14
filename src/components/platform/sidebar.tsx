@@ -204,7 +204,7 @@ export default function Sidebar({ isSidebarOpen, title, miniTitle, titleHref, na
             <Link
               key="exit"
               href={exitItem.href}
-              className={`flex items-center mx-2 rounded-lg transition-all duration-300 text-text-secondary hover:bg-red-500/10 hover:text-red-500 ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
+              className={`flex items-center mx-2 rounded-lg transition-all duration-300 text-text-secondary hover:bg-red-500/20 hover:text-red-500 ${(isMinimized && !isMobile) ? 'justify-center py-2' : 'px-4 py-2'
                 }`}
               title={(isMinimized && !isMobile) ? exitItem.label : ''}
             >
