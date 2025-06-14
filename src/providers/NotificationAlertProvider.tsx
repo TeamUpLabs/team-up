@@ -208,7 +208,7 @@ function NotificationAlert() {
           </div>
           <button
             onClick={handleManualClose}
-            className="text-text-tertiary hover:text-text-primary transition-all duration-200 ml-4 p-1 rounded-full hover:bg-component-secondary-background/50"
+            className="text-text-secondary hover:text-text-primary transition-all duration-200 ml-4 cursor-pointer"
             aria-label="알림 닫기"
           >
             <FontAwesomeIcon icon={faXmark} className="w-3.5 h-3.5" />
