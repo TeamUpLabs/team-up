@@ -1,6 +1,3 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-
 interface SubmitBtnProps {
   submitStatus: 'idle' | 'submitting' | 'success' | 'error';
   onClick?: () => void;
@@ -16,11 +13,11 @@ export default function SubmitBtn({ submitStatus, onClick, buttonText = "제출"
         type="submit"
         disabled={submitStatus === 'submitting' || submitStatus === 'error'}
         className={`
-        w-full py-3 px-6 rounded-md text-base font-medium
+        w-full px-4 py-2 rounded-md text-base font-medium
         flex items-center justify-center gap-2
         transition-all duration-300 ease-in-out
         focus:outline-none group
-        active:scale-95
+        active:scale-95 cursor-pointer
         ${submitStatus === 'success' 
           ? 'bg-point-color-green hover:bg-point-color-green-hover' 
           : 'bg-point-color-indigo hover:bg-point-color-indigo-hover'}
@@ -32,18 +29,12 @@ export default function SubmitBtn({ submitStatus, onClick, buttonText = "제출"
         {submitStatus === 'idle' && (
           <>
           {buttonText}
-          <span className="overflow-hidden w-4">
-            <FontAwesomeIcon 
-              icon={faArrowRight} 
-              className="transform -translate-x-4 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" 
-            />
-          </span>
         </>
       )}
       {submitStatus === 'submitting' && (
         <>
           <svg 
-            className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" 
+            className="animate-spin -ml-1 mr-1 h-4 w-4 text-white" 
             xmlns="http://www.w3.org/2000/svg" 
             fill="none" 
             viewBox="0 0 24 24"
