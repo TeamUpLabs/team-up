@@ -31,6 +31,7 @@ import {
   CalendarMonth as CalendarMonthSolid,
   Flag as FlagSolid,
   Cog as CogSolid,
+  Github as GithubSolid,
 } from "flowbite-react-icons/solid";
 
 export default function ProjectLayout({
@@ -132,6 +133,13 @@ export default function ProjectLayout({
       label: "마일스톤",
       href: `/platform/${projectId}/milestone`,
       isActive: pathname === `/platform/${projectId}/milestone`,
+    },
+    {
+      icon: GithubSolid,
+      activeIcon: GithubSolid,
+      label: "깃허브",
+      href: `/platform/${projectId}/github`,
+      isActive: pathname === `/platform/${projectId}/github`,
     },
     {
       icon: CogOutline,
