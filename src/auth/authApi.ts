@@ -70,7 +70,7 @@ export const logout = async () => {
   if (!user) {
     throw new Error('User not found');
   }
-  await useAuthStore.getState().logout();
+  useAuthStore.getState().logout();
   try {
     const res = await server.put(`/member/${user.id}`, {
       status: "비활성"
