@@ -21,6 +21,7 @@ const ExtraInfoPage = () => {
     socialLinks: [],
     introduction: "",
     social_id: "",
+    social_access_token: "",
   });
   const [formData, setFormData] = useState<ExtraInfoFormData>({
     status: "활성",
@@ -239,6 +240,7 @@ const ExtraInfoPage = () => {
         signupMethod: social,
         createdAt: getCurrentKoreanTimeDate(),
         lastLogin: getCurrentKoreanTime(),
+        github_access_token: social === "github" ? partialUser.social_access_token : "",
       });
 
       const data = res.data;
