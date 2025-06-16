@@ -42,4 +42,14 @@ export interface Member {
   }[];
   participationRequests: number[];
   notification: Notification[];
+  isGithub: boolean;
+  github_id: string;
+  github_access_token: string;
+  isGoogle: boolean;
+  google_id: string;
+  google_access_token: string;
+  isApple: boolean;
+  apple_id: string;
+  apple_access_token: string;
+  signupMethod: "local" | "github" | "google" | "apple";
 }
