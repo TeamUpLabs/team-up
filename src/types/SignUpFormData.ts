@@ -8,8 +8,8 @@ export interface SignUpFormData {
   birthDate: string;
   workingHours: {
     timezone: string;
-    workingStartHour: string;
-    workingEndHour: string;
+    start: string;
+    end: string;
   };
   languages: string[];
   introduction: string;
