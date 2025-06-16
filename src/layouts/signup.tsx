@@ -26,11 +26,11 @@ export default function SignUpLayout() {
     birthDate: "",
     workingHours: {
       timezone: "",
-      workingStartHour: "",
-      workingEndHour: "",
+      start: "",
+      end: "",
     },
     languages: [],
-    introduction: ""
+    introduction: "",
   });
 
   const [step, setStep] = useState(1); // 1단계: 이메일, 2단계: 추가 정보
@@ -112,20 +112,20 @@ export default function SignUpLayout() {
     }
   };
 
-  const handleWorkingHourChange = (type: "timezone" | "workingStartHour" | "workingEndHour", value: string) => {
+  const handleWorkingHourChange = (type: "timezone" | "start" | "end", value: string) => {
     if (type === "timezone") setSelectedTimeZone(value);
-    if (type === "workingStartHour") setWorkingStartHour(value);
-    if (type === "workingEndHour") setWorkingEndHour(value);
+    if (type === "start") setWorkingStartHour(value);
+    if (type === "end") setWorkingEndHour(value);
 
     const timezoneVal = type === "timezone" ? value : selectedTimeZone;
-    const workingStartHourVal = type === "workingStartHour" ? value : workingStartHour;
-    const workingEndHourVal = type === "workingEndHour" ? value : workingEndHour;
+    const workingStartHourVal = type === "start" ? value : workingStartHour;
+    const workingEndHourVal = type === "end" ? value : workingEndHour;
 
     if (timezoneVal && workingStartHourVal && workingEndHourVal) {
       const formatted = {
         timezone: timezoneVal,
-        workingStartHour: workingStartHourVal,
-        workingEndHour: workingEndHourVal
+        start: workingStartHourVal,
+        end: workingEndHourVal
       }
       setFormData(prev => ({
         ...prev,

@@ -5,8 +5,8 @@ import { getCurrentKoreanTime, getCurrentKoreanTimeDate } from "@/utils/dateUtil
 export const signup = async (data: SignUpFormData) => {
   const transformedWorkingHours = {
     timezone: data.workingHours.timezone,
-    start: data.workingHours.workingStartHour,
-    end: data.workingHours.workingEndHour
+    start: data.workingHours.start,
+    end: data.workingHours.end
   };
 
   let profileImageFile = null;
@@ -35,6 +35,7 @@ export const signup = async (data: SignUpFormData) => {
     status: '비활성',
     lastLogin: getCurrentKoreanTime(),
     createdAt: getCurrentKoreanTimeDate(),
+    signupMethod: "local",
   };
 
   try {

@@ -15,6 +15,8 @@ export const login = async (email: string, password: string) => {
       throw new Error('Invalid response from server');
     }
 
+    console.log(data);
+
     const token = data.access_token;
     useAuthStore.getState().setToken(token);
 
@@ -39,15 +41,15 @@ export const login = async (email: string, password: string) => {
           } else {
             throw new Error('Failed to update user status');
           }
-        } catch (error) {
+        } catch (error: unknown) {
           console.error("Failed to update user status:", error);
           useAuthStore.getState().logout();
-          useAuthStore.getState().setAlert("사용자 정보를 가져오는데 실패했습니다.", "error");
+          useAuthStore.getState().setAlert("Status를 업데이트하는데 실패했습니다.", "error");
         }
       } else {
         throw new Error('User data not found');
       }
-    } catch (userError) {
+    } catch (userError: unknown) {
       console.error("Failed to fetch user data:", userError);
       useAuthStore.getState().logout();
       useAuthStore.getState().setAlert("사용자 정보를 가져오는데 실패했습니다.", "error");
