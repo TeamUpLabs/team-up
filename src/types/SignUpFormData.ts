@@ -14,3 +14,18 @@ export interface SignUpFormData {
   languages: string[];
   introduction: string;
 }
+
+export interface ExtraInfoFormData {
+  status: string;
+  role: string;
+  contactNumber: string;
+  skills: string[];
+  birthDate: string;
+  workingHours: {
+    timezone: string;
+    start: string;
+    end: string;
+  };
+  languages: string[];
+  introduction: string;
+}
