@@ -1,4 +1,5 @@
-import { CodePullRequest } from "flowbite-react-icons/outline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCodePullRequest } from "@fortawesome/free-solid-svg-icons";
 
 interface PRData {
   total_count?: number;
@@ -10,7 +11,7 @@ export default function PRCard({ prData }: { prData: PRData }) {
     <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">
       <div className="flex items-center justify-between">
         <span className="text-text-primary text-sm font-semibold">열린 PR</span>
-        <CodePullRequest className="w-4 h-4 text-text-primary" />
+        <FontAwesomeIcon icon={faCodePullRequest} className="w-4 h-4 text-text-primary" />
       </div>
       <div>
         <span className="text-text-primary text-3xl font-bold">
