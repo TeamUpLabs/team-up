@@ -20,7 +20,6 @@ const formatCommitDate = (dateString: string): string => {
   const compareYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
   const compareDayBeforeYesterday = new Date(dayBeforeYesterday.getFullYear(), dayBeforeYesterday.getMonth(), dayBeforeYesterday.getDate());
 
-  console.log(compareDate, compareToday);
   if (compareDate.getTime() === compareToday.getTime()) {
     return '오늘';
   } else if (compareDate.getTime() === compareYesterday.getTime()) {
