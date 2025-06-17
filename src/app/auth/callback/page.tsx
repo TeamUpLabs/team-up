@@ -14,11 +14,9 @@ export default function AuthCallback() {
       const code = url.searchParams.get("code");
       const social = url.searchParams.get("social");
       if (!code || !social) return;
-      console.log(code, social);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/callback?social=${social}&code=${code}`);
-      const data = await res.json();
-      console.log(data);
+      const res = await server.get(`/auth/callback?social=${social}&code=${code}`);
+      const data = res.data;
 
       if (data.access_token) {
         try {
