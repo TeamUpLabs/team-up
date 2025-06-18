@@ -3,6 +3,7 @@ import Badge from "@/components/ui/Badge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { Book, Users, Building, MapPinAlt } from "flowbite-react-icons/outline";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface ProfileData {
   name: string;
@@ -17,6 +18,8 @@ interface ProfileData {
 }
 
 export default function ProfileCard({ githubUser }: { githubUser: ProfileData }) {
+  const { isDark } = useTheme();
+
   return (
     <div className="w-full bg-component-background border border-component-border rounded-lg p-6 space-y-4">
       <div className="space-y-2">
@@ -41,7 +44,7 @@ export default function ProfileCard({ githubUser }: { githubUser: ProfileData })
               <span className="text-text-primary text-sm font-bold">@{githubUser?.login || "아이디 없음"}</span>
               <Badge
                 content="웹훅 활성화"
-                color="black"
+                color={isDark ? "white" : "black"}
                 className="!text-xs !px-3 !py-1 !rounded-full !font-semibold"
               />
             </div>
@@ -72,7 +75,7 @@ export default function ProfileCard({ githubUser }: { githubUser: ProfileData })
       <div className="flex items-center gap-2">
         <button
           onClick={() => window.open('https://github.com/' + githubUser?.login, '_blank')}
-          className="flex items-center gap-2 border border-component-border rounded-lg px-3 py-2 cursor-pointer"
+          className="flex items-center gap-2 border border-component-border rounded-lg px-3 py-2 cursor-pointer bg-transparent hover:bg-component-secondary-background"
         >
           <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />
           <span className="text-text-primary text-sm font-semibold">Github 프로필</span>
