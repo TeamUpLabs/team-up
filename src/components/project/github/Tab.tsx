@@ -8,67 +8,47 @@ interface TabProps {
 }
 
 export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
+  const tabName = {
+    overview: "개요",
+    repo: "저장소",
+    issue: "이슈",
+    pr: "PR",
+    commit: "커밋",
+    cicd: "CI/CD",
+    org: "조직",
+    analytics: "분석",
+  }
+
+  const tabIcon = {
+    overview: faFolder,
+    repo: faCodeBranch,
+    issue: faExclamation,
+    pr: faCodePullRequest,
+    commit: faCodeCommit,
+    cicd: faSignal,
+    org: faBuilding,
+    analytics: faChartColumn,
+  }
+
   return (
-    <div className="flex items-center w-full bg-component-tertiary-background rounded-lg p-2 cursor-pointer text-sm">
-      <div
-        onClick={() => setSelectedTab("overview")}
-        className={`flex items-center gap-1 w-full ${selectedTab === "overview" ? "bg-component-background text-text-primary" : "bg-transparent text-text-secondary"} px-3 py-2 justify-center`}
-      >
-        <FontAwesomeIcon icon={faFolder} size="sm" />
-        <span>개요</span>
-      </div>
-      <div
-        onClick={() => setSelectedTab("repo")}
-        className={`flex items-center gap-1 w-full ${selectedTab === "repo" ? "bg-component-background text-text-primary" : "bg-transparent text-text-secondary"} px-3 py-2 justify-center`}
-      >
-        <FontAwesomeIcon icon={faCodeBranch} size="sm" />
-        <span>저장소</span>
-      </div>
-      <div
-        onClick={() => setSelectedTab("issue")}
-        className={`flex items-center gap-1 w-full ${selectedTab === "issue" ? "bg-component-background text-text-primary" : "bg-transparent text-text-secondary"} px-3 py-2 justify-center`}
-      >
-        <span className="fa-layers">
-          <FontAwesomeIcon icon={faCircle} className="text-text-primary" />
-          <FontAwesomeIcon icon={faExclamation} className="text-text-primary" transform="shrink-6" />
-        </span>
-        <span>이슈</span>
-      </div>
-      <div
-        onClick={() => setSelectedTab("pr")}
-        className={`flex items-center gap-1 w-full ${selectedTab === "pr" ? "bg-component-background text-text-primary" : "bg-transparent text-text-secondary"} px-3 py-2 justify-center`}
-      >
-        <FontAwesomeIcon icon={faCodePullRequest} size="sm" />
-        <span>PR</span>
-      </div>
-      <div
-        onClick={() => setSelectedTab("commit")}
-        className={`flex items-center gap-1 w-full ${selectedTab === "commit" ? "bg-component-background text-text-primary" : "bg-transparent text-text-secondary"} px-3 py-2 justify-center`}
-      >
-        <FontAwesomeIcon icon={faCodeCommit} size="sm" />
-        <span>커밋</span>
-      </div>
-      <div
-        onClick={() => setSelectedTab("cicd")}
-        className={`flex items-center gap-1 w-full ${selectedTab === "cicd" ? "bg-component-background text-text-primary" : "bg-transparent text-text-secondary"} px-3 py-2 justify-center`}
-      >
-        <FontAwesomeIcon icon={faSignal} size="sm" />
-        <span>CI/CD</span>
-      </div>
-      <div
-        onClick={() => setSelectedTab("org")}
-        className={`flex items-center gap-1 w-full ${selectedTab === "org" ? "bg-component-background text-text-primary" : "bg-transparent text-text-secondary"} px-3 py-2 justify-center`}
-      >
-        <FontAwesomeIcon icon={faBuilding} size="sm" />
-        <span> 조직</span>
-      </div>
-      <div
-        onClick={() => setSelectedTab("analytics")}
-        className={`flex items-center gap-1 w-full ${selectedTab === "analytics" ? "bg-component-background text-text-primary" : "bg-transparent text-text-secondary"} px-3 py-2 justify-center`}
-      >
-        <FontAwesomeIcon icon={faChartColumn} size="sm" />
-        <span>분석</span>
-      </div>
+    <div className="flex items-center w-full bg-component-tertiary-background rounded-lg p-2 cursor-pointer text-xs md:text-sm">
+      {Object.entries(tabName).map(([key, value]) => (
+        <div
+          key={key}
+          onClick={() => setSelectedTab(key as 'overview' | 'repo' | 'issue' | 'pr' | 'commit' | 'cicd' | 'org' | 'analytics')}
+          className={`flex items-center gap-1 w-full ${selectedTab === key ? "bg-component-background text-text-primary" : "bg-transparent text-text-secondary"} px-1.5 py-1 md:px-3 md:py-2 justify-center`}
+        >
+          {key === "issue" ? (
+            <span className="fa-layers">
+              <FontAwesomeIcon icon={faCircle} className="text-text-primary" />
+              <FontAwesomeIcon icon={faExclamation} className="text-text-primary" transform="shrink-6" />
+            </span>
+          ) : (
+            <FontAwesomeIcon icon={tabIcon[key as 'overview' | 'repo' | 'issue' | 'pr' | 'commit' | 'cicd' | 'org' | 'analytics']} size="sm" />
+          )}
+          <span>{value}</span>
+        </div>
+      ))}
     </div>
   )
 }
