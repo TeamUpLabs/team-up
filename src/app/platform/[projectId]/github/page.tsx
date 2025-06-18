@@ -9,6 +9,7 @@ import IssueCard from "@/components/project/github/IssueCard";
 import PRCard from "@/components/project/github/PRCard";
 import CommitCard, { CommitData } from "@/components/project/github/CommitCard";
 import ProfileCard from "@/components/project/github/ProfileCard";
+import Tab from "@/components/project/github/Tab";
 
 export default function GithubPage() {
   const { project } = useProject();
@@ -27,6 +28,7 @@ export default function GithubPage() {
     company: "",
     location: "",
   });
+  const [selectedTab, setSelectedTab] = useState<'overview' | 'repo' | 'issue' | 'pr' | 'commit' | 'cicd' | 'org' | 'analytics'>("overview");
 
   const fetchCommit = useCallback(async () => {
     const res = await fetch('/api/github/commits?repo=team-up', {
@@ -66,7 +68,6 @@ export default function GithubPage() {
       },
     })
     const data = await res.json();
-    console.log(data.user);
     setGithubUser(data.user);
   }, [user?.github_access_token, user?.github_id])
 
@@ -98,6 +99,8 @@ export default function GithubPage() {
           </div>
 
           <ProfileCard githubUser={githubUser} />
+
+          <Tab selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
         </div>
       ) : (
         <GithubRepoCreate />
