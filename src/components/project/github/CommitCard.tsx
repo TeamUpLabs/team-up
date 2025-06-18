@@ -2,39 +2,7 @@
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeCommit } from "@fortawesome/free-solid-svg-icons";
-
-const formatCommitDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  date.setDate(date.getDate() - 1);  // 날짜 보정
-
-  const today = new Date();
-  const yesterday = new Date(today);
-  const dayBeforeYesterday = new Date(today);
-
-  yesterday.setDate(yesterday.getDate() - 1);
-  dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 2);
-
-  // Set hours to 0 to compare dates without time
-  const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const compareToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const compareYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
-  const compareDayBeforeYesterday = new Date(dayBeforeYesterday.getFullYear(), dayBeforeYesterday.getMonth(), dayBeforeYesterday.getDate());
-
-  if (compareDate.getTime() === compareToday.getTime()) {
-    return '오늘';
-  } else if (compareDate.getTime() === compareYesterday.getTime()) {
-    return '어제';
-  } else if (compareDate.getTime() === compareDayBeforeYesterday.getTime()) {
-    return '그저께';
-  } else {
-    // Format as YYYY-MM-DD
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).replace(/\. /g, '-').replace(/\./g, '');
-  }
-};
+import { formatDate } from "@/utils/formatDate";
 
 export interface CommitData {
   commit: {
@@ -72,7 +40,7 @@ export default function CommitCard({ commitData }: CommitCardProps) {
         </span>
         <p className="text-xs text-text-secondary">
           {hasCommits 
-            ? formatCommitDate(commitData[0].commit.author.date)
+            ? formatDate(new Date(commitData[0].commit.author.date))
             : '커밋 없음'}
         </p>
       </div>
