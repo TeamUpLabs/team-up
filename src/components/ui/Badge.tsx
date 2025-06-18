@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
-type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone" | "neutral" | "emerald" | "none";
+type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone" | "neutral" | "emerald" | "black" | "none";
 
 interface BadgeProps {
   content: string | React.ReactNode;
@@ -28,6 +28,7 @@ export default function Badge({ content, color, isEditable = false, onRemove, on
     stone: "bg-stone-100 text-stone-800",
     neutral: "bg-neutral-100 text-neutral-800",
     emerald: "bg-emerald-100 text-emerald-800",
+    black: "bg-black text-white",
     none: "bg-transparent text-text-primary"
   };
 
@@ -45,6 +46,7 @@ export default function Badge({ content, color, isEditable = false, onRemove, on
     stone: "text-stone-800 hover:text-stone-600",
     neutral: "text-neutral-800 hover:text-neutral-600",
     emerald: "text-emerald-800 hover:text-emerald-600",
+    black: "text-white hover:text-white",
     none: "text-text-primary"
   };
 
