@@ -20,7 +20,7 @@ interface OrgDataProps {
 
 export default function OrgCard({ isDark, orgData }: OrgDataProps) {
   return (
-    <div className="flex flex-col justify-between bg-component-background border border-component-border rounded-lg p-4">
+    <div className="flex flex-col gap-10 justify-between bg-component-background border border-component-border rounded-lg p-4">
       <div className="space-y-4">
         <div className="flex flex-col gap-1">
           <span className="text-xl font-bold text-text-primary">Organization Overview</span>
