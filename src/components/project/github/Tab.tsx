@@ -1,10 +1,20 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCodeBranch, faExclamation, faCodePullRequest, faCodeCommit, faSignal, faChartColumn } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCodeBranch,
+  faExclamation,
+  faCodePullRequest,
+  faCodeCommit,
+  faSignal,
+  faChartColumn,
+} from "@fortawesome/free-solid-svg-icons";
 import { faFolder, faCircle, faBuilding } from "@fortawesome/free-regular-svg-icons";
 
 interface TabProps {
   selectedTab: 'overview' | 'repo' | 'issue' | 'pr' | 'commit' | 'cicd' | 'org' | 'analytics';
-  setSelectedTab: (tab: 'overview' | 'repo' | 'issue' | 'pr' | 'commit' | 'cicd' | 'org' | 'analytics') => void;
+  setSelectedTab: (tab: TabProps["selectedTab"]) => void;
 }
 
 export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
@@ -17,7 +27,7 @@ export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
     cicd: "CI/CD",
     org: "조직",
     analytics: "분석",
-  }
+  };
 
   const tabIcon = {
     overview: faFolder,
@@ -28,15 +38,42 @@ export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
     cicd: faSignal,
     org: faBuilding,
     analytics: faChartColumn,
-  }
+  };
+
+  const tabRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [sliderStyle, setSliderStyle] = useState({ left: 0, width: 0 });
+
+  useEffect(() => {
+    const selectedEl = tabRefs.current[selectedTab];
+    if (selectedEl) {
+      const { offsetLeft, offsetWidth } = selectedEl;
+      setSliderStyle({ left: offsetLeft, width: offsetWidth });
+    }
+  }, [selectedTab]);
 
   return (
-    <div className="flex items-center w-full bg-component-tertiary-background rounded-lg p-2 cursor-pointer text-xs md:text-sm">
+    <div className="relative flex items-center w-full bg-component-tertiary-background rounded-lg p-2 text-xs md:text-sm">
+      {/* Animated Slider */}
+      <div
+        className="absolute top-2 bottom-2 bg-component-background rounded-lg transition-all duration-300"
+        style={{
+          left: sliderStyle.left,
+          width: sliderStyle.width,
+        }}
+      />
+
       {Object.entries(tabName).map(([key, value]) => (
         <div
           key={key}
-          onClick={() => setSelectedTab(key as 'overview' | 'repo' | 'issue' | 'pr' | 'commit' | 'cicd' | 'org' | 'analytics')}
-          className={`flex items-center gap-1 w-full ${selectedTab === key ? "bg-component-background text-text-primary" : "bg-transparent text-text-secondary"} px-1.5 py-1 md:px-3 md:py-2 justify-center`}
+          ref={(el) => {
+            tabRefs.current[key] = el;
+          }}
+          onClick={() => setSelectedTab(key as TabProps["selectedTab"])}
+          className={`
+            relative z-10 flex items-center gap-1 w-full px-1.5 py-1 md:px-3 md:py-2 justify-center rounded-lg
+            ${selectedTab === key ? "text-text-primary font-medium" : "text-text-secondary"}
+            cursor-pointer
+          `}
         >
           {key === "issue" ? (
             <span className="fa-layers">
@@ -44,11 +81,11 @@ export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
               <FontAwesomeIcon icon={faExclamation} className="text-text-primary" transform="shrink-6" />
             </span>
           ) : (
-            <FontAwesomeIcon icon={tabIcon[key as 'overview' | 'repo' | 'issue' | 'pr' | 'commit' | 'cicd' | 'org' | 'analytics']} size="sm" />
+            <FontAwesomeIcon icon={tabIcon[key as keyof typeof tabIcon]} size="sm" />
           )}
           <span>{value}</span>
         </div>
       ))}
     </div>
-  )
+  );
 }
