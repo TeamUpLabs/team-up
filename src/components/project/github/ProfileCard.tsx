@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +10,7 @@ interface ProfileData {
   name: string;
   login: string;
   email: string;
+  html_url: string;
   avatar_url: string;
   public_repos: number;
   followers: number;
@@ -41,17 +43,19 @@ export default function ProfileCard({ githubUser }: { githubUser: ProfileData })
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
               <span className="text-text-primary text-lg font-semibold">{githubUser?.name || "이름 없음"}</span>
-              <span className="text-text-primary text-sm font-bold">@{githubUser?.login || "아이디 없음"}</span>
+              <Link href={githubUser?.html_url || ""} target="_blank" className="hover:underline">
+                <span className="text-text-primary text-sm font-bold">@{githubUser?.login || "아이디 없음"}</span>
+              </Link>
               <Badge
                 content="웹훅 활성화"
                 color={isDark ? "white" : "black"}
                 className="!text-xs !px-3 !py-1 !rounded-full !font-semibold"
               />
             </div>
-            <p className="text-text-secondary text-sm">{githubUser?.email}</p>
+            <p className="text-text-secondary text-sm">{githubUser?.email || "이메일 없음"}</p>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-sm text-text-secondary">
+        <div className="flex items-center gap-2 md:gap-4 text-xs md:text-sm text-text-secondary">
           <div className="flex items-center gap-1">
             <Book className="w-4 h-4 text-text-secondary" />
             <span>{githubUser?.public_repos || 0} 저장소</span>
@@ -74,7 +78,7 @@ export default function ProfileCard({ githubUser }: { githubUser: ProfileData })
       </div>
       <div className="flex items-center gap-2">
         <button
-          onClick={() => window.open('https://github.com/' + githubUser?.login, '_blank')}
+          onClick={() => window.open(githubUser?.html_url || "", '_blank')}
           className="flex items-center gap-2 border border-component-border rounded-lg px-3 py-2 cursor-pointer bg-transparent hover:bg-component-secondary-background"
         >
           <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />
