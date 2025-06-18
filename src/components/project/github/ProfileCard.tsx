@@ -36,7 +36,7 @@ export default function ProfileCard({ githubUser }: { githubUser: ProfileData })
                 className="w-12 h-12 rounded-full"
               />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-component-secondary-background flex items-center justify-center">
               </div>
             )}
           </div>
