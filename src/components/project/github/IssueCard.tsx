@@ -1,12 +1,8 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamation } from "@fortawesome/free-solid-svg-icons";
-import { faCircle } from "@fortawesome/free-regular-svg-icons";
+import { faCircle } from "@fortawesome/free-regular-svg-icons"; 
 
-interface RepoData {
-  open_issues_count?: number;
-}
-
-export default function IssueCard({ repoData }: { repoData: RepoData }) {
+export default function IssueCard({ issueLength }: { issueLength: number }) {
   return (
     <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">
       <div className="flex items-center justify-between">
@@ -18,7 +14,7 @@ export default function IssueCard({ repoData }: { repoData: RepoData }) {
       </div>
       <div>
         <span className="text-text-primary text-3xl font-bold">
-          {repoData.open_issues_count ?? 0}
+          {issueLength || 0}
         </span>
         <p className="text-xs text-text-secondary">처리 대기 중</p>
       </div>
