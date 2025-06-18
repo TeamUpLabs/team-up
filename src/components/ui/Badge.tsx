@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 
-type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone" | "neutral" | "emerald" | "black" | "white" | "none";
+export type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone" | "neutral" | "emerald" | "black" | "white" | "none";
 
 interface BadgeProps {
   content: string | React.ReactNode;
