@@ -4,17 +4,16 @@ export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
   const token = authHeader?.replace('Bearer ', '');
   const org = req.nextUrl.searchParams.get('org');
-  const repo = req.nextUrl.searchParams.get('repo');
 
-  if (!token || !org || !repo) {
-    return NextResponse.json({ error: 'Missing GitHub token or org or repo' }, { status: 401 });
+  if (!token || !org) {
+    return NextResponse.json({ error: 'Missing GitHub token or org' }, { status: 401 });
   }
 
-  const url = `https://api.github.com/repos/${org}/${repo}/commits`;
+  const url = `https://api.github.com/orgs/${org}`;
   const headers = {
     Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github+json',
-  }
+  };
 
   try {
     const res = await fetch(url, { headers });
@@ -22,9 +21,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'GitHub API error' }, { status: res.status });
     }
 
-    const commits = await res.json();
-    return NextResponse.json({ commits: commits });
+    const org = await res.json();
+    return NextResponse.json({ org: org });
   } catch (error) {
-    return NextResponse.json({ error: `Failed to fetch commits: ${error}` }, { status: 500 });
+    return NextResponse.json({ error: `Failed to fetch org: ${error}` }, { status: 500 });
   }
 }

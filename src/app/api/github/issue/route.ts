@@ -3,15 +3,14 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
   const token = authHeader?.replace('Bearer ', '');
+  const org = req.nextUrl.searchParams.get('org');
   const repo = req.nextUrl.searchParams.get('repo');
 
-  if (!token || !repo) {
-    return NextResponse.json({ error: 'Missing GitHub token or repo' }, { status: 401 });
+  if (!token || !org || !repo) {
+    return NextResponse.json({ error: 'Missing GitHub token or org or repo' }, { status: 401 });
   }
 
-  const owner = 'TeamUpLabs';
-
-  const url = `https://api.github.com/repos/${owner}/${repo}/issues`;
+  const url = `https://api.github.com/repos/${org}/${repo}/issues`;
   const headers = {
     Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github+json',
