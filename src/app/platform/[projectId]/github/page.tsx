@@ -11,6 +11,7 @@ import CommitCard, { CommitData } from "@/components/project/github/CommitCard";
 import ProfileCard from "@/components/project/github/ProfileCard";
 import Tab from "@/components/project/github/Tab";
 import Overview from "@/components/project/github/overview/overview";
+import Repo from "@/components/project/github/repo/repo";
 import {
   fetchCommitData,
   fetchIssueData,
@@ -23,7 +24,24 @@ import {
 export default function GithubPage() {
   const { project } = useProject();
   const user = useAuthStore.getState().user;
-  const [repoData, setRepoData] = useState({});
+  const [repoData, setRepoData] = useState({
+    name: "",
+    html_url: "",
+    description: "",
+    stargazers_count: 0,
+    watchers_count: 0,
+    forks_count: 0,
+    open_issues_count: 0,
+    license: {
+      name: "",
+    },
+    owner: {
+      login: "",
+      avatar_url: "",
+    },
+    topics: [],
+    language: "",
+  });
   const [prData, setPrData] = useState({
     total_count: 0,
     items: []
@@ -91,7 +109,7 @@ export default function GithubPage() {
     const fetchAllData = async () => {
       if (project?.github_repo_url) {
         const org = "TeamUpLabs";
-        const repo = project.github_repo_url.split("/").pop()!;
+        const repo = "team-up"
 
         await Promise.all([
           fetchRepo(org, repo),
@@ -103,7 +121,7 @@ export default function GithubPage() {
         ]);
       }
     };
-  
+
     fetchAllData();
   }, [project, user, fetchRepo, fetchPr, fetchCommit, fetchIssue, fetchUser, fetchOrg]);
 
@@ -130,6 +148,7 @@ export default function GithubPage() {
           <Tab selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
           {selectedTab === "overview" && <Overview issueData={issueData} prData={prData} commitData={commitData} orgData={orgData} />}
+          {selectedTab === "repo" && <Repo repoData={repoData} prCount={prData?.total_count || 0} />}
         </div>
       ) : (
         <GithubRepoCreate />
