@@ -70,7 +70,7 @@ export default function RecentActivityCard({ recentItems }: RecentActivityCardPr
     const { icon, label, color } = getTypeInfo(item.__type || 'commit', item);
 
     return (
-      <Link href={item.html_url || ''} target="_blank" key={`${item.__type}-${index}`} className="flex items-start gap-1 px-2 py-3 hover:bg-component-secondary-background rounded-lg">
+      <Link href={item.html_url || ''} target="_blank" key={`${item.__type}-${index}`} className="flex items-start gap-1 px-2 py-3 hover:bg-component-secondary-background">
         <div className="mt-1 flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white">
           {icon}
         </div>
@@ -105,7 +105,7 @@ export default function RecentActivityCard({ recentItems }: RecentActivityCardPr
         <span className="text-sm text-text-secondary">GitHub에서의 최근 활동 요약</span>
       </div>
       {recentItems.length > 0 ? (
-        <div className="space-y-2">
+        <div className="divide-y divide-component-border">
           {recentItems.map((item, index) => renderItem(item, index))}
         </div>
       ) : (
