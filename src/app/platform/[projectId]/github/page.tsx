@@ -62,6 +62,7 @@ export default function GithubPage() {
 
   const fetchRepo = useCallback(async (org: string, repo: string) => {
     const data = await fetchRepoData(org, repo, user!);
+    console.log(data);
     setRepoData(data);
   }, [user])
 
@@ -83,20 +84,20 @@ export default function GithubPage() {
 
   const fetchOrg = useCallback(async (org: string) => {
     const data = await fetchOrgData(org, user!);
-    console.log(data);
     setOrgData(data);
   }, [user])
 
   useEffect(() => {
-    const org = "TeamUpLabs";
-    
     const fetchAllData = async () => {
       if (project?.github_repo_url) {
+        const org = "TeamUpLabs";
+        const repo = project.github_repo_url.split("/").pop()!;
+
         await Promise.all([
-          fetchRepo(org, project.github_repo_url.split("/").pop()!),
-          fetchCommit(org, project.github_repo_url.split("/").pop()!),
-          fetchPr(org, project.github_repo_url.split("/").pop()!),
-          fetchIssue(org, project.github_repo_url.split("/").pop()!),
+          fetchRepo(org, repo),
+          fetchCommit(org, repo),
+          fetchPr(org, repo),
+          fetchIssue(org, repo),
           fetchUser(),
           fetchOrg(org)
         ]);
