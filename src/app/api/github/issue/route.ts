@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
+import { IssueData } from '@/types/IssueData';
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
@@ -22,8 +23,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'GitHub API error' }, { status: res.status });
     }
 
-    const issues = await res.json();
-    return NextResponse.json({ issues: issues });
+    const issues = await res.json() as IssueData[];
+    const issuesOnly = issues.filter((item) => !item.pull_request);
+    return NextResponse.json({ issues: issuesOnly });
   } catch (error) {
     return NextResponse.json({ error: `Failed to fetch issues: ${error}` }, { status: 500 });
   }
