@@ -5,21 +5,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { Book, Users, Building, MapPinAlt } from "flowbite-react-icons/outline";
 import { useTheme } from "@/contexts/ThemeContext";
+import { GithubUser } from "@/types/GithubUser";
 
-interface ProfileData {
-  name: string;
-  login: string;
-  email: string;
-  html_url: string;
-  avatar_url: string;
-  public_repos: number;
-  followers: number;
-  following: number;
-  company: string;
-  location: string;
-}
-
-export default function ProfileCard({ githubUser }: { githubUser: ProfileData }) {
+export default function ProfileCard({ githubUser }: { githubUser: GithubUser }) {
   const { isDark } = useTheme();
 
   return (
