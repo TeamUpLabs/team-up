@@ -47,7 +47,7 @@ export default function IssueTracker({ issueData }: IssueTrackerProps) {
           placeholder="이슈 검색..."
           value={searchQuery}
           onChange={handleSearch}
-          className="w-full py-2 !rounded-md bg-component-background"
+          className="w-full py-2 !rounded-md !bg-component-background"
           fullWidth
           startAdornment={<Search className="h-5 w-5 text-gray-400" />}
         />
