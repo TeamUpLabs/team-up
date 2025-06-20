@@ -10,6 +10,6 @@ export interface CommitData {
       sha: string;
       url: string;
     };
-    url: string;
   };
+  html_url: string;
 }

@@ -93,8 +93,8 @@ const transformToActivities = (
         title: commitData.commit.message.split('\n')[0],
         author: commitData.commit.author.name,
         date: commitData.commit.author.date,
-        url: commitData.commit.url, 
-        repoName: getRepoNameFromUrl(commitData.commit.url),
+        url: commitData.html_url, 
+        repoName: getRepoNameFromUrl(commitData.html_url),
       });
     });
   }

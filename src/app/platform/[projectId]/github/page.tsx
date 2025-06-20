@@ -75,7 +75,6 @@ export default function GithubPage() {
   const fetchPr = useCallback(
     async (org: string, repo: string) => {
       const data = await fetchPrData(org, repo, user!);
-      console.log(data);
       setPrData(data);
     },
     [user]
