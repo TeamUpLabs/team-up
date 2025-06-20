@@ -8,6 +8,7 @@ import Badge from "@/components/ui/Badge";
 import { createProject } from '@/hooks/getProjectData';
 import { updateProjectMember } from '@/hooks/getMemberData';
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import { Input } from "@/components/ui/Input";
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -292,13 +293,14 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   >
                     프로젝트 이름 <span className="text-point-color-purple ml-1">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="title"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="!px-3 !py-2"
+                    fullWidth
                     placeholder="작업 이름을 입력하세요"
                     required
                   />
@@ -316,7 +318,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                     value={formData.description}
                     onChange={handleChange}
                     rows={3}
-                    className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="resize-none w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     placeholder="작업 설명을 입력하세요"
                   />
                 </div>
@@ -396,7 +398,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                       { name: "projectType", value: "토이", label: "토이 프로젝트" },
                       { name: "projectType", value: "기타", label: "기타" },
                     ]}
-                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+                    className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
                     dropDownClassName="!w-full"
                   />
                 </div>
@@ -417,7 +419,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   >
                     필요한 역할 <span className="text-point-color-purple ml-1">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="roles"
                     name="roles"
@@ -426,7 +428,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                     onKeyDown={(e) => handleKeyDown("role", e)}
                     onCompositionStart={() => setIsComposing(true)}
                     onCompositionEnd={() => setIsComposing(false)}
-                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+                    className="!py-2"
                     placeholder="역할을 입력하고 Enter 키를 누르세요"
                   />
                   <div className="mt-2 flex flex-wrap gap-2">
@@ -442,7 +444,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   >
                     필요한 기술 <span className="text-point-color-purple ml-1">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="techStack"
                     name="techStack"
@@ -451,7 +453,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                     onKeyDown={(e) => handleKeyDown("techStack", e)}
                     onCompositionStart={() => setIsComposing(true)}
                     onCompositionEnd={() => setIsComposing(false)}
-                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+                    className="!py-2"
                     placeholder="기술을 입력하고 Enter 키를 누르세요"
                   />
                   <div className="mt-2 flex flex-wrap gap-2">
@@ -477,13 +479,13 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   >
                     위치 <span className="text-point-color-purple ml-1">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="location"
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors"
+                    className="!py-2"
                     placeholder="예) 원격, 서울"
                   />
                 </div>
@@ -501,7 +503,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                     value={formData.teamSize}
                     onChange={handleChange}
                     onWheel={(e) => e.currentTarget.blur()}
-                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors placeholder:text-text-secondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className="w-full px-4 py-2 rounded-lg bg-input-background border border-input-border hover:border-input-border-hover focus:border-point-color-indigo focus:outline-none transition-colors placeholder:text-text-secondary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     placeholder="5"
                   />
                 </div>

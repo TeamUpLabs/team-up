@@ -7,7 +7,7 @@ export interface MileStone {
   title: string;
   description: string;
   startDate: string;
-  endDate: string;
+  endDate?: string;
   status: 'in-progress' | 'done' | 'not-started';
   assignee_id: number[];
   assignee: Member[] | [];

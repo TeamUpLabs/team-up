@@ -19,6 +19,8 @@ import { getPriorityColorName } from "@/utils/getPriorityColor";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
+import { Input } from "@/components/ui/Input";
+import DatePicker from "@/components/ui/DatePicker";
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -193,12 +195,12 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
         <div className="flex items-center gap-2">
           <FontAwesomeIcon icon={faBullseye} />
           {isEditing === "title" ? (
-            <input
+            <Input
               type="text"
               name="title"
               value={milestoneData?.title}
               onChange={handleChange}
-              className="text-xl font-semibold py-1 px-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+              className="!text-xl !font-semibold !py-1 !px-2"
               placeholder="작업 제목을 입력하세요"
             />
           ) : (
@@ -348,7 +350,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 name="description"
                 value={milestoneData.description}
                 onChange={handleChange}
-                className="w-full p-3 rounded-lg m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
+                className="w-full p-3 rounded-md m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
                 placeholder="마일스톤의 설명을 작성하세요"
               />
             ) : (
@@ -399,12 +401,15 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               />
             </div>
             {isEditing === "startDate" ? (
-              <input
-                type="date"
-                name="startDate"
-                value={milestoneData.startDate}
-                onChange={handleChange}
+              <DatePicker
+                value={milestoneData.startDate ? new Date(milestoneData.startDate) : undefined}
+                onChange={(date: Date | undefined) => {
+                  if (date) {
+                    setMilestoneData({ ...milestoneData, startDate: date.toISOString().split("T")[0] });
+                  }
+                }}
                 className="w-full p-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                maxDate={milestoneData.endDate ? new Date(milestoneData.endDate) : undefined}
               />
             ) : (
               <p className="text-sm text-muted-foreground">
@@ -428,12 +433,15 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               />
             </div>
             {isEditing === "endDate" ? (
-              <input
-                type="date"
-                name="endDate"
-                value={milestoneData.endDate}
-                onChange={handleChange}
-                className="w-full p-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+              <DatePicker
+                value={milestoneData.endDate ? new Date(milestoneData.endDate) : undefined}
+                onChange={(date: Date | undefined) => {
+                  if (date) {
+                    setMilestoneData({ ...milestoneData, endDate: date ? date.toISOString().split("T")[0] : undefined });
+                  }
+                }}
+                className="w-full p-2 rounded-md bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                minDate={milestoneData.startDate ? new Date(milestoneData.startDate) : undefined}
               />
             ) : (
               <p className="text-sm text-muted-foreground">
@@ -701,15 +709,14 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 />
               ))}
               <div className="flex">
-                <input
-                  type="text"
+                <Input
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
                   onKeyDown={handleKeyDown}
                   onCompositionStart={() => setIsComposing(true)}
                   onCompositionEnd={() => setIsComposing(false)}
                   placeholder="새 태그 추가"
-                  className="px-2 rounded-md bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                  className="h-full"
                 />
               </div>
             </>

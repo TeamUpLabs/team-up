@@ -37,7 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           ref={ref}
           className={`
-            block w-full rounded-md bg-input-background
+            block w-full rounded-md bg-input-background py-2
             ${startAdornment ? 'pl-10' : 'pl-3'}
             ${endAdornment ? 'pr-10' : 'pr-3'}
             text-text-primary placeholder:text-text-secondary focus:outline-none

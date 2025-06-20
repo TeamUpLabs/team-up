@@ -28,6 +28,7 @@ import { getPlatformColor } from "@/utils/getPlatformColor";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import { createSchedule } from "@/hooks/getScheduleData";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import { Input } from "@/components/ui/Input";
 
 type ScheduleType = "meeting" | "event";
 type MeetingPlatform = "Zoom" | "Google Meet" | "TeamUp";
@@ -365,13 +366,13 @@ export default function ScheduleCreateModal({
                   >
                     일정 이름 <span className="text-point-color-purple ml-1">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="title"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="!px-3 !py-2"
                     placeholder="일정 이름을 입력하세요"
                     required
                   />
@@ -389,7 +390,7 @@ export default function ScheduleCreateModal({
                     value={formData.description}
                     onChange={handleChange}
                     rows={3}
-                    className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="resize-none w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     placeholder="일정 설명을 입력하세요"
                   />
                 </div>
@@ -527,13 +528,13 @@ export default function ScheduleCreateModal({
                                 className="text-text-tertiary text-sm"
                               />
                             </div>
-                            <input
+                            <Input
                               type="text"
                               id="link"
                               name="link"
                               value={formData.link}
                               onChange={handleChange}
-                              className="w-full pl-10 pr-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                              className="!px-3 !py-2"
                               placeholder={
                                 selectedPlatform === "Zoom"
                                   ? "Zoom 회의 링크를 입력하세요"
@@ -554,13 +555,13 @@ export default function ScheduleCreateModal({
                       >
                         이벤트 장소 <span className="text-point-color-purple ml-1">*</span>
                       </label>
-                      <input
+                      <Input
                         type="text"
                         id="where"
                         name="where"
                         value={formData.where}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                        className="!px-3 !py-2"
                         placeholder="이벤트 장소를 입력해주세요"
                         required
                       />
@@ -615,7 +616,7 @@ export default function ScheduleCreateModal({
                     value={formData.memo}
                     onChange={handleChange}
                     rows={3}
-                    className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="resize-none w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder-text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     placeholder="메모를 입력해주세요"
                   />
                 </div>

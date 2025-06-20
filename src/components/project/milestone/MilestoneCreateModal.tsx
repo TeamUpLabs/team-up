@@ -17,6 +17,7 @@ import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import { Input } from "@/components/ui/Input";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -331,13 +332,13 @@ export default function MilestoneCreateModal({
                 >
                   마일스톤 이름 <span className="text-point-color-purple ml-1">*</span>
                 </label>
-                <input
+                <Input
                   type="text"
                   id="title"
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                  className="!px-3 !py-2"
                   placeholder="마일스톤 이름을 입력하세요"
                   required
                 />
@@ -355,7 +356,7 @@ export default function MilestoneCreateModal({
                   value={formData.description}
                   onChange={handleChange}
                   rows={3}
-                  className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                  className="resize-none w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                   placeholder="마일스톤 설명을 입력하세요"
                 />
               </div>
@@ -431,7 +432,7 @@ export default function MilestoneCreateModal({
                     ]}
                     value={formData.status}
                     onChange={(value) => handleSelectChange("status", value as string)}
-                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     dropDownClassName="!w-full"
                     placeholder="상태를 선택해주세요"
                   />
@@ -454,7 +455,7 @@ export default function MilestoneCreateModal({
                     ]}
                     value={formData.priority}
                     onChange={(value) => handleSelectChange("priority", value as string)}
-                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     dropDownClassName="!w-full"
                     placeholder="우선순위를 선택해주세요"
                   />
@@ -482,7 +483,7 @@ export default function MilestoneCreateModal({
                 >
                   태그
                 </label>
-                <input
+                <Input
                   type="text"
                   id="tags"
                   name="tags"
@@ -491,7 +492,7 @@ export default function MilestoneCreateModal({
                   onKeyDown={(e) => handleKeyDown("tags", e)}
                   onCompositionStart={() => setIsComposing(true)}
                   onCompositionEnd={() => setIsComposing(false)}
-                  className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                  className="w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                   placeholder="태그를 입력하고 Enter 키를 누르세요"
                 />
 

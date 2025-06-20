@@ -7,6 +7,7 @@ import { useAuthStore } from "@/auth/authStore";
 import { createChannel } from "@/hooks/getChannelData";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import { Input } from "@/components/ui/Input";
 
 interface ChannelCreateModalProps {
   isOpen: boolean;
@@ -146,13 +147,14 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
           </label>
           <div className="flex items-center gap-2">
             <span className="text-text-secondary font-bold">#</span>
-            <input
+            <Input
               type="text"
               id="channelName"
               name="channelName"
               value={formData.channelName}
               onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+              className="!px-3 !py-2"
+              fullWidth
               placeholder="채널 이름을 입력하세요"
               required
             />
@@ -171,7 +173,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
             name="channelDescription"
             value={formData.channelDescription}
             onChange={handleChange}
-            className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+            className="resize-none w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             placeholder="채널 설명을 입력하세요"
           />
         </div>

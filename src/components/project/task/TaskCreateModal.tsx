@@ -19,6 +19,7 @@ import Select from "@/components/ui/Select";
 import Badge from "@/components/ui/Badge";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import { Input } from "@/components/ui/Input";
 
 interface TaskCreateModalProps {
   isOpen: boolean;
@@ -347,13 +348,13 @@ export default function TaskCreateModal({
                   >
                     작업 이름 <span className="text-point-color-purple ml-1">*</span>
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="title"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="!px-3 !py-2"
                     placeholder="작업 이름을 입력하세요"
                     required
                   />
@@ -371,7 +372,7 @@ export default function TaskCreateModal({
                     value={formData.description}
                     onChange={handleChange}
                     rows={3}
-                    className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="resize-none w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     placeholder="작업 설명을 입력하세요"
                   />
                 </div>
@@ -441,14 +442,14 @@ export default function TaskCreateModal({
                   >
                     하위 작업
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="subtasks"
                     name="subtasks"
                     value={subtasksInput}
                     onChange={(e) => setSubtasksInput(e.target.value)}
                     onKeyDown={(e) => handleKeyDown("subtasks", e)}
-                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="!px-3 !py-2"
                     placeholder="하위 작업을 입력하고 Enter 키를 누르세요"
                   />
 
@@ -495,7 +496,7 @@ export default function TaskCreateModal({
                   >
                     태그
                   </label>
-                  <input
+                  <Input
                     type="text"
                     id="tags"
                     name="tags"
@@ -504,7 +505,7 @@ export default function TaskCreateModal({
                     onKeyDown={(e) => handleKeyDown("tags", e)}
                     onCompositionStart={() => setIsComposing(true)}
                     onCompositionEnd={() => setIsComposing(false)}
-                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="!px-3 !py-2"
                     placeholder="태그를 입력하고 Enter 키를 누르세요"
                   />
 
@@ -535,7 +536,7 @@ export default function TaskCreateModal({
                     ]}
                     value={formData.priority}
                     onChange={(value) => handleSelectChange("priority", value as string)}
-                    className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                    className="w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     dropDownClassName="!w-full"
                   />
                 </div>
