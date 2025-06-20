@@ -49,7 +49,7 @@ export default function IssueTracker({ issueData }: IssueTrackerProps) {
             placeholder="이슈 검색..."
             value={searchQuery}
             onChange={handleSearch}
-            className="w-full p-2 pl-10 border border-component-border rounded-md focus:outline-none bg-transparent"
+            className="w-full p-2 pl-10 text-text-secondary border border-component-border rounded-md focus:outline-none bg-transparent"
           />
         </div>
         <Select
