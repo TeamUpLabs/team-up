@@ -34,7 +34,7 @@ export default function IssueAverageResolutionTimeCard({ issues }: IssueAverageR
         <FontAwesomeIcon icon={faClock} className="text-blue-500" />
       </div>
       <div>
-        <span className="text-text-primary text-3xl font-bold">{averageTime}</span>
+        <span className="text-text-primary text-3xl font-bold">{averageTime || "N/A"}</span>
         <p className="text-xs text-text-secondary">이슈가 해결되기까지의 평균 시간</p>
       </div>
     </div>
