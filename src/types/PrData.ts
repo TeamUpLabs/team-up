@@ -1,5 +1,6 @@
 export interface PrData {
   id: number;
+  number: number;
   state: string;
   title: string;
   body: string;
@@ -10,7 +11,19 @@ export interface PrData {
   html_url: string;
   repository_url: string;
   assignee: {
+    id: number;
     login: string;
     avatar_url: string;
+    html_url: string;
+  };
+  labels: {
+    name: string;
+    color: string;
+  }[];
+  user: {
+    login: string;
+    id: number;
+    avatar_url: string;
+    html_url: string;
   };
 }
