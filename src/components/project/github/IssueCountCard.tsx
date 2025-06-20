@@ -18,7 +18,7 @@ export default function IssueCountCard({ issueLength, state }: IssueCountCardPro
             <FontAwesomeIcon icon={faExclamation} className="text-red-500" transform="shrink-6" />
           </span>
         ) : (
-          <FontAwesomeIcon icon={faCircleCheck} className="text-green-500" />
+          <FontAwesomeIcon icon={faCircleCheck} className="text-purple-500" />
         )}
       </div>
       <div>
