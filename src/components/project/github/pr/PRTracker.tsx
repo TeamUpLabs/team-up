@@ -70,14 +70,14 @@ export default function PRTracker({ prData }: PRTrackerProps) {
         </div>
       </div>
       {[...(filteredPRs || [])]
-              .sort((a, b) => {
-                if (a.state === "open" && b.state !== "open") return -1;
-                if (a.state !== "open" && b.state === "open") return 1;
-                return 0;
-              })
-              .map((pr, index) => (
-                <PRCard prData={pr} key={index} />
-              ))}
+        .sort((a, b) => {
+          if (a.state === "open" && b.state !== "open") return -1;
+          if (a.state !== "open" && b.state === "open") return 1;
+          return 0;
+        })
+        .map((pr, index) => (
+          <PRCard prData={pr} key={index} />
+        ))}
     </div>
   );
 }
