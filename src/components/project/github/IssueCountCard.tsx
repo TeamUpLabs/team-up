@@ -1,22 +1,31 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamation } from "@fortawesome/free-solid-svg-icons";
-import { faCircle } from "@fortawesome/free-regular-svg-icons"; 
+import { faCircle, faCircleCheck } from "@fortawesome/free-regular-svg-icons"; 
 
-export default function IssueCountCard({ issueLength }: { issueLength: number }) {
+interface IssueCountCardProps {
+  issueLength: number;
+  state: string;
+}
+
+export default function IssueCountCard({ issueLength, state }: IssueCountCardProps) {
   return (
     <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">
       <div className="flex items-center justify-between">
-        <span className="text-text-primary text-sm font-semibold">열린 이슈</span>
-        <span className="fa-layers">
-          <FontAwesomeIcon icon={faCircle} className="text-text-primary" />
-          <FontAwesomeIcon icon={faExclamation} className="text-text-primary" transform="shrink-6" />
-        </span>
+        <span className="text-text-primary text-sm font-semibold">{state === "open" ? "열린 이슈" : "닫힌 이슈"}</span>
+        {state === "open" ? (
+          <span className="fa-layers">
+            <FontAwesomeIcon icon={faCircle} className="text-red-500" />
+            <FontAwesomeIcon icon={faExclamation} className="text-red-500" transform="shrink-6" />
+          </span>
+        ) : (
+          <FontAwesomeIcon icon={faCircleCheck} className="text-green-500" />
+        )}
       </div>
       <div>
         <span className="text-text-primary text-3xl font-bold">
           {issueLength || 0}
         </span>
-        <p className="text-xs text-text-secondary">처리 대기 중</p>
+        <p className="text-xs text-text-secondary">{state === "open" ? "처리 대기 중" : "해결됨"}</p>
       </div>
     </div>
   );
