@@ -7,7 +7,7 @@ import { useAuthStore } from "@/auth/authStore";
 import RepoCard from "@/components/project/github/RepoCard";
 import IssueCountCard from "@/components/project/github/IssueCountCard";
 import PRCountCard from "@/components/project/github/PRCountCard";
-import CommitCountCard, { CommitData } from "@/components/project/github/CommitCountCard";
+import CommitCountCard from "@/components/project/github/CommitCountCard";
 import ProfileCard from "@/components/project/github/ProfileCard";
 import Tab from "@/components/project/github/Tab";
 import Overview, {
@@ -27,6 +27,7 @@ import { RepoData } from "@/types/RepoData";
 import { PrData } from "@/types/PrData";
 import { GithubUser } from "@/types/GithubUser";
 import { OrgData } from "@/types/OrgData";
+import { CommitData } from "@/types/CommitData";
 import IssueCard from "@/components/project/github/issue/IssueCard";
 
 export default function GithubPage() {
