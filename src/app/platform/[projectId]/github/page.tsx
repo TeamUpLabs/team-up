@@ -27,12 +27,13 @@ import { GithubUser } from "@/types/GithubUser";
 import { OrgData } from "@/types/OrgData";
 import { CommitData } from "@/types/CommitData";
 import IssueTracker from "@/components/project/github/issue/IssueTracker";
+import PRTracker from "@/components/project/github/pr/PRTracker";
 
 export default function GithubPage() {
   const { project } = useProject();
   const user = useAuthStore.getState().user;
   const [repoData, setRepoData] = useState<RepoData | null>(null);
-  const [prData, setPrData] = useState<PrData | null>(null);
+  const [prData, setPrData] = useState<PrData[]>([]);
   const [commitData, setCommitData] = useState<CommitData[]>([]);
   const [issueData, setIssueData] = useState<{ items: IssueData[] }>({ items: [] });
   const [githubUser, setGithubUser] = useState<GithubUser | null>(null);
@@ -75,6 +76,7 @@ export default function GithubPage() {
   const fetchPr = useCallback(
     async (org: string, repo: string) => {
       const data = await fetchPrData(org, repo, user!);
+      console.log(data);
       setPrData(data);
     },
     [user]
@@ -165,7 +167,7 @@ export default function GithubPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             <RepoCard repoData={repoData || {}} />
             <IssueCountCard issueLength={issueData.items.filter((issue) => issue.state === "open").length || 0} state="open" />
-            <PRCountCard prData={prData || {}} />
+            <PRCountCard prCount={prData.filter((pr) => pr.state === "open").length || 0} state="open" />
             <CommitCountCard commitData={commitData || {}} />
           </div>
 
@@ -176,7 +178,7 @@ export default function GithubPage() {
           {selectedTab === "overview" && (
             <Overview
               issueData={issueData || { items: [] }}
-              prData={prData || { total_count: 0, items: [] }}
+              prData={prData || []}
               commitData={commitData || []}
               orgData={orgData || emptyOrgData}
             />
@@ -184,11 +186,14 @@ export default function GithubPage() {
           {selectedTab === "repo" && (
             <Repo
               repoData={repoData || emptyRepoData}
-              prCount={prData?.total_count || 0}
+              prCount={prData.length || 0}
             />
           )}
           {selectedTab === "issue" && (
             <IssueTracker issueData={issueData || { items: [] }} />
+          )}
+          {selectedTab === "pr" && (
+            <PRTracker prData={prData || []} />
           )}
         </div>
       ) : (
