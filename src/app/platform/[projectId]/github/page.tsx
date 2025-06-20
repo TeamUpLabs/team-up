@@ -26,7 +26,7 @@ import { PrData } from "@/types/PrData";
 import { GithubUser } from "@/types/GithubUser";
 import { OrgData } from "@/types/OrgData";
 import { CommitData } from "@/types/CommitData";
-import IssueCard from "@/components/project/github/issue/IssueCard";
+import IssueTracker from "@/components/project/github/issue/IssueTracker";
 
 export default function GithubPage() {
   const { project } = useProject();
@@ -150,6 +150,7 @@ export default function GithubPage() {
     language: "",
   };
 
+
   return (
     <div className="flex items-start justify-center py-20 px-4">
       {!project ? (
@@ -186,16 +187,9 @@ export default function GithubPage() {
               prCount={prData?.total_count || 0}
             />
           )}
-          {selectedTab === "issue" &&
-            [...(issueData.items || [])]
-              .sort((a, b) => {
-                if (a.state === "open" && b.state !== "open") return -1;
-                if (a.state !== "open" && b.state === "open") return 1;
-                return 0;
-              })
-              .map((issue, index) => (
-                <IssueCard issueData={issue} key={index} />
-              ))}
+          {selectedTab === "issue" && (
+            <IssueTracker issueData={issueData || { items: [] }} />
+          )}
         </div>
       ) : (
         <GithubRepoCreate />
