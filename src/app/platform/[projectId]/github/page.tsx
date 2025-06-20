@@ -10,9 +10,7 @@ import PRCountCard from "@/components/project/github/PRCountCard";
 import CommitCountCard from "@/components/project/github/CommitCountCard";
 import ProfileCard from "@/components/project/github/ProfileCard";
 import Tab from "@/components/project/github/Tab";
-import Overview, {
-  GitHubItem,
-} from "@/components/project/github/overview/overview";
+import Overview from "@/components/project/github/overview/overview";
 import Repo from "@/components/project/github/repo/repo";
 import {
   fetchCommitData,
@@ -36,7 +34,7 @@ export default function GithubPage() {
   const [repoData, setRepoData] = useState<RepoData | null>(null);
   const [prData, setPrData] = useState<PrData | null>(null);
   const [commitData, setCommitData] = useState<CommitData[]>([]);
-  const [issueData, setIssueData] = useState<IssueData[]>([]);
+  const [issueData, setIssueData] = useState<{ items: IssueData[] }>({ items: [] });
   const [githubUser, setGithubUser] = useState<GithubUser | null>(null);
   const [orgData, setOrgData] = useState<OrgData | null>(null);
   const [selectedTab, setSelectedTab] = useState<
@@ -69,8 +67,7 @@ export default function GithubPage() {
   const fetchIssue = useCallback(
     async (org: string, repo: string) => {
       const data = await fetchIssueData(org, repo, user!);
-      console.log(data);
-      setIssueData(data);
+      setIssueData({ items: data });
     },
     [user]
   );
@@ -78,6 +75,7 @@ export default function GithubPage() {
   const fetchPr = useCallback(
     async (org: string, repo: string) => {
       const data = await fetchPrData(org, repo, user!);
+      console.log(data);
       setPrData(data);
     },
     [user]
@@ -125,38 +123,7 @@ export default function GithubPage() {
     fetchOrg,
   ]);
 
-  // 타입 변환 함수들
-  function mapIssueDataToGitHubItem(issueData: IssueData[]): GitHubItem[] {
-    return issueData.map((issue) => ({
-      __type: "issue",
-      created_at: issue.created_at,
-      updated_at: issue.updated_at,
-      title: issue.title,
-      state:
-        issue.state === "open" || issue.state === "closed"
-          ? (issue.state as "open" | "closed")
-          : undefined,
-      html_url: issue.html_url,
-      author: {
-        login: issue.user.login,
-        avatar_url: issue.user.avatar_url,
-      },
-    }));
-  }
 
-  function mapCommitDataToGitHubItem(commitData: CommitData[]): GitHubItem[] {
-    return commitData.map((commit) => ({
-      __type: "commit",
-      commit: {
-        message: commit.commit.message,
-        author: {
-          date: commit.commit.author.date,
-          name: commit.commit.author.name,
-          email: commit.commit.author.email,
-        },
-      },
-    }));
-  }
 
   // 안전한 기본값
   const emptyOrgData = {
@@ -197,7 +164,7 @@ export default function GithubPage() {
         <div className="w-full space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             <RepoCard repoData={repoData || {}} />
-            <IssueCountCard issueLength={issueData.filter((issue) => issue.state === "open").length || 0} />
+            <IssueCountCard issueLength={issueData.items.filter((issue) => issue.state === "open").length || 0} />
             <PRCountCard prData={prData || {}} />
             <CommitCountCard commitData={commitData || {}} />
           </div>
@@ -208,9 +175,9 @@ export default function GithubPage() {
 
           {selectedTab === "overview" && (
             <Overview
-              issueData={mapIssueDataToGitHubItem(issueData || [])}
+              issueData={issueData || { items: [] }}
               prData={prData || { total_count: 0, items: [] }}
-              commitData={mapCommitDataToGitHubItem(commitData || [])}
+              commitData={commitData || []}
               orgData={orgData || emptyOrgData}
             />
           )}
@@ -221,7 +188,7 @@ export default function GithubPage() {
             />
           )}
           {selectedTab === "issue" &&
-            [...issueData]
+            [...(issueData.items || [])]
               .sort((a, b) => {
                 if (a.state === "open" && b.state !== "open") return -1;
                 if (a.state !== "open" && b.state === "open") return 1;

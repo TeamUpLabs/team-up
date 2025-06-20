@@ -11,5 +11,5 @@ export interface CommitData {
       url: string;
     };
     url: string;
-  }
+  };
 }
