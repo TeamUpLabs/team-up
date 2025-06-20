@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { IssueData } from "@/types/IssueData";
 
-interface AverageResolutionTimeCardProps {
+interface IssueAverageResolutionTimeCardProps {
   issues: IssueData[];
 }
 
@@ -24,7 +24,7 @@ const calculateAverageResolutionTime = (issues: IssueData[]) => {
   return `${averageDays.toFixed(1)}일`;
 };
 
-export default function AverageResolutionTimeCard({ issues }: AverageResolutionTimeCardProps) {
+export default function IssueAverageResolutionTimeCard({ issues }: IssueAverageResolutionTimeCardProps) {
   const averageTime = calculateAverageResolutionTime(issues);
 
   return (
