@@ -196,7 +196,7 @@ export default function GithubPage() {
         <div className="w-full space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             <RepoCard repoData={repoData || {}} />
-            <IssueCountCard issueLength={issueData?.length || 0} />
+            <IssueCountCard issueLength={issueData.filter((issue) => issue.state === "open").length || 0} />
             <PRCountCard prData={prData || {}} />
             <CommitCountCard commitData={commitData || {}} />
           </div>
