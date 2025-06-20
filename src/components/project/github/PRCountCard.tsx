@@ -5,7 +5,7 @@ interface PRData {
   total_count?: number;
 }
 
-export default function PRCard({ prData }: { prData: PRData }) {
+export default function PRCountCard({ prData }: { prData: PRData }) {
 
   return (
     <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">

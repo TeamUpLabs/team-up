@@ -24,7 +24,7 @@ interface CommitCardProps {
   commitData: CommitData[] | null;
 }
 
-export default function CommitCard({ commitData }: CommitCardProps) {
+export default function CommitCountCard({ commitData }: CommitCardProps) {
   // Handle loading state or empty data
   const hasCommits = commitData && commitData.length > 0;
   
