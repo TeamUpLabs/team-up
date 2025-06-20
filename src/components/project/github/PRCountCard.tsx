@@ -1,23 +1,28 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCodePullRequest } from "@fortawesome/free-solid-svg-icons";
+import { faCodePullRequest, faCodeMerge } from "@fortawesome/free-solid-svg-icons";
 
-interface PRData {
-  total_count?: number;
+interface PRCountCardProps {
+  prCount?: number;
+  state: string;
 }
 
-export default function PRCountCard({ prData }: { prData: PRData }) {
+export default function PRCountCard({ prCount, state }: PRCountCardProps) {
 
   return (
     <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">
       <div className="flex items-center justify-between">
-        <span className="text-text-primary text-sm font-semibold">열린 PR</span>
-        <FontAwesomeIcon icon={faCodePullRequest} className="w-4 h-4 text-green-500" />
+        <span className="text-text-primary text-sm font-semibold">{state === "open" ? "열린 PR" : "병합된 PR"}</span>
+        {state === "open" ? (
+          <FontAwesomeIcon icon={faCodePullRequest} className="w-4 h-4 text-green-500" />
+        ) : (
+          <FontAwesomeIcon icon={faCodeMerge} className="w-4 h-4 text-purple-500" />
+        )}
       </div>
       <div>
         <span className="text-text-primary text-3xl font-bold">
-          {prData.total_count ?? 0}
+          {prCount || 0}
         </span>
-        <p className="text-xs text-text-secondary">리뷰 대기 중</p>
+        <p className="text-xs text-text-secondary">{state === "open" ? "리뷰 대기 중" : "병합됨"}</p>
       </div>
     </div>
   );
