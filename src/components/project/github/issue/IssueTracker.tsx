@@ -5,6 +5,8 @@ import { useState } from "react";
 import { IssueData } from "@/types/IssueData";
 import IssueCountCard from "@/components/project/github/IssueCountCard";
 import AverageResolutionTimeCard from "@/components/project/github/issue/AverageResolutionTimeCard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 interface IssueTrackerProps {
   issueData: {
@@ -34,7 +36,7 @@ export default function IssueTracker({ issueData }: IssueTrackerProps) {
 
   return (
     <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         <IssueCountCard issueLength={issueData.items.filter((issue) => issue.state === "open").length || 0} state="open" />
         <IssueCountCard issueLength={issueData.items.filter((issue) => issue.state === "closed").length || 0} state="closed" />
         <AverageResolutionTimeCard issues={issueData.items} />
@@ -61,6 +63,12 @@ export default function IssueTracker({ issueData }: IssueTrackerProps) {
           className="w-full md:w-1/4 p-2 !rounded-md !bg-component-background !border !border-component-border"
           dropDownClassName="!w-full !rounded-md"
         />
+        <button
+          className="flex items-center gap-2 rounded-md bg-point-color-indigo text-white px-4 py-2 active:scale-95 whitespace-nowrap cursor-pointer"
+        >
+          <FontAwesomeIcon icon={faPlus} />
+          <span className="font-semibold">새 이슈</span>
+        </button>
       </div>
       {[...(filteredIssues || [])]
         .sort((a, b) => {
