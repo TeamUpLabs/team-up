@@ -84,7 +84,7 @@ export default function IssueCard({ issueData }: { issueData: IssueData }) {
               style={{
                 backgroundColor: isDark
                   ? hexToRgba(`#${label.color}`, 0.2)
-                  : hexToRgba(`#${label.color}`, 1),
+                  : hexToRgba(`#${label.color}`, 0.4),
                 borderColor: hexToRgba(`#${label.color}`, 1),
                 color: isDark ? `#${label.color}` : (isColorDark(`#${label.color}`) ? "#fff" : "#000"),
               }}
