@@ -32,4 +32,6 @@ export interface IssueData {
     diff_url: string;
     patch_url: string;
   };
+  repository_url: string;
+  comments: number;
 }
