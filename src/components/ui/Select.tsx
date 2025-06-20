@@ -3,6 +3,7 @@
 import type React from "react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { faChevronDown, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export interface SelectOption {
@@ -265,9 +266,14 @@ export default function Select({
       </button>
 
       {/* 드롭다운 옵션들 */}
-      {isOpen && (
-        <div
-          className={`absolute z-50 w-max mt-1 bg-component-background border border-component-border rounded-md shadow-lg ${(() => {
+      <AnimatePresence>
+        {isOpen && (
+        <motion.div
+           initial={{ opacity: 0, scaleY: 0.95, y: -4 }}
+           animate={{ opacity: 1, scaleY: 1, y: 0 }}
+           exit={{ opacity: 0, scaleY: 0.95, y: -4 }}
+           transition={{ duration: 0.1, ease: "easeOut" }}
+           className={`absolute z-50 w-max mt-3 bg-component-background border border-component-border rounded-md shadow-lg ${(() => {
             if (dropdownAlign === 'center') return 'left-1/2 -translate-x-1/2';
             if (dropdownAlign === 'end') return 'right-0';
             return 'left-0';
@@ -340,8 +346,9 @@ export default function Select({
               })
             )}
           </div>
-        </div>
-      )}
+        </motion.div>
+       )}
+      </AnimatePresence>
     </div>
   )
 }
