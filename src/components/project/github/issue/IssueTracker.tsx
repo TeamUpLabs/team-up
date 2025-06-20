@@ -7,6 +7,7 @@ import IssueCountCard from "@/components/project/github/IssueCountCard";
 import AverageResolutionTimeCard from "@/components/project/github/issue/AverageResolutionTimeCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { Input } from "@/components/ui/Input";
 
 interface IssueTrackerProps {
   issueData: {
@@ -42,16 +43,14 @@ export default function IssueTracker({ issueData }: IssueTrackerProps) {
         <AverageResolutionTimeCard issues={issueData.items} />
       </div>
       <div className="flex items-center flex-col md:flex-row gap-2">
-        <div className="relative w-full bg-component-background rounded-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="이슈 검색..."
-            value={searchQuery}
-            onChange={handleSearch}
-            className="w-full p-2 pl-10 text-text-secondary border border-component-border rounded-md focus:outline-none bg-transparent"
-          />
-        </div>
+        <Input
+          placeholder="이슈 검색..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="w-full py-2 !rounded-md bg-component-background"
+          fullWidth
+          startAdornment={<Search className="h-5 w-5 text-gray-400" />}
+        />
         <Select
           options={[
             { name: "state", value: "all", label: "모든 상태" },
