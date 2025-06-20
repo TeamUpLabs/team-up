@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { useProject } from "@/contexts/ProjectContext";
 import Image from "next/image";
+import Badge from "@/components/ui/Badge";
+import { useTheme } from "@/contexts/ThemeContext";
 import TeamActivitiesSkeleton from "@/components/skeleton/TeamActivitiesSkeleton";
 
 export default function TeamActivities() {
   const { project } = useProject();
   const [isLoading, setIsLoading] = useState(true);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     if (project && project.members) {
@@ -54,19 +57,28 @@ export default function TeamActivities() {
                 <div className="flex items-center gap-2">
                   <p className="text-text-primary">{member.name}</p>
                   {member.id === project?.leader.id ? (
-                    <div className="flex items-center bg-yellow-500/20 text-yellow-500 px-3 py-1 rounded-full">
-                      <span className="text-xs">프로젝트 리더</span>
-                    </div>
+                    <Badge
+                      content="프로젝트 리더"
+                      color="yellow"
+                      isDark={isDark}
+                      className="!text-xs !px-2 !py-0.5"
+                    />
                   ) : project?.manager.some(
                       (manager) => manager.id === member.id
                     ) ? (
-                    <div className="flex items-center bg-blue-500/20 text-blue-500 px-3 py-1 rounded-full">
-                      <span className="text-xs">관리자</span>
-                    </div>
+                    <Badge
+                      content="관리자"
+                      color="blue"
+                      isDark={isDark}
+                      className="!text-xs !px-2 !py-0.5"
+                    />
                   ) : (
-                    <div className="flex items-center bg-green-500/20 text-green-500 px-3 py-1 rounded-full">
-                      <span className="text-xs">멤버</span>
-                    </div>
+                    <Badge
+                      content="멤버"
+                      color="green"
+                      isDark={isDark}
+                      className="!text-xs !px-2 !py-0.5"
+                    />
                   )}
                 </div>
                 <p className="text-sm text-text-secondary">{member.role}</p>

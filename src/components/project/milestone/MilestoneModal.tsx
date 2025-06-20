@@ -21,6 +21,7 @@ import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { Input } from "@/components/ui/Input";
 import DatePicker from "@/components/ui/DatePicker";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -38,6 +39,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const [newTag, setNewTag] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const { isDark } = useTheme();
 
   if (!isOpen) return null;
 
@@ -239,6 +241,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 color={getStatusColorName(milestoneData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
+                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -274,6 +277,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 color={getPriorityColorName(milestoneData.priority)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
+                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -706,6 +710,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                   color="pink"
                   isEditable={true}
                   onRemove={() => handleRemoveTag(index)}
+                  isDark={isDark}
                 />
               ))}
               <div className="flex">
@@ -723,7 +728,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
           ) : (
             <div className="flex items-center gap-2 group relative">
               {milestoneData?.tags.map((tag, index) => (
-                <Badge key={index} content={tag} color="pink" />
+                <Badge key={index} content={tag} color="pink" isDark={isDark} />
               ))}
               <FontAwesomeIcon
                 icon={faPencil}

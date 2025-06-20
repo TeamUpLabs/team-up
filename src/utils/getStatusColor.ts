@@ -11,7 +11,7 @@ export const getStatusColor = (status: string) => {
 
 export const getStatusColorName = (status: string) => {
   switch (status) {
-    case 'not-started': return 'neutral';
+    case 'not-started': return 'yellow';
     case 'in-progress': return 'blue';
     case 'done': return 'emerald';
     default: return 'gray';

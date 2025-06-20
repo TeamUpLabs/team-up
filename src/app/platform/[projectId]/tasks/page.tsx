@@ -8,13 +8,16 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Task } from '@/types/Task';
 import TaskComponent from '@/components/project/task/TaskComponent';
 import TaskModal from '@/components/project/task/TaskModal';
-import { getStatusColor } from "@/utils/getStatusColor";
+import { getStatusColorName } from "@/utils/getStatusColor";
 import { useProject } from '@/contexts/ProjectContext';
 import SelectMilestoneModal from '@/components/project/task/SelectMilestoneModal';
 import { updateTaskStatus } from '@/hooks/getTaskData';
 import { useAuthStore } from '@/auth/authStore';
+import { useTheme } from '@/contexts/ThemeContext';
+import Badge from '@/components/ui/Badge';
 
 export default function TasksPage() {
+  const { isDark } = useTheme();
   const { project } = useProject();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -124,9 +127,12 @@ export default function TasksPage() {
               <div className="px-4 py-3 border-b border-component-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <span className={`inline-flex px-2 py-1 rounded-md text-xs font-medium mr-2 ${getStatusColor(status as Task['status'])}`}>
-                      {getStatusText(status as Task['status'])}
-                    </span>
+                    <Badge
+                      content={getStatusText(status as Task['status'])}
+                      color={getStatusColorName(status as Task['status'])}
+                      isDark={isDark}
+                      className="!inline-flex !px-2 !py-1 !rounded-md !text-xs !font-medium !mr-2"
+                    />
                     <span className="text-text-secondary text-sm">{tasksList.length}</span>
                   </div>
                 </div>

@@ -24,6 +24,7 @@ import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { Input } from "@/components/ui/Input";
+import { useTheme } from "@/contexts/ThemeContext";
 
 
 interface TaskModalProps {
@@ -42,6 +43,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const [newTag, setNewTag] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const { isDark } = useTheme();
 
   // Update taskData when the task prop changes
   useEffect(() => {
@@ -325,6 +327,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             isEditable={false}
             className="!rounded-full !px-2 !py-0.5 cursor-pointer"
             onClick={() => handleMilestoneClick(taskData?.milestone_id ?? 0)}
+            isDark={isDark}
           />
           {isEditing === "status" ? (
             <Select
@@ -345,6 +348,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 color={getStatusColorName(taskData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
+                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -380,6 +384,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 color={getPriorityColorName(taskData.priority)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
+                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -839,6 +844,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   color="pink"
                   isEditable={true}
                   onRemove={() => handleRemoveTag(index)}
+                  isDark={isDark}
                 />
               ))}
               <div className="flex">
@@ -860,7 +866,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 <p className="text-text-secondary">태그가 없습니다.</p>
               ) : (
                 taskData?.tags.map((tag, index) => (
-                  <Badge key={index} content={tag} color="pink" />
+                  <Badge key={index} content={tag} color="pink" isDark={isDark} />
                 ))
               )}
               <FontAwesomeIcon

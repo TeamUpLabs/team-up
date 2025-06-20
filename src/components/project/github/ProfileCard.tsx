@@ -38,6 +38,7 @@ export default function ProfileCard({ githubUser }: { githubUser: GithubUser }) 
                 content="웹훅 활성화"
                 color={isDark ? "white" : "black"}
                 className="!text-xs !px-3 !py-1 !rounded-full !font-semibold"
+                isDark={isDark}
               />
             </div>
             <p className="text-text-secondary text-sm">{githubUser?.email || "이메일 없음"}</p>

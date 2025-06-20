@@ -5,12 +5,14 @@ import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faPencil } from "@fortawesome/free-solid-svg-icons";
 import Badge from "@/components/ui/Badge";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface GeneralSettingTabProps {
   project: Project;
 }
 
 export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
+  const { isDark } = useTheme();
   const user = useAuthStore(state => state.user);
   const [isEditing, setIsEditing] = useState<string>("none");
   const [isLoading, setIsLoading] = useState(false);
@@ -430,6 +432,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                           color="blue"
                           isEditable={isEditing === "techStack" ? true : false}
                           onRemove={() => handleRemoveTechItem(index)}
+                          isDark={isDark}
                         />
                       ))
                     ) : (
@@ -489,6 +492,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                           color="purple"
                           isEditable={isEditing === "roles" ? true : false}
                           onRemove={() => handleRemoveRoleItem(index)}
+                          isDark={isDark}
                         />
                       ))
                     ) : (

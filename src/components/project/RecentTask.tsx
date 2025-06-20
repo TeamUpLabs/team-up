@@ -1,16 +1,19 @@
 import { useProject } from '@/contexts/ProjectContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCommentDots } from '@fortawesome/free-solid-svg-icons';
-import { getPriorityColor } from '@/utils/getPriorityColor';
+import { getPriorityColorName } from '@/utils/getPriorityColor';
 import Image from 'next/image';
 import { Task } from '@/types/Task';
 import { useEffect, useState } from 'react';
 import RecentTaskSkeleton from '@/components/skeleton/RecentTaskSkeleton';
 import Tooltip from '@/components/ui/Tooltip';
+import Badge, { BadgeColor } from '@/components/ui/Badge';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function RecentTask() {
   const { project } = useProject();
   const [isLoading, setIsLoading] = useState(true);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     if (project && project.tasks) {
@@ -46,10 +49,16 @@ export default function RecentTask() {
           <div key={task.id} className="bg-component-secondary-background p-4 rounded-lg border border-component-border flex flex-col justify-between space-y-4">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className={`inline-flex items-center px-3 py-1 rounded-md text-sm font-medium ${getPriorityColor(task.priority)}`}>
-                  <span className={`w-2 h-2 mr-2 rounded-full ${task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-violet-500' : 'bg-cyan-500'}`}></span>
-                  {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                </span>
+                <Badge
+                  content={
+                    <span className='inline-flex items-center'>
+                      <span className={`w-2 h-2 mr-2 rounded-full ${task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-violet-500' : 'bg-cyan-500'}`}></span>
+                      {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                    </span>
+                  }
+                  color={getPriorityColorName(task.priority) as BadgeColor}
+                  isDark={isDark}
+                  />
                 <p className="text-sm text-text-secondary">마감일: {task.endDate}</p>
               </div>
               <h3 className="text-md font-semibold text-text-primary mb-1">{task.title}</h3>

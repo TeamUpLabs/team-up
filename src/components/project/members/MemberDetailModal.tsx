@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/auth/authStore";
 import ModalTemplete from "@/components/ModalTemplete";
-import Badge from "@/components/ui/Badge";
+import Badge, { BadgeColor } from "@/components/ui/Badge";
 import { kickOutMemberFromProject } from "@/hooks/getProjectData";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,6 +15,7 @@ import { useProject } from "@/contexts/ProjectContext";
 import { formatRelativeTime } from "@/utils/dateUtils";
 import Accordion from "@/components/ui/Accordion";
 import { getStatusInfo } from "@/utils/getStatusColor";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface MemberDetailModalProps {
   member: Member;
@@ -35,6 +36,7 @@ export default function MemberDetailModal({
   const { project } = useProject();
   const router = useRouter();
   const params = useParams();
+  const { isDark } = useTheme();
 
   const handleTaskClick = (taskId: number) => {
     localStorage.setItem("selectedTaskId", taskId.toString());
@@ -62,20 +64,20 @@ export default function MemberDetailModal({
       return {
         icon: <FontAwesomeIcon icon={faStar} className="text-yellow-500" />,
         text: "리더",
-        className: "bg-yellow-100 text-yellow-700 border-yellow-200",
+        className: "yellow",
       };
     }
     if (isManager) {
       return {
         icon: <FontAwesomeIcon icon={faShieldAlt} className="text-blue-500" />,
         text: "관리자",
-        className: "bg-blue-100 text-blue-700 border-blue-200",
+        className: "blue",
       };
     }
     return {
       icon: <FontAwesomeIcon icon={faUser} className="text-gray-500" />,
       text: "멤버",
-      className: "bg-gray-100 text-gray-700 border-gray-200",
+      className: "gray",
     };
   };
 
@@ -109,12 +111,17 @@ export default function MemberDetailModal({
           <h2 className="text-2xl font-bold text-text-primary">
             {member.name}
           </h2>
-          <div
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${roleInfo.className} border`}
-          >
-            {roleInfo.icon}
-            <span>{roleInfo.text}</span>
-          </div>
+          <Badge
+            content={
+              <div className="flex items-center gap-1.5">
+                {roleInfo.icon}
+                <span>{roleInfo.text}</span>
+              </div>
+            }
+            color={roleInfo.className as BadgeColor}
+            isDark={isDark}
+            className="!inline-flex !px-3 !py-1.5 !rounded-full !text-sm !font-medium"
+          />
         </div>
         <div className="flex items-center space-x-3">
           <div className="flex items-center px-2.5 py-1 rounded-full bg-component-secondary-background text-text-secondary">
@@ -266,7 +273,7 @@ export default function MemberDetailModal({
         <div className="space-x-2">
           {member.skills && member.skills.length > 0 ? (
             member.skills.map((skill, index) => (
-              <Badge key={index} content={skill} color="blue" />
+              <Badge key={index} content={skill} color="blue" isDark={isDark} />
             ))
           ) : (
             <p className="text-text-secondary">
@@ -284,7 +291,7 @@ export default function MemberDetailModal({
         <div className="space-x-2">
           {member.languages && member.languages.length > 0 ? (
             member.languages.map((language, index) => (
-              <Badge key={index} content={language} color="purple" />
+              <Badge key={index} content={language} color="purple" isDark={isDark} />
             ))
           ) : (
             <p className="text-text-secondary">
@@ -340,6 +347,7 @@ export default function MemberDetailModal({
                   }
                   color="pink"
                   isEditable={false}
+                  isDark={isDark}
                 />
               </Link>
             ))

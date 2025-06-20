@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import { MileStone } from '@/types/MileStone';
 import { useProject } from '@/contexts/ProjectContext';
 import MilestoneCardSkeleton from '@/components/skeleton/MilestoneCardSkeleton';
-import { getStatusColor } from '@/utils/getStatusColor';
+import { getStatusColorName } from '@/utils/getStatusColor';
+import Badge, { BadgeColor } from '@/components/ui/Badge';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function MileStoneCard() {
   const { project } = useProject();
   const [closestMilestone, setClosestMilestone] = useState<MileStone | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     const getClosestMilestone = async () => {
@@ -19,8 +22,8 @@ export default function MileStoneCard() {
 
         const closest = data
           .filter(milestone => ['in-progress', 'not-started'].includes(milestone.status))
-          .filter(milestone => new Date(milestone.endDate) >= today)
-          .sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime())[0] || null;
+          .filter(milestone => new Date(milestone.endDate || "") >= today)
+          .sort((a, b) => new Date(a.endDate || "").getTime() - new Date(b.endDate || "").getTime())[0] || null;
 
         setClosestMilestone(closest);
       } catch (error) {
@@ -54,10 +57,16 @@ export default function MileStoneCard() {
           <div className="bg-component-secondary-background p-3 rounded-lg border border-component-border hover:border-point-color-indigo-hover transition duration-200">
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-xl font-semibold text-text-primary">{closestMilestone?.title}</h3>
-              <span className={`px-3 py-1 rounded-md text-sm ${getStatusColor(closestMilestone?.status ?? '')}`}>
-                {closestMilestone?.status === 'done' ? '완료' :
-                  closestMilestone.status === 'in-progress' ? '진행중' : '시작 전'}
-              </span>
+              <Badge
+                content={
+                  <span className='inline-flex items-center'>
+                    {closestMilestone?.status === 'done' ? '완료' :
+                      closestMilestone.status === 'in-progress' ? '진행중' : '시작 전'}
+                  </span>
+                }
+                color={getStatusColorName(closestMilestone?.status ?? '') as BadgeColor}
+                isDark={isDark}
+              />
             </div>
             <p className="text-sm text-text-secondary">{closestMilestone.description}</p>
             <div className="mt-2 flex items-center">

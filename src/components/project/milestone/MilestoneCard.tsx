@@ -6,8 +6,10 @@ import { MileStone } from '@/types/MileStone';
 import Badge from '@/components/ui/Badge';
 import { Flag, ArrowRight, Users } from 'flowbite-react-icons/outline';
 import { getPriorityColorName } from '@/utils/getPriorityColor';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
+  const { isDark } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getStatusColor = (status: string) => {
@@ -40,15 +42,16 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
             color={getPriorityColorName(milestone.priority)}
             isEditable={false}
             className="!rounded-full !px-2 !py-0.5"
+            isDark={isDark}
           />
         </div>
 
         <p className="text-text-secondary text-sm line-clamp-1">{milestone.description}</p>
 
         <div className="flex items-center gap-2">
-          <p className="text-text-secondary text-sm">{new Date(milestone.startDate).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}</p>
+          <p className="text-text-secondary text-sm">{new Date(milestone?.startDate || "").toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}</p>
           <ArrowRight className="w-4 h-4 text-text-secondary" />
-          <p className="text-text-secondary text-sm">{new Date(milestone.endDate).toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}</p>
+          <p className="text-text-secondary text-sm">{new Date(milestone?.endDate || "").toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}</p>
         </div>
 
         <div className="flex items-center justify-between">

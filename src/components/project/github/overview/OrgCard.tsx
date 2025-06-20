@@ -79,6 +79,7 @@ export default function OrgCard({ isDark, orgData }: OrgDataProps) {
             content="connected"
             color={isDark ? "white" : "black"}
             className="!text-xs !px-3 !py-1 !rounded-full !font-semibold"
+            isDark={isDark}
           />
         </div>
       </div>

@@ -20,6 +20,7 @@ import Badge from "@/components/ui/Badge";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface TaskCreateModalProps {
   isOpen: boolean;
@@ -32,6 +33,7 @@ export default function TaskCreateModal({
   onClose,
   milestone_id,
 }: TaskCreateModalProps) {
+  const { isDark } = useTheme();
   const [step, setStep] = useState(1);
 
   const totalSteps = 5
@@ -517,6 +519,7 @@ export default function TaskCreateModal({
                         color="pink"
                         isEditable={true}
                         onRemove={() => handleRemoveTag(tag)}
+                        isDark={isDark}
                       />
                     ))}
                   </div>

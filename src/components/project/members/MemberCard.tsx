@@ -1,9 +1,10 @@
 import { Member } from "@/types/Member";
-import Badge from "@/components/ui/Badge";
+import Badge, { BadgeColor } from "@/components/ui/Badge";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt, faStar, faShieldAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 import { getStatusInfo } from "@/utils/getStatusColor";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface MemberCardProps {
   member: Member;
@@ -20,16 +21,17 @@ export default function MemberCard({
   isExplore,
   onClick,
 }: MemberCardProps) {
+  const { isDark } = useTheme();
   
   const getContributionLevel = () => {
     const milestoneCount = member.projectDetails?.map((project) => project.milestones.map((milestone) => milestone.assignee_id.includes(member.id))).length || 0;
     const taskCount = member.currentTask?.length || 0;
     const contributionScore = (milestoneCount * 10) + (taskCount * 15);
     
-    if (contributionScore > 80) return { level: "상위 기여자", class: "text-purple-600 bg-purple-100" };
-    if (contributionScore > 50) return { level: "활발한 기여자", class: "text-blue-600 bg-blue-100" };
-    if (contributionScore > 20) return { level: "정기 기여자", class: "text-green-600 bg-green-100" };
-    return { level: "신규 기여자", class: "text-gray-600 bg-gray-100" };
+    if (contributionScore > 80) return { level: "상위 기여자", class: "purple" };
+    if (contributionScore > 50) return { level: "활발한 기여자", class: "blue" };
+    if (contributionScore > 20) return { level: "정기 기여자", class: "green" };
+    return { level: "신규 기여자", class: "gray" };
   };
 
   const getRoleInfo = () => {
@@ -37,20 +39,20 @@ export default function MemberCard({
       return { 
         icon: <FontAwesomeIcon icon={faStar} className="text-yellow-500" />,
         text: "리더", 
-        className: "bg-yellow-100 text-yellow-700 border-yellow-200" 
+        className: "yellow" 
       };
     }
     if (isManager) {
       return { 
         icon: <FontAwesomeIcon icon={faShieldAlt} className="text-blue-500" />,
         text: "관리자", 
-        className: "bg-blue-100 text-blue-700 border-blue-200" 
+        className: "blue" 
       };
     }
     return { 
       icon: <FontAwesomeIcon icon={faUser} className="text-gray-500" />,
       text: "멤버", 
-      className: "bg-gray-100 text-gray-700 border-gray-200" 
+      className: "gray" 
     };
   };
 
@@ -98,10 +100,17 @@ export default function MemberCard({
             )}
           </div>
 
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${roleInfo.className} border`}>
-            {roleInfo.icon}
-            <span>{roleInfo.text}</span>
-          </div>
+          <Badge
+            content={
+              <div className="flex items-center gap-1.5">
+                {roleInfo.icon}
+                <span>{roleInfo.text}</span>
+              </div>
+            }
+            color={roleInfo.className as BadgeColor}
+            isDark={isDark}
+            className="!inline-flex !px-3 !py-1.5 !rounded-full !text-sm !font-medium"
+          />
         </div>
 
         <div className="space-y-2 mb-5">
@@ -116,10 +125,17 @@ export default function MemberCard({
           </div>
 
           {!isExplore && (
-            <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${contributionInfo.class}`}>
-              <FontAwesomeIcon icon={faBolt} />
-              <span>{contributionInfo.level}</span>
-            </div>
+            <Badge
+              content={
+                <div className="flex items-center gap-1.5">
+                  <FontAwesomeIcon icon={faBolt} />
+                  <span>{contributionInfo.level}</span>
+                </div>
+              }
+              color={contributionInfo.class as BadgeColor}
+              isDark={isDark}
+              className="!inline-flex !px-3 !py-1.5 !rounded-md !text-sm !font-medium"
+            />
           )}
         </div>
 
@@ -136,6 +152,7 @@ export default function MemberCard({
                   key={idx} 
                   content={skill} 
                   color="blue"
+                  isDark={isDark}
                 />
               ))}
             </div>

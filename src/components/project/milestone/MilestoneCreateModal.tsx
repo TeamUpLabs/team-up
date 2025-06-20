@@ -18,6 +18,7 @@ import DatePicker from "@/components/ui/DatePicker";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ export default function MilestoneCreateModal({
   onClose,
 }: MilestoneCreateModalProps) {
   const [step, setStep] = useState(1);
+  const { isDark } = useTheme();
 
   const totalSteps = 5
   const progress = (step / totalSteps) * 100
@@ -504,6 +506,7 @@ export default function MilestoneCreateModal({
                       color="pink"
                       isEditable={true}
                       onRemove={() => handleRemoveTag(tag)}
+                      isDark={isDark}
                     />
                   ))}
                 </div>

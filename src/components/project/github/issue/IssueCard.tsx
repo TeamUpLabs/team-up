@@ -47,19 +47,12 @@ export default function IssueCard({ issueData }: { issueData: IssueData }) {
               {issueData.title || "제목 없음"}
             </p>
           </Link>
-          {isDark ? (
-            <span
-              className="px-2 py-0.5 rounded-full text-xs bg-pink-800/20 text-pink-500 border border-pink-800"
-            >
-              #{issueData.number || 0}
-            </span>
-          ) : (
-            <Badge
-              content={`#${issueData.number || 0}`}
-              color="pink"
-              className="!text-xs !px-2 !py-0.5 !rounded-full"
-            />
-          )}
+          <Badge
+            content={`#${issueData.number || 0}`}
+            color="pink"
+            className="!text-xs !px-2 !py-0.5 !rounded-full"
+            isDark={isDark}
+          />
         </div>
         <p className="text-sm text-text-secondary">
           {summarizeMarkdown(issueData.body)}

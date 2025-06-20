@@ -5,8 +5,8 @@ import { formatDateTimeRange } from "@/utils/formatDateTimeRange";
 import { useState, useEffect } from "react";
 import ScheduleSkeleton from "@/components/skeleton/ScheduleSkeleton";
 import { Task } from "@/types/Task";
-import { getStatusColor } from "@/utils/getStatusColor";
-import { getPriorityColor } from "@/utils/getPriorityColor";
+import { getStatusColorName } from "@/utils/getStatusColor";
+import { getPriorityColorName } from "@/utils/getPriorityColor";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUsers,
@@ -24,6 +24,8 @@ import {
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import Tooltip from "@/components/ui/Tooltip";
 import { MiniLogo } from "@/components/logo";
+import Badge, { BadgeColor } from "@/components/ui/Badge";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Schedule() {
   const { project } = useProject();
@@ -31,6 +33,7 @@ export default function Schedule() {
     "meetings"
   );
   const [isLoading, setIsLoading] = useState(true);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     if (project && project.schedules) {
@@ -142,18 +145,20 @@ export default function Schedule() {
                         <span className="text-base sm:text-lg font-semibold text-text-primary">
                           {meeting.title}
                         </span>
-                        <span
-                          className={`mt-1 px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1 self-start ${getStatusColor(
-                            meeting.status
-                          )}`}
-                        >
-                          <FontAwesomeIcon icon={faInfoCircle} />
-                          {meeting.status === "not-started"
-                            ? "예정"
-                            : meeting.status === "in-progress"
-                            ? "진행중"
-                            : "완료"}
-                        </span>
+                        <Badge
+                          content={
+                            <span className='flex items-center gap-1 self-start'>
+                              <FontAwesomeIcon icon={faInfoCircle} />
+                              <span>
+                                {meeting.status === 'not-started' ? '예정' :
+                                  meeting.status === 'in-progress' ? '진행중' : '완료'}
+                              </span>
+                            </span>
+                          }
+                          color={getStatusColorName(meeting.status ?? '') as BadgeColor}
+                          isDark={isDark}
+                          className="!text-xs !px-2 !py-0.5"
+                        />
                       </div>
                       <span className="text-xs sm:text-sm text-text-secondary font-medium flex items-center gap-1 self-start sm:self-center">
                         <FontAwesomeIcon
@@ -188,7 +193,7 @@ export default function Schedule() {
                           ) : meeting.where === "google" ? (
                             <FontAwesomeIcon icon={faGoogle} className="mr-1" />
                           ) : (
-                            <MiniLogo />
+                            <MiniLogo className="text-xs" />
                           )}
                           {meeting.where === "zoom"
                             ? "Zoom"
@@ -275,18 +280,18 @@ export default function Schedule() {
                         <span className="text-base sm:text-lg font-semibold text-text-primary">
                           {event.title}
                         </span>
-                        <span
-                          className={`mt-1 px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1 self-start ${getStatusColor(
-                            event.status
-                          )}`}
-                        >
-                          <FontAwesomeIcon icon={faInfoCircle} />
-                          {event.status === "not-started"
-                            ? "예정"
-                            : event.status === "in-progress"
-                            ? "진행중"
-                            : "완료"}
-                        </span>
+                        <Badge
+                          content={
+                            <span className='flex items-center gap-1 self-start'>
+                              <FontAwesomeIcon icon={faInfoCircle} />
+                              {event.status === 'not-started' ? '예정' :
+                                event.status === 'in-progress' ? '진행중' : '완료'}
+                            </span>
+                          }
+                          color={getStatusColorName(event.status ?? '') as BadgeColor}
+                          isDark={isDark}
+                          className="!text-xs !px-2 !py-0.5"
+                        />
                       </div>
                       <span className="text-xs sm:text-sm text-text-secondary font-medium flex items-center gap-1 self-start sm:self-center">
                         <FontAwesomeIcon
@@ -393,30 +398,33 @@ export default function Schedule() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2 mt-2">
-                  <span
-                    className={`px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1 ${getStatusColor(
-                      task.status
-                    )}`}
-                  >
-                    <FontAwesomeIcon icon={faTag} />
-                    {task.status === "not-started"
-                      ? "예정"
-                      : task.status === "in-progress"
-                      ? "진행중"
-                      : "완료"}
-                  </span>
-                  <span
-                    className={`px-2 py-0.5 rounded text-xs font-medium flex items-center gap-1 ${getPriorityColor(
-                      task.priority
-                    )}`}
-                  >
-                    <FontAwesomeIcon icon={faTag} />
-                    {task.priority === "high"
-                      ? "높음"
-                      : task.priority === "medium"
-                      ? "중간"
-                      : "낮음"}
-                  </span>
+                  <Badge
+                    content={
+                      <span className='flex items-center gap-1 self-start'>
+                        <FontAwesomeIcon icon={faTag} />
+                        {task.status === 'not-started' ? '예정' :
+                          task.status === 'in-progress' ? '진행중' : '완료'}
+                      </span>
+                    }
+                    color={getStatusColorName(task.status ?? '') as BadgeColor}
+                    isDark={isDark}
+                    className="!text-xs !px-2 !py-0.5"
+                  />
+                  <Badge
+                    content={
+                      <span className='flex items-center gap-1 self-start'>
+                        <FontAwesomeIcon icon={faTag} />
+                        {task.priority === "high"
+                          ? "높음"
+                          : task.priority === "medium"
+                          ? "중간"
+                          : "낮음"}
+                      </span>
+                    }
+                    color={getPriorityColorName(task.priority ?? '') as BadgeColor}
+                    isDark={isDark}
+                    className="!text-xs !px-2 !py-0.5"
+                  />
                   <div className="flex ml-auto items-center">
                     {task.assignee?.slice(0, 2).map((member, idx) => (
                       <Tooltip
