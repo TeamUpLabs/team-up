@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing GitHub token or org or repo' }, { status: 401 });
   }
 
-  const url = `https://api.github.com/search/issues?q=repo:${org}/${repo}+is:pr+is:open`;
+  const url = `https://api.github.com/repos/${org}/${repo}/pulls?state=all`;
   const headers = {
     Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github+json',
