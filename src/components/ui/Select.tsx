@@ -246,7 +246,7 @@ export default function Select({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={`
-          w-full focus:outline-none focus:ring-0 text-left
+          w-full focus:outline-none focus:ring-0 text-left text-text-secondary
           ${disabled ? "bg-gray-100 cursor-not-allowed" : "hover:border-gray-400 cursor-pointer"}
         `}
         aria-haspopup="listbox"
