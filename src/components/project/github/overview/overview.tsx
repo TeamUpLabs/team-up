@@ -8,7 +8,7 @@ import { Activity } from "@/types/ActivityData";
 
 interface OverviewProps {
   issueData: { items: IssueData[] };
-  prData: PrData;
+  prData: PrData[];
   commitData: CommitData[];
   orgData: {
     name: string;
@@ -43,7 +43,7 @@ const getRepoNameFromUrl = (url: string): string => {
 
 const transformToActivities = (
   issues: IssueData[],
-  prs: PrData['items'],
+  prs: PrData[],
   commits: CommitData[]
 ): Activity[] => {
   const allActivities: Activity[] = [];
@@ -67,7 +67,7 @@ const transformToActivities = (
   if (prs) {
     prs.forEach(pr => {
       let state: 'merged' | 'open' | 'closed' = 'closed';
-      if (pr.merged) {
+      if (pr.merged_at) {
         state = 'merged';
       } else if (pr.state === 'open') {
         state = 'open';
@@ -80,7 +80,7 @@ const transformToActivities = (
         date: pr.created_at,
         url: pr.html_url,
         state,
-        repoName: getRepoNameFromUrl(pr.repository_url),
+        repoName: getRepoNameFromUrl(pr.html_url),
       });
     });
   }
@@ -106,7 +106,7 @@ export default function Overview({ issueData, prData, commitData, orgData }: Ove
   const { isDark } = useTheme();
 
   const allIssues = issueData?.items || [];
-  const allPRs = prData?.items || [];
+  const allPRs = prData || [];
   const allCommits = commitData || [];
 
   const allActivities = transformToActivities(allIssues, allPRs, allCommits);
