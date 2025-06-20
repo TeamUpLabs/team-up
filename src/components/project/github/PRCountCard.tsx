@@ -11,7 +11,7 @@ export default function PRCountCard({ prData }: { prData: PRData }) {
     <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">
       <div className="flex items-center justify-between">
         <span className="text-text-primary text-sm font-semibold">열린 PR</span>
-        <FontAwesomeIcon icon={faCodePullRequest} className="w-4 h-4 text-text-primary" />
+        <FontAwesomeIcon icon={faCodePullRequest} className="w-4 h-4 text-green-500" />
       </div>
       <div>
         <span className="text-text-primary text-3xl font-bold">

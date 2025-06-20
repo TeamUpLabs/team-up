@@ -16,12 +16,12 @@ const getTypeInfo = (item: Activity) => {
       return {
         icon: (
           <span className="fa-layers">
-            <FontAwesomeIcon icon={faCircle} className={`text-${item.state === 'open' ? 'green-500' : 'purple-500'}`} />
-            <FontAwesomeIcon icon={faExclamation} className={`text-${item.state === 'open' ? 'green-500' : 'purple-500'}`} transform="shrink-6" />
+            <FontAwesomeIcon icon={faCircle} className={`text-${item.state === 'open' ? 'red-500' : 'purple-500'}`} />
+            <FontAwesomeIcon icon={faExclamation} className={`text-${item.state === 'open' ? 'red-500' : 'purple-500'}`} transform="shrink-6" />
           </span>
         ),
         label: item.state === 'open' ? 'Open' : 'Closed',
-        color: item.state === 'open' ? 'green' : 'purple',
+        color: item.state === 'open' ? 'red' : 'purple',
       };
     case 'pr':
       return {

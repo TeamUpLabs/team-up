@@ -40,7 +40,7 @@ export default function IssueCard({ issueData }: { issueData: IssueData }) {
           {issueData.state === "open" ? (
             <ExclamationCircle className="w-5 h-5 text-red-500" />
           ) : (
-            <CheckCircle className="w-5 h-5 text-green-500" />
+            <CheckCircle className="w-5 h-5 text-purple-500" />
           )}
           <Link href={issueData.html_url} target="_blank" className="hover:underline">
             <p className="text-sm font-semibold text-text-primary">

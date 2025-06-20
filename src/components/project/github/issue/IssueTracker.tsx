@@ -3,6 +3,8 @@ import Select from "@/components/ui/Select";
 import { Search } from "flowbite-react-icons/outline";
 import { useState } from "react";
 import { IssueData } from "@/types/IssueData";
+import IssueCountCard from "@/components/project/github/IssueCountCard";
+import AverageResolutionTimeCard from "@/components/project/github/issue/AverageResolutionTimeCard";
 
 interface IssueTrackerProps {
   issueData: {
@@ -32,6 +34,11 @@ export default function IssueTracker({ issueData }: IssueTrackerProps) {
 
   return (
     <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+        <IssueCountCard issueLength={issueData.items.filter((issue) => issue.state === "open").length || 0} state="open" />
+        <IssueCountCard issueLength={issueData.items.filter((issue) => issue.state === "closed").length || 0} state="closed" />
+        <AverageResolutionTimeCard issues={issueData.items} />
+      </div>
       <div className="flex items-center flex-col md:flex-row gap-2">
         <div className="relative w-full bg-component-background rounded-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
