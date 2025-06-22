@@ -29,7 +29,30 @@ export interface PrDataBase {
     html_url: string;
   };
   commits_url: string;
+  comments_url: string;
   url: string;
+  head: {
+    label: string;
+    ref: string;
+    sha: string;
+    user: {
+      login: string;
+      id: number;
+      avatar_url: string;
+      html_url: string;
+    };
+  };
+  base: {
+    label: string;
+    ref: string;
+    sha: string;
+    user: {
+      login: string;
+      id: number;
+      avatar_url: string;
+      html_url: string;
+    };
+  };
 }
 
 export interface File {
@@ -52,8 +75,34 @@ export interface Review {
   };
 }
 
+export interface Comment {
+  body: string;
+  created_at: string;
+  html_url: string;
+  reactions: {
+    "+1": number;
+    "-1": number;
+    confused: number;
+    eyes: number;
+    heart: number;
+    hooray: number;
+    laugh: number;
+    rocket: number;
+    total_count: number;
+    url: string;
+  }
+  user: {
+    login: string;
+    id: number;
+    avatar_url: string;
+    html_url: string;
+    type: string;
+  }
+}
+
 export interface PrData extends PrDataBase {
   files: File[];
   commits: CommitData[];
   reviews: Review[];
+  comments: Comment[];
 }
