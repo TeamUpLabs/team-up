@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server';
+import { PrDataBase } from '@/types/PrData';
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
@@ -10,7 +11,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing GitHub token or org or repo' }, { status: 401 });
   }
 
-  const url = `https://api.github.com/repos/${org}/${repo}/pulls?state=all`;
+  const url = `https://api.github.com/repos/${org}/${repo}/pulls?state=all&per_page=50`;
   const headers = {
     Authorization: `Bearer ${token}`,
     Accept: 'application/vnd.github+json',
@@ -23,7 +24,26 @@ export async function GET(req: NextRequest) {
     }
 
     const prs = await res.json();
-    return NextResponse.json({ prs: prs });
+
+    const enrichedPRs = await Promise.all(
+      prs.map(async (pr: PrDataBase) => {
+        const [commits, files, reviews] = await Promise.all([
+          fetch(pr.commits_url, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
+          fetch(pr.url + '/files', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
+          fetch(pr.url + '/reviews', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
+        ]);
+  
+        return {
+          ...pr,
+          commits,
+          files,
+          reviews,
+          commitCount: commits.length,
+          fileCount: files.length,
+        };
+      })
+    );
+    return NextResponse.json({ prs: enrichedPRs });
   } catch (error) {
     return NextResponse.json({ error: `Failed to fetch prs: ${error}` }, { status: 500 });
   }

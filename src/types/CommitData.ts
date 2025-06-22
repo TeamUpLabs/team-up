@@ -12,4 +12,10 @@ export interface CommitData {
     };
   };
   html_url: string;
+  author: {
+    login: string;
+    id: number;
+    avatar_url: string;
+    html_url: string;
+  }
 }

@@ -1,4 +1,6 @@
-export interface PrData {
+import { CommitData } from "@/types/CommitData";
+
+export interface PrDataBase {
   id: number;
   number: number;
   state: string;
@@ -26,4 +28,32 @@ export interface PrData {
     avatar_url: string;
     html_url: string;
   };
+  commits_url: string;
+  url: string;
+}
+
+export interface File {
+  additions: number;
+  deletions: number;
+  changes: number;
+  filename: string;
+  status: string;
+}
+
+export interface Review {
+  body: string;
+  html_url: string;
+  state: string;
+  user: {
+    login: string;
+    id: number;
+    avatar_url: string;
+    html_url: string;
+  };
+}
+
+export interface PrData extends PrDataBase {
+  files: File[];
+  commits: CommitData[];
+  reviews: Review[];
 }
