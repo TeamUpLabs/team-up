@@ -1,6 +1,6 @@
 import { IssueData } from "@/types/IssueData";
 import Badge from "@/components/ui/Badge";
-import { hexToRgba } from "@/utils/hexToRgba";
+import { hexToRgba, isColorDark } from "@/utils/hexToRgba";
 import { summarizeMarkdown } from "@/utils/summarizeMarkdown";
 import {
   ExclamationCircle,
@@ -13,20 +13,6 @@ import {
 } from "flowbite-react-icons/outline";
 import { useTheme } from "@/contexts/ThemeContext";
 import Link from "next/link";
-
-// Determine if a hex color is perceived as dark
-function isColorDark(hex: string): boolean {
-  hex = hex.replace("#", "");
-  if (hex.length === 3) {
-    hex = hex.split("").map((c) => c + c).join("");
-  }
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  // Perceptive luminance formula
-  const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
-  return brightness < 140; // threshold where lower means darker
-}
 
 export default function IssueCard({ issueData }: { issueData: IssueData }) {
   const { isDark } = useTheme();
