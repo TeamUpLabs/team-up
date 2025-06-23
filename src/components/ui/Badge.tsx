@@ -31,8 +31,8 @@ export default function Badge({ content, color, isEditable = false, onRemove, on
     emerald: "bg-emerald-100 text-emerald-800 border border-emerald-300",
     violet: "bg-violet-100 text-violet-800 border border-violet-300",
     cyan: "bg-cyan-100 text-cyan-800 border border-cyan-300",
-    black: "bg-black text-white border border-black",
-    white: "bg-white text-black border border-white",
+    black: "bg-black text-white border border-white",
+    white: "bg-white text-black border border-black",
     none: "bg-transparent text-text-primary border border-component-border"
   };
 
@@ -52,8 +52,8 @@ export default function Badge({ content, color, isEditable = false, onRemove, on
     emerald: "bg-emerald-800/20 text-emerald-500 border border-emerald-800",
     violet: "bg-violet-800/20 text-violet-500 border border-violet-800",
     cyan: "bg-cyan-800/20 text-cyan-500 border border-cyan-800",
-    black: "bg-black/20 text-white border border-black",
-    white: "bg-white/20 text-white border border-white",
+    black: "bg-black/20 text-white border border-white",
+    white: "bg-white/20 text-white border border-black",
     none: "bg-transparent text-text-primary border border-component-border"
   };
 
