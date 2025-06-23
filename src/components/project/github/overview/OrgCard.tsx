@@ -11,6 +11,26 @@ interface OrgDataProps {
     description: string;
     public_repos: number;
     collaborators: number;
+    members: {
+      login: string;
+      id: number;
+      node_id: string;
+      avatar_url: string;
+      gravatar_id: string;
+      url: string;
+      html_url: string;
+      followers_url: string;
+      following_url: string;
+      gists_url: string;
+      starred_url: string;
+      subscriptions_url: string;
+      organizations_url: string;
+      repos_url: string;
+      events_url: string;
+      received_events_url: string;
+      type: string;
+      site_admin: boolean;
+    }[];
     avatar_url: string;
     html_url: string;
     company: string;
@@ -62,7 +82,7 @@ export default function OrgCard({ isDark, orgData }: OrgDataProps) {
               </div>
               <div className="flex items-center gap-1">
                 <Users className="w-4 h-4 text-text-secondary" />
-                <span>{orgData.collaborators || 0} 팀원</span>
+                <span>{orgData.members.length || 0} 팀원</span>
               </div>
               <div className="flex items-center gap-1">
                 <Building className="w-4 h-4 text-text-secondary" />
