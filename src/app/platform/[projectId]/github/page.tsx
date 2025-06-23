@@ -29,6 +29,7 @@ import { CommitData } from "@/types/CommitData";
 import IssueTracker from "@/components/project/github/issue/IssueTracker";
 import PRTracker from "@/components/project/github/pr/PRTracker";
 import CommitTracker from "@/components/project/github/commit/CommitTracker";
+import OrgTracker from "@/components/project/github/org/OrgTracker";
 
 export default function GithubPage() {
   const { project } = useProject();
@@ -89,6 +90,7 @@ export default function GithubPage() {
   const fetchOrg = useCallback(
     async (org: string) => {
       const data = await fetchOrgData(org, user!);
+      console.log(data);
       setOrgData(data);
     },
     [user]
@@ -136,7 +138,11 @@ export default function GithubPage() {
     html_url: "",
     company: "",
     location: "",
+    repos_url: "",
+    members: [],
+    repos: [],
   };
+  
   const emptyRepoData = {
     name: "",
     html_url: "",
@@ -196,6 +202,9 @@ export default function GithubPage() {
           )}
           {selectedTab === "commit" && (
             <CommitTracker commits={commitData || []} />
+          )}
+          {selectedTab === "org" && (
+            <OrgTracker orgData={orgData || emptyOrgData} />
           )}
         </div>
       ) : (
