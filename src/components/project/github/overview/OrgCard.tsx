@@ -77,7 +77,7 @@ export default function OrgCard({ isDark, orgData }: OrgDataProps) {
 
           <Badge
             content="connected"
-            color={isDark ? "white" : "black"}
+            color="black"
             className="!text-xs !px-3 !py-1 !rounded-full !font-semibold"
             isDark={isDark}
           />

@@ -50,7 +50,7 @@ export default function ProfileCard({ user, githubUser }: Props) {
               </Link>
               <Badge
                 content="웹훅 활성화"
-                color={isDark ? "white" : "black"}
+                color="black"
                 className="!text-xs !px-3 !py-1 !rounded-full !font-semibold"
                 isDark={isDark}
               />
