@@ -253,7 +253,7 @@ export default function Select({
         aria-expanded={isOpen}
       >
         <div className="flex items-center justify-between">
-          <div className="flex-1 min-w-0">{renderDisplayValue()}</div>
+          <div className="flex-1 min-w-0 text-sm">{renderDisplayValue()}</div>
           <div className="flex items-center gap-2">
             {clearable && selectedValues.length > 0 && (
               <button type="button" onClick={handleClear} className="hover:bg-component-background rounded-full p-1">
@@ -324,7 +324,7 @@ export default function Select({
                     key={option.value}
                     onClick={() => handleOptionSelect(option)}
                     className={`
-                      px-3 py-2 cursor-pointer 
+                      px-3 py-2 cursor-pointer text-sm
                       ${option.disabled ? "text-text-secondary cursor-not-allowed" : "hover:bg-component-secondary-background"}
                       ${isSelected ? "bg-component-secondary-background text-text-primary" : "bg-transparent text-text-primary"}
                       ${isFocused ? "bg-component-secondary-background" : ""}
