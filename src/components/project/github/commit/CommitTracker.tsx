@@ -1,12 +1,13 @@
+import { useState } from "react";
 import { CommitData } from "@/types/CommitData";
 import CommitCountCard from "@/components/project/github/CommitCountCard";
 import ContributorCountCard from "@/components/project/github/commit/ContributorCountCard";
 import LineCountCard from "@/components/project/github/commit/LineCountCard";
 import ChangedFileCountCard from "@/components/project/github/commit/ChangedFileCountCard";
+import CommitCard from "@/components/project/github/commit/CommitCard";
 import { Input } from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import { Search } from "flowbite-react-icons/outline";
-import { useState } from "react";
 
 interface CommitTrackerProps {
   commits: CommitData[];
@@ -63,6 +64,15 @@ export default function CommitTracker({ commits }: CommitTrackerProps) {
           />
         </div>
       </div>
+      {[...(filteredCommits || [])]
+        .sort((a, b) => {
+          if (a.commit?.author?.date > b.commit?.author?.date) return -1;
+          if (a.commit?.author?.date < b.commit?.author?.date) return 1;
+          return 0;
+        })
+        .map((commit, index) => (
+          <CommitCard commitData={commit} key={index} />
+        ))}
     </div>
   );
 }
