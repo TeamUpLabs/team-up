@@ -170,7 +170,7 @@ export default function GithubPage() {
             <CommitCountCard commitData={commitData || {}} />
           </div>
 
-          {githubUser && <ProfileCard githubUser={githubUser} />}
+          <ProfileCard user={user || undefined} githubUser={githubUser || undefined} />
 
           <Tab selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 

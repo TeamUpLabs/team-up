@@ -1,17 +1,31 @@
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import { Book, Users, Building, MapPinAlt } from "flowbite-react-icons/outline";
+import { Book, Users, Building, MapPinAlt, Refresh } from "flowbite-react-icons/outline";
 import { useTheme } from "@/contexts/ThemeContext";
+import { Member } from "@/types/Member";
 import { GithubUser } from "@/types/GithubUser";
+import RateLimitWarning from "@/components/project/github/RateLimitWarning";
 
-export default function ProfileCard({ githubUser }: { githubUser: GithubUser }) {
+interface Props {
+  user?: Member;
+  githubUser?: GithubUser;
+}
+
+export default function ProfileCard({ user, githubUser }: Props) {
   const { isDark } = useTheme();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
+  };
 
   return (
-    <div className="w-full bg-component-background border border-component-border rounded-lg p-6 space-y-4">
+    <div className="w-full flex justify-between bg-component-background border border-component-border rounded-lg p-6 space-y-4">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <div className="w-12 h-12 bg-component-secondary-background rounded-full">
@@ -65,13 +79,18 @@ export default function ProfileCard({ githubUser }: { githubUser: GithubUser }) 
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex self-start items-center gap-2">
+        <RateLimitWarning 
+          token={user?.github_access_token || ""} 
+          threshold={100}
+        />
         <button
-          onClick={() => window.open(githubUser?.html_url || "", '_blank')}
-          className="flex items-center gap-2 border border-component-border rounded-lg px-3 py-2 cursor-pointer bg-transparent hover:bg-component-secondary-background"
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className="flex shrink-0 items-center self-start gap-2 border border-component-border rounded-lg px-3 py-2 cursor-pointer bg-transparent hover:bg-component-secondary-background disabled:cursor-not-allowed"
         >
-          <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />
-          <span className="text-text-primary text-sm font-semibold">Github 프로필</span>
+          <Refresh className={`w-4 h-4 text-text-primary ${isRefreshing ? "animate-spin" : ""}`} />
+          <span className="text-text-primary text-sm font-semibold">새로고침</span>
         </button>
       </div>
     </div>
