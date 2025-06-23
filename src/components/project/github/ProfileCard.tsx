@@ -79,7 +79,7 @@ export default function ProfileCard({ user, githubUser }: Props) {
           </div>
         </div>
       </div>
-      <div className="flex self-start items-center gap-2">
+      <div className="flex self-start items-center gap-2 active:scale-95">
         <RateLimitWarning 
           token={user?.github_access_token || ""} 
           threshold={100}
