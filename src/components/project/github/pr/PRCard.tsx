@@ -15,7 +15,7 @@ export default function PRCard({ prData }: { prData: PrData }) {
     <div
       className="flex items-start justify-between bg-component-background border border-component-border rounded-lg p-4"
     >
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           {prData.state === "open" ? (
             <CodePullRequest className="w-5 h-5 text-green-500" />
