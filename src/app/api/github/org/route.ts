@@ -21,8 +21,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'GitHub API error' }, { status: res.status });
     }
 
-    const org = await res.json();
-    return NextResponse.json({ org: org });
+    const orgData = await res.json();
+
+    const [members, repos] = await Promise.all([
+      fetch(orgData.url + '/members', { headers }).then(r => r.json()),
+      fetch(orgData.repos_url, { headers }).then(r => r.json()),
+    ])
+    return NextResponse.json({ org: { ...orgData, members, repos } });
   } catch (error) {
     return NextResponse.json({ error: `Failed to fetch org: ${error}` }, { status: 500 });
   }
