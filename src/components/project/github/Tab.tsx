@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCodeBranch,
@@ -37,10 +37,11 @@ export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
     analytics: faChartColumn,
   };
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const tabRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [sliderStyle, setSliderStyle] = useState({ left: 0, width: 0 });
 
-  useEffect(() => {
+  const updateSlider = useCallback(() => {
     const selectedEl = tabRefs.current[selectedTab];
     if (selectedEl) {
       const { offsetLeft, offsetWidth } = selectedEl;
@@ -48,8 +49,28 @@ export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
     }
   }, [selectedTab]);
 
+  useEffect(() => {
+    const timer = setTimeout(updateSlider, 0);
+
+    const container = containerRef.current;
+    if (!container) return () => clearTimeout(timer);
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateSlider();
+    });
+    resizeObserver.observe(container);
+
+    return () => {
+      clearTimeout(timer);
+      resizeObserver.disconnect();
+    };
+  }, [selectedTab, updateSlider]);
+
   return (
-    <div className="relative flex items-center w-full bg-component-tertiary-background rounded-lg p-2 text-xs md:text-sm">
+    <div
+      ref={containerRef}
+      className="relative flex items-center w-full bg-component-tertiary-background rounded-lg p-2 text-xs md:text-sm"
+    >
       {/* Animated Slider */}
       <div
         className="absolute top-2 bottom-2 bg-component-background rounded-lg transition-all duration-300"
