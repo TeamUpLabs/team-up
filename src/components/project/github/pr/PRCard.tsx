@@ -60,9 +60,9 @@ export default function PRCard({ prData }: { prData: PrData }) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-green-500">+{prData.files.reduce((total, file) => total + file.additions, 0) || 0}</span>
-          <span className="text-xs text-red-500">-{prData.files.reduce((total, file) => total + file.deletions, 0) || 0}</span>
-          <span className="text-xs text-text-secondary">{prData.files.length || 0} 파일 변경</span>
+          <span className="text-xs text-green-500">+{Array.isArray(prData.files) ? prData.files.reduce((total, file) => total + file.additions, 0) : 0}</span>
+          <span className="text-xs text-red-500">-{Array.isArray(prData.files) ? prData.files.reduce((total, file) => total + file.deletions, 0) : 0}</span>
+          <span className="text-xs text-text-secondary">{Array.isArray(prData.files) ? prData.files.length : 0} 파일 변경</span>
           <span className="text-xs text-text-secondary">{prData.head.ref}</span>
           <span className="text-xs text-text-secondary">→</span>
           <span className="text-xs text-text-secondary">{prData.base.ref}</span>
