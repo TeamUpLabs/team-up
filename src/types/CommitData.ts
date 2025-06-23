@@ -1,4 +1,4 @@
-export interface CommitData {
+export interface CommitDataBase {
   commit: {
     author: {
       name: string;
@@ -18,4 +18,25 @@ export interface CommitData {
     avatar_url: string;
     html_url: string;
   }
+  url: string;
+  sha: string;
+}
+
+export interface CommitDetail {
+  files: {
+    filename: string;
+    status: string;
+    additions: number;
+    deletions: number;
+    changes: number;
+  }[];
+  stats: {
+    total: number;
+    additions: number;
+    deletions: number;
+  };
+}
+
+export interface CommitData extends CommitDataBase {
+  commitDetail: CommitDetail;
 }

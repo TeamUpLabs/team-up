@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { CommitData } from '@/types/CommitData';
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization');
@@ -23,7 +24,20 @@ export async function GET(req: NextRequest) {
     }
 
     const commits = await res.json();
-    return NextResponse.json({ commits: commits });
+
+    const enrichedCommits = await Promise.all(
+      commits.map(async (commit: CommitData) => {
+        const [commitDetail] = await Promise.all([
+          fetch(commit.url, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()),
+        ]);
+
+        return {
+          ...commit,
+          commitDetail,
+        };
+      })
+    );
+    return NextResponse.json({ commits: enrichedCommits });
   } catch (error) {
     return NextResponse.json({ error: `Failed to fetch commits: ${error}` }, { status: 500 });
   }
