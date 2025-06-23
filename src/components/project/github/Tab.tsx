@@ -7,13 +7,12 @@ import {
   faExclamation,
   faCodePullRequest,
   faCodeCommit,
-  faSignal,
   faChartColumn,
 } from "@fortawesome/free-solid-svg-icons";
 import { faFolder, faCircle, faBuilding } from "@fortawesome/free-regular-svg-icons";
 
 interface TabProps {
-  selectedTab: 'overview' | 'repo' | 'issue' | 'pr' | 'commit' | 'cicd' | 'org' | 'analytics';
+  selectedTab: 'overview' | 'repo' | 'issue' | 'pr' | 'commit' | 'org' | 'analytics';
   setSelectedTab: (tab: TabProps["selectedTab"]) => void;
 }
 
@@ -24,7 +23,6 @@ export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
     issue: "이슈",
     pr: "PR",
     commit: "커밋",
-    cicd: "CI/CD",
     org: "조직",
     analytics: "분석",
   };
@@ -35,7 +33,6 @@ export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
     issue: faExclamation,
     pr: faCodePullRequest,
     commit: faCodeCommit,
-    cicd: faSignal,
     org: faBuilding,
     analytics: faChartColumn,
   };

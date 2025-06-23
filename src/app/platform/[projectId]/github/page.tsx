@@ -45,7 +45,6 @@ export default function GithubPage() {
     | "issue"
     | "pr"
     | "commit"
-    | "cicd"
     | "org"
     | "analytics"
   >("overview");
@@ -166,8 +165,8 @@ export default function GithubPage() {
         <div className="w-full space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             <RepoCard repoData={repoData || {}} />
-            <IssueCountCard issueLength={issueData.items.filter((issue) => issue.state === "open").length || 0} state="open" />
-            <PRCountCard prCount={prData.filter((pr) => pr.state === "open").length || 0} state="open" />
+            <IssueCountCard issueLength={(issueData.items || []).filter((issue) => issue.state === "open").length || 0} state="open" />
+            <PRCountCard prCount={(prData || []).filter((pr) => pr.state === "open").length || 0} state="open" />
             <CommitCountCard commitData={commitData || {}} />
           </div>
 
@@ -186,7 +185,7 @@ export default function GithubPage() {
           {selectedTab === "repo" && (
             <Repo
               repoData={repoData || emptyRepoData}
-              prCount={prData.length || 0}
+              prCount={(prData || []).length || 0}
             />
           )}
           {selectedTab === "issue" && (
