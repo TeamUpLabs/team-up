@@ -9,7 +9,7 @@ export default function OrgCountCard({ orgCount }: OrgCountCardProps) {
     <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">
       <div className="flex items-center justify-between">
         <span className="text-text-primary text-sm font-semibold">연결된 조직</span>
-        <Building className="text-text-primary" />
+        <Building className="text-lime-600" />
       </div>
       <div>
         <span className="text-text-primary text-3xl font-bold">
