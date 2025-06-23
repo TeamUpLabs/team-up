@@ -9,6 +9,7 @@ export interface OrgDataBase {
   company: string;
   location: string;
   repos_url: string;
+  created_at: string;
 }
 
 export interface Member {

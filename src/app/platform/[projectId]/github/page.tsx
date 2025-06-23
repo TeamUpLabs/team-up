@@ -90,7 +90,6 @@ export default function GithubPage() {
   const fetchOrg = useCallback(
     async (org: string) => {
       const data = await fetchOrgData(org, user!);
-      console.log(data);
       setOrgData(data);
     },
     [user]
@@ -141,6 +140,7 @@ export default function GithubPage() {
     repos_url: "",
     members: [],
     repos: [],
+    created_at: "",
   };
   
   const emptyRepoData = {

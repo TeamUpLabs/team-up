@@ -2,6 +2,7 @@ import { OrgData } from "@/types/OrgData";
 import OrgCountCard from "@/components/project/github/org/OrgCountCard";
 import OrgMemberCountCard from "@/components/project/github/org/OrgMemberCountCard";
 import OrgPublicRepoCountCard from "@/components/project/github/org/OrgPublicRepoCountCard";
+import OrgCard from "@/components/project/github/org/OrgCard";
 
 interface OrgDataProps {
   orgData: OrgData;
@@ -15,6 +16,7 @@ export default function OrgTracker({ orgData }: OrgDataProps) {
         <OrgMemberCountCard memberCount={orgData.members.length || 0} />
         <OrgPublicRepoCountCard publicRepoCount={orgData.public_repos || 0} />
       </div>
+      <OrgCard orgData={orgData} />
     </div>
   );
 }
