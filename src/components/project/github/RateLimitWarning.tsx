@@ -26,7 +26,6 @@ export default function RateLimitWarning({ token, threshold = 100, className = "
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        console.log(data);
         if (res.ok) setRate(data.rateLimit.rate);
         else setError(data.error || "API 호출 실패");
       } catch (err) {
