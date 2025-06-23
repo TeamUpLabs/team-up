@@ -30,6 +30,7 @@ import IssueTracker from "@/components/project/github/issue/IssueTracker";
 import PRTracker from "@/components/project/github/pr/PRTracker";
 import CommitTracker from "@/components/project/github/commit/CommitTracker";
 import OrgTracker from "@/components/project/github/org/OrgTracker";
+import AnalyticsTracker from "@/components/project/github/analytics/AnalyticsTracker";
 
 export default function GithubPage() {
   const { project } = useProject();
@@ -205,6 +206,9 @@ export default function GithubPage() {
           )}
           {selectedTab === "org" && (
             <OrgTracker orgData={orgData || emptyOrgData} />
+          )}
+          {selectedTab === "analytics" && (
+            <AnalyticsTracker commits={commitData || []} repoData={repoData || emptyRepoData} />
           )}
         </div>
       ) : (

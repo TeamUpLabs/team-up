@@ -16,7 +16,7 @@ export default function CommitCountCard({ commitData }: CommitCardProps) {
   return (
     <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">
       <div className="flex items-center justify-between">
-        <span className="text-text-primary text-sm font-semibold">최근 커밋</span>
+        <span className="text-text-primary text-sm font-semibold">총 커밋</span>
         <FontAwesomeIcon icon={faCodeCommit} className="w-4 h-4 text-blue-500" />
       </div>
       <div>
