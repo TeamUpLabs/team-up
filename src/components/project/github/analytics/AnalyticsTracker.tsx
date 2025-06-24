@@ -4,6 +4,7 @@ import LineCountCard from "@/components/project/github/commit/LineCountCard";
 import TotalStarCountCard from "@/components/project/github/analytics/TotalStarCountCard";
 import ForkCountCard from "@/components/project/github/analytics/ForkCountCard";
 import CommitCountCard from "@/components/project/github/CommitCountCard";
+import CommitChart from "@/components/project/github/analytics/CommitChart";
 
 interface AnalyticsTrackerProps {
   commits: CommitData[];
@@ -18,6 +19,9 @@ export default function AnalyticsTracker({ commits, repoData }: AnalyticsTracker
         <LineCountCard lineCount={commits.reduce((total, commit) => total + (commit.commitDetail?.stats?.total || 0), 0)} state="total" />
         <TotalStarCountCard starCount={repoData.stargazers_count || 0} repoCount={1} />
         <ForkCountCard forkCount={repoData.forks_count || 0} />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2">
+        <CommitChart commits={commits} />
       </div>
     </div>
   );
