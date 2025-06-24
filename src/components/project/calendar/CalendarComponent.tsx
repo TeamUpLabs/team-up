@@ -103,7 +103,7 @@ export default function Calendar({
                   <Tooltip content="작업" key={task?.id}>
                     <div
                       onClick={() => onSelectTask(task)}
-                      className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("task")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
+                      className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("task")} hover:opacity-60 transition-all cursor-pointer`}
                     >
                       <p className="font-medium truncate">{task?.title}</p>
                       {task?.assignee && task?.assignee.length > 0 && (
@@ -124,7 +124,7 @@ export default function Calendar({
                   <Tooltip content="회의" key={meeting?.id}>
                     <div
                       onClick={() => onSelectSchedule(meeting)}
-                      className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("meeting")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
+                      className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("meeting")} hover:opacity-60 transition-all cursor-pointer`}
                     >
                       <p className="font-medium truncate">{meeting?.title}</p>
                       {meeting?.assignee && meeting?.assignee.length > 0 && (
@@ -145,7 +145,7 @@ export default function Calendar({
                   <Tooltip content="이벤트" key={event?.id}>
                     <div
                       onClick={() => onSelectSchedule(event)}
-                      className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("event")} hover:opacity-80 hover:shadow-md transition-all cursor-pointer`}
+                      className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("event")} hover:opacity-60 transition-all cursor-pointer`}
                   >
                     <p className="font-medium truncate">{event?.title}</p>
                     {event?.assignee && event?.assignee.length > 0 && (

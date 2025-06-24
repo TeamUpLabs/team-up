@@ -25,12 +25,12 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
     <>
       <div
         onClick={() => setIsModalOpen(true)}
-        className="space-y-4 bg-component-background rounded-lg shadow-md p-6 transition-colors duration-300 border border-component-border hover:border-point-color-indigo-hover cursor-pointer"
+        className="space-y-4 bg-component-background rounded-lg p-6 transition-all duration-300 hover:translate-y-[-4px] hover:shadow-lg border border-component-border cursor-pointer"
       >
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${getStatusColor(milestone.status)}`} />
-            <h3 className="text-lg font-semibold text-text-primary">{milestone.title}</h3>
+            <h3 className="text-lg font-semibold text-text-primary">{milestone.title || "제목 없음"}</h3>
           </div>
           <Badge
             content={
@@ -46,7 +46,7 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
           />
         </div>
 
-        <p className="text-text-secondary text-sm line-clamp-1">{milestone.description}</p>
+        <p className="text-text-secondary text-sm line-clamp-1">{milestone.description || "설명 없음"}</p>
 
         <div className="flex items-center gap-2">
           <p className="text-text-secondary text-sm">{new Date(milestone?.startDate || "").toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}</p>
@@ -57,9 +57,9 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <Users className="w-4 h-4 text-text-secondary" />
-            <p className="text-text-secondary text-sm">{milestone.assignee.length}</p>
+            <p className="text-text-secondary text-sm">{milestone.assignee.length || "0"}</p>
           </div>
-          <p className="text-text-secondary text-sm">{milestone.subtasks.filter((task) => task.status === 'done').length}/{milestone.subtasks.length} tasks</p>
+          <p className="text-text-secondary text-sm">{milestone.subtasks.filter((task) => task.status === 'done').length}/{milestone.subtasks.length || "0"} tasks</p>
         </div>
       </div>
       {isModalOpen && (

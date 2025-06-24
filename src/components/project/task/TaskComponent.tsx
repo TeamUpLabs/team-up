@@ -14,7 +14,7 @@ export default function TaskComponent({ task }: { task: Task }) {
       onDragStart={(e) => {
         e.dataTransfer.setData('taskId', task?.id.toString() ?? '');
       }}
-      className="p-3 mb-2 bg-component-secondary-background rounded-lg hover:bg-component-secondary-background/60 cursor-move transition-colors border border-component-border"
+      className="p-3 mb-2 bg-component-secondary-background rounded-lg hover:bg-component-tertiary-background cursor-move transition-colors border border-component-border"
       draggable
     >
       <div className="flex flex-col gap-1 font-medium mb-2">
