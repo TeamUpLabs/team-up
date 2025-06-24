@@ -16,13 +16,12 @@ interface CommitChartProps {
 export default function CommitChart({ commits }: CommitChartProps) {
   if (!commits || commits.length === 0) {
     return (
-      <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">
-        <div className="flex flex-col gap-1">
+      <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out flex flex-col items-center justify-center h-full min-h-[300px]">
+        <div className="text-center">
           <p className="text-text-primary text-lg font-semibold">커밋 활동 추이</p>
-          <span className="text-text-secondary text-sm">최근 7일간 커밋 활동</span>
-        </div>
-        <div className="flex items-center justify-center h-[300px]">
-          <p className="text-text-secondary">커밋 데이터가 없거나 불러오는 중입니다...</p>
+          <span className="text-text-secondary text-sm">
+            분석할 레포지토리의 커밋 데이터가 없습니다.
+          </span>
         </div>
       </div>
     );

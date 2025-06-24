@@ -36,9 +36,9 @@ export default function Repo({ repoData, prCount }: RepoProps) {
     <div className="flex items-center justify-between bg-component-background border border-component-border rounded-lg p-4">
       <div className="flex flex-col items-start gap-2">
         <Link href={repoData.html_url || ""} target="_blank" className="hover:underline">
-          <span className="text-xl font-bold text-text-primary">{repoData?.name}</span>
+          <span className="text-xl font-bold text-text-primary">{repoData?.name || "이름 없음"}</span>
         </Link>
-        <span className="text-sm text-text-secondary">{repoData?.description}</span>
+        <span className="text-sm text-text-secondary">{repoData?.description || "설명 없음"}</span>
         {repoData?.topics?.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
             {repoData?.topics?.map((topic, index) => (
@@ -55,30 +55,30 @@ export default function Repo({ repoData, prCount }: RepoProps) {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getLanguageColor(repoData?.language) }}></div>
-            <span className="text-sm text-text-secondary">{repoData?.language}</span>
+            <span className="text-sm text-text-secondary">{repoData?.language || "언어 없음"}</span>
           </div>
           <Tooltip content="Star" placement="bottom">
             <div className="group flex items-center gap-1 hover:cursor-pointer">
               <Star className="w-4 h-4 text-text-secondary group-hover:text-blue-500" />
-              <span className="text-sm text-text-secondary group-hover:text-blue-500">{repoData?.stargazers_count}</span>
+              <span className="text-sm text-text-secondary group-hover:text-blue-500">{repoData?.stargazers_count || "0"}</span>
             </div>
           </Tooltip>
           <Tooltip content="Pull Request" placement="bottom">
             <div className="group flex items-center gap-1 hover:cursor-pointer">
               <CodePullRequest className="w-4 h-4 text-text-secondary group-hover:text-blue-500" />
-              <span className="text-sm text-text-secondary group-hover:text-blue-500">{prCount}</span>
+              <span className="text-sm text-text-secondary group-hover:text-blue-500">{prCount || "0"}</span>
             </div>
           </Tooltip>
           <Tooltip content="Fork" placement="bottom">
             <div className="group flex items-center gap-1 hover:cursor-pointer">
               <CodeFork className="w-4 h-4 text-text-secondary group-hover:text-blue-500" />
-              <span className="text-sm text-text-secondary group-hover:text-blue-500">{repoData?.forks_count}</span>
+              <span className="text-sm text-text-secondary group-hover:text-blue-500">{repoData?.forks_count || "0"}</span>
             </div>
           </Tooltip>
           <Tooltip content="Issue" placement="bottom">
             <div className="group flex items-center gap-1 hover:cursor-pointer">
               <ExclamationCircle className="w-4 h-4 text-text-secondary group-hover:text-blue-500" />
-              <span className="text-sm text-text-secondary group-hover:text-blue-500">{repoData?.open_issues_count}</span>
+              <span className="text-sm text-text-secondary group-hover:text-blue-500">{repoData?.open_issues_count || "0"}</span>
             </div>
           </Tooltip>
         </div>

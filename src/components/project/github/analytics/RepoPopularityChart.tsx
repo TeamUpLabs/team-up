@@ -22,6 +22,19 @@ export default function RepoPopularityChart({ stars, forks, watchers }: RepoPopu
     { name: "Watchers", count: watchers || 0 },
   ];
 
+  if (stars === 0 || forks === 0 || watchers === 0) {
+    return (
+      <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out flex flex-col items-center justify-center h-full min-h-[300px]">
+        <div className="text-center">
+          <p className="text-text-primary text-lg font-semibold">저장소 인기 지표</p>
+          <span className="text-text-secondary text-sm">
+            분석할 레포지토리의 인기 지표 데이터가 없습니다.
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-component-background rounded-lg p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">
       <div className="flex flex-col gap-1">

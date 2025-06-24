@@ -81,22 +81,22 @@ export default function WeeklyReport({ commits, repoData, pullRequests = [], iss
       {/* Metric cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {/* Avg commits */}
-        <div className={`rounded-lg p-4 ${isDark ? "bg-indigo-900 text-indigo-100" : "bg-indigo-100 text-indigo-800"} text-center`}>
+        <div className={`rounded-lg p-4 ${isDark ? "bg-indigo-900 text-indigo-200" : "bg-indigo-100 text-indigo-800"} text-center`}>
           <p className="text-indigo-600 text-2xl font-bold">{averageCommitsPerDay}</p>
           <span className="text-text-secondary text-xs">일평균 커밋</span>
         </div>
         {/* Addition ratio */}
-        <div className={`rounded-lg p-4 ${isDark ? "bg-green-900 text-green-100" : "bg-green-100 text-green-800"} text-center`}>
+        <div className={`rounded-lg p-4 ${isDark ? "bg-green-900 text-green-200" : "bg-green-100 text-green-800"} text-center`}>
           <p className="text-green-600 text-2xl font-bold">{additionRatio}%</p>
           <span className="text-text-secondary text-xs">코드 추가 비율</span>
         </div>
         {/* Total stars */}
-        <div className={`rounded-lg p-4 ${isDark ? "bg-violet-900 text-violet-100" : "bg-violet-100 text-violet-800"} text-center`}>
+        <div className={`rounded-lg p-4 ${isDark ? "bg-violet-900 text-violet-200" : "bg-violet-100 text-violet-800"} text-center`}>
           <p className="text-violet-600 text-2xl font-bold">{repoData.stargazers_count || 0}</p>
           <span className="text-text-secondary text-xs">총 스타 수</span>
         </div>
         {/* Active repos */}
-        <div className={`rounded-lg p-4 ${isDark ? "bg-orange-900 text-orange-100" : "bg-orange-100 text-orange-800"} text-center`}>
+        <div className={`rounded-lg p-4 ${isDark ? "bg-orange-900 text-orange-200" : "bg-orange-100 text-orange-800"} text-center`}>
           <p className="text-orange-600 text-2xl font-bold">1</p>
           <span className="text-text-secondary text-xs">활성 저장소</span>
         </div>
