@@ -51,7 +51,7 @@ export default function RateLimitWarning({ token, threshold = 100, className = "
     return (
       <div className={`w-full max-w-md rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700 shadow-sm ${className}`}>
         <div className="flex items-start gap-3">
-          <Ban className="h-5 w-5 text-red-500" />
+          <Ban className="text-red-500" />
           <div>
             <p className="font-medium">GitHub API 사용량 경고</p>
             <p className="mt-1 text-sm">
