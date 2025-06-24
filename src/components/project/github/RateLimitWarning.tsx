@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Ban } from "flowbite-react-icons/outline";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface RateLimit {
   limit: number;
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export default function RateLimitWarning({ token, threshold = 100, className = "" }: Props) {
+  const { isDark } = useTheme();
   const [rate, setRate] = useState<RateLimit | null>(null);
   const [error, setError] = useState("");
 
@@ -49,10 +51,10 @@ export default function RateLimitWarning({ token, threshold = 100, className = "
 
   if (rate.remaining < threshold) {
     return (
-      <div className={`w-full max-w-md rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700 shadow-sm ${className}`}>
+      <div className={`w-full max-w-md rounded-lg border p-4 text-sm text-red-700 shadow-sm ${className} ${isDark ? "bg-red-900 border-red-600" : "bg-red-100 border-red-300"}`}>
         <div className="flex items-start gap-3">
-          <Ban className="text-red-500" />
-          <div>
+          <Ban className={isDark ? "text-red-200" : "text-red-600"} />
+          <div className={isDark ? "text-red-200" : "text-red-600"}>
             <p className="font-medium">GitHub API 사용량 경고</p>
             <p className="mt-1 text-sm">
               남은 요청 수: <span className="font-semibold">{rate.remaining}/{rate.limit}</span>
