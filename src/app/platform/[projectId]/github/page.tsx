@@ -156,6 +156,7 @@ export default function GithubPage() {
     owner: { login: "", avatar_url: "" },
     topics: [],
     language: "",
+    languages: {},
   };
 
 

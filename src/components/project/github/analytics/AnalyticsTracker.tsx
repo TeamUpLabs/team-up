@@ -5,6 +5,7 @@ import TotalStarCountCard from "@/components/project/github/analytics/TotalStarC
 import ForkCountCard from "@/components/project/github/analytics/ForkCountCard";
 import CommitCountCard from "@/components/project/github/CommitCountCard";
 import CommitChart from "@/components/project/github/analytics/CommitChart";
+import LanguageChart from "@/components/project/github/analytics/LanguageChart";
 
 interface AnalyticsTrackerProps {
   commits: CommitData[];
@@ -22,6 +23,7 @@ export default function AnalyticsTracker({ commits, repoData }: AnalyticsTracker
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2">
         <CommitChart commits={commits} />
+        <LanguageChart languages={repoData.languages} />
       </div>
     </div>
   );
