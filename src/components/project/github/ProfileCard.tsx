@@ -60,7 +60,7 @@ export default function ProfileCard({ user, githubUser, onRefresh }: Props) {
             <p className="text-text-secondary text-sm">{githubUser?.email || "이메일 없음"}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 md:gap-4 text-xs md:text-sm text-text-secondary">
+        <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-text-secondary">
           <div className="flex items-center gap-1">
             <Book className="w-4 h-4 text-text-secondary" />
             <span>{githubUser?.public_repos || 0} 저장소</span>

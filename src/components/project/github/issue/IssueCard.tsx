@@ -43,7 +43,7 @@ export default function IssueCard({ issueData }: { issueData: IssueData }) {
         <p className="text-sm text-text-secondary">
           {summarizeMarkdown(issueData.body)}
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1 text-xs text-text-secondary">
             <CodeBranch className="w-3 h-3" />
             <span>{issueData.repository_url.split('/').pop() || "저장소 없음"}</span>
@@ -62,7 +62,7 @@ export default function IssueCard({ issueData }: { issueData: IssueData }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {issueData.labels.map((label, index) => (
             <span
               key={index}
@@ -80,17 +80,15 @@ export default function IssueCard({ issueData }: { issueData: IssueData }) {
           ))}
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => {
+      <button
+        onClick={() => {
 
-          }}
-          className="flex items-center gap-2 font-semibold border border-component-border p-2 text-sm rounded-md hover:bg-component-secondary-background cursor-pointer"
-        >
-          <Clipboard className="w-5 h-5" />
-          Task 변환
-        </button>
-      </div>
+        }}
+        className="flex flex-shrink-0 items-center gap-2 font-semibold border border-component-border p-2 text-xs md:text-sm rounded-md hover:bg-component-secondary-background cursor-pointer"
+      >
+        <Clipboard className="w-5 h-5" />
+        Task 변환
+      </button>
     </div>
   );
 }

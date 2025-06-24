@@ -4,12 +4,12 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeCommit } from "@fortawesome/free-solid-svg-icons";
 import Badge from "@/components/ui/Badge";
-import { 
-  User, 
-  Clock, 
-  CodeBranch, 
-  Plus, 
-  Minus, 
+import {
+  User,
+  Clock,
+  CodeBranch,
+  Plus,
+  Minus,
   FileLines,
   FileCopy,
   Pen,
@@ -47,8 +47,8 @@ export default function CommitCard({ commitData }: { commitData: CommitData }) {
         <div className="flex items-center gap-2">
           <FontAwesomeIcon icon={faCodeCommit} size="xs" className="text-blue-600" />
           <Link href={commitData.html_url} target="_blank" className="hover:underline">
-          <p className="text-sm font-semibold text-text-primary">{commitData.commit.message.split("\n")[0] || "커밋 메시지 없음"}</p>
-        </Link>
+            <p className="text-sm font-semibold text-text-primary">{commitData.commit.message.split("\n")[0] || "커밋 메시지 없음"}</p>
+          </Link>
           <Badge
             content={`#${commitData.sha.slice(0, 7) || "커밋 없음"}`}
             color="pink"
@@ -57,7 +57,7 @@ export default function CommitCard({ commitData }: { commitData: CommitData }) {
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1 text-xs text-text-secondary">
             <User className="w-3 h-3" />
             <span>{commitData.author.login || "사용자 없음"}</span>
@@ -72,7 +72,7 @@ export default function CommitCard({ commitData }: { commitData: CommitData }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs text-green-600">+{commitData.commitDetail.stats.additions || 0}</span>
           <span className="text-xs text-red-600">-{commitData.commitDetail.stats.deletions || 0}</span>
           <span className="text-xs text-text-secondary">{commitData.commitDetail.files.length || 0} 파일 변경</span>
