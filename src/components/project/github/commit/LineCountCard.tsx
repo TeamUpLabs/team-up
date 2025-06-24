@@ -15,11 +15,11 @@ export default function LineCountCard({ lineCount, state }: LineCountCardProps) 
         ) : state === "deletions" ? (
           <Minus className="text-red-600" />
         ) : (
-          <Code className="text-gray-600" />
+          <Code className="text-text-primary" />
         )}
       </div>
       <div>
-        <span className={`${state === "additions" ? "text-green-600" : state === "deletions" ? "text-red-600" : "text-gray-600"} text-3xl font-bold`}>
+        <span className={`${state === "additions" ? "text-green-600" : state === "deletions" ? "text-red-600" : "text-text-primary"} text-3xl font-bold`}>
           {state === "additions" ? "+" : state === "deletions" ? "-" : ""}{lineCount || 0}
         </span>
         <p className="text-xs text-text-secondary">라인</p>
