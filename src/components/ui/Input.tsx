@@ -3,6 +3,7 @@ import React from 'react';
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  isRequired?: boolean;
   error?: string;
   fullWidth?: boolean;
   startAdornment?: React.ReactNode;
@@ -14,6 +15,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     {
       className = '',
       label,
+      isRequired,
       error,
       fullWidth = false,
       startAdornment,
@@ -69,6 +71,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className="block text-sm font-medium leading-6 text-gray-900 mb-1"
           >
             {label}
+            {isRequired && <span className="text-point-color-purple ml-1">*</span>}
           </label>
         )}
         {inputElement}
