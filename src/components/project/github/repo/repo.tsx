@@ -83,16 +83,6 @@ export default function Repo({ repoData, prCount }: RepoProps) {
           </Tooltip>
         </div>
       </div>
-      <button
-        type="button"
-        className="flex shrink-0 hover:cursor-pointer active:scale-95"
-      >
-        <Badge
-          content="웹훅 연결하기"
-          color="black"
-          className="!px-3 !py-1 !font-semibold"
-        />
-      </button>
     </div>
   )
 }
