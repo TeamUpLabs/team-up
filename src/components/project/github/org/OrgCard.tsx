@@ -61,7 +61,7 @@ export default function OrgCard({ orgData }: OrgCardProps) {
           content={
             <div className="flex items-center gap-2">
               <Users />
-              <span className="font-semibold">연결</span>
+              <span className="font-semibold">연결됨</span>
             </div>
           }
           color="black"
