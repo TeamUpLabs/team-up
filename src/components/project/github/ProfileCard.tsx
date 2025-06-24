@@ -7,6 +7,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { Member } from "@/types/Member";
 import { GithubUser } from "@/types/GithubUser";
 import RateLimitWarning from "@/components/project/github/RateLimitWarning";
+import { useAuthStore } from "@/auth/authStore";
 
 interface Props {
   user?: Member;
@@ -21,6 +22,7 @@ export default function ProfileCard({ user, githubUser, onRefresh }: Props) {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await onRefresh();
+    useAuthStore.getState().setAlert("새로고침되었습니다.", "success");
     setIsRefreshing(false);
   };
 
