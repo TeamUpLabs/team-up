@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useProject } from "@/contexts/ProjectContext";
 import GithubRepoCreate from "@/layouts/GithubRepoCreate";
 import { useAuthStore } from "@/auth/authStore";
@@ -12,14 +12,7 @@ import ProfileCard from "@/components/project/github/ProfileCard";
 import Tab from "@/components/project/github/Tab";
 import Overview from "@/components/project/github/overview/overview";
 import Repo from "@/components/project/github/repo/repo";
-import {
-  fetchCommitData,
-  fetchIssueData,
-  fetchPrData,
-  fetchRepoData,
-  fetchUserData,
-  fetchOrgData,
-} from "@/hooks/github/getData";
+import { fetchAllGithubData } from "@/hooks/github/getData";
 import { IssueData } from "@/types/IssueData";
 import { RepoData } from "@/types/RepoData";
 import { PrData } from "@/types/PrData";
@@ -38,7 +31,7 @@ export default function GithubPage() {
   const [repoData, setRepoData] = useState<RepoData | null>(null);
   const [prData, setPrData] = useState<PrData[]>([]);
   const [commitData, setCommitData] = useState<CommitData[]>([]);
-  const [issueData, setIssueData] = useState<{ items: IssueData[] }>({ items: [] });
+  const [issueData, setIssueData] = useState<IssueData[]>([]);
   const [githubUser, setGithubUser] = useState<GithubUser | null>(null);
   const [orgData, setOrgData] = useState<OrgData | null>(null);
   const [selectedTab, setSelectedTab] = useState<
@@ -51,81 +44,23 @@ export default function GithubPage() {
     | "analytics"
   >("overview");
 
-  const fetchCommit = useCallback(
-    async (org: string, repo: string) => {
-      const data = await fetchCommitData(org, repo, user!);
-      setCommitData(data);
-    },
-    [user]
-  );
-
-  const fetchRepo = useCallback(
-    async (org: string, repo: string) => {
-      const data = await fetchRepoData(org, repo, user!);
-      setRepoData(data);
-    },
-    [user]
-  );
-
-  const fetchIssue = useCallback(
-    async (org: string, repo: string) => {
-      const data = await fetchIssueData(org, repo, user!);
-      setIssueData({ items: data });
-    },
-    [user]
-  );
-
-  const fetchPr = useCallback(
-    async (org: string, repo: string) => {
-      const data = await fetchPrData(org, repo, user!);
-      setPrData(data);
-    },
-    [user]
-  );
-
-  const fetchUser = useCallback(async () => {
-    const data = await fetchUserData(user!);
-    setGithubUser(data);
-  }, [user]);
-
-  const fetchOrg = useCallback(
-    async (org: string) => {
-      const data = await fetchOrgData(org, user!);
-      setOrgData(data);
-    },
-    [user]
-  );
-
   useEffect(() => {
     const fetchAllData = async () => {
       if (project?.github_repo_url) {
         const org = "TeamUpLabs";
         const repo = "team-up";
 
-        await Promise.all([
-          fetchRepo(org, repo),
-          fetchCommit(org, repo),
-          fetchPr(org, repo),
-          fetchIssue(org, repo),
-          fetchUser(),
-          fetchOrg(org),
-        ]);
+        const { repoData, commitData, prData, issueData, githubUser, orgData } = await fetchAllGithubData(org, repo, user!);
+        setRepoData(repoData);
+        setCommitData(commitData);
+        setPrData(prData);
+        setIssueData(issueData);
+        setGithubUser(githubUser);
+        setOrgData(orgData);
       }
     };
-
     fetchAllData();
-  }, [
-    project,
-    user,
-    fetchRepo,
-    fetchPr,
-    fetchCommit,
-    fetchIssue,
-    fetchUser,
-    fetchOrg,
-  ]);
-
-
+  }, [project, user]);
 
   // 안전한 기본값
   const emptyOrgData = {
@@ -173,7 +108,7 @@ export default function GithubPage() {
         <div className="w-full space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             <RepoCard repoData={repoData || {}} />
-            <IssueCountCard issueLength={(issueData.items || []).filter((issue) => issue.state === "open").length || 0} state="open" />
+            <IssueCountCard issueLength={(issueData || []).filter((issue) => issue.state === "open").length || 0} state="open" />
             <PRCountCard prCount={(prData || []).filter((pr) => pr.state === "open").length || 0} state="open" />
             <CommitCountCard commitData={commitData || {}} />
           </div>
@@ -184,7 +119,7 @@ export default function GithubPage() {
 
           {selectedTab === "overview" && (
             <Overview
-              issueData={issueData || { items: [] }}
+              issueData={issueData || []}
               prData={prData || []}
               commitData={commitData || []}
               orgData={orgData || emptyOrgData}
@@ -197,7 +132,7 @@ export default function GithubPage() {
             />
           )}
           {selectedTab === "issue" && (
-            <IssueTracker issueData={issueData || { items: [] }} />
+            <IssueTracker issueData={issueData || []} />
           )}
           {selectedTab === "pr" && (
             <PRTracker prData={prData || []} />

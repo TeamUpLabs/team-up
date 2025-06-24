@@ -59,3 +59,15 @@ export const fetchOrgData = async (org: string, user: Member) => {
   const data = await res.json();
   return data.org;
 }
+
+export const fetchAllGithubData = async (org: string, repo: string, user: Member) => {
+  const [repoData, commitData, prData, issueData, githubUser, orgData] = await Promise.all([
+    fetchRepoData(org, repo, user),
+    fetchCommitData(org, repo, user),
+    fetchPrData(org, repo, user),
+    fetchIssueData(org, repo, user),
+    fetchUserData(user),
+    fetchOrgData(org, user),
+  ])
+  return { repoData, commitData, prData, issueData, githubUser, orgData };
+}

@@ -10,16 +10,14 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Input } from "@/components/ui/Input";
 
 interface IssueTrackerProps {
-  issueData: {
-    items: IssueData[];
-  };
+  issueData: IssueData[];
 }
 
 export default function IssueTracker({ issueData }: IssueTrackerProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedState, setSelectedState] = useState("all");
 
-  const filteredIssues = (issueData.items || []).filter((issue) => {
+  const filteredIssues = (issueData || []).filter((issue) => {
     const matchesSearch = issue.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesState = selectedState === "all" || issue.state === selectedState;
     return matchesSearch && matchesState;
@@ -38,9 +36,9 @@ export default function IssueTracker({ issueData }: IssueTrackerProps) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-        <IssueCountCard issueLength={(issueData.items || []).filter((issue) => issue.state === "open").length || 0} state="open" />
-        <IssueCountCard issueLength={(issueData.items || []).filter((issue) => issue.state === "closed").length || 0} state="closed" />
-        <IssueAverageResolutionTimeCard issues={(issueData.items || [])} />
+        <IssueCountCard issueLength={(issueData || []).filter((issue) => issue.state === "open").length || 0} state="open" />
+        <IssueCountCard issueLength={(issueData || []).filter((issue) => issue.state === "closed").length || 0} state="closed" />
+        <IssueAverageResolutionTimeCard issues={(issueData || [])} />
       </div>
       <div className="flex items-center flex-col md:flex-row gap-2 justify-between">
         <Input

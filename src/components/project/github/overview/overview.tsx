@@ -2,25 +2,16 @@ import { useTheme } from "@/contexts/ThemeContext";
 import OrgCard from "@/components/project/github/overview/OrgCard";
 import RecentActivityCard from "@/components/project/github/overview/RecentActivityCard";
 import { CommitData } from "@/types/CommitData";
+import { OrgData } from "@/types/OrgData";
 import { IssueData } from "@/types/IssueData";
 import { PrData } from "@/types/PrData";
 import { Activity } from "@/types/ActivityData";
 
 interface OverviewProps {
-  issueData: { items: IssueData[] };
+  issueData: IssueData[];
   prData: PrData[];
   commitData: CommitData[];
-  orgData: {
-    name: string;
-    login: string;
-    description: string;
-    public_repos: number;
-    collaborators: number;
-    avatar_url: string;
-    html_url: string;
-    company: string;
-    location: string;
-  };
+  orgData?: OrgData; // optional to allow absence
 }
 
 const getRepoNameFromUrl = (url: string): string => {
@@ -105,7 +96,7 @@ const transformToActivities = (
 export default function Overview({ issueData, prData, commitData, orgData }: OverviewProps) {
   const { isDark } = useTheme();
 
-  const allIssues = issueData?.items || [];
+  const allIssues = issueData || [];
   const allPRs = prData || [];
   const allCommits = commitData || [];
 
@@ -117,7 +108,7 @@ export default function Overview({ issueData, prData, commitData, orgData }: Ove
 
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-      <OrgCard isDark={isDark} orgData={orgData} />
+      {orgData && <OrgCard isDark={isDark} orgData={orgData} />}
       <RecentActivityCard recentItems={recentActivities} />
     </div>
   );
