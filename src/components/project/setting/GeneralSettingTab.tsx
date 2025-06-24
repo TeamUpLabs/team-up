@@ -323,6 +323,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                       value={formData.teamSize}
                       onChange={handleChange}
                       readOnly={isEditing !== "teamSize"}
+                      onWheel={(e) => e.currentTarget.blur()}
                       min={1}
                       className={`w-full border ${isEditing === "teamSize" ? 'bg-input-secondary-background border-input-secondary-border focus:border-point-color-indigo focus:ring-1 focus:ring-point-color-indigo' : 'bg-component-background/50 border-component-border'} rounded-lg px-4 py-3 text-text-primary outline-none transition-all ${!isEditing && 'cursor-not-allowed'} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                     />
