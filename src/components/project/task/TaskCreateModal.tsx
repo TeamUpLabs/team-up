@@ -276,7 +276,7 @@ export default function TaskCreateModal({
     <div className="flex justify-between">
       <button
         type="button"
-        className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+        className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={() => setStep(step - 1)}
         disabled={step === 1}
       >
@@ -562,7 +562,7 @@ export default function TaskCreateModal({
                   </label>
                   <AssigneeSelect
                     selectedAssignee={formData.assignee_id}
-                    assignee={project?.milestones?.find((milestone) => formData.milestone_id === milestone.id)?.assignee || []}
+                    assignee={project?.milestones?.find((milestone) => formData.milestone_id === milestone.id)?.assignee || project?.members || []}
                     toggleAssignee={toggleAssignee}
                     isAssigned={isAssigned}
                     label="선택된 담당자"

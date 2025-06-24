@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { faChevronDown, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { BadgeColor } from "@/components/ui/Badge";
 
 export interface SelectOption {
   name: string;
@@ -30,8 +31,6 @@ interface SelectProps {
   renderValue?: (value: string | string[]) => React.ReactNode;
   dropdownAlign?: "start" | "center" | "end";
 }
-
-type BadgeColor = "gray" | "red" | "green" | "blue" | "yellow" | "purple" | "orange" | "pink" | "zinc" | "teal" | "stone" | "neutral" | "emerald";
 
 export default function Select({
   options,
@@ -184,19 +183,24 @@ export default function Select({
   }
 
   const badgeColors = {
-    gray: "bg-gray-100 text-gray-800",
-    red: "bg-red-100 text-red-800",
-    green: "bg-green-100 text-green-800",
-    blue: "bg-blue-100 text-blue-800",
-    yellow: "bg-yellow-100 text-yellow-800",
-    purple: "bg-purple-100 text-purple-800",
-    orange: "bg-orange-100 text-orange-800",
-    pink: "bg-pink-100 text-pink-800",
-    zinc: "bg-zinc-100 text-zinc-800",
-    teal: "bg-teal-100 text-teal-800",
-    stone: "bg-stone-100 text-stone-800",
-    neutral: "bg-neutral-100 text-neutral-800",
-    emerald: "bg-emerald-100 text-emerald-800",
+    gray: "bg-gray-100 text-gray-800 border border-gray-300",
+    red: "bg-red-100 text-red-800 border border-red-300",
+    green: "bg-green-100 text-green-800 border border-green-300",
+    blue: "bg-blue-100 text-blue-800 border border-blue-300",
+    yellow: "bg-yellow-100 text-yellow-800 border border-yellow-300",
+    purple: "bg-purple-100 text-purple-800 border border-purple-300",
+    orange: "bg-orange-100 text-orange-800 border border-orange-300",
+    pink: "bg-pink-100 text-pink-800 border border-pink-300",
+    zinc: "bg-zinc-100 text-zinc-800 border border-zinc-300",
+    teal: "bg-teal-100 text-teal-800 border border-teal-300",
+    stone: "bg-stone-100 text-stone-800 border border-stone-300",
+    neutral: "bg-neutral-100 text-neutral-800 border border-neutral-300",
+    emerald: "bg-emerald-100 text-emerald-800 border border-emerald-300",
+    violet: "bg-violet-100 text-violet-800 border border-violet-300",
+    cyan: "bg-cyan-100 text-cyan-800 border border-cyan-300",
+    black: "bg-black text-white border border-white",
+    white: "bg-white text-black border border-black",
+    none: "bg-transparent text-text-primary border border-component-border"
   };
 
   // 표시할 값 렌더링
@@ -239,7 +243,7 @@ export default function Select({
   }
 
   return (
-    <div ref={selectRef} className={`relative ${badgeColors[color]} ${className}`} onKeyDown={handleKeyDown} tabIndex={disabled ? -1 : 0}>
+    <div ref={selectRef} className={`relative ${badgeColors[color as BadgeColor]} ${className}`} onKeyDown={handleKeyDown} tabIndex={disabled ? -1 : 0}>
       {/* Select 버튼 */}
       <button
         type="button"
@@ -268,86 +272,86 @@ export default function Select({
       {/* 드롭다운 옵션들 */}
       <AnimatePresence>
         {isOpen && (
-        <motion.div
-           initial={{ opacity: 0, scaleY: 0.95, y: -4 }}
-           animate={{ opacity: 1, scaleY: 1, y: 0 }}
-           exit={{ opacity: 0, scaleY: 0.95, y: -4 }}
-           transition={{ duration: 0.1, ease: "easeOut" }}
-           className={`absolute z-50 w-max mt-3 bg-component-background border border-component-border rounded-md shadow-lg ${(() => {
-            if (dropdownAlign === 'center') return 'left-1/2 -translate-x-1/2';
-            if (dropdownAlign === 'end') return 'right-0';
-            return 'left-0';
-          })()} ${dropDownClassName}`}
-          style={{ maxHeight: `${maxHeight}px` }}
-        >
-          {searchable && (
-            <div className="p-2 border-b border-component-border">
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="검색..."
-                className="w-full px-2 py-1 border border-component-border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          )}
-
-          <div
-            ref={optionsRef}
-            className="max-h-60 overflow-auto divide-y divide-component-border"
+          <motion.div
+            initial={{ opacity: 0, scaleY: 0.95, y: -4 }}
+            animate={{ opacity: 1, scaleY: 1, y: 0 }}
+            exit={{ opacity: 0, scaleY: 0.95, y: -4 }}
+            transition={{ duration: 0.1, ease: "easeOut" }}
+            className={`absolute z-50 w-max mt-3 bg-component-background border border-component-border rounded-md shadow-lg ${(() => {
+              if (dropdownAlign === 'center') return 'left-1/2 -translate-x-1/2';
+              if (dropdownAlign === 'end') return 'right-0';
+              return 'left-0';
+            })()} ${dropDownClassName}`}
             style={{ maxHeight: `${maxHeight}px` }}
-            role="listbox"
           >
-            {filteredOptions.length === 0 ? (
-              <div className="px-3 py-2 text-text-secondary text-center">검색 결과가 없습니다</div>
-            ) : (
-              filteredOptions.map((option, index) => {
-                const isSelected = selectedValues.includes(option.value)
-                const isFocused = index === focusedIndex
+            {searchable && (
+              <div className="p-2 border-b border-component-border">
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="검색..."
+                  className="w-full px-2 py-1 border border-component-border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            )}
 
-                let itemRoundedClass = "";
-                if (filteredOptions.length > 0) {
-                  if (filteredOptions.length === 1) {
-                    itemRoundedClass = "rounded-md";
-                  } else {
-                    if (index === 0) {
-                      itemRoundedClass = "rounded-t-md";
-                    } else if (index === filteredOptions.length - 1) {
-                      itemRoundedClass = "rounded-b-md";
+            <div
+              ref={optionsRef}
+              className="max-h-60 overflow-auto divide-y divide-component-border"
+              style={{ maxHeight: `${maxHeight}px` }}
+              role="listbox"
+            >
+              {filteredOptions.length === 0 ? (
+                <div className="px-3 py-2 text-text-secondary text-center">검색 결과가 없습니다</div>
+              ) : (
+                filteredOptions.map((option, index) => {
+                  const isSelected = selectedValues.includes(option.value)
+                  const isFocused = index === focusedIndex
+
+                  let itemRoundedClass = "";
+                  if (filteredOptions.length > 0) {
+                    if (filteredOptions.length === 1) {
+                      itemRoundedClass = "rounded-md";
+                    } else {
+                      if (index === 0) {
+                        itemRoundedClass = "rounded-t-md";
+                      } else if (index === filteredOptions.length - 1) {
+                        itemRoundedClass = "rounded-b-md";
+                      }
                     }
                   }
-                }
 
-                return (
-                  <div
-                    key={option.value}
-                    onClick={() => handleOptionSelect(option)}
-                    className={`
+                  return (
+                    <div
+                      key={option.value}
+                      onClick={() => handleOptionSelect(option)}
+                      className={`
                       px-3 py-2 cursor-pointer text-sm
                       ${option.disabled ? "text-text-secondary cursor-not-allowed" : "hover:bg-component-secondary-background"}
                       ${isSelected ? "bg-component-secondary-background text-text-primary" : "bg-transparent text-text-primary"}
                       ${isFocused ? "bg-component-secondary-background" : ""}
                       ${itemRoundedClass}
                     `}
-                    role="option"
-                    aria-selected={isSelected}
-                  >
-                    {renderOption ? (
-                      renderOption(option, isSelected)
-                    ) : (
-                      <div className="flex items-center gap-2 justify-between">
-                        <span className="text-text-primary">{option.label}</span>
-                        {isSelected && <FontAwesomeIcon icon={faCheck} />}
-                      </div>
-                    )}
-                  </div>
-                )
-              })
-            )}
-          </div>
-        </motion.div>
-       )}
+                      role="option"
+                      aria-selected={isSelected}
+                    >
+                      {renderOption ? (
+                        renderOption(option, isSelected)
+                      ) : (
+                        <div className="flex items-center gap-2 justify-between">
+                          <span className="text-text-primary">{option.label}</span>
+                          {isSelected && <FontAwesomeIcon icon={faCheck} />}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })
+              )}
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   )

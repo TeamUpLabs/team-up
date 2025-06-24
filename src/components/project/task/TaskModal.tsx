@@ -321,14 +321,24 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge
-            content={project?.milestones?.find((milestone) => milestone.id === taskData?.milestone_id)?.title}
-            color="teal"
-            isEditable={false}
-            className="!rounded-full !px-2 !py-0.5 cursor-pointer"
-            onClick={() => handleMilestoneClick(taskData?.milestone_id ?? 0)}
-            isDark={isDark}
-          />
+          {taskData?.milestone_id ? (
+            <Badge
+              content={project?.milestones?.find((milestone) => milestone.id === taskData?.milestone_id)?.title}
+              color="teal"
+              isEditable={false}
+              className="!rounded-full !px-2 !py-0.5 cursor-pointer"
+              onClick={() => handleMilestoneClick(taskData?.milestone_id ?? 0)}
+              isDark={isDark}
+            />
+          ) : (
+            <Badge
+              content="미등록"
+              color="teal"
+              isEditable={false}
+              className="!rounded-full !px-2 !py-0.5 cursor-pointer"
+              isDark={isDark}
+            />
+          )}
           {isEditing === "status" ? (
             <Select
               options={[
