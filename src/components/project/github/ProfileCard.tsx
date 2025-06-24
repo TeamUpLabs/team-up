@@ -82,7 +82,7 @@ export default function ProfileCard({ user, githubUser, onRefresh }: Props) {
       <div className="flex self-start items-center gap-2">
         <RateLimitWarning 
           token={user?.github_access_token || ""} 
-          threshold={100}
+          threshold={500}
         />
         <button
           onClick={handleRefresh}
