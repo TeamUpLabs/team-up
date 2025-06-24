@@ -68,7 +68,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium leading-6 text-gray-900 mb-1"
+            className="block text-sm font-medium leading-6 text-text-primary mb-1"
           >
             {label}
             {isRequired && <span className="text-point-color-purple ml-1">*</span>}

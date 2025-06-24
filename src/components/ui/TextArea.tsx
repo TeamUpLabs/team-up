@@ -53,7 +53,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={textareaId}
-            className="block text-sm font-medium leading-6 text-gray-900 mb-1"
+            className="block text-sm font-medium leading-6 text-text-primary mb-1"
           >
             {label}
             {isRequired && <span className="text-point-color-purple ml-1">*</span>}
