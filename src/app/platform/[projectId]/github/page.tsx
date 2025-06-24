@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useProject } from "@/contexts/ProjectContext";
 import GithubRepoCreate from "@/layouts/GithubRepoCreate";
 import { useAuthStore } from "@/auth/authStore";
@@ -43,24 +43,26 @@ export default function GithubPage() {
     | "org"
     | "analytics"
   >("overview");
+  const org = "TeamUpLabs";
+  const repo = "team-up";
+
+  const fetchAllData = useCallback(async (org: string, repo: string) => {
+    if (project?.github_repo_url && user) {
+      const { repoData, commitData, prData, issueData, githubUser, orgData } = await fetchAllGithubData(org, repo, user);
+      setRepoData(repoData);
+      setCommitData(commitData);
+      setPrData(prData);
+      setIssueData(issueData);
+      setGithubUser(githubUser);
+      setOrgData(orgData);
+    }
+  }, [project, user]);
 
   useEffect(() => {
-    const fetchAllData = async () => {
-      if (project?.github_repo_url) {
-        const org = "TeamUpLabs";
-        const repo = "team-up";
-
-        const { repoData, commitData, prData, issueData, githubUser, orgData } = await fetchAllGithubData(org, repo, user!);
-        setRepoData(repoData);
-        setCommitData(commitData);
-        setPrData(prData);
-        setIssueData(issueData);
-        setGithubUser(githubUser);
-        setOrgData(orgData);
-      }
-    };
-    fetchAllData();
-  }, [project, user]);
+    if (project?.github_repo_url) {
+      fetchAllData(org, repo);
+    }
+  }, [fetchAllData, project, org, repo]);
 
   // 안전한 기본값
   const emptyOrgData = {
@@ -78,7 +80,7 @@ export default function GithubPage() {
     repos: [],
     created_at: "",
   };
-  
+
   const emptyRepoData = {
     name: "",
     html_url: "",
@@ -113,7 +115,7 @@ export default function GithubPage() {
             <CommitCountCard commitData={commitData || {}} />
           </div>
 
-          <ProfileCard user={user || undefined} githubUser={githubUser || undefined} />
+          <ProfileCard user={user || undefined} githubUser={githubUser || undefined} onRefresh={() => fetchAllData(org, repo)} />
 
           <Tab selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 

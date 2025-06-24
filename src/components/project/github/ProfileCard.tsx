@@ -11,17 +11,17 @@ import RateLimitWarning from "@/components/project/github/RateLimitWarning";
 interface Props {
   user?: Member;
   githubUser?: GithubUser;
+  onRefresh: () => Promise<void>;
 }
 
-export default function ProfileCard({ user, githubUser }: Props) {
+export default function ProfileCard({ user, githubUser, onRefresh }: Props) {
   const { isDark } = useTheme();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 1000);
+    await onRefresh();
+    setIsRefreshing(false);
   };
 
   return (
@@ -79,7 +79,7 @@ export default function ProfileCard({ user, githubUser }: Props) {
           </div>
         </div>
       </div>
-      <div className="flex self-start items-center gap-2 active:scale-95">
+      <div className="flex self-start items-center gap-2">
         <RateLimitWarning 
           token={user?.github_access_token || ""} 
           threshold={100}
@@ -87,7 +87,7 @@ export default function ProfileCard({ user, githubUser }: Props) {
         <button
           onClick={handleRefresh}
           disabled={isRefreshing}
-          className="flex shrink-0 items-center self-start gap-2 border border-component-border rounded-lg px-3 py-2 cursor-pointer bg-transparent hover:bg-component-secondary-background disabled:cursor-not-allowed"
+          className="flex shrink-0 items-center self-start gap-2 border border-component-border rounded-lg px-3 py-2 cursor-pointer bg-transparent hover:bg-component-secondary-background disabled:cursor-not-allowed active:scale-95"
         >
           <Refresh className={`w-4 h-4 text-text-primary ${isRefreshing ? "animate-spin" : ""}`} />
           <span className="text-text-primary text-sm font-semibold">새로고침</span>
