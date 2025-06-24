@@ -15,4 +15,7 @@ export interface RepoData {
   },
   topics: string[];
   language: string;
+  languages: {
+    [key: string]: number;
+  };
 }

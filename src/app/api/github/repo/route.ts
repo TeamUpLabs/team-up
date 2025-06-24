@@ -23,7 +23,11 @@ export async function GET(req: NextRequest) {
     }
 
     const repo = await res.json();
-    return NextResponse.json({ repo: repo });
+    const languages = await Promise.all([
+      fetch(repo.languages_url, { headers }).then(r => r.json()),
+    ])
+    
+    return NextResponse.json({ repo: {...repo, languages: languages[0]} });
   } catch (error) {
     return NextResponse.json({ error: `Failed to fetch repo: ${error}` }, { status: 500 });
   }
