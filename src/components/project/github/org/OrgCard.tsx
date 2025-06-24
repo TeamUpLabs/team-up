@@ -25,7 +25,7 @@ export default function OrgCard({ orgData }: OrgCardProps) {
         ) : (
           <div className="w-10 h-10 rounded-full bg-component-border"></div>
         )}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-wrap flex-col gap-1">
           <div className="flex items-center gap-1">
             <span className="text-lg font-bold text-text-primary">{orgData.name || "이름 없음"}</span>
             <Link
@@ -55,7 +55,7 @@ export default function OrgCard({ orgData }: OrgCardProps) {
       </div>
 
       <button
-        className="flex flex-wrap self-center cursor-pointer active:scale-95"
+        className="flex flex-shrink-0 self-center cursor-pointer active:scale-95"
       >
         <Badge
           content={
