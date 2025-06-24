@@ -9,7 +9,7 @@ import {
   Clock,
   User,
   Messages,
-  Clipboard
+  Flag
 } from "flowbite-react-icons/outline";
 import { useTheme } from "@/contexts/ThemeContext";
 import Link from "next/link";
@@ -82,12 +82,12 @@ export default function IssueCard({ issueData }: { issueData: IssueData }) {
       </div>
       <button
         onClick={() => {
-
+          console.log(issueData);
         }}
         className="flex flex-shrink-0 items-center gap-2 font-semibold border border-component-border p-2 text-xs md:text-sm rounded-md hover:bg-component-secondary-background cursor-pointer"
       >
-        <Clipboard className="w-5 h-5" />
-        Task 변환
+        <Flag className="w-5 h-5" />
+        마일스톤 변환
       </button>
     </div>
   );
