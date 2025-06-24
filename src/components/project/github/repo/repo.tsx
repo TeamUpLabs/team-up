@@ -52,7 +52,7 @@ export default function Repo({ repoData, prCount }: RepoProps) {
             ))}
           </div>
         )}
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getLanguageColor(repoData?.language) }}></div>
             <span className="text-sm text-text-secondary">{repoData?.language || "언어 없음"}</span>
