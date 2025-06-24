@@ -90,7 +90,7 @@ export default function Repo({ repoData, prCount }: RepoProps) {
         <Badge
           content="웹훅 연결하기"
           color="black"
-          className="!px-4 !py-2 !font-semibold"
+          className="!px-3 !py-1 !font-semibold"
         />
       </button>
     </div>
