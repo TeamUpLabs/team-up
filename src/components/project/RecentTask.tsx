@@ -61,9 +61,9 @@ export default function RecentTask() {
                   />
                 <p className="text-sm text-text-secondary">마감일: {task.endDate}</p>
               </div>
-              <h3 className="text-md font-semibold text-text-primary mb-1">{task.title}</h3>
+              <h3 className="text-md font-semibold text-text-primary mb-1">{task.title || '제목 없음'}</h3>
               <p className="text-sm text-text-secondary mb-3 h-10 overflow-hidden text-ellipsis">
-                {task.description || 'No description available. This task focuses on integrating the new API services.'}
+                {task.description || '설명 없음'}
               </p>
             </div>
 
