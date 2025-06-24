@@ -5,8 +5,6 @@ import { useState } from "react";
 import { IssueData } from "@/types/IssueData";
 import IssueCountCard from "@/components/project/github/IssueCountCard";
 import IssueAverageResolutionTimeCard from "@/components/project/github/issue/IssueAverageResolutionTimeCard";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Input } from "@/components/ui/Input";
 
 interface IssueTrackerProps {
@@ -49,25 +47,17 @@ export default function IssueTracker({ issueData }: IssueTrackerProps) {
           fullWidth
           startAdornment={<Search className="h-5 w-5 text-gray-400" />}
         />
-        <div className="flex items-center gap-2 w-full md:w-1/4">
-          <Select
-            options={[
-              { name: "state", value: "all", label: "모든 상태" },
-              { name: "state", value: "open", label: "열림" },
-              { name: "state", value: "closed", label: "닫힘" },
-            ]}
-            value={selectedState}
-            onChange={(e) => onSelectState(e as string)}
-            className="w-full p-2 !rounded-md !bg-component-background !border !border-component-border"
-            dropDownClassName="!w-full !rounded-md"
-          />
-          <button
-            className="flex items-center gap-2 rounded-md bg-point-color-indigo text-white px-4 py-2 active:scale-95 whitespace-nowrap cursor-pointer"
-          >
-            <FontAwesomeIcon icon={faPlus} />
-            <span className="font-semibold">새 이슈</span>
-          </button>
-        </div>
+        <Select
+          options={[
+            { name: "state", value: "all", label: "모든 상태" },
+            { name: "state", value: "open", label: "열림" },
+            { name: "state", value: "closed", label: "닫힘" },
+          ]}
+          value={selectedState}
+          onChange={(e) => onSelectState(e as string)}
+          className="w-full md:w-1/5 p-2 !rounded-md !bg-component-background !border !border-component-border"
+          dropDownClassName="!w-full !rounded-md"
+        />
       </div>
       {[...(filteredIssues || [])]
         .sort((a, b) => {
