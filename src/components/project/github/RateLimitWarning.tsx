@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Ban } from "flowbite-react-icons/outline";
 
 interface RateLimit {
   limit: number;
@@ -50,19 +51,7 @@ export default function RateLimitWarning({ token, threshold = 100, className = "
     return (
       <div className={`w-full max-w-md rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700 shadow-sm ${className}`}>
         <div className="flex items-start gap-3">
-          <svg
-            className="h-5 w-5 text-red-500 mt-0.5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 9v2m0 4h.01M4.93 4.93l14.14 14.14M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
+          <Ban className="h-5 w-5 text-red-500" />
           <div>
             <p className="font-medium">GitHub API 사용량 경고</p>
             <p className="mt-1 text-sm">
