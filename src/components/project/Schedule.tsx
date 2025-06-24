@@ -46,7 +46,7 @@ export default function Schedule() {
   }
 
   return (
-    <div className="col-span-1 sm:col-span-2 bg-component-background p-3 md:p-4 lg:p-6 rounded-lg shadow-md border border-component-border">
+    <div className="col-span-1 sm:col-span-2 bg-component-background p-3 md:p-4 lg:p-6 rounded-lg border border-component-border">
       <div className="flex items-center justify-between mb-3 md:mb-4">
         <h2 className="text-base sm:text-lg md:text-xl font-semibold text-text-primary">
           일정

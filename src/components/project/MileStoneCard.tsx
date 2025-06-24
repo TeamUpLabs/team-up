@@ -48,7 +48,7 @@ export default function MileStoneCard() {
   }
 
   return (
-    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md overflow-x-auto border border-component-border">
+    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg overflow-x-auto border border-component-border">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-text-primary">다가오는 마일스톤</h2>
       </div>
