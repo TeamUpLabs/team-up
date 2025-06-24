@@ -258,7 +258,7 @@ export default function TaskCreateModal({
     <div className="flex items-center space-x-3">
       <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
         <ClipboardList
-          className="text-primary-600 text-lg"
+          className="text-text-primary text-lg"
         />
       </div>
       <div>
