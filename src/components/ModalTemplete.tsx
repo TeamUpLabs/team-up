@@ -1,7 +1,7 @@
-import { Fragment } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 interface ModalTempleteProps {
     header: React.ReactNode;
@@ -12,60 +12,103 @@ interface ModalTempleteProps {
 }
 
 export default function ModalTemplete({ header, children, footer, isOpen, onClose }: ModalTempleteProps) {
-    return (
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-[10000]" onClose={onClose}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/50" />
-          </Transition.Child>
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
+  // Handle mount/unmount with animation
+  useEffect(() => {
+    if (isOpen) {
+      setIsMounted(true);
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+        document.body.style.overflow = 'hidden';
+      }, 10);
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
+      document.body.style.overflow = 'unset';
+      const timer = setTimeout(() => {
+        setIsMounted(false);
+      }, 300); // Match this with the exit animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
+  // Don't render anything if not mounted
+  if (!isMounted && !isOpen) return null;
+
+  return (
+    <AnimatePresence mode="wait" onExitComplete={onClose}>
+        <div className="fixed inset-0 z-[10000]" onClick={onClose}>
+          {/* Backdrop */}
+          <motion.div
+            className="fixed inset-0 bg-black/50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isVisible ? 1 : 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+          />
+
+          {/* Modal Panel */}
           <div className="fixed inset-0 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-4">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
+              <motion.div
+                className="w-full max-w-2xl overflow-hidden rounded-xl bg-component-background backdrop-blur-sm text-left align-middle shadow-xl border border-component-border flex flex-col max-h-[90vh]"
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{
+                  opacity: isVisible ? 1 : 0,
+                  scale: isVisible ? 1 : 0.95,
+                  y: isVisible ? 0 : 20
+                }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{
+                  type: 'spring',
+                  damping: 25,
+                  stiffness: 300,
+                  duration: 0.3
+                }}
+                onClick={(e) => e.stopPropagation()}
               >
-                <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-component-background backdrop-blur-sm p-6 text-left align-middle shadow-xl transition-all border border-component-border flex flex-col max-h-[90vh]">
-                  {/* 헤더 섹션 */}
-                  <div className="flex justify-between gap-3 items-start pb-2">
-                    <div className="w-full">
-                      {header}
-                    </div>
-                    <button
-                      onClick={onClose}
-                      className="text-text-secondary hover:text-text-primary transition-all"
-                    >
-                      <FontAwesomeIcon icon={faXmark} />
-                    </button>
+                {/* Header Section */}
+                <div className="flex justify-between gap-3 items-start p-6 pb-2">
+                  <div className="w-full">
+                    {header}
                   </div>
+                  <button
+                    onClick={onClose}
+                    className="text-text-secondary hover:text-text-primary transition-all"
+                  >
+                    <FontAwesomeIcon icon={faXmark} />
+                  </button>
+                </div>
 
-                  {/* 내용 섹션 */}
-                  <div className="mt-2 space-y-6 overflow-y-auto px-1">
-                    {children}
-                    {footer && (
-                      <div className="mt-auto">
-                        {footer}
-                      </div>
-                    )}
+                {/* Main Content and Footer Container */}
+                <div className="flex flex-col flex-1 overflow-hidden px-6">
+                  {/* Scrollable Content Section */}
+                  <div className="flex-1 overflow-y-auto -mx-1 px-1">
+                    <div className="space-y-6">
+                      {children}
+                    </div>
                   </div>
-                </Dialog.Panel>
-              </Transition.Child>
+                  
+                  {/* Footer Section - Fixed at bottom */}
+                  {footer && (
+                    <div className="pt-4 pb-6">
+                      {footer}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
             </div>
           </div>
-        </Dialog>
-      </Transition>
-    )
+        </div>
+    </AnimatePresence>
+  )
 }
