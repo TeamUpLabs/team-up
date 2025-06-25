@@ -150,11 +150,6 @@ export default function TaskCreateModal({
     if (project?.id) {
       setSubmitStatus('submitting');
       try {
-<<<<<<< HEAD
-        setSubmitStatus('submitting');
-
-=======
->>>>>>> 2694b27 (Refactor form data initialization and submission handling in project modals)
         await createTask(project.id, {
           ...formData,
           project_id: project.id,
