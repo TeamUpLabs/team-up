@@ -78,7 +78,7 @@ export default function ConfirmProvider() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-base font-semibold text-text-primary">
-                    작업 확인
+                    실행 확인
                   </h3>
                   <p className="mt-1 text-sm text-text-secondary">
                     {confirm.message}

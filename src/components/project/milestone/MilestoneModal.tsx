@@ -13,6 +13,7 @@ import Badge from "@/components/ui/Badge";
 import { Flag, InfoCircle, CalendarWeek, FileCheck, User, Tag } from "flowbite-react-icons/outline";
 import Accordion from "@/components/ui/Accordion";
 import { updateMilestone, deleteMilestone } from "@/hooks/getMilestoneData";
+import { createTask } from "@/hooks/getTaskData";
 import Select from "@/components/ui/Select";
 import { getStatusColorName } from "@/utils/getStatusColor";
 import { getPriorityColorName } from "@/utils/getPriorityColor";
@@ -21,6 +22,7 @@ import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { Input } from "@/components/ui/Input";
 import DatePicker from "@/components/ui/DatePicker";
+import { detectSubtasks } from "@/utils/detectSubtask";
 import { useTheme } from "@/contexts/ThemeContext";
 import { isMarkdown } from "@/utils/isMarkdown";
 import MarkdownEditor from "@/components/ui/MarkdownEditor";
@@ -204,6 +206,41 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     setMilestoneData(milestone);
     setIsEditing("none");
     useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
+  };
+
+  const AutoGenerateSubtasks = async (description: string) => {
+    const subtasks = detectSubtasks(description);
+
+    useAuthStore.getState().setConfirm(`하위 작업을 생성하시겠습니까? \n\n 하위 작업은 마일스톤의 시작일과 종료일, 우선순위, 태그, 할당자, 상태를 따라갑니다.`, async () => {
+      if (project?.id) {
+        try {
+          useAuthStore.getState().setAlert("진행중입니다. 잠시만 기다려주세요.", "info");
+          await Promise.all(subtasks.map(async (subtask) => {
+            await createTask(project?.id, {
+              project_id: project?.id,
+              title: subtask.text,
+              description: "",
+              status: milestoneData.status,
+              startDate: milestoneData.startDate || "",
+              endDate: milestoneData.endDate || "",
+              assignee_id: milestoneData.assignee.map(a => a.id),
+              tags: milestoneData.tags,
+              priority: milestoneData.priority,
+              subtasks: [],
+              milestone_id: milestoneData.id,
+              createdBy: useAuthStore.getState().user?.id || 0,
+              updatedBy: useAuthStore.getState().user?.id || 0,
+            });
+          }));
+        } catch (error) {
+          console.error("Error creating subtasks:", error);
+          useAuthStore.getState().setAlert("하위 작업 생성에 실패했습니다.", "error");
+        } finally {
+          useAuthStore.getState().setAlert("하위 작업이 성공적으로 생성되었습니다.", "success");
+          useAuthStore.getState().clearConfirm();
+        }
+      }
+    });
   };
 
   const modalHeader = (
@@ -505,8 +542,16 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
           <div className="space-y-2">
             {milestoneData.subtasks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-6">
+              <div className="flex flex-col items-center justify-center gap-4 text-center">
                 <span className="text-text-secondary">하위 작업이 없습니다.</span>
+                {isMarkdown(milestoneData.description) && (
+                  <button
+                    onClick={() => AutoGenerateSubtasks(milestoneData.description)}
+                    className="w-full bg-point-color-indigo hover:bg-point-color-indigo-hover text-white font-semibold px-4 py-2 rounded-md transition-colors cursor-pointer"
+                  >
+                    ✨ 하위 작업 자동 생성
+                  </button>
+                )}
               </div>
             ) : (
               milestoneData.subtasks.map((subtask) => (
@@ -746,7 +791,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               <div className="flex">
                 <Input
                   value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTag(e.target.value)}
                   onKeyDown={handleKeyDown}
                   onCompositionStart={() => setIsComposing(true)}
                   onCompositionEnd={() => setIsComposing(false)}
