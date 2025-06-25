@@ -44,7 +44,7 @@ export default function GithubPage() {
     | "analytics"
   >("overview");
   const org = "TeamUpLabs";
-  const repo = "team-up";
+  const repo = project?.github_repo_url?.split("/").pop() || "";
 
   const fetchAllData = useCallback(async (org: string, repo: string) => {
     if (project?.github_repo_url && user) {
