@@ -8,7 +8,7 @@ import { faBullseye, faPencil, faCheck, faHourglassStart, faHourglassEnd, faUser
 import { useAuthStore } from "@/auth/authStore";
 import { useParams, useRouter } from "next/navigation";
 import { useProject } from "@/contexts/ProjectContext";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Badge from "@/components/ui/Badge";
 import { Flag, InfoCircle, CalendarWeek, FileCheck, User, Tag } from "flowbite-react-icons/outline";
 import Accordion from "@/components/ui/Accordion";
@@ -22,6 +22,12 @@ import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { Input } from "@/components/ui/Input";
 import DatePicker from "@/components/ui/DatePicker";
 import { useTheme } from "@/contexts/ThemeContext";
+import { isMarkdown } from "@/utils/isMarkdown";
+import MarkdownEditor from "@/components/ui/MarkdownEditor";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import 'highlight.js/styles/github.css'; // 코드 하이라이트 스타일
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -40,6 +46,15 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const [isComposing, setIsComposing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const { isDark } = useTheme();
+
+  const handleDescriptionChange = useCallback((value: string) => {
+    setMilestoneData((prev) => {
+      if (prev.description === value) {
+        return prev;
+      }
+      return { ...prev, description: value };
+    });
+  }, []);
 
   if (!isOpen) return null;
 
@@ -95,6 +110,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const handleSelectChange = (name: string, value: string | string[]) => {
     setMilestoneData(prevData => ({ ...prevData, [name]: value }));
   };
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -172,16 +189,14 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
       useAuthStore.getState().setAlert("마일스톤이 성공적으로 수정되었습니다.", "success");
       setSubmitStatus('success');
       setIsEditing("none");
-      setTimeout(() => {
-        onClose();
-      }, 1000);
     } catch (error) {
       console.error("Error updating milestone:", error);
       setSubmitStatus('error');
       useAuthStore.getState().setAlert("마일스톤 수정에 실패했습니다.", "error");
     } finally {
-      setIsEditing("none");
-      setSubmitStatus('idle');
+      setTimeout(() => {
+        setSubmitStatus('idle');
+      }, 1000);
     }
   };
 
@@ -350,16 +365,31 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               />
             </div>
             {isEditing === "description" ? (
-              <textarea
-                name="description"
-                value={milestoneData.description}
-                onChange={handleChange}
-                className="w-full p-3 rounded-md m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
-                placeholder="마일스톤의 설명을 작성하세요"
-              />
+              isMarkdown(milestoneData.description) ? (
+                <MarkdownEditor
+                  value={milestoneData.description}
+                  onChange={handleDescriptionChange}
+                />
+              ) : (
+                <textarea
+                  name="description"
+                  value={milestoneData.description}
+                  onChange={handleChange}
+                  className="w-full p-3 rounded-md m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
+                />
+              )
             ) : (
               milestoneData.description ? (
-                <p className="text-muted-foreground leading-relaxed">{milestoneData.description}</p>
+                isMarkdown(milestoneData.description) ? (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                  >
+                    {milestoneData.description || "마일스톤의 설명이 없습니다."}
+                  </ReactMarkdown>
+                ) : (
+                  <p className="text-muted-foreground leading-relaxed">{milestoneData.description}</p>
+                )
               ) : (
                 <p className="text-text-secondary">마일스톤의 설명이 없습니다.</p>
               )

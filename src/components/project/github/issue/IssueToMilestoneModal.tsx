@@ -9,7 +9,6 @@ import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import MarkdownEditor from "@/components/ui/MarkdownEditor";
-import removeMarkdown from "remove-markdown";
 import { useProject } from "@/contexts/ProjectContext";
 import { useAuthStore } from "@/auth/authStore";
 import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";
@@ -158,16 +157,10 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
       return;
     }
 
-    const cleanedDescription = removeMarkdown(formData.description);
-    const submissionData = {
-      ...formData,
-      description: cleanedDescription,
-    };
-
     if (project?.id) {
       try {
         setSubmitStatus('submitting');
-        await createMilestone(project.id, submissionData);
+        await createMilestone(project.id, formData);
         useAuthStore.getState().setAlert("마일스톤이 성공적으로 생성되었습니다.", "success");
         setSubmitStatus('success');
 
