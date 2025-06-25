@@ -1,5 +1,5 @@
 import { PrData } from "@/types/PrData";
-import { CodePullRequest, CodeMerge, CodeBranch, Clock, User, Messages, Clipboard } from "flowbite-react-icons/outline";
+import { CodePullRequest, CodeMerge, CodeBranch, Clock, User, Messages } from "flowbite-react-icons/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeCommit } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
@@ -88,15 +88,6 @@ export default function PRCard({ prData }: { prData: PrData }) {
           ))}
         </div>
       </div>
-      <button
-        onClick={() => {
-
-        }}
-        className="flex self-start flex-shrink-0 items-center gap-2 font-semibold border border-component-border p-2 text-xs md:text-sm rounded-md hover:bg-component-secondary-background cursor-pointer"
-      >
-        <Clipboard className="w-5 h-5" />
-        Task 변환
-      </button>
     </div>
   );
 }
