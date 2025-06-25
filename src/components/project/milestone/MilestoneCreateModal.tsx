@@ -120,7 +120,9 @@ export default function MilestoneCreateModal({
         setSubmitStatus('error');
         useAuthStore.getState().setAlert("마일스톤 생성에 실패했습니다. 관리자에게 문의해주세요.", "error");
       } finally {
-        setSubmitStatus('idle');
+        setTimeout(() => {
+          setSubmitStatus('idle');
+        }, 1000);
       }
     }
   };
