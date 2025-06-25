@@ -5,6 +5,8 @@ import MilestoneCardSkeleton from '@/components/skeleton/MilestoneCardSkeleton';
 import { getStatusColorName } from '@/utils/getStatusColor';
 import Badge, { BadgeColor } from '@/components/ui/Badge';
 import { useTheme } from '@/contexts/ThemeContext';
+import { isMarkdown } from '@/utils/isMarkdown';
+import { summarizeMarkdown } from '@/utils/summarizeMarkdown';
 
 export default function MileStoneCard() {
   const { project } = useProject();
@@ -68,7 +70,11 @@ export default function MileStoneCard() {
                 isDark={isDark}
               />
             </div>
-            <p className="text-sm text-text-secondary">{closestMilestone.description}</p>
+            {isMarkdown(closestMilestone.description) ? (
+              <p className="text-sm text-text-secondary line-clamp-2">{summarizeMarkdown(closestMilestone.description) || "설명 없음"}</p>
+            ) : (
+              <p className="text-sm text-text-secondary line-clamp-2">{closestMilestone.description || "설명 없음"}</p>
+            )}
             <div className="mt-2 flex items-center">
               <div className="w-full bg-component-tertiary-background rounded-full h-1.5">
                 <div

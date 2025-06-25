@@ -7,6 +7,8 @@ import Badge from '@/components/ui/Badge';
 import { Flag, ArrowRight, Users } from 'flowbite-react-icons/outline';
 import { getPriorityColorName } from '@/utils/getPriorityColor';
 import { useTheme } from '@/contexts/ThemeContext';
+import { isMarkdown } from '@/utils/isMarkdown';
+import { summarizeMarkdown } from '@/utils/summarizeMarkdown';
 
 export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
   const { isDark } = useTheme();
@@ -46,7 +48,11 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
           />
         </div>
 
-        <p className="text-text-secondary text-sm line-clamp-1">{milestone.description || "설명 없음"}</p>
+        {isMarkdown(milestone.description) ? (
+          <p className="text-text-secondary text-sm line-clamp-1">{summarizeMarkdown(milestone.description) || "설명 없음"}</p>
+        ) : (
+          <p className="text-text-secondary text-sm line-clamp-1">{milestone.description || "설명 없음"}</p>
+        )}
 
         <div className="flex items-center gap-2">
           <p className="text-text-secondary text-sm">{new Date(milestone?.startDate || "").toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}</p>
