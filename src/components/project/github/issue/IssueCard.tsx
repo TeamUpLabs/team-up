@@ -13,9 +13,12 @@ import {
 } from "flowbite-react-icons/outline";
 import { useTheme } from "@/contexts/ThemeContext";
 import Link from "next/link";
+import { useState } from "react";
+import IssueToMilestoneModal from "@/components/project/github/issue/IssueToMilestoneModal";
 
 export default function IssueCard({ issueData }: { issueData: IssueData }) {
   const { isDark } = useTheme();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div
@@ -81,14 +84,15 @@ export default function IssueCard({ issueData }: { issueData: IssueData }) {
         </div>
       </div>
       <button
-        onClick={() => {
-          console.log(issueData);
-        }}
+        onClick={() => setIsModalOpen(true)}
         className="flex flex-shrink-0 items-center gap-2 font-semibold border border-component-border p-2 text-xs md:text-sm rounded-md hover:bg-component-secondary-background cursor-pointer"
       >
         <Flag className="w-5 h-5" />
         마일스톤 변환
       </button>
+      {isModalOpen && (
+        <IssueToMilestoneModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} issueData={issueData} />
+      )}
     </div>
   );
 }
