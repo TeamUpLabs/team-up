@@ -194,6 +194,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       } catch (error) {
         console.error("Error deleting task:", error);
         useAuthStore.getState().setAlert("작업 삭제에 실패했습니다.", "error");
+      } finally {
+        setIsEditing("none");
+        setSubmitStatus('idle');
       }
     });
   };
