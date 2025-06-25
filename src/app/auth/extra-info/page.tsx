@@ -11,8 +11,13 @@ import { getCurrentKoreanTimeDate, getCurrentKoreanTime } from "@/utils/dateUtil
 
 const ExtraInfoPage = () => {
   const router = useRouter();
-  const url = new URL(window.location.href);
-  const social = url.searchParams.get("social");
+  const [social, setSocial] = useState<string | null>(null);
+
+  useEffect(() => {
+    // This code runs only on the client side
+    const url = new URL(window.location.href);
+    setSocial(url.searchParams.get("social"));
+  }, []);
 
   const [partialUser, setPartialUser] = useState({
     name: "",
