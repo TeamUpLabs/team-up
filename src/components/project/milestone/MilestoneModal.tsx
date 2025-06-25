@@ -212,33 +212,37 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     const subtasks = detectSubtasks(description);
 
     useAuthStore.getState().setConfirm(`하위 작업을 생성하시겠습니까? \n\n 하위 작업은 마일스톤의 시작일과 종료일, 우선순위, 태그, 할당자, 상태를 따라갑니다.`, async () => {
-      if (project?.id) {
-        try {
-          useAuthStore.getState().setAlert("진행중입니다. 잠시만 기다려주세요.", "info");
-          await Promise.all(subtasks.map(async (subtask) => {
-            await createTask(project?.id, {
-              project_id: project?.id,
-              title: subtask.text,
-              description: "",
-              status: milestoneData.status,
-              startDate: milestoneData.startDate || "",
-              endDate: milestoneData.endDate || "",
-              assignee_id: milestoneData.assignee.map(a => a.id),
-              tags: milestoneData.tags,
-              priority: milestoneData.priority,
-              subtasks: [],
-              milestone_id: milestoneData.id,
-              createdBy: useAuthStore.getState().user?.id || 0,
-              updatedBy: useAuthStore.getState().user?.id || 0,
-            });
-          }));
-        } catch (error) {
-          console.error("Error creating subtasks:", error);
-          useAuthStore.getState().setAlert("하위 작업 생성에 실패했습니다.", "error");
-        } finally {
-          useAuthStore.getState().setAlert("하위 작업이 성공적으로 생성되었습니다.", "success");
-          useAuthStore.getState().clearConfirm();
+      if (subtasks.length !== 0) {
+        if (project?.id) {
+          try {
+            useAuthStore.getState().setAlert("진행중입니다. 잠시만 기다려주세요.", "info");
+            await Promise.all(subtasks.map(async (subtask) => {
+              await createTask(project?.id, {
+                project_id: project?.id,
+                title: subtask.text,
+                description: "",
+                status: milestoneData.status,
+                startDate: milestoneData.startDate || "",
+                endDate: milestoneData.endDate || "",
+                assignee_id: milestoneData.assignee.map(a => a.id),
+                tags: milestoneData.tags,
+                priority: milestoneData.priority,
+                subtasks: [],
+                milestone_id: milestoneData.id,
+                createdBy: useAuthStore.getState().user?.id || 0,
+                updatedBy: useAuthStore.getState().user?.id || 0,
+              });
+            }));
+          } catch (error) {
+            console.error("Error creating subtasks:", error);
+            useAuthStore.getState().setAlert("하위 작업 생성에 실패했습니다.", "error");
+          } finally {
+            useAuthStore.getState().setAlert("하위 작업이 성공적으로 생성되었습니다.", "success");
+            useAuthStore.getState().clearConfirm();
+          }
         }
+      } else {
+        useAuthStore.getState().setAlert("생성할 하위 작업이 없습니다. 마일스톤의 설명에 하위 작업을 추가해주세요.", "info");
       }
     });
   };
