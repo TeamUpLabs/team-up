@@ -1,6 +1,6 @@
 "use client";
 
-import type React from "react";
+import React from 'react';
 import { useState, useRef, useEffect, useCallback } from "react";
 import { faChevronDown, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,6 +15,8 @@ export interface SelectOption {
 }
 
 interface SelectProps {
+  label?: string;
+  isRequired?: boolean;
   options: SelectOption[];
   value?: string | string[];
   onChange: (value: string | string[]) => void;
@@ -33,6 +35,8 @@ interface SelectProps {
 }
 
 export default function Select({
+  label,
+  isRequired,
   options,
   value,
   onChange,
@@ -242,117 +246,138 @@ export default function Select({
     return selectedOption ? selectedOption.label : placeholder
   }
 
+  const generatedId = React.useId();
+  const inputId = generatedId;
+
   return (
-    <div ref={selectRef} className={`relative ${badgeColors[color as BadgeColor]} ${className}`} onKeyDown={handleKeyDown} tabIndex={disabled ? -1 : 0}>
-      {/* Select 버튼 */}
-      <button
-        type="button"
-        onClick={() => !disabled && setIsOpen(!isOpen)}
-        disabled={disabled}
-        className={`
+    <div className="w-full">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-medium leading-6 text-text-primary mb-1"
+      >
+        {label}
+        {isRequired && <span className="text-point-color-purple ml-1">*</span>}
+      </label>
+      <div
+        ref={selectRef}
+        className={`relative ${badgeColors[color as BadgeColor]} 
+      bg-input-background px-3 py-2 border border-input-border rounded-md
+      text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo 
+      focus:border-transparent transition-all duration-200 hover:border-input-border-hover
+      ${className}`}
+        onKeyDown={handleKeyDown}
+        tabIndex={disabled ? -1 : 0}
+      >
+        {/* Select 버튼 */}
+        <button
+          type="button"
+          onClick={() => !disabled && setIsOpen(!isOpen)}
+          disabled={disabled}
+          className={`
           w-full focus:outline-none focus:ring-0 text-left text-text-secondary
           ${disabled ? "bg-gray-100 cursor-not-allowed" : "hover:border-gray-400 cursor-pointer"}
         `}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex-1 min-w-0 text-sm">{renderDisplayValue()}</div>
-          <div className="flex items-center gap-2">
-            {clearable && selectedValues.length > 0 && (
-              <button type="button" onClick={handleClear} className="hover:bg-component-background rounded-full p-1">
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-            )}
-            <FontAwesomeIcon icon={faChevronDown} size="sm" className={`ml-2 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex-1 min-w-0 text-sm">{renderDisplayValue()}</div>
+            <div className="flex items-center gap-2">
+              {clearable && selectedValues.length > 0 && (
+                <button type="button" onClick={handleClear} className="hover:bg-component-background rounded-full p-1">
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+              )}
+              <FontAwesomeIcon icon={faChevronDown} size="sm" className={`ml-2 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+            </div>
           </div>
-        </div>
-      </button>
+        </button>
 
-      {/* 드롭다운 옵션들 */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scaleY: 0.95, y: -4 }}
-            animate={{ opacity: 1, scaleY: 1, y: 0 }}
-            exit={{ opacity: 0, scaleY: 0.95, y: -4 }}
-            transition={{ duration: 0.1, ease: "easeOut" }}
-            className={`absolute z-50 w-max mt-3 bg-component-background border border-component-border rounded-md shadow-lg ${(() => {
-              if (dropdownAlign === 'center') return 'left-1/2 -translate-x-1/2';
-              if (dropdownAlign === 'end') return 'right-0';
-              return 'left-0';
-            })()} ${dropDownClassName}`}
-            style={{ maxHeight: `${maxHeight}px` }}
-          >
-            {searchable && (
-              <div className="p-2 border-b border-component-border">
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="검색..."
-                  className="w-full px-2 py-1 border border-component-border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            )}
-
-            <div
-              ref={optionsRef}
-              className="max-h-60 overflow-auto divide-y divide-component-border"
+        {/* 드롭다운 옵션들 */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, scaleY: 0.95, y: -4 }}
+              animate={{ opacity: 1, scaleY: 1, y: 0 }}
+              exit={{ opacity: 0, scaleY: 0.95, y: -4 }}
+              transition={{ duration: 0.1, ease: "easeOut" }}
+              className={`absolute z-50 w-max mt-3 bg-component-background border border-component-border rounded-md shadow-lg ${(() => {
+                if (dropdownAlign === 'center') return 'left-1/2 -translate-x-1/2';
+                if (dropdownAlign === 'end') return 'right-0';
+                return 'left-0';
+              })()} ${dropDownClassName}`}
               style={{ maxHeight: `${maxHeight}px` }}
-              role="listbox"
             >
-              {filteredOptions.length === 0 ? (
-                <div className="px-3 py-2 text-text-secondary text-center">검색 결과가 없습니다</div>
-              ) : (
-                filteredOptions.map((option, index) => {
-                  const isSelected = selectedValues.includes(option.value)
-                  const isFocused = index === focusedIndex
+              {searchable && (
+                <div className="p-2 border-b border-component-border">
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="검색..."
+                    className="w-full px-2 py-1 border border-component-border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              )}
 
-                  let itemRoundedClass = "";
-                  if (filteredOptions.length > 0) {
-                    if (filteredOptions.length === 1) {
-                      itemRoundedClass = "rounded-md";
-                    } else {
-                      if (index === 0) {
-                        itemRoundedClass = "rounded-t-md";
-                      } else if (index === filteredOptions.length - 1) {
-                        itemRoundedClass = "rounded-b-md";
+              <div
+                ref={optionsRef}
+                className="max-h-60 overflow-auto divide-y divide-component-border"
+                style={{ maxHeight: `${maxHeight}px` }}
+                role="listbox"
+              >
+                {filteredOptions.length === 0 ? (
+                  <div className="px-3 py-2 text-text-secondary text-center">검색 결과가 없습니다</div>
+                ) : (
+                  filteredOptions.map((option, index) => {
+                    const isSelected = selectedValues.includes(option.value)
+                    const isFocused = index === focusedIndex
+
+                    let itemRoundedClass = "";
+                    if (filteredOptions.length > 0) {
+                      if (filteredOptions.length === 1) {
+                        itemRoundedClass = "rounded-md";
+                      } else {
+                        if (index === 0) {
+                          itemRoundedClass = "rounded-t-md";
+                        } else if (index === filteredOptions.length - 1) {
+                          itemRoundedClass = "rounded-b-md";
+                        }
                       }
                     }
-                  }
 
-                  return (
-                    <div
-                      key={option.value}
-                      onClick={() => handleOptionSelect(option)}
-                      className={`
+                    return (
+                      <div
+                        key={option.value}
+                        onClick={() => handleOptionSelect(option)}
+                        className={`
                       px-3 py-2 cursor-pointer text-sm
                       ${option.disabled ? "text-text-secondary cursor-not-allowed" : "hover:bg-component-secondary-background"}
                       ${isSelected ? "bg-component-secondary-background text-text-primary" : "bg-transparent text-text-primary"}
                       ${isFocused ? "bg-component-secondary-background" : ""}
                       ${itemRoundedClass}
                     `}
-                      role="option"
-                      aria-selected={isSelected}
-                    >
-                      {renderOption ? (
-                        renderOption(option, isSelected)
-                      ) : (
-                        <div className="flex items-center gap-2 justify-between">
-                          <span className="text-text-primary">{option.label}</span>
-                          {isSelected && <FontAwesomeIcon icon={faCheck} />}
-                        </div>
-                      )}
-                    </div>
-                  )
-                })
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                        role="option"
+                        aria-selected={isSelected}
+                      >
+                        {renderOption ? (
+                          renderOption(option, isSelected)
+                        ) : (
+                          <div className="flex items-center gap-2 justify-between">
+                            <span className="text-text-primary">{option.label}</span>
+                            {isSelected && <FontAwesomeIcon icon={faCheck} />}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   )
 }
