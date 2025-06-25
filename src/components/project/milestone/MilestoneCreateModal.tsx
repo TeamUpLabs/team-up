@@ -19,6 +19,7 @@ import AssigneeSelect from "@/components/project/AssigneeSelect";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
 import { useTheme } from "@/contexts/ThemeContext";
+import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -141,30 +142,6 @@ export default function MilestoneCreateModal({
     if (name === "priority") {
       setPriorityError(false);
     }
-  };
-
-  // Helper to format Date to YYYY-MM-DD string
-  const formatDateToString = (date: Date | undefined): string => {
-    if (!date) return "";
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
-  // Helper to parse YYYY-MM-DD string to Date object (local timezone)
-  const parseStringToDate = (dateString: string): Date | undefined => {
-    if (!dateString) return undefined;
-    const parts = dateString.split("-");
-    if (parts.length === 3) {
-      const year = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed for Date constructor
-      const day = parseInt(parts[2], 10);
-      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
-        return new Date(year, month, day); // Interprets as local date
-      }
-    }
-    return undefined;
   };
 
   const handleStartDateChange = (date: Date | undefined) => {
