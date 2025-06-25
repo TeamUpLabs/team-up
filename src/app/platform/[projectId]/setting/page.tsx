@@ -5,7 +5,6 @@ import { useProject } from "@/contexts/ProjectContext";
 import { useState } from "react";
 import GeneralSettingTab from "@/components/project/setting/GeneralSettingTab";
 import TeamSettingTab from "@/components/project/setting/TeamSettingTab";
-import NotificationsSettingTab from "@/components/project/setting/NotificationsSettingTab";
 import DangerSettingTab from "@/components/project/setting/DangerSettingTab";
 
 export default function SettingsPage() {
@@ -54,14 +53,6 @@ export default function SettingsPage() {
             </span>
           )}
         </button>
-        <button
-          onClick={() => setActiveTab("notifications")}
-          className={`px-4 py-2 font-medium ${
-            activeTab === "notifications" ? "text-blue-500 border-b-2 border-blue-500" : "text-text-secondary"
-          }`}
-        >
-          알림
-        </button>
         {isLeader && (
           <button
             onClick={() => setActiveTab("danger")}
@@ -80,10 +71,6 @@ export default function SettingsPage() {
 
       {activeTab === "team" && project && (
         <TeamSettingTab project={project} />
-      )}
-
-      {activeTab === "notifications" && (
-        <NotificationsSettingTab />
       )}
 
       {activeTab === "danger" && isLeader && (
