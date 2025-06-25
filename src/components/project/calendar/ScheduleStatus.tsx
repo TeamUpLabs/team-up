@@ -14,7 +14,7 @@ export default function ScheduleStatus({ tasks, meetings, events }: ScheduleStat
       <h3 className="text-lg font-semibold text-text-primary mb-4">일정 현황</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {['meeting', 'event', 'task'].map((schedule) => (
-          <div key={schedule} className={`p-4 rounded-lg border border-component-border ${getScheduleColor(schedule)}`}>
+          <div key={schedule} className={`p-4 rounded-lg border ${getScheduleColor(schedule)}`}>
             <h4 className="font-medium capitalize mb-2">
               {schedule === 'meeting' ? '회의' : schedule === 'event' ? '이벤트' : schedule === 'task' ? '작업' : ''}
             </h4>

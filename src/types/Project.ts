@@ -25,4 +25,5 @@ export interface Project {
   participationRequestMembers: Member[];
   schedules: Schedule[];
   channels: Channel[];
+  github_repo_url: string;
 }

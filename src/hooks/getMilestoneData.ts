@@ -6,7 +6,7 @@ interface MilestoneFormData {
   title: string;
   description: string;
   startDate: string;
-  endDate: string;
+  endDate?: string;
   status: string;
   priority: string;
   tags: string[];

@@ -1,11 +1,10 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useProject } from '@/contexts/ProjectContext';
-import { MileStone } from '@/types/MileStone';
 import TaskCreateModal from '@/components/project/task/TaskCreateModal';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/ui/Badge';
 import CancelBtn from '@/components/ui/button/CancelBtn';
-
+import { Flag } from 'flowbite-react-icons/outline';
 
 interface SelectMilestoneModalProps {
   isOpen: boolean;
@@ -15,7 +14,7 @@ interface SelectMilestoneModalProps {
 export default function SelectMilestoneModal({ isOpen, onClose }: SelectMilestoneModalProps) {
   const { project } = useProject();
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedMilestone, setSelectedMilestone] = useState<MileStone | null>(null);
+  const [selectedMilestone, setSelectedMilestone] = useState<number | null>(null);
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
 
   useEffect(() => {
@@ -25,15 +24,25 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
   }, [project]);
 
   const handleSelectMilestone = () => {
-    if (!selectedMilestone) return;
-    
     setIsCreateTaskModalOpen(true);
     onClose();
   }
 
   const header = (
-    <div className="flex items-center space-x-4">
-      <h2 className="text-xl font-bold text-text-primary">마일스톤 선택</h2>
+    <div className="flex items-center space-x-3">
+      <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
+        <Flag
+          className="text-primary-600 text-lg"
+        />
+      </div>
+      <div>
+        <h3 className="text-xl font-bold text-text-primary">
+          마일스톤 선택
+        </h3>
+        <p className="text-sm text-point-color-indigo mt-0.5">
+          마일스톤을 선택해주세요
+        </p>
+      </div>
     </div>
   );
 
@@ -46,13 +55,8 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
       />
       <button
         type="button"
-        disabled={!selectedMilestone}
         onClick={handleSelectMilestone}
-        className={`px-4 py-2 rounded-lg text-sm ${
-          !selectedMilestone
-            ? "bg-blue-600/50 text-white cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
-        } transition-colors flex items-center active:scale-95`}
+        className="px-4 py-2 rounded-lg text-sm bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors flex items-center active:scale-95"
       >
         선택하기
       </button>
@@ -76,26 +80,43 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
             <span className="text-text-secondary">마일스톤을 불러오는 중...</span>
           </div>
         ) : project?.milestones.length === 0 ? (
-          <div className="py-8 text-center text-text-secondary">
-            <p>마일스톤이 없습니다.</p>
-            <p className="mt-2 text-sm">마일스톤을 생성해주세요.</p>
+          <div
+            onClick={() => setSelectedMilestone(null)}
+            className={`p-4 rounded-lg border ${selectedMilestone === null
+              ? "border-blue-500 bg-blue-500/10"
+              : "border-component-border hover:border-component-border-hover hover:bg-component-secondary-background"
+              } cursor-pointer transition-all`}
+          >
+            <div className="flex justify-between items-center">
+              <h3 className={`font-medium ${selectedMilestone === null ? "text-blue-400" : "text-text-primary"}`}>
+                선택하지 않음
+              </h3>
+              {selectedMilestone === null && (
+                <div className="flex-shrink-0 h-5 w-5 text-blue-500">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              )}
+            </div>
+            <div className="mt-2 text-sm text-text-secondary">마일스톤을 선택하지 않겠습니다.</div>
           </div>
         ) : (
           <div className="grid gap-4">
             {project?.milestones.map((milestone) => (
               <div
                 key={milestone.id}
-                onClick={() => setSelectedMilestone(milestone)}
-                className={`p-4 rounded-lg border ${selectedMilestone === milestone
-                    ? "border-blue-500 bg-blue-500/10"
-                    : "border-component-border hover:border-component-border-hover hover:bg-component-secondary-background"
+                onClick={() => setSelectedMilestone(milestone.id)}
+                className={`p-4 rounded-lg border ${selectedMilestone === milestone.id
+                  ? "border-blue-500 bg-blue-500/10"
+                  : "border-component-border hover:border-component-border-hover hover:bg-component-secondary-background"
                   } cursor-pointer transition-all`}
               >
                 <div className="flex justify-between items-center">
-                  <h3 className={`font-medium ${selectedMilestone === milestone ? "text-blue-400" : "text-text-primary"}`}>
+                  <h3 className={`font-medium ${selectedMilestone === milestone.id ? "text-blue-400" : "text-text-primary"}`}>
                     {milestone.title}
                   </h3>
-                  {selectedMilestone === milestone && (
+                  {selectedMilestone === milestone.id && (
                     <div className="flex-shrink-0 h-5 w-5 text-blue-500">
                       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -111,6 +132,28 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
                 </div>
               </div>
             ))}
+
+            <div
+              onClick={() => setSelectedMilestone(null)}
+              className={`p-4 rounded-lg border ${selectedMilestone === null
+                ? "border-blue-500 bg-blue-500/10"
+                : "border-component-border hover:border-component-border-hover hover:bg-component-secondary-background"
+                } cursor-pointer transition-all`}
+            >
+              <div className="flex justify-between items-center">
+                <h3 className={`font-medium ${selectedMilestone === null ? "text-blue-400" : "text-text-primary"}`}>
+                  선택하지 않음
+                </h3>
+                {selectedMilestone === null && (
+                  <div className="flex-shrink-0 h-5 w-5 text-blue-500">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="mt-2 text-sm text-text-secondary">마일스톤을 선택하지 않겠습니다.</div>
+            </div>
           </div>
         )}
       </ModalTemplete>
@@ -119,7 +162,7 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
         <TaskCreateModal
           isOpen={isCreateTaskModalOpen}
           onClose={() => setIsCreateTaskModalOpen(false)}
-          milestone_id={selectedMilestone?.id ?? null}
+          milestone_id={selectedMilestone ?? null}
         />
       )}
     </>

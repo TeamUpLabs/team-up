@@ -7,6 +7,8 @@ import { useAuthStore } from "@/auth/authStore";
 import { createChannel } from "@/hooks/getChannelData";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import { Input } from "@/components/ui/Input";
+import { TextArea } from "@/components/ui/TextArea";
 
 interface ChannelCreateModalProps {
   isOpen: boolean;
@@ -98,7 +100,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
     <div className="flex items-center space-x-3">
       <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
         <MessageCaption
-          className="text-primary-600 text-lg"
+          className="text-text-primary text-lg"
         />
       </div>
       <div>
@@ -133,48 +135,34 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
       />
     </div>
   )
-  
+
   return (
     <ModalTemplete header={modalHeader} footer={modalFooter} isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col space-y-2">
-          <label
-            className="text-sm font-medium text-text-secondary"
-            htmlFor="channelName"
-          >
-            채널 이름 <span className="text-point-color-purple ml-1">*</span>
-          </label>
-          <div className="flex items-center gap-2">
-            <span className="text-text-secondary font-bold">#</span>
-            <input
-              type="text"
-              id="channelName"
-              name="channelName"
-              value={formData.channelName}
-              onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-              placeholder="채널 이름을 입력하세요"
-              required
-            />
-          </div>
+          <Input
+            type="text"
+            id="channelName"
+            name="channelName"
+            value={formData.channelName}
+            onChange={handleChange}
+            fullWidth
+            placeholder="채널 이름을 입력하세요"
+            startAdornment={<span className="font-semibold">#</span>}
+            label="채널 이름"
+            isRequired
+            className="!pl-8"
+          />
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
-        <div className="flex flex-col space-y-2">
-          <label
-            className="text-sm font-medium text-text-secondary"
-            htmlFor="channelDescription"
-          >
-            채널 설명
-          </label>
-          <textarea
-            id="channelDescription"
-            name="channelDescription"
-            value={formData.channelDescription}
-            onChange={handleChange}
-            className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-            placeholder="채널 설명을 입력하세요"
-          />
-        </div>
+        <TextArea
+          id="channelDescription"
+          name="channelDescription"
+          value={formData.channelDescription}
+          onChange={handleChange}
+          placeholder="채널 설명을 입력하세요"
+          label="채널 설명"
+        />
         <div className="flex flex-col space-y-2">
           <div className="flex items-center justify-between p-4 bg-component-secondary-background rounded-lg border border-component-border transition-all hover:border-component-border-hover">
             <div>

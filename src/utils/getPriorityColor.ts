@@ -10,8 +10,8 @@ export const getPriorityColor = (priority: string) => {
 export const getPriorityColorName = (priority: string) => {
   switch (priority) {
     case 'high': return 'red';
-    case 'medium': return 'yellow';
-    case 'low': return 'green';
+    case 'medium': return 'violet';
+    case 'low': return 'cyan';
     default: return 'gray';
   }
 };

@@ -61,7 +61,7 @@ export default function AssigneeSelect({
           {label} : {selectedAssignee.length > 0 ? `${selectedAssignee.length}명` : "없음"}
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className={`grid ${assignee.length >= 2 ? "grid-cols-2" : "grid-cols-1"} gap-4`}>
         {assignee.map((member) => {
           const roleInfo = getRoleInfo(member.id);
           const statusInfo = getStatusInfo(member.status);

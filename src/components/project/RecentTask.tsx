@@ -1,16 +1,19 @@
 import { useProject } from '@/contexts/ProjectContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCommentDots } from '@fortawesome/free-solid-svg-icons';
-import { getPriorityColor } from '@/utils/getPriorityColor';
+import { getPriorityColorName } from '@/utils/getPriorityColor';
 import Image from 'next/image';
 import { Task } from '@/types/Task';
 import { useEffect, useState } from 'react';
 import RecentTaskSkeleton from '@/components/skeleton/RecentTaskSkeleton';
 import Tooltip from '@/components/ui/Tooltip';
+import Badge, { BadgeColor } from '@/components/ui/Badge';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function RecentTask() {
   const { project } = useProject();
   const [isLoading, setIsLoading] = useState(true);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     if (project && project.tasks) {
@@ -36,7 +39,7 @@ export default function RecentTask() {
   }
 
   return (
-    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md border border-component-border">
+    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg border border-component-border">
       <div className="flex items-center justify-between mb-3 sm:mb-4">
         <h2 className="text-lg sm:text-xl font-bold text-text-primary">최근 작업</h2>
       </div>
@@ -46,15 +49,21 @@ export default function RecentTask() {
           <div key={task.id} className="bg-component-secondary-background p-4 rounded-lg border border-component-border flex flex-col justify-between space-y-4">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className={`inline-flex items-center px-3 py-1 rounded-md text-sm font-medium ${getPriorityColor(task.priority)}`}>
-                  <span className={`w-2 h-2 mr-2 rounded-full ${task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-violet-500' : 'bg-cyan-500'}`}></span>
-                  {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                </span>
+                <Badge
+                  content={
+                    <span className='inline-flex items-center'>
+                      <span className={`w-2 h-2 mr-2 rounded-full ${task.priority === 'high' ? 'bg-red-500' : task.priority === 'medium' ? 'bg-violet-500' : 'bg-cyan-500'}`}></span>
+                      {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                    </span>
+                  }
+                  color={getPriorityColorName(task.priority) as BadgeColor}
+                  isDark={isDark}
+                  />
                 <p className="text-sm text-text-secondary">마감일: {task.endDate}</p>
               </div>
-              <h3 className="text-md font-semibold text-text-primary mb-1">{task.title}</h3>
+              <h3 className="text-md font-semibold text-text-primary mb-1">{task.title || '제목 없음'}</h3>
               <p className="text-sm text-text-secondary mb-3 h-10 overflow-hidden text-ellipsis">
-                {task.description || 'No description available. This task focuses on integrating the new API services.'}
+                {task.description || '설명 없음'}
               </p>
             </div>
 

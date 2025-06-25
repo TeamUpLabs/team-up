@@ -2,12 +2,17 @@ import { useState, useEffect } from 'react';
 import { MileStone } from '@/types/MileStone';
 import { useProject } from '@/contexts/ProjectContext';
 import MilestoneCardSkeleton from '@/components/skeleton/MilestoneCardSkeleton';
-import { getStatusColor } from '@/utils/getStatusColor';
+import { getStatusColorName } from '@/utils/getStatusColor';
+import Badge, { BadgeColor } from '@/components/ui/Badge';
+import { useTheme } from '@/contexts/ThemeContext';
+import { isMarkdown } from '@/utils/isMarkdown';
+import { summarizeMarkdown } from '@/utils/summarizeMarkdown';
 
 export default function MileStoneCard() {
   const { project } = useProject();
   const [closestMilestone, setClosestMilestone] = useState<MileStone | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     const getClosestMilestone = async () => {
@@ -19,8 +24,8 @@ export default function MileStoneCard() {
 
         const closest = data
           .filter(milestone => ['in-progress', 'not-started'].includes(milestone.status))
-          .filter(milestone => new Date(milestone.endDate) >= today)
-          .sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime())[0] || null;
+          .filter(milestone => new Date(milestone.endDate || "") >= today)
+          .sort((a, b) => new Date(a.endDate || "").getTime() - new Date(b.endDate || "").getTime())[0] || null;
 
         setClosestMilestone(closest);
       } catch (error) {
@@ -45,7 +50,7 @@ export default function MileStoneCard() {
   }
 
   return (
-    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg shadow-md overflow-x-auto border border-component-border">
+    <div className="col-span-1 sm:col-span-2 bg-component-background p-4 sm:p-6 rounded-lg overflow-x-auto border border-component-border">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-text-primary">다가오는 마일스톤</h2>
       </div>
@@ -54,12 +59,22 @@ export default function MileStoneCard() {
           <div className="bg-component-secondary-background p-3 rounded-lg border border-component-border hover:border-point-color-indigo-hover transition duration-200">
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-xl font-semibold text-text-primary">{closestMilestone?.title}</h3>
-              <span className={`px-3 py-1 rounded-md text-sm ${getStatusColor(closestMilestone?.status ?? '')}`}>
-                {closestMilestone?.status === 'done' ? '완료' :
-                  closestMilestone.status === 'in-progress' ? '진행중' : '시작 전'}
-              </span>
+              <Badge
+                content={
+                  <span className='inline-flex items-center'>
+                    {closestMilestone?.status === 'done' ? '완료' :
+                      closestMilestone.status === 'in-progress' ? '진행중' : '시작 전'}
+                  </span>
+                }
+                color={getStatusColorName(closestMilestone?.status ?? '') as BadgeColor}
+                isDark={isDark}
+              />
             </div>
-            <p className="text-sm text-text-secondary">{closestMilestone.description}</p>
+            {isMarkdown(closestMilestone.description) ? (
+              <p className="text-sm text-text-secondary line-clamp-2">{summarizeMarkdown(closestMilestone.description) || "설명 없음"}</p>
+            ) : (
+              <p className="text-sm text-text-secondary line-clamp-2">{closestMilestone.description || "설명 없음"}</p>
+            )}
             <div className="mt-2 flex items-center">
               <div className="w-full bg-component-tertiary-background rounded-full h-1.5">
                 <div

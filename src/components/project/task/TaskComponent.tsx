@@ -4,14 +4,17 @@ import Tooltip from '@/components/ui/Tooltip';
 import Badge from '@/components/ui/Badge';
 import { Flag } from 'flowbite-react-icons/outline';
 import { getPriorityColorName } from '@/utils/getPriorityColor';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function TaskComponent({ task }: { task: Task }) {
+  const { isDark } = useTheme();
+
   return (
     <div
       onDragStart={(e) => {
         e.dataTransfer.setData('taskId', task?.id.toString() ?? '');
       }}
-      className="p-3 mb-2 bg-component-secondary-background rounded-lg hover:bg-component-secondary-background/60 cursor-move transition-colors border border-component-border"
+      className="p-3 mb-2 bg-component-secondary-background rounded-lg hover:bg-component-tertiary-background cursor-move transition-colors border border-component-border"
       draggable
     >
       <div className="flex flex-col gap-1 font-medium mb-2">
@@ -29,6 +32,7 @@ export default function TaskComponent({ task }: { task: Task }) {
             color={getPriorityColorName(task.priority)}
             isEditable={false}
             className="!rounded-full !px-2 !py-0.5"
+            isDark={isDark}
           />
         </div>
         {task?.description && (

@@ -536,7 +536,6 @@ export default function ProfilePage() {
                       ]}
                       value={profileData.role}
                       onChange={(value) => handleSelectChange("role", value as string)}
-                      className="w-full rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
                     />
                   ) : (
                     <div className="flex items-center gap-2">
@@ -726,7 +725,6 @@ export default function ProfilePage() {
                           ]}
                           value={newSocialLink.name}
                           onChange={(value) => setNewSocialLink(prev => ({ ...prev, name: value as string }))}
-                          className="rounded-md border border-component-border px-3 py-2 bg-component-secondary-background text-text-primary"
                         />
                         <input
                           type="text"

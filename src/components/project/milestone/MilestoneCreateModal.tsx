@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { 
-  AngleLeft, 
-  AngleRight, 
-  InfoCircle, 
-  CalendarWeek, 
-  Flag, 
+import {
+  AngleLeft,
+  AngleRight,
+  InfoCircle,
+  CalendarWeek,
+  Flag,
   Star,
-  Tag, 
-  Users } from "flowbite-react-icons/outline";
+  Tag,
+  Users
+} from "flowbite-react-icons/outline";
 import { useProject } from "@/contexts/ProjectContext";
 import { createMilestone } from "@/hooks/getMilestoneData";
 import { useAuthStore } from "@/auth/authStore";
@@ -17,6 +18,10 @@ import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import { Input } from "@/components/ui/Input";
+import { TextArea } from "@/components/ui/TextArea";
+import { useTheme } from "@/contexts/ThemeContext";
+import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -28,6 +33,7 @@ export default function MilestoneCreateModal({
   onClose,
 }: MilestoneCreateModalProps) {
   const [step, setStep] = useState(1);
+  const { isDark } = useTheme();
 
   const totalSteps = 5
   const progress = (step / totalSteps) * 100
@@ -68,6 +74,12 @@ export default function MilestoneCreateModal({
   const handleSubmit = async () => {
     let hasError = false;
 
+    if (!project?.id) {
+      console.error("Project ID is missing. Cannot create milestone.")
+      useAuthStore.getState().setAlert("프로젝트 정보를 찾을 수 없습니다. 페이지를 새로고침하거나 문제가 지속되면 관리자에게 문의해주세요.", "error")
+      return;
+    }
+
     if (dateError) {
       hasError = true;
     }
@@ -86,18 +98,12 @@ export default function MilestoneCreateModal({
       setPriorityError(false);
     }
 
-    if (hasError) {
-      return;
-    }
-
     if (formData.assignee_id.length === 0) {
       useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "error");
       return;
     }
 
-    if (!project?.id) {
-      console.error("Project ID is missing. Cannot create milestone.")
-      useAuthStore.getState().setAlert("프로젝트 정보를 찾을 수 없습니다. 페이지를 새로고침하거나 문제가 지속되면 관리자에게 문의해주세요.", "error")
+    if (hasError) {
       return;
     }
 
@@ -115,6 +121,10 @@ export default function MilestoneCreateModal({
         console.error(error);
         setSubmitStatus('error');
         useAuthStore.getState().setAlert("마일스톤 생성에 실패했습니다. 관리자에게 문의해주세요.", "error");
+      } finally {
+        setTimeout(() => {
+          setSubmitStatus('idle');
+        }, 1000);
       }
     }
   };
@@ -138,30 +148,6 @@ export default function MilestoneCreateModal({
     if (name === "priority") {
       setPriorityError(false);
     }
-  };
-
-  // Helper to format Date to YYYY-MM-DD string
-  const formatDateToString = (date: Date | undefined): string => {
-    if (!date) return "";
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
-  // Helper to parse YYYY-MM-DD string to Date object (local timezone)
-  const parseStringToDate = (dateString: string): Date | undefined => {
-    if (!dateString) return undefined;
-    const parts = dateString.split("-");
-    if (parts.length === 3) {
-      const year = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed for Date constructor
-      const day = parseInt(parts[2], 10);
-      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
-        return new Date(year, month, day); // Interprets as local date
-      }
-    }
-    return undefined;
   };
 
   const handleStartDateChange = (date: Date | undefined) => {
@@ -244,7 +230,7 @@ export default function MilestoneCreateModal({
     <div className="flex items-center space-x-3">
       <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
         <Flag
-          className="text-primary-600 text-lg"
+          className="text-text-primary text-lg"
         />
       </div>
       <div>
@@ -262,7 +248,7 @@ export default function MilestoneCreateModal({
     <div className="flex justify-between">
       <button
         type="button"
-        className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all"
+        className="flex items-center gap-2 border border-component-border px-4 py-2 rounded-lg cursor-pointer active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         onClick={() => setStep(step - 1)}
         disabled={step === 1}
       >
@@ -324,41 +310,24 @@ export default function MilestoneCreateModal({
                 <h3 className="text-lg font-semibold">Basic Information</h3>
                 <p className="text-text-secondary">Let&apos;s start with the essentials</p>
               </div>
-              <div className="space-y-2">
-                <label
-                  htmlFor="title"
-                  className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                >
-                  마일스톤 이름 <span className="text-point-color-purple ml-1">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-                  placeholder="마일스톤 이름을 입력하세요"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label
-                  htmlFor="description"
-                  className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                >
-                  설명
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows={3}
-                  className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-                  placeholder="마일스톤 설명을 입력하세요"
-                />
-              </div>
+              <Input
+                type="text"
+                label="마일스톤 이름"
+                isRequired
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="마일스톤 이름을 입력하세요"
+              />
+              <TextArea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="마일스톤 설명을 입력하세요"
+                label="마일스톤 설명"
+              />
             </div>
           )}
 
@@ -370,28 +339,18 @@ export default function MilestoneCreateModal({
                 <p className="text-text-secondary">When will this milestone happen?</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
+                <DatePicker
+                  label="시작일"
+                  isRequired
+                  value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                  onChange={handleStartDateChange}
+                  placeholder="시작일 선택"
+                  className="w-full bg-input-background"
+                />
                 <div className="space-y-2">
-                  <label
-                    htmlFor="startDate"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    시작일 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
                   <DatePicker
-                    value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
-                    onChange={handleStartDateChange}
-                    placeholder="시작일 선택"
-                    className="w-full bg-input-background"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="endDate"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    종료일 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
-                  <DatePicker
+                    label="종료일"
+                    isRequired
                     value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
                     onChange={handleEndDateChange}
                     placeholder="종료일 선택"
@@ -417,12 +376,6 @@ export default function MilestoneCreateModal({
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label
-                    htmlFor="status"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    상태 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
                   <Select
                     options={[
                       { name: "status", value: "not-started", label: "준비" },
@@ -431,21 +384,16 @@ export default function MilestoneCreateModal({
                     ]}
                     value={formData.status}
                     onChange={(value) => handleSelectChange("status", value as string)}
-                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     dropDownClassName="!w-full"
                     placeholder="상태를 선택해주세요"
+                    label="상태"
+                    isRequired
                   />
                   {statusError && (
                     <p className="text-red-500 text-sm mt-2">상태를 선택해주세요.</p>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <label
-                    htmlFor="priority"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    우선순위 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
                   <Select
                     options={[
                       { name: "priority", value: "low", label: "낮음" },
@@ -454,9 +402,10 @@ export default function MilestoneCreateModal({
                     ]}
                     value={formData.priority}
                     onChange={(value) => handleSelectChange("priority", value as string)}
-                    className="w-full px-4 py-3 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                     dropDownClassName="!w-full"
                     placeholder="우선순위를 선택해주세요"
+                    label="우선순위"
+                    isRequired
                   />
                   {priorityError && (
                     <p className="text-red-500 text-sm mt-2">
@@ -476,14 +425,9 @@ export default function MilestoneCreateModal({
                 <p className="text-text-secondary">Add tags</p>
               </div>
               <div className="space-y-2">
-                <label
-                  htmlFor="tags"
-                  className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                >
-                  태그
-                </label>
-                <input
+                <Input
                   type="text"
+                  label="태그"
                   id="tags"
                   name="tags"
                   value={tagsInput}
@@ -491,7 +435,7 @@ export default function MilestoneCreateModal({
                   onKeyDown={(e) => handleKeyDown("tags", e)}
                   onCompositionStart={() => setIsComposing(true)}
                   onCompositionEnd={() => setIsComposing(false)}
-                  className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+                  className="w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
                   placeholder="태그를 입력하고 Enter 키를 누르세요"
                 />
 
@@ -503,6 +447,7 @@ export default function MilestoneCreateModal({
                       color="pink"
                       isEditable={true}
                       onRemove={() => handleRemoveTag(tag)}
+                      isDark={isDark}
                     />
                   ))}
                 </div>
@@ -517,13 +462,7 @@ export default function MilestoneCreateModal({
                 <h3 className="text-lg font-semibold">Assignee</h3>
                 <p className="text-text-secondary">Assign this task to a team member</p>
               </div>
-              <div className="space-y-2 px-1">
-                <label
-                  htmlFor="assignee"
-                  className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                >
-                  담당자 <span className="text-point-color-purple ml-1">*</span>
-                </label>
+              <div className="px-1">
                 <AssigneeSelect
                   selectedAssignee={formData.assignee_id}
                   assignee={project?.members || []}

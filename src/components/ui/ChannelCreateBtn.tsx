@@ -1,11 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Plus } from "flowbite-react-icons/outline"
 import ChannelCreateModal from "@/components/project/chat/ChannelCreateModal"
+import { createPortal } from "react-dom"
 
 export default function CreateChannelButton() {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
 
   return (
     <>
@@ -17,7 +24,10 @@ export default function CreateChannelButton() {
         <span className="text-sm">채널 추가</span>
         <Plus className="h-5 w-5" />
       </button>
-      <ChannelCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {mounted && isModalOpen && createPortal(
+        <ChannelCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />,
+        document.body
+      )}
     </>
   )
 }

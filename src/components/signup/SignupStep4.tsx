@@ -17,7 +17,7 @@ interface SignupStep4Props {
   specialties: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBirthDateChange: (type: "year" | "month" | "day", value: string) => void;
-  onWorkingHourChange: (type: "timezone" | "workingStartHour" | "workingEndHour", value: string) => void;
+  onWorkingHourChange: (type: "timezone" | "start" | "end", value: string) => void;
   onLanguageInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSpecialtyInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (type: "language" | "specialty", e: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -220,10 +220,10 @@ export default function SignupStep4({
           </select>
 
           <select
-            name="workingStartHour"
+            name="start"
             className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             value={workingStartHour}
-            onChange={(e) => onWorkingHourChange("workingStartHour", e.target.value)}
+            onChange={(e) => onWorkingHourChange("start", e.target.value)}
             required
           >
             <option value="">시작 시간</option>
@@ -233,10 +233,10 @@ export default function SignupStep4({
           </select>
 
           <select
-            name="workingEndHour"
+            name="end"
             className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
             value={workingEndHour}
-            onChange={(e) => onWorkingHourChange("workingEndHour", e.target.value)}
+            onChange={(e) => onWorkingHourChange("end", e.target.value)}
             required
           >
             <option value="">종료 시간</option>

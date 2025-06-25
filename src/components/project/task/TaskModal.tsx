@@ -23,6 +23,8 @@ import DatePicker from "@/components/ui/DatePicker";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
+import { Input } from "@/components/ui/Input";
+import { useTheme } from "@/contexts/ThemeContext";
 
 
 interface TaskModalProps {
@@ -41,6 +43,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const [newTag, setNewTag] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const { isDark } = useTheme();
 
   // Update taskData when the task prop changes
   useEffect(() => {
@@ -191,6 +194,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       } catch (error) {
         console.error("Error deleting task:", error);
         useAuthStore.getState().setAlert("작업 삭제에 실패했습니다.", "error");
+      } finally {
+        setIsEditing("none");
+        setSubmitStatus('idle');
       }
     });
   };
@@ -293,12 +299,12 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             icon={faBullseye}
           />
           {isEditing === "title" ? (
-            <input
+            <Input
               type="text"
               name="title"
               value={taskData?.title}
               onChange={handleChange}
-              className="text-xl font-semibold py-1 px-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+              className="!text-xl font-semibold !py-1 !px-2"
               placeholder="작업 제목을 입력하세요"
             />
           ) : (
@@ -318,13 +324,24 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           )}
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge
-            content={project?.milestones?.find((milestone) => milestone.id === taskData?.milestone_id)?.title}
-            color="teal"
-            isEditable={false}
-            className="!rounded-full !px-2 !py-0.5 cursor-pointer"
-            onClick={() => handleMilestoneClick(taskData?.milestone_id ?? 0)}
-          />
+          {taskData?.milestone_id ? (
+            <Badge
+              content={project?.milestones?.find((milestone) => milestone.id === taskData?.milestone_id)?.title}
+              color="teal"
+              isEditable={false}
+              className="!rounded-full !px-2 !py-0.5 cursor-pointer"
+              onClick={() => handleMilestoneClick(taskData?.milestone_id ?? 0)}
+              isDark={isDark}
+            />
+          ) : (
+            <Badge
+              content="미등록"
+              color="teal"
+              isEditable={false}
+              className="!rounded-full !px-2 !py-0.5 cursor-pointer"
+              isDark={isDark}
+            />
+          )}
           {isEditing === "status" ? (
             <Select
               options={[
@@ -344,6 +361,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 color={getStatusColorName(taskData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
+                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -379,6 +397,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 color={getPriorityColorName(taskData.priority)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
+                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -454,7 +473,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 name="description"
                 value={taskData.description}
                 onChange={handleChange}
-                className="w-full p-3 rounded-lg m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
+                className="w-full p-3 rounded-md m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
                 placeholder="작업의 설명을 작성하세요"
               />
             ) : (
@@ -489,7 +508,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         icon={CalendarWeek}
       >
         <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2 bg-component-secondary-background border border-component-border p-3 rounded-lg">
+          <div className="space-y-2 bg-component-secondary-background border border-component-border p-3 rounded-md">
             <div className="flex items-center gap-2 group relative">
               <div className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faHourglassStart} color="green" />
@@ -520,7 +539,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               </p>
             )}
           </div>
-          <div className="space-y-2 bg-component-secondary-background border border-component-border p-3 rounded-lg">
+          <div className="space-y-2 bg-component-secondary-background border border-component-border p-3 rounded-md">
             <div className="flex items-center gap-2 group relative">
               <div className="flex items-center gap-2">
                 <FontAwesomeIcon icon={faHourglassEnd} color="red" />
@@ -562,7 +581,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         defaultOpen
       >
         <div className="space-y-4">
-          <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
+          <div className="bg-component-secondary-background border border-component-border p-3 rounded-md">
             <div className="flex items-center justify-between">
               <span className="font-medium">Overall Progress</span>
               <span className="text-sm font-medium">{progress}%</span>
@@ -579,7 +598,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 <button
                   type="button"
                   onClick={handleAddSubtask}
-                  className="w-full flex items-center justify-center gap-2 bg-component-tertiary-background hover:bg-component-tertiary-background/60 border border-component-border p-3 rounded-lg text-text-primary transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-component-tertiary-background hover:bg-component-tertiary-background/60 border border-component-border p-3 rounded-md text-text-primary transition-colors"
                 >
                   <FontAwesomeIcon icon={faPlus} />
                   새 하위 작업 추가
@@ -587,7 +606,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               </div>
             ) : (
               taskData.subtasks.map((subtask, index) => (
-                <div key={index} className="flex items-center bg-component-secondary-background border border-component-border p-3 rounded-lg justify-between group relative">
+                <div key={index} className="flex items-center bg-component-secondary-background border border-component-border p-3 rounded-md justify-between group relative">
                   <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
@@ -597,11 +616,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                     />
                     {isEditing === "subtasks" ? (
                       <>
-                        <input
+                        <Input
                           type="text"
                           value={subtask.title}
                           onChange={(e) => handleSubtaskChange(index, e.target.value)}
-                          className="w-full text-sm rounded-lg p-1 text-text-primary border border-component-border focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                          className="!text-sm !p-1"
                         />
                       </>
                     ) : (
@@ -640,7 +659,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               <button
                 type="button"
                 onClick={handleAddSubtask}
-                className="w-full flex items-center justify-center gap-2 bg-component-tertiary-background hover:bg-component-tertiary-background/60 border border-component-border p-3 rounded-lg text-text-primary transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-component-tertiary-background hover:bg-component-tertiary-background/60 border border-component-border p-3 rounded-md text-text-primary transition-colors"
               >
                 <FontAwesomeIcon icon={faPlus} />
                 새 하위 작업 추가
@@ -657,7 +676,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       >
         <div className="space-y-2">
           {isEditing === "assignee" ? (
-            <div className="border border-component-border rounded-lg p-3 bg-component-secondary-background hover:border-component-border-hover transition-all">
+            <div className="border border-component-border rounded-md p-3 bg-component-secondary-background hover:border-component-border-hover transition-all">
               <div className="mb-3">
                 <p className="text-sm text-text-secondary">
                   선택된 담당자:{" "}
@@ -701,7 +720,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                           });
                         }
                       }}
-                      className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-200 ${isSelected
+                      className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all duration-200 ${isSelected
                         ? "bg-purple-500/20 border border-purple-500/50"
                         : "bg-component-tertiary-background border border-component-border hover:bg-component-tertiary-background/60"
                         }`}
@@ -758,7 +777,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-2 border border-component-border rounded-lg p-3 bg-component-secondary-background hover:border-component-border-hover">
+            <div className="flex flex-col gap-2 border border-component-border rounded-md p-3 bg-component-secondary-background hover:border-component-border-hover">
               <div className="flex items-center gap-2 group relative">
                 <p className="text-sm text-text-secondary">
                   담당자:{" "}
@@ -779,7 +798,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 {taskData?.assignee?.map((assi) => (
                   <div
                     key={assi?.id}
-                    className="flex items-center gap-3 p-2 rounded-lg bg-component-tertiary-background border border-component-border transform transition-all duration-300 hover:bg-component-tertiary-background/60 hover:border-point-color-indigo cursor-pointer"
+                    className="flex items-center gap-3 p-2 rounded-md bg-component-tertiary-background border border-component-border transform transition-all duration-300 hover:bg-component-tertiary-background/60 hover:border-point-color-indigo cursor-pointer"
                     onClick={() => handleAssigneeClick(assi?.id ?? 0)}
                   >
                     <div className="relative flex-shrink-0">
@@ -838,10 +857,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   color="pink"
                   isEditable={true}
                   onRemove={() => handleRemoveTag(index)}
+                  isDark={isDark}
                 />
               ))}
               <div className="flex">
-                <input
+                <Input
                   type="text"
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
@@ -849,7 +869,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   onCompositionStart={() => setIsComposing(true)}
                   onCompositionEnd={() => setIsComposing(false)}
                   placeholder="새 태그 추가"
-                  className="px-2 rounded-md bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                  className="h-full"
                 />
               </div>
             </>
@@ -859,7 +879,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 <p className="text-text-secondary">태그가 없습니다.</p>
               ) : (
                 taskData?.tags.map((tag, index) => (
-                  <Badge key={index} content={tag} color="pink" />
+                  <Badge key={index} content={tag} color="pink" isDark={isDark} />
                 ))
               )}
               <FontAwesomeIcon
@@ -885,7 +905,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             taskData?.comments?.map((comment, index) => (
               <div
                 key={index}
-                className="bg-component-secondary-background p-4 rounded-lg border border-component-border hover:border-component-border-hover transition-all duration-200"
+                className="bg-component-secondary-background p-4 rounded-md border border-component-border hover:border-component-border-hover transition-all duration-200"
               >
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 relative border border-component-border rounded-full bg-component-tertiary-background flex items-center justify-center">
@@ -948,7 +968,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               </div>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center py-8 bg-component-secondary-background border border-dashed border-component-border rounded-lg">
+            <div className="flex flex-col items-center justify-center py-8 bg-component-secondary-background border border-dashed border-component-border rounded-md">
               <p className="text-text-secondary mb-1">아직 댓글이 없습니다</p>
               <p className="text-xs text-text-secondary">
                 첫 댓글을 작성해보세요
@@ -976,7 +996,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 <textarea
                   name="comment"
                   placeholder="댓글을 작성하세요..."
-                  className="w-full p-3 rounded-lg bg-component-secondary-background border border-component-border text-text-primary hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent resize-none"
+                  className="w-full p-3 rounded-md bg-component-secondary-background border border-component-border text-text-primary hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent resize-none"
                   rows={3}
                 />
                 <div className="flex justify-end mt-2">

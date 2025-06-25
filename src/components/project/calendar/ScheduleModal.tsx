@@ -26,6 +26,8 @@ import { updateSchedule, deleteSchedule } from "@/hooks/getScheduleData";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
+import { Input } from "@/components/ui/Input";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface ScheduleModalProps {
   schedule: Schedule;
@@ -35,6 +37,7 @@ interface ScheduleModalProps {
 
 export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleModalProps) {
   const user = useAuthStore.getState().user;
+  const { isDark } = useTheme();
   const { project } = useProject();
   const params = useParams();
   const router = useRouter();
@@ -138,12 +141,12 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
         <div className="flex items-center gap-2">
           <FontAwesomeIcon icon={faBullseye} />
           {isEditing === "title" ? (
-            <input
+            <Input
               type="text"
               name="title"
               value={scheduleData?.title}
               onChange={handleChange}
-              className="text-lg font-semibold py-1 px-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+              className="!text-lg !font-semibold !py-1 !px-2"
               placeholder={`${schedule.type === "meeting" ? "회의" : "이벤트"} 제목을 입력하세요`}
             />
           ) : (
@@ -169,6 +172,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
             color="teal"
             isEditable={false}
             className="!rounded-full !px-2 !py-0.5"
+            isDark={isDark}
           />
           {isEditing === "status" ? (
             <Select
@@ -189,6 +193,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                 color={getStatusColorName(scheduleData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
+                isDark={isDark}
               />
               {isUserAssignee && (
                 <FontAwesomeIcon
@@ -263,7 +268,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                 name="description"
                 value={scheduleData.description}
                 onChange={handleChange}
-                className="w-full p-3 rounded-lg m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
+                className="w-full p-3 rounded-md m-auto bg-component-secondary-background border border-component-border text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
                 placeholder="스케줄의 설명을 작성하세요"
               />
             ) : (
@@ -382,13 +387,13 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
               dropdownAlign="start"
             />
           ) : scheduleData.type === "event" && isEditing === "location" ? (
-            <input
+            <Input
               type="text"
               id="where"
               name="where"
               value={scheduleData.where}
               onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
+              className="!px-3 !py-2"
               placeholder="이벤트 장소를 입력해주세요"
               required
             />
@@ -414,6 +419,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                 color="none"
                 isEditable={false}
                 className={`!p-0 w-fit`}
+                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -428,11 +434,11 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
           {isEditing === "link" ? (
             <div className="flex items-center gap-2">
               <LinkIcon className="text-text-secondary" />
-              <input
+              <Input
                 type="url"
                 value={scheduleData.link}
                 onChange={(e) => handleSelectChange("link", e.target.value)}
-                className="w-full border border-component-border rounded-lg p-2 focus:outline-none focus:border-component-border-hover"
+                className="!px-2 !py-1"
                 placeholder="링크를 입력해주세요"
               />
             </div>

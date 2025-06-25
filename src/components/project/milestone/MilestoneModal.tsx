@@ -8,17 +8,28 @@ import { faBullseye, faPencil, faCheck, faHourglassStart, faHourglassEnd, faUser
 import { useAuthStore } from "@/auth/authStore";
 import { useParams, useRouter } from "next/navigation";
 import { useProject } from "@/contexts/ProjectContext";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Badge from "@/components/ui/Badge";
 import { Flag, InfoCircle, CalendarWeek, FileCheck, User, Tag } from "flowbite-react-icons/outline";
 import Accordion from "@/components/ui/Accordion";
 import { updateMilestone, deleteMilestone } from "@/hooks/getMilestoneData";
+import { createTask } from "@/hooks/getTaskData";
 import Select from "@/components/ui/Select";
 import { getStatusColorName } from "@/utils/getStatusColor";
 import { getPriorityColorName } from "@/utils/getPriorityColor";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
+import { Input } from "@/components/ui/Input";
+import DatePicker from "@/components/ui/DatePicker";
+import { detectSubtasks } from "@/utils/detectSubtask";
+import { useTheme } from "@/contexts/ThemeContext";
+import { isMarkdown } from "@/utils/isMarkdown";
+import MarkdownEditor from "@/components/ui/MarkdownEditor";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
+import 'highlight.js/styles/github.css'; // 코드 하이라이트 스타일
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -36,6 +47,16 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const [newTag, setNewTag] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const { isDark } = useTheme();
+
+  const handleDescriptionChange = useCallback((value: string) => {
+    setMilestoneData((prev) => {
+      if (prev.description === value) {
+        return prev;
+      }
+      return { ...prev, description: value };
+    });
+  }, []);
 
   if (!isOpen) return null;
 
@@ -91,6 +112,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const handleSelectChange = (name: string, value: string | string[]) => {
     setMilestoneData(prevData => ({ ...prevData, [name]: value }));
   };
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -168,16 +191,14 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
       useAuthStore.getState().setAlert("마일스톤이 성공적으로 수정되었습니다.", "success");
       setSubmitStatus('success');
       setIsEditing("none");
-      setTimeout(() => {
-        onClose();
-      }, 1000);
     } catch (error) {
       console.error("Error updating milestone:", error);
       setSubmitStatus('error');
       useAuthStore.getState().setAlert("마일스톤 수정에 실패했습니다.", "error");
     } finally {
-      setIsEditing("none");
-      setSubmitStatus('idle');
+      setTimeout(() => {
+        setSubmitStatus('idle');
+      }, 1000);
     }
   };
 
@@ -187,18 +208,57 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
   };
 
+  const AutoGenerateSubtasks = async (description: string) => {
+    const subtasks = detectSubtasks(description);
+
+    useAuthStore.getState().setConfirm(`하위 작업을 생성하시겠습니까? \n\n 하위 작업은 마일스톤의 시작일과 종료일, 우선순위, 태그, 할당자, 상태를 따라갑니다.`, async () => {
+      if (subtasks.length !== 0) {
+        if (project?.id) {
+          try {
+            useAuthStore.getState().setAlert("진행중입니다. 잠시만 기다려주세요.", "info");
+            await Promise.all(subtasks.map(async (subtask) => {
+              await createTask(project?.id, {
+                project_id: project?.id,
+                title: subtask.text,
+                description: "",
+                status: milestoneData.status,
+                startDate: milestoneData.startDate || "",
+                endDate: milestoneData.endDate || "",
+                assignee_id: milestoneData.assignee.map(a => a.id),
+                tags: milestoneData.tags,
+                priority: milestoneData.priority,
+                subtasks: [],
+                milestone_id: milestoneData.id,
+                createdBy: useAuthStore.getState().user?.id || 0,
+                updatedBy: useAuthStore.getState().user?.id || 0,
+              });
+            }));
+          } catch (error) {
+            console.error("Error creating subtasks:", error);
+            useAuthStore.getState().setAlert("하위 작업 생성에 실패했습니다.", "error");
+          } finally {
+            useAuthStore.getState().setAlert("하위 작업이 성공적으로 생성되었습니다.", "success");
+            useAuthStore.getState().clearConfirm();
+          }
+        }
+      } else {
+        useAuthStore.getState().setAlert("생성할 하위 작업이 없습니다. 마일스톤의 설명에 하위 작업을 추가해주세요.", "info");
+      }
+    });
+  };
+
   const modalHeader = (
     <div className="flex items-start justify-between">
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <FontAwesomeIcon icon={faBullseye} />
           {isEditing === "title" ? (
-            <input
+            <Input
               type="text"
               name="title"
               value={milestoneData?.title}
               onChange={handleChange}
-              className="text-xl font-semibold py-1 px-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+              className="!text-xl !font-semibold !py-1 !px-2"
               placeholder="작업 제목을 입력하세요"
             />
           ) : (
@@ -237,6 +297,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 color={getStatusColorName(milestoneData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
+                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -272,6 +333,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 color={getPriorityColorName(milestoneData.priority)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
+                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -344,16 +406,31 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               />
             </div>
             {isEditing === "description" ? (
-              <textarea
-                name="description"
-                value={milestoneData.description}
-                onChange={handleChange}
-                className="w-full p-3 rounded-lg m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
-                placeholder="마일스톤의 설명을 작성하세요"
-              />
+              isMarkdown(milestoneData.description) ? (
+                <MarkdownEditor
+                  value={milestoneData.description}
+                  onChange={handleDescriptionChange}
+                />
+              ) : (
+                <textarea
+                  name="description"
+                  value={milestoneData.description}
+                  onChange={handleChange}
+                  className="w-full p-3 rounded-md m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
+                />
+              )
             ) : (
               milestoneData.description ? (
-                <p className="text-muted-foreground leading-relaxed">{milestoneData.description}</p>
+                isMarkdown(milestoneData.description) ? (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeHighlight]}
+                  >
+                    {milestoneData.description || "마일스톤의 설명이 없습니다."}
+                  </ReactMarkdown>
+                ) : (
+                  <p className="text-muted-foreground leading-relaxed">{milestoneData.description}</p>
+                )
               ) : (
                 <p className="text-text-secondary">마일스톤의 설명이 없습니다.</p>
               )
@@ -399,12 +476,15 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               />
             </div>
             {isEditing === "startDate" ? (
-              <input
-                type="date"
-                name="startDate"
-                value={milestoneData.startDate}
-                onChange={handleChange}
+              <DatePicker
+                value={milestoneData.startDate ? new Date(milestoneData.startDate) : undefined}
+                onChange={(date: Date | undefined) => {
+                  if (date) {
+                    setMilestoneData({ ...milestoneData, startDate: date.toISOString().split("T")[0] });
+                  }
+                }}
                 className="w-full p-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                maxDate={milestoneData.endDate ? new Date(milestoneData.endDate) : undefined}
               />
             ) : (
               <p className="text-sm text-muted-foreground">
@@ -428,12 +508,15 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               />
             </div>
             {isEditing === "endDate" ? (
-              <input
-                type="date"
-                name="endDate"
-                value={milestoneData.endDate}
-                onChange={handleChange}
-                className="w-full p-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+              <DatePicker
+                value={milestoneData.endDate ? new Date(milestoneData.endDate) : undefined}
+                onChange={(date: Date | undefined) => {
+                  if (date) {
+                    setMilestoneData({ ...milestoneData, endDate: date ? date.toISOString().split("T")[0] : undefined });
+                  }
+                }}
+                className="w-full p-2 rounded-md bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                minDate={milestoneData.startDate ? new Date(milestoneData.startDate) : undefined}
               />
             ) : (
               <p className="text-sm text-muted-foreground">
@@ -463,8 +546,16 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
           <div className="space-y-2">
             {milestoneData.subtasks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-6">
+              <div className="flex flex-col items-center justify-center gap-4 text-center">
                 <span className="text-text-secondary">하위 작업이 없습니다.</span>
+                {isMarkdown(milestoneData.description) && (
+                  <button
+                    onClick={() => AutoGenerateSubtasks(milestoneData.description)}
+                    className="w-full bg-point-color-indigo hover:bg-point-color-indigo-hover text-white font-semibold px-4 py-2 rounded-md transition-colors cursor-pointer"
+                  >
+                    ✨ 하위 작업 자동 생성
+                  </button>
+                )}
               </div>
             ) : (
               milestoneData.subtasks.map((subtask) => (
@@ -698,25 +789,25 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                   color="pink"
                   isEditable={true}
                   onRemove={() => handleRemoveTag(index)}
+                  isDark={isDark}
                 />
               ))}
               <div className="flex">
-                <input
-                  type="text"
+                <Input
                   value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTag(e.target.value)}
                   onKeyDown={handleKeyDown}
                   onCompositionStart={() => setIsComposing(true)}
                   onCompositionEnd={() => setIsComposing(false)}
                   placeholder="새 태그 추가"
-                  className="px-2 rounded-md bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                  className="h-full"
                 />
               </div>
             </>
           ) : (
             <div className="flex items-center gap-2 group relative">
               {milestoneData?.tags.map((tag, index) => (
-                <Badge key={index} content={tag} color="pink" />
+                <Badge key={index} content={tag} color="pink" isDark={isDark} />
               ))}
               <FontAwesomeIcon
                 icon={faPencil}

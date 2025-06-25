@@ -19,11 +19,15 @@ import {
 } from "@/hooks/getProjectData";
 import { useAuthStore } from "@/auth/authStore";
 import Image from "next/image";
+import Badge from "@/components/ui/Badge";
+import { useTheme } from "@/contexts/ThemeContext";
+
 interface TeamSettingTabProps {
   project: Project;
 }
 
 export default function TeamSettingTab({ project }: TeamSettingTabProps) {
+  const { isDark } = useTheme();
   const [searchTerm, setSearchTerm] = useState("");
   const [showJoinRequests, setShowJoinRequests] = useState(true);
   const [showRoleModal, setShowRoleModal] = useState(false);
@@ -366,24 +370,36 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                             {member.name}
                           </p>
                           {project.leader && member.id === project.leader.id ? (
-                            <span className="bg-yellow-500/20 text-yellow-500 text-xs px-2 py-0.5 rounded-md">
-                              프로젝트 리더
-                            </span>
+                            <Badge
+                              content="프로젝트 리더"
+                              color="yellow"
+                              isDark={isDark}
+                              className="!text-xs !px-2 !py-0.5"
+                            />
                           ) : Array.isArray(project.manager) &&
                             project.manager.some(
                               (manager) => manager.id === member.id
                             ) ? (
-                            <span className="bg-blue-500/20 text-blue-500 text-xs px-2 py-0.5 rounded-md">
-                              관리자
-                            </span>
+                            <Badge
+                              content="관리자"
+                              color="blue"
+                              isDark={isDark}
+                              className="!text-xs !px-2 !py-0.5"
+                            />
                           ) : (
-                            <span className="bg-green-500/20 text-green-500 text-xs px-2 py-0.5 rounded-md">
-                              멤버
-                            </span>
+                            <Badge
+                              content="멤버"
+                              color="green"
+                              isDark={isDark}
+                              className="!text-xs !px-2 !py-0.5"
+                            />
                           )}
-                          <span className="bg-component-tertiary-background text-text-secondary text-xs px-2 py-0.5 rounded-md">
-                            {member.role}
-                          </span>
+                          <Badge
+                            content={member.role}
+                            color="cyan"
+                            isDark={isDark}
+                            className="!text-xs !px-2 !py-0.5"
+                          />
                         </div>
                         <p className="text-text-secondary text-xs">
                           {member.email}
