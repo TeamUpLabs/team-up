@@ -1,12 +1,14 @@
 "use client"
 
-import type React from "react"
+import React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import { CalendarMonth, ChevronLeft, ChevronRight } from "flowbite-react-icons/outline"
 
 // 타입 정의
 interface DatePickerProps {
+  label?: string;
+  isRequired?: boolean;
   value?: Date
   onChange?: (date: Date | undefined) => void
   placeholder?: string
@@ -221,6 +223,8 @@ const Calendar = ({
 
 // 메인 DatePicker 컴포넌트
 export default function DatePicker({
+  label,
+  isRequired,
   value,
   onChange,
   placeholder = "날짜를 선택하세요",
@@ -308,8 +312,20 @@ export default function DatePicker({
     }
   }
 
+  const generatedId = React.useId();
+  const inputId = generatedId;
+
   return (
     <div className={`relative`} ref={containerRef}>
+      {label && (
+        <label
+          htmlFor={inputId}
+          className="block text-sm font-medium leading-6 text-text-primary mb-1"
+        >
+          {label}
+          {isRequired && <span className="text-point-color-purple ml-1">*</span>}
+        </label>
+      )}
       <button
         type="button"
         ref={buttonRef}
@@ -317,8 +333,8 @@ export default function DatePicker({
         onKeyDown={handleButtonKeyDown}
         disabled={disabled}
         className={`
-          w-full flex items-center justify-start px-3 py-2 text-left border border-input-border rounded-md bg-component-background 
-          transition-colors focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent ${className}
+          w-full flex items-center justify-start bg-input-background px-3 py-2 text-left border border-input-border rounded-md bg-component-background 
+          transition-colors focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent cursor-pointer ${className}
           ${disabled ? "opacity-50 cursor-not-allowed bg-gray-50" : "hover:border-input-border-hover"}
           ${!value ? "text-text-secondary" : "text-text-primary"}`}
       >
