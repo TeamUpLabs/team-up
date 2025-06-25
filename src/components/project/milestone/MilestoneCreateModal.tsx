@@ -72,6 +72,12 @@ export default function MilestoneCreateModal({
   const handleSubmit = async () => {
     let hasError = false;
 
+    if (!project?.id) {
+      console.error("Project ID is missing. Cannot create milestone.")
+      useAuthStore.getState().setAlert("프로젝트 정보를 찾을 수 없습니다. 페이지를 새로고침하거나 문제가 지속되면 관리자에게 문의해주세요.", "error")
+      return;
+    }
+
     if (dateError) {
       hasError = true;
     }
@@ -90,18 +96,12 @@ export default function MilestoneCreateModal({
       setPriorityError(false);
     }
 
-    if (hasError) {
-      return;
-    }
-
     if (formData.assignee_id.length === 0) {
       useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "error");
       return;
     }
 
-    if (!project?.id) {
-      console.error("Project ID is missing. Cannot create milestone.")
-      useAuthStore.getState().setAlert("프로젝트 정보를 찾을 수 없습니다. 페이지를 새로고침하거나 문제가 지속되면 관리자에게 문의해주세요.", "error")
+    if (hasError) {
       return;
     }
 
