@@ -29,6 +29,7 @@ import AssigneeSelect from "@/components/project/AssigneeSelect";
 import { createSchedule } from "@/hooks/getScheduleData";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
+import { TextArea } from "@/components/ui/TextArea";
 
 type ScheduleType = "meeting" | "event";
 type MeetingPlatform = "Zoom" | "Google Meet" | "TeamUp";
@@ -359,41 +360,26 @@ export default function ScheduleCreateModal({
                   <h3 className="text-lg font-semibold">Basic Information</h3>
                   <p className="text-text-secondary">Type the essentials</p>
                 </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="title"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    일정 이름 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
-                  <Input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    className="!px-3 !py-2"
-                    placeholder="일정 이름을 입력하세요"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="description"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    설명
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={3}
-                    className="resize-none w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-                    placeholder="일정 설명을 입력하세요"
-                  />
-                </div>
+                <Input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  className="!px-3 !py-2"
+                  placeholder="일정 이름을 입력하세요"
+                  label="일정 이름"
+                  isRequired
+                />
+                <TextArea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={3}
+                  placeholder="일정 설명을 입력하세요"
+                  label="설명"
+                />
               </div>
             )}
 
@@ -404,29 +390,17 @@ export default function ScheduleCreateModal({
                   <h3 className="text-lg font-semibold">Date and Time</h3>
                   <p className="text-text-secondary">Select the date and time</p>
                 </div>
+                <DateTimePicker
+                  id="start_time"
+                  name="start_time"
+                  value={formData.start_time}
+                  onChange={handleChange}
+                  label="시작일"
+                  required
+                />
                 <div className="space-y-2">
-                  <label
-                    htmlFor="start_time"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    시작일 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
                   <DateTimePicker
-                    id="start_time"
-                    name="start_time"
-                    value={formData.start_time}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="end_time"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    종료일 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
-                  <DateTimePicker
+                    label="종료일"
                     id="end_time"
                     name="end_time"
                     value={formData.end_time}
@@ -524,9 +498,7 @@ export default function ScheduleCreateModal({
                           </label>
                           <div className="relative">
                             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                              <Link
-                                className="text-text-tertiary text-sm"
-                              />
+                              <Link className="text-text-tertiary text-sm" />
                             </div>
                             <Input
                               type="text"
@@ -548,24 +520,17 @@ export default function ScheduleCreateModal({
                       )}
                     </>
                   ) : (
-                    <>
-                      <label
-                        htmlFor="where"
-                        className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                      >
-                        이벤트 장소 <span className="text-point-color-purple ml-1">*</span>
-                      </label>
-                      <Input
-                        type="text"
-                        id="where"
-                        name="where"
-                        value={formData.where}
-                        onChange={handleChange}
-                        className="!px-3 !py-2"
-                        placeholder="이벤트 장소를 입력해주세요"
-                        required
-                      />
-                    </>
+                    <Input
+                      type="text"
+                      id="where"
+                      name="where"
+                      value={formData.where}
+                      onChange={handleChange}
+                      className="!px-3 !py-2"
+                      placeholder="이벤트 장소를 입력해주세요"
+                      label="이벤트 장소"
+                      isRequired
+                    />
                   )}
                 </div>
               </div>
@@ -578,13 +543,7 @@ export default function ScheduleCreateModal({
                   <h3 className="text-lg font-semibold">Assignee</h3>
                   <p className="text-text-secondary">Assign this task to a team member</p>
                 </div>
-                <div className="space-y-2 px-1">
-                  <label
-                    htmlFor="assignee"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    담당자 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
+                <div className="px-1">
                   <AssigneeSelect
                     selectedAssignee={formData.assignee_id}
                     assignee={project?.members || []}
@@ -603,23 +562,15 @@ export default function ScheduleCreateModal({
                   <h3 className="text-lg font-semibold">Memo</h3>
                   <p className="text-text-secondary">Add a memo</p>
                 </div>
-                <div className="space-y-2 p-1">
-                  <label
-                    htmlFor="memo"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    메모
-                  </label>
-                  <textarea
-                    id="memo"
-                    name="memo"
-                    value={formData.memo}
-                    onChange={handleChange}
-                    rows={3}
-                    className="resize-none w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder-text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-                    placeholder="메모를 입력해주세요"
-                  />
-                </div>
+                <TextArea
+                  id="memo"
+                  name="memo"
+                  value={formData.memo}
+                  onChange={handleChange}
+                  className="!px-3 !py-2"
+                  placeholder="메모를 입력해주세요"
+                  label="메모"
+                />
               </div>
             )}
           </div>

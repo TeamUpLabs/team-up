@@ -35,7 +35,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           rows={3}
           className={cn(
-            'block resize-none w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover',
+            'block resize-none w-full text-sm px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover',
             error ? 'ring-red-500 focus:ring-red-500' : '',
             className,
           )}

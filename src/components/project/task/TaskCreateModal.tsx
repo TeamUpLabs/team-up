@@ -1,14 +1,14 @@
 import ModalTemplete from "@/components/ModalTemplete";
 import { useState, useEffect } from "react";
-import { 
+import {
   ClipboardList,
-  AngleLeft, 
-  AngleRight, 
-  InfoCircle, 
-  CalendarWeek, 
-  Users, 
-  Tag, 
-  FileLines 
+  AngleLeft,
+  AngleRight,
+  InfoCircle,
+  CalendarWeek,
+  Users,
+  Tag,
+  FileLines
 } from "flowbite-react-icons/outline";
 import { CloseCircle } from "flowbite-react-icons/solid";
 import { useProject } from "@/contexts/ProjectContext";
@@ -20,6 +20,7 @@ import Badge from "@/components/ui/Badge";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
+import { TextArea } from "@/components/ui/TextArea";
 import { useTheme } from "@/contexts/ThemeContext";
 
 interface TaskCreateModalProps {
@@ -148,7 +149,7 @@ export default function TaskCreateModal({
     if (project?.id) {
       try {
         setSubmitStatus('submitting');
-        
+
         await createTask(project.id, {
           ...formData,
           project_id: project.id,
@@ -343,41 +344,26 @@ export default function TaskCreateModal({
                   <h3 className="text-lg font-semibold">Basic Information</h3>
                   <p className="text-text-secondary">Let&apos;s start with the essentials</p>
                 </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="title"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    작업 이름 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
-                  <Input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    className="!px-3 !py-2"
-                    placeholder="작업 이름을 입력하세요"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="description"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    설명
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={3}
-                    className="resize-none w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-                    placeholder="작업 설명을 입력하세요"
-                  />
-                </div>
+                <Input
+                  type="text"
+                  label="작업 이름"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  className="!px-3 !py-2"
+                  placeholder="작업 이름을 입력하세요"
+                  isRequired
+                />
+                <TextArea
+                  id="description"
+                  name="description"
+                  label="설명"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={3}
+                  placeholder="작업 설명을 입력하세요"
+                />
               </div>
             )}
 
@@ -390,13 +376,8 @@ export default function TaskCreateModal({
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label
-                      htmlFor="startDate"
-                      className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                    >
-                      시작일 <span className="text-point-color-purple ml-1">*</span>
-                    </label>
                     <DatePicker
+                      label="시작일"
                       value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
                       onChange={handleStartDateChange}
                       placeholder="시작일 선택"
@@ -406,13 +387,8 @@ export default function TaskCreateModal({
                     />
                   </div>
                   <div className="space-y-2">
-                    <label
-                      htmlFor="endDate"
-                      className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                    >
-                      종료일 <span className="text-point-color-purple ml-1">*</span>
-                    </label>
                     <DatePicker
+                      label="종료일"
                       value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
                       onChange={handleEndDateChange}
                       placeholder="종료일 선택"
@@ -438,16 +414,11 @@ export default function TaskCreateModal({
                   <p className="text-text-secondary">Add subtasks to this task</p>
                 </div>
                 <div className="space-y-2">
-                  <label
-                    htmlFor="subtasks"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    하위 작업
-                  </label>
                   <Input
                     type="text"
                     id="subtasks"
                     name="subtasks"
+                    label="하위 작업"
                     value={subtasksInput}
                     onChange={(e) => setSubtasksInput(e.target.value)}
                     onKeyDown={(e) => handleKeyDown("subtasks", e)}
@@ -492,16 +463,11 @@ export default function TaskCreateModal({
                   <p className="text-text-secondary">Add tags and set priority</p>
                 </div>
                 <div className="space-y-2">
-                  <label
-                    htmlFor="tags"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    태그
-                  </label>
                   <Input
                     type="text"
                     id="tags"
                     name="tags"
+                    label="태그"
                     value={tagsInput}
                     onChange={(e) => setTagsInput(e.target.value)}
                     onKeyDown={(e) => handleKeyDown("tags", e)}
@@ -524,25 +490,18 @@ export default function TaskCreateModal({
                     ))}
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label
-                    htmlFor="priority"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    우선순위 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
-                  <Select
-                    options={[
-                      { name: "priority", value: "low", label: "낮음" },
-                      { name: "priority", value: "medium", label: "중간" },
-                      { name: "priority", value: "high", label: "높음" },
-                    ]}
-                    value={formData.priority}
-                    onChange={(value) => handleSelectChange("priority", value as string)}
-                    className="w-full px-3 py-2 rounded-md bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
-                    dropDownClassName="!w-full"
-                  />
-                </div>
+                <Select
+                  options={[
+                    { name: "priority", value: "low", label: "낮음" },
+                    { name: "priority", value: "medium", label: "중간" },
+                    { name: "priority", value: "high", label: "높음" },
+                  ]}
+                  value={formData.priority}
+                  onChange={(value) => handleSelectChange("priority", value as string)}
+                  dropDownClassName="!w-full"
+                  label="우선순위"
+                  isRequired
+                />
               </div>
             )}
 
@@ -553,19 +512,13 @@ export default function TaskCreateModal({
                   <h3 className="text-lg font-semibold">Assignee</h3>
                   <p className="text-text-secondary">Assign this task to a team member</p>
                 </div>
-                <div className="space-y-2 px-1">
-                  <label
-                    htmlFor="assignee"
-                    className="flex items-center text-sm font-medium mb-2 text-text-secondary"
-                  >
-                    담당자 <span className="text-point-color-purple ml-1">*</span>
-                  </label>
+                <div className="px-1">
                   <AssigneeSelect
                     selectedAssignee={formData.assignee_id}
                     assignee={project?.milestones?.find((milestone) => formData.milestone_id === milestone.id)?.assignee || project?.members || []}
                     toggleAssignee={toggleAssignee}
                     isAssigned={isAssigned}
-                    label="선택된 담당자"
+                    label="담당자"
                   />
                 </div>
               </div>
