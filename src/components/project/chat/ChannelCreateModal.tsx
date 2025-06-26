@@ -157,6 +157,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
             label="채널 이름"
             isRequired
             className="!pl-8"
+            autoComplete="off"
           />
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
