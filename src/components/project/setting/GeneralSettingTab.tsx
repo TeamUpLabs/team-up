@@ -75,12 +75,14 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleAddTechItem = () => {
-    if (!newTechItem.trim()) return;
+  const handleAddTechItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedTech = newTechItem.trim();
+    if (!trimmedTech) return;
 
     setFormData(prev => ({
       ...prev,
-      techStack: [...prev.techStack, newTechItem.trim()]
+      techStack: [...prev.techStack, trimmedTech]
     }));
     setNewTechItem("");
   };
@@ -92,12 +94,14 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
     }));
   };
 
-  const handleAddRoleItem = () => {
-    if (!newRoleItem.trim()) return;
+  const handleAddRoleItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedRole = newRoleItem.trim();
+    if (!trimmedRole) return;
 
     setFormData(prev => ({
       ...prev,
-      roles: [...prev.roles, newRoleItem.trim()]
+      roles: [...prev.roles, trimmedRole]
     }));
     setNewRoleItem("");
   };
@@ -109,17 +113,10 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
     }));
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent, addHandler: () => void) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addHandler();
-    }
-  };
-
-  const handleEdit = (name: string) => {
+  const handleEdit = (field: string) => {
     if (project.leader.id === user?.id || project.manager.some(m => m.id === user?.id)) {
-      setIsEditing(name);
-      if (name !== "none") {
+      setIsEditing(field);
+      if (field !== "none") {
         useAuthStore.getState().setAlert("편집 모드로 전환되었습니다.", "info");
       } else {
         useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
@@ -444,24 +441,23 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
 
                 {isEditing === "techStack" && (
                   <div className="mt-3">
-                    <div className="flex">
+                    <form onSubmit={handleAddTechItem} className="flex">
                       <input
                         type="text"
                         value={newTechItem}
                         onChange={(e) => setNewTechItem(e.target.value)}
-                        onKeyDown={(e) => handleKeyDown(e, handleAddTechItem)}
                         placeholder="기술 스택 추가"
                         className="flex-grow bg-input-secondary-background border border-input-secondary-border rounded-l-lg px-4 py-2.5 text-text-primary focus:border-blue-600 focus:ring-1 focus:ring-point-color-indigo outline-none"
                       />
                       <button
-                        onClick={handleAddTechItem}
+                        type="submit"
                         className="bg-blue-600 hover:bg-blue-700 text-white px-4 rounded-r-lg flex items-center"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                         </svg>
                       </button>
-                    </div>
+                    </form>
                   </div>
                 )}
               </div>
@@ -504,24 +500,23 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
 
                 {isEditing === "roles" && (
                   <div className="mt-3">
-                    <div className="flex">
+                    <form onSubmit={handleAddRoleItem} className="flex">
                       <input
                         type="text"
                         value={newRoleItem}
                         onChange={(e) => setNewRoleItem(e.target.value)}
-                        onKeyDown={(e) => handleKeyDown(e, handleAddRoleItem)}
                         placeholder="역할 추가"
                         className="flex-grow bg-input-secondary-background border border-input-secondary-border rounded-l-lg px-4 py-2.5 text-text-primary focus:border-purple-600 focus:ring-1 focus:ring-point-color-indigo outline-none"
                       />
                       <button
-                        onClick={handleAddRoleItem}
+                        type="submit"
                         className="bg-purple-600 hover:bg-purple-700 text-white px-4 rounded-r-lg flex items-center"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                         </svg>
                       </button>
-                    </div>
+                    </form>
                   </div>
                 )}
               </div>
