@@ -6,7 +6,8 @@ import Badge from '@/components/ui/Badge';
 import CancelBtn from '@/components/ui/button/CancelBtn';
 import { Flag } from 'flowbite-react-icons/outline';
 import { isMarkdown } from '@/utils/isMarkdown';
-import MarkdownViewer from '@/components/ui/MarkdownViewer';
+import { summarizeMarkdown } from '@/utils/summarizeMarkdown';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface SelectMilestoneModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface SelectMilestoneModalProps {
 
 export default function SelectMilestoneModal({ isOpen, onClose }: SelectMilestoneModalProps) {
   const { project } = useProject();
+  const { isDark } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMilestone, setSelectedMilestone] = useState<number | null>(null);
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
@@ -128,14 +130,14 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
                 </div>
                 {isMarkdown(milestone.description) ? (
                   <div className="mt-2 text-sm text-text-secondary line-clamp-1">
-                    <MarkdownViewer value={milestone.description || "마일스톤의 설명이 없습니다."} />
+                    {summarizeMarkdown(milestone.description || "마일스톤의 설명이 없습니다.")}
                   </div>
                 ) : (
                   <p className="text-text-secondary leading-relaxed line-clamp-1">{milestone.description}</p>
                 )}
                 <div className="mt-3 flex flex-wrap gap-2">
                   {milestone.tags.map((tag, idx) => (
-                    <Badge key={idx} content={tag} color="red" className="text-xs" />
+                    <Badge key={idx} content={tag} color="red" className="text-xs" isDark={isDark} />
                   ))}
                 </div>
               </div>
