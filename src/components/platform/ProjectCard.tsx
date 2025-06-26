@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useAuthStore } from "@/auth/authStore";
 import { sendParticipationRequest, cancelParticipationRequest } from "@/hooks/getMemberData";
 import Badge from "@/components/ui/Badge";
+import { useTheme } from "@/contexts/ThemeContext";
+
 interface ProjectCardProps {
   project: Project;
   isExplore?: boolean;
@@ -11,6 +13,7 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
   const user = useAuthStore((state) => state.user);
+  const { isDark } = useTheme();
 
   return (
     <div className="bg-component-background rounded-lg shadow-md p-6 border border-component-border hover:border-point-color-indigo transition-colors duration-200">
@@ -24,7 +27,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
       <p className="text-text-secondary mb-4 line-clamp-2 min-h-[3rem]">{project.description}</p>
       <div className="flex items-center space-x-2 mb-4">
         {project.roles.map((role, index) => (
-          <Badge key={index} content={role} color="purple" />
+          <Badge key={index} content={role} color="purple" isDark={isDark} />
         ))}
       </div>
       <div className="flex items-center justify-between">
