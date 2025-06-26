@@ -41,7 +41,7 @@ export const useAuthStore = create<AuthState>()(
       clearAlert: () => set({ alert: null }),
       clearConfirm: () => set({ confirm: null }),
       clearNotificationAlert: () => set({ notificationAlert: null }),
-      logout: () => set({ token: null, user: null }),
+      logout: () => set({ token: null, user: null, alert: null, confirm: null, notificationAlert: null }),
       isAuthenticated: () => {
         const state = get();
         return !!state.token;
