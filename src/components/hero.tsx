@@ -3,10 +3,15 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useAuthStore } from "@/auth/authStore"
+import { ArrowRight } from "flowbite-react-icons/outline"
+import { Zap } from "lucide-react";
+import Badge from "@/components/ui/Badge"
+import { useTheme } from "@/contexts/ThemeContext"
 
 export default function Hero() {
   const [isClient, setIsClient] = useState(false)
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const { isDark } = useTheme();
 
   useEffect(() => {
     setIsClient(true)
@@ -14,22 +19,51 @@ export default function Hero() {
 
   return (
     <section className="pt-36 pb-28 px-6 relative overflow-hidden">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight tracking-tight">
-          개발자 <span className="text-purple-400 bg-point-color-purple bg-clip-text text-transparent">커뮤니티</span>의 <span className="text-green-400 bg-point-color-green bg-clip-text text-transparent">새로운 시작</span>
+      <div className="max-w-7xl mx-auto px-6 py-10 text-center relative">
+        <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
+          <span className="text-text-primary">개발자 </span>
+          <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-green-400 bg-clip-text text-transparent">
+            커뮤니티의
+          </span>
+          <br />
+          <span className="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+            새로운 시작
+          </span>
         </h1>
-        <p className="text-xl text-text-secondary-color mb-12 max-w-2xl leading-relaxed">
-          TeamUp은 개발자들이 함께 성장하고 협업하는 신뢰 기반 플랫폼입니다.
+        <p className="text-xl font-semibold md:text-2xl text-text-primary mb-12 max-w-4xl mx-auto leading-relaxed">
+          TeamUp은 개발자들이 함께 성장하고 협업하는 신뢰 기반 플랫폼입니다. <br />
           코드를 공유하고, 지식을 나누며, 함께 미래를 만들어갑니다.
         </p>
-        <div className="flex flex-wrap gap-5">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           {isClient && !isAuthenticated() && (
-            <Link href="/signin" className="bg-point-color-purple px-8 py-3.5 rounded-md text-white font-medium hover:bg-point-color-purple-hover transition-all duration-300">
-              가입하기
+            <Link href="/signin" className="flex w-full sm:w-fit justify-center group">
+              <Badge
+                content={
+                  <span className="flex items-center gap-2 font-semibold">
+                    <Zap className="w-5 h-5" />
+                    지금 시작하기
+                  </span>
+                }
+                color="purple"
+                className="!px-10 !py-3 flex !w-full sm:!w-fit !justify-center"
+                isDark={isDark}
+                isHover
+              />
             </Link>
           )}
-          <Link href="/about" className="bg-transparent border border-component-border px-8 py-3.5 rounded-md text-text-secondary-color font-medium hover:bg-white/5 transition-colors">
-            더 알아보기
+          <Link href="/about" className="flex w-full sm:w-fit justify-center group">
+            <Badge
+              content={
+                <span className="flex items-center gap-2 font-semibold">
+                  더 알아보기
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </span>
+              }
+              color="indigo"
+              className="!px-10 !py-3 flex !w-full sm:!w-fit !justify-center"
+              isDark={isDark}
+              isHover
+            />
           </Link>
         </div>
       </div>
