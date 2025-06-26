@@ -54,20 +54,20 @@ export default function Stats() {
         <section className="py-16">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-point-color-purple mb-2">{counts.developers >= targets.current.developers ? `${counts.developers/1000}K+` : counts.developers}</p>
+            <div className="text-center group">
+              <p className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300 cursor-default">{counts.developers >= targets.current.developers ? `${counts.developers/1000}K+` : counts.developers}</p>
               <p className="text-text-secondary-color text-sm uppercase tracking-wider">개발자</p>
             </div>
-            <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-point-color-green mb-2">{counts.projects >= targets.current.projects ? `${counts.projects}+` : counts.projects}</p>
+            <div className="text-center group">
+              <p className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300 cursor-default">{counts.projects >= targets.current.projects ? `${counts.projects}+` : counts.projects}</p>
               <p className="text-text-secondary-color text-sm uppercase tracking-wider">프로젝트</p>
             </div>
-            <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-point-color-purple mb-2">{counts.mentors >= targets.current.mentors ? `${counts.mentors}+` : counts.mentors}</p>
+            <div className="text-center group">
+              <p className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300 cursor-default">{counts.mentors >= targets.current.mentors ? `${counts.mentors}+` : counts.mentors}</p>
               <p className="text-text-secondary-color text-sm uppercase tracking-wider">멘토</p>
             </div>
-            <div className="text-center">
-              <p className="text-4xl md:text-5xl font-bold text-point-color-green mb-2">{counts.partners >= targets.current.partners ? `${counts.partners}+` : counts.partners}</p>
+            <div className="text-center group">
+              <p className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform duration-300 cursor-default">{counts.partners >= targets.current.partners ? `${counts.partners}+` : counts.partners}</p>
               <p className="text-text-secondary-color text-sm uppercase tracking-wider">기업 파트너</p>
             </div>
           </div>
