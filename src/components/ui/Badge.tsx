@@ -11,9 +11,10 @@ interface BadgeProps {
   onClick?: () => void;
   isDark?: boolean;
   className?: string;
+  isHover?: boolean;
 }
 
-export default function Badge({ content, color, isEditable = false, onRemove, onClick, isDark = false, className }: BadgeProps) {
+export default function Badge({ content, color, isEditable = false, onRemove, onClick, isDark = false, className, isHover = false }: BadgeProps) {
 
   const badgeColors = {
     gray: "bg-gray-100 text-gray-800 border border-gray-300",
@@ -100,7 +101,12 @@ export default function Badge({ content, color, isEditable = false, onRemove, on
   };
 
   return (
-    <span className={`${isDark ? darkBadgeColors[color] : badgeColors[color]} px-3 py-1 rounded-md text-sm ${className}`} onClick={onClick}>
+    <span 
+    className={`${isDark ? darkBadgeColors[color] : badgeColors[color]} 
+    ${isHover ? "transition-all duration-300 hover:scale-105" : ""}
+    px-3 py-1 rounded-md text-sm ${className}`} 
+    onClick={onClick}
+    >
       {content}
       {isEditable && (
         <button
