@@ -52,8 +52,8 @@ export default function Badge({ content, color, isEditable = false, onRemove, on
     emerald: "bg-emerald-800/20 text-emerald-500 border border-emerald-800",
     violet: "bg-violet-800/20 text-violet-500 border border-violet-800",
     cyan: "bg-cyan-800/20 text-cyan-500 border border-cyan-800",
-    black: "bg-black/20 text-white border border-white",
-    white: "bg-white/20 text-white border border-black",
+    black: "bg-black/20 text-white border border-black",
+    white: "bg-white/20 text-white border border-white",
     none: "bg-transparent text-text-primary border border-component-border"
   };
 
