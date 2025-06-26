@@ -18,8 +18,8 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="pt-36 pb-28 px-6 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 py-10 text-center relative">
+    <section className="max-w-7xl mx-auto pt-36 pb-28 px-6 relative overflow-hidden">
+      <div className="mx-auto text-center relative">
         <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
           <span className="text-text-primary">개발자 </span>
           <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-green-400 bg-clip-text text-transparent">
@@ -45,7 +45,7 @@ export default function Hero() {
                   </span>
                 }
                 color="purple"
-                className="!px-10 !py-3 flex !w-full sm:!w-fit !justify-center"
+                className="!px-10 !py-3 !font-semibold flex !w-full sm:!w-fit !justify-center"
                 isDark={isDark}
                 isHover
               />
@@ -60,7 +60,7 @@ export default function Hero() {
                 </span>
               }
               color="indigo"
-              className="!px-10 !py-3 flex !w-full sm:!w-fit !justify-center"
+              className="!px-10 !py-3 !font-semibold flex !w-full sm:!w-fit !justify-center"
               isDark={isDark}
               isHover
             />

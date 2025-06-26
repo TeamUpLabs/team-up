@@ -97,7 +97,7 @@ export default function Events() {
 
       <Link
         href="#"
-        className="flex group mt-12 justify-center"
+        className="flex group mt-12 justify-center w-full sm:w-fit justify-self-center"
       >
         <Badge
           content={
@@ -107,7 +107,7 @@ export default function Events() {
             </span>
           }
           color="fuchsia"
-          className="!px-6 !py-2 flex font-semibold"
+          className="!px-6 !py-2 !font-semibold flex !w-full sm:!w-fit !justify-center"
           isDark={isDark}
           isHover
         />
