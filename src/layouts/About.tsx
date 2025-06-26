@@ -1,6 +1,7 @@
 "use client";
 
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import Badge from "@/components/ui/Badge"
 import { useTheme } from "@/contexts/ThemeContext"
 import Link from "next/link";
@@ -366,6 +367,7 @@ export default function About() {
           </Link>
         </div>
       </section>
+      <Footer />
     </div>
   )
 }
