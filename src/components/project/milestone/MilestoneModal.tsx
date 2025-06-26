@@ -26,10 +26,7 @@ import { detectSubtasks } from "@/utils/detectSubtask";
 import { useTheme } from "@/contexts/ThemeContext";
 import { isMarkdown } from "@/utils/isMarkdown";
 import MarkdownEditor from "@/components/ui/MarkdownEditor";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
-import 'highlight.js/styles/github.css'; // 코드 하이라이트 스타일
+import MarkdownViewer from "@/components/ui/MarkdownViewer";
 
 interface MilestoneModalProps {
   milestone: MileStone;
@@ -422,12 +419,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             ) : (
               milestoneData.description ? (
                 isMarkdown(milestoneData.description) ? (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeHighlight]}
-                  >
-                    {milestoneData.description || "마일스톤의 설명이 없습니다."}
-                  </ReactMarkdown>
+                  <MarkdownViewer value={milestoneData.description || "마일스톤의 설명이 없습니다."} />
                 ) : (
                   <p className="text-muted-foreground leading-relaxed">{milestoneData.description}</p>
                 )
