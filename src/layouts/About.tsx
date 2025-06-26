@@ -206,21 +206,21 @@ export default function About() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <p className="text-lg font-semibold text-text-secondary leading-8">
+            <p className="text-lg font-semibold text-text-primary leading-8">
               많은 협업 도구들이 각기 다른 기능을 제공하지만,{" "}
               <span className="text-purple-400 font-semibold">
                 TeamUp은 협업의 처음부터 끝까지를 하나의 플랫폼 안에서 해결
               </span>
               할 수 있습니다.
             </p>
-            <p className="text-lg font-semibold text-text-secondary leading-8">
+            <p className="text-lg font-semibold text-text-primary leading-8">
               복잡한 설정이나 연동 없이도 빠르게 시작할 수 있으며,{" "}
               <span className="text-green-400 font-semibold">
                 스타트업, 사이드 프로젝트 팀, 오픈소스 커뮤니티 등 다양한 규모의 팀
               </span>
               에 최적화되어 있습니다.
             </p>
-            <p className="text-lg font-semibold text-text-secondary leading-8">
+            <p className="text-lg font-semibold text-text-primary leading-8">
               또, GitHub와의 긴밀한 통합을 통해{" "}
               <span className="text-blue-400 font-semibold">코드 중심의 협업 문화를 강화</span>하며, 실시간 커뮤니케이션
               기능은 원격 팀 환경에서도 높은 생산성을 유지할 수 있게 도와줍니다.
