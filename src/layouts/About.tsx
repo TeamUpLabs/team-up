@@ -136,7 +136,7 @@ export default function About() {
               color="blue"
               content={
                 <span className="flex items-center gap-2 font-semibold">
-                  <Zap className="mr-2 h-5 w-5" />
+                  <Zap className="h-5 w-5" />
                   지금 시작하기
                 </span>
               }
