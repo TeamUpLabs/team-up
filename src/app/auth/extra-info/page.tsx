@@ -15,8 +15,10 @@ const ExtraInfoPage = () => {
 
   useEffect(() => {
     // This code runs only on the client side
-    const url = new URL(window.location.href);
-    setSocial(url.searchParams.get("social"));
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      setSocial(url.searchParams.get("social"));
+    }
   }, []);
 
   const [partialUser, setPartialUser] = useState({
