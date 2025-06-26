@@ -1,68 +1,117 @@
 import eventsData from '../../public/json/events.json';
+import { ArrowRight, Users, MapPin, CalendarMonth } from "flowbite-react-icons/outline"
+import Badge, { BadgeColor } from '@/components/ui/Badge';
+import { useTheme } from '@/contexts/ThemeContext';
+import Link from 'next/link';
 
 interface event {
-    id: number;
-    title: string;
-    description: string;
-    date: string;
-    location: string;
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  participant: number;
 }
 
 export default function Events() {
-    const events: event[] = eventsData.slice(0, 2);
+  const { isDark } = useTheme();
+  const events: event[] = eventsData.slice(0, 3);
+  const colorPalette = [
+    {
+      color: "green",
+      borderColor: "border-green-500",
+      iconColor: "text-green-500",
+      textColor: "text-green-500",
+      bgColor: "bg-green-500",
+      hoverBgColor: "hover:bg-green-600",
+    },
+    {
+      color: "purple",
+      borderColor: "border-purple-500",
+      iconColor: "text-purple-500",
+      textColor: "text-purple-500",
+      bgColor: "bg-purple-500",
+      hoverBgColor: "hover:bg-purple-600",
+    },
+    {
+      color: "blue",
+      borderColor: "border-blue-500",
+      iconColor: "text-blue-500",
+      textColor: "text-blue-500",
+      bgColor: "bg-blue-500", 
+      hoverBgColor: "hover:bg-blue-600",
+    },
+  ];
 
-    return (
-        <section className="py-24 px-6 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto relative">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-12">
-            <div className="md:w-1/2">
-              <h2 className="text-3xl text-text-primary-color md:text-4xl font-bold mb-5 tracking-tight">다가오는 이벤트</h2>
-              <p className="text-text-secondary-color mb-10 max-w-xl leading-relaxed">온라인과 오프라인에서 개최되는 다양한 개발자 이벤트에 참여하세요</p>
-              
-              <div className="space-y-6">
-                {events.map((event, idx) => (
-                    <div key={idx} className={`bg-component-background border p-6 rounded-lg border-l-4 backdrop-blur-sm hover:translate-x-1 transition-transform ${idx % 2 === 0 ? 'border-point-color-green' : 'border-point-color-purple'}`}>
-                        <div className="flex items-center justify-between mb-3">
-                            <h3 className="font-semibold text-lg">{event.title}</h3>
-                            <span className="text-xs text-text-primary-color bg-component-background px-2 py-1 rounded">
-                                {
-                                    (() => {
-                                        const currentYear = new Date().getFullYear();
-                                        const dateParts = event.date.split(' ');
-                                        const eventYear = parseInt(dateParts[0].replace('년', ''));
-                                        
-                                        if (eventYear === currentYear) {
-                                            return dateParts.slice(1).join(' ');
-                                        } else {
-                                            return event.date;
-                                        }
-                                    })()
-                                }
-                            </span>
-                        </div>
-                        <p className="text-sm text-text-secondary-color mb-3 leading-relaxed">{event.description}</p>
-                        <div className={`flex items-center text-xs ${idx % 2 === 0 ? 'text-point-color-green' : 'text-point-color-purple'}`}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            {event.location}
-                        </div>
-                    </div>
+  return (
+    <section className="max-w-7xl mx-auto px-6 py-20">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+            다가오는 이벤트
+          </span>
+        </h2>
+        <p className="text-xl text-text-primary">온라인과 오프라인에서 개최되는 다양한 개발자 이벤트에 참여하세요</p>
+      </div>
 
-                ))
-                }
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {events.map((event, index) => (
+          <div
+            key={index}
+            className={`bg-component-background border border-l-4
+               ${colorPalette[index % colorPalette.length].borderColor}
+               rounded-lg hover:-translate-y-1
+              p-6 overflow-hidden space-y-4 transition-all duration-300`}
+          >
+            <div className="flex items-center justify-between">
+              <Badge
+                content={event.date}
+                color={colorPalette[index % colorPalette.length].color as BadgeColor}
+                className="!rounded-full !text-xs"
+                isDark={isDark}
+              />
+              <div className="flex items-center gap-1 text-sm text-text-secondary">
+                <Users className="h-4 w-4" />
+                {event.participant}명 참여
               </div>
-              
-              <button className="mt-10 bg-transparent text-text-primary-color border border-component-border px-6 py-2.5 rounded-md text-sm font-medium transition-colors duration-200 flex items-center group cursor-pointer">
-                모든 이벤트 보기
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </button>
             </div>
+            <div className="space-y-2">
+              <p className="text-text-primary font-bold">{event.title}</p>
+              <p className="text-text-secondary font-semibold">{event.description}</p>
+              <div className="flex items-center gap-1 text-sm text-text-secondary">
+                <MapPin className={`${colorPalette[index % colorPalette.length].iconColor} h-4 w-4`} />
+                {event.location}
+              </div>
+            </div>
+            <button 
+              className={`flex items-center gap-2 justify-self-center 
+                ${colorPalette[index % colorPalette.length].textColor}
+                p-2 cursor-pointer hover:underline`}
+            >
+              <CalendarMonth className="h-4 w-4" />
+              <span>참여 신청하기</span>
+            </button>
           </div>
-        </div>
-      </section>
-    )
+        ))}
+      </div>
+
+      <Link
+        href="#"
+        className="flex group mt-12 justify-center"
+      >
+        <Badge
+          content={
+            <span className="flex items-center gap-2">
+              모든 이벤트 보기
+              <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+            </span>
+          }
+          color="fuchsia"
+          className="!px-6 !py-2 flex font-semibold"
+          isDark={isDark}
+          isHover
+        />
+      </Link>
+    </section>
+  )
 }

@@ -4,13 +4,23 @@
         "title": "프론트엔드 밋업",
         "description": "최신 프론트엔드 기술 트렌드와 실무 적용 사례 공유",
         "date": "2025년 6월 15일",
-        "location": "온라인 (Zoom)"
+        "location": "온라인 (Zoom)",
+        "participant": 100
     },
     {
         "id": 2,
         "title": "TeamUp 코딩 해커톤",
         "description": "24시간 동안 혁신적인 서비스를 함께 개발하는 챌린지",
         "date": "2025년 7월 1-2일",
-        "location": "서울 강남구"
+        "location": "서울 강남구",
+        "participant": 45
+    },
+    {
+        "id": 3,
+        "title": "AI 개발자 컨퍼런스",
+        "description": "인공지능과 머신러닝의 최신 동향과 실무 활용법",
+        "date": "2025년 7월 20일",
+        "location": "온라인 (YouTube Live)",
+        "participant": 50
     }
 ]
