@@ -10,6 +10,7 @@ import {
   Home as HomeOutline,
   Folder as FolderOutline,
   UsersGroup as UsersGroupOutline,
+  ArrowRightToBracket as ArrowRightToBracketOutline,
 } from "flowbite-react-icons/outline";
 import { 
   Home as HomeSolid,
@@ -75,9 +76,34 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
   }
 
   const mainNavItems = [
-      { icon: HomeOutline, activeIcon: HomeSolid, label: "내 프로젝트", href: "/platform", isActive: pathname === "/platform" },
-      { icon: FolderOutline, activeIcon: FolderSolid, label: "프로젝트 찾기", href: "/platform/projects", isActive: pathname === "/platform/projects" },
-      { icon: UsersGroupOutline, activeIcon: UsersGroupSolid, label: "팀원 찾기", href: "/platform/members", isActive: pathname === "/platform/members" },
+      { 
+        icon: HomeOutline, 
+        activeIcon: HomeSolid, 
+        label: "내 프로젝트", 
+        href: "/platform", 
+        isActive: pathname === "/platform" 
+      },
+      { 
+        icon: FolderOutline, 
+        activeIcon: FolderSolid, 
+        label: "프로젝트 찾기", 
+        href: "/platform/projects", 
+        isActive: pathname === "/platform/projects" 
+      },
+      { 
+        icon: UsersGroupOutline, 
+        activeIcon: UsersGroupSolid, 
+        label: "팀원 찾기", 
+        href: "/platform/members", 
+        isActive: pathname === "/platform/members" 
+      },
+      {
+        icon: ArrowRightToBracketOutline,
+        activeIcon: ArrowRightToBracketOutline,
+        label: "나가기",
+        href: `/`,
+        isActive: pathname === `/`,
+      },
     ];
   return (
     <NotificationProvider>

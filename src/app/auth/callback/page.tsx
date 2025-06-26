@@ -28,7 +28,7 @@ export default function AuthCallback() {
             useAuthStore.getState().setToken(data.access_token);
             useAuthStore.getState().setUser(data.user_info);
             useAuthStore.getState().setAlert("로그인 성공", "success");
-            window.location.href = '/platform';
+            window.location.href = '/';
           } else {
             throw new Error('Failed to update user status');
           }
