@@ -112,7 +112,7 @@ export default function About() {
         <div className="relative max-w-7xl mx-auto px-6 py-24 text-center">
           <Badge
             color="purple"
-            content="베타 서비스 중"
+            content="🚀 베타 서비스 런칭"
             isDark={isDark}
             className="!rounded-full"
           />
