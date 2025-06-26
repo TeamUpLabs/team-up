@@ -141,7 +141,7 @@ export default function About() {
                 </span>
               }
               isDark={isDark}
-              className="!w-fit !flex !justify-center !items-center !px-8 !py-2"
+              className="!w-fit !flex !justify-center !items-center !px-8 !py-3"
               isHover
             />
           </Link>
