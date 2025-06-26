@@ -76,9 +76,9 @@ export default function ExploreProject() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="mx-auto">
       {filteredProjects.length === 0 && (
-        <div className="text-center text-text-secondary mt-8 p-8 bg-component-background border border-component-border rounded-lg">
+        <div className="text-center text-text-secondary p-8 bg-component-background border border-component-border rounded-lg">
           검색 결과가 없습니다.
         </div>
       )}

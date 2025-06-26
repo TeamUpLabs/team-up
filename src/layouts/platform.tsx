@@ -96,7 +96,7 @@ export default function Platform() {
   })
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="mx-auto">
       {/* 프로젝트 그리드 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
         {/* 프로젝트 카드 */}
