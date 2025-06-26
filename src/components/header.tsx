@@ -3,6 +3,9 @@ import Link from "next/link"
 import { Logo } from "@/components/logo"
 import { useAuthStore } from "@/auth/authStore"
 import UserDropdown from "@/components/platform/UserDropdown"
+import Badge from "@/components/ui/Badge"
+import { useTheme } from '@/contexts/ThemeContext';
+
 
 export default function Header() {
   const [isMounted, setIsMounted] = useState(false);
@@ -10,6 +13,7 @@ export default function Header() {
     useAuthStore.getState().setAlert("서비스 준비중입니다.", "info");
   }
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     setIsMounted(true);
@@ -21,12 +25,22 @@ export default function Header() {
         <div className="h-8 w-24"></div>
       );
     }
-    
+
     return isAuthenticated() ? (
       <UserDropdown />
     ) : (
-      <Link href="/signin" className="text-white bg-point-color-purple hover:bg-point-color-purple-hover px-5 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
-        시작하기
+      <Link href="/signin" className="flex group">
+        <Badge
+          content={
+            <span className="flex items-center gap-2 font-semibold">
+              로그인
+            </span>
+          }
+          color="purple"
+          className="!px-3 !py-1 flex"
+          isDark={isDark}
+          isHover
+        />
       </Link>
     );
   };
@@ -37,7 +51,7 @@ export default function Header() {
         <Link href="/">
           <Logo />
         </Link>
-        <nav className="md:flex space-x-10 text-sm font-medium">
+        <nav className="md:flex space-x-5 sm:space-x-10 text-sm font-medium">
           <Link href="/platform" className="hover:text-point-color-purple transition-colors duration-200">플랫폼</Link>
           <Link href="#" className="hover:text-point-color-purple transition-colors duration-200" onClick={alertServicePreparing}>커뮤니티</Link>
           <Link href="#" className="hover:text-point-color-purple transition-colors duration-200" onClick={alertServicePreparing}>멘토링</Link>
