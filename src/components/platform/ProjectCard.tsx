@@ -1,10 +1,10 @@
-import Image from "next/image";
 import { Project } from "@/types/Project";
 import Link from "next/link";
 import { useAuthStore } from "@/auth/authStore";
 import { sendParticipationRequest, cancelParticipationRequest } from "@/hooks/getMemberData";
 import Badge from "@/components/ui/Badge";
 import { useTheme } from "@/contexts/ThemeContext";
+import { Clock, Users } from "flowbite-react-icons/outline";
 
 interface ProjectCardProps {
   project: Project;
@@ -12,43 +12,57 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
-  const user = useAuthStore((state) => state.user);
   const { isDark } = useTheme();
+  const user = useAuthStore((state) => state.user);
 
   return (
-    <div className="bg-component-background rounded-lg shadow-md p-6 border border-component-border hover:border-point-color-indigo transition-colors duration-200">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-semibold">{project.title}</h3>
-        <div className="space-x-3">
-          <span className="text-sm text-text-secondary">{project.members.length}/{project.teamSize}명</span>
-          <span className="text-sm text-point-color-green">{project.status}</span>
+    <div
+      className="bg-component-background rounded-lg p-8
+     border border-component-border hover:translate-y-[-4px] hover:shadow-lg
+     transition-all duration-200 space-y-6"
+    >
+      <div className="flex items-center justify-between">
+        <Badge
+          content={
+            <span className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              {project.status}
+            </span>
+          }
+          color="indigo"
+          isDark={isDark}
+          className="!text-xs !rounded-full"
+        />
+        <div className="flex items-center gap-1 text-sm text-text-secondary">
+          <Users className="w-4 h-4" />
+          <span className="">{project.members.length}/{project.teamSize}명</span>
         </div>
       </div>
-      <p className="text-text-secondary mb-4 line-clamp-2 min-h-[3rem]">{project.description}</p>
-      <div className="flex items-center space-x-2 mb-4">
-        {project.roles.map((role, index) => (
-          <Badge key={index} content={role} color="purple" isDark={isDark} />
-        ))}
+      <div className="space-y-1">
+        <h3 className="text-xl font-semibold">{project.title}</h3>
+        <p className="text-text-secondary text-base line-clamp-2 min-h-[3rem]">{project.description}</p>
       </div>
-      <div className="flex items-center justify-between">
-        <div className="flex -space-x-2">
-          {
-            project.members.slice(0, 2).map((member => (
-              <div key={member.id} className="w-8 h-8 relative rounded-full bg-component-secondary-background border-2 border-component-border text-sm flex align-center justify-center place-items-center">
-                {member.profileImage ? (
-                  <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={32} height={32} />
-            ) : (
-              <p>{member.name.charAt(0)}</p>
-            )}
-              </div>
-            )))
-          }
-          {project.members.length > 2 && (
-            <div className="w-8 h-8 rounded-full bg-component-secondary-background border-2 border-component-border text-sm flex align-center justify-center place-items-center">
-              +{project.members.length - 2}
-            </div>
+      <div>
+        <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3 flex items-center">
+          <span className="mr-2">필요한 역할</span>
+          <span className="h-px flex-grow bg-component-border"></span>
+        </h4>
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          {project.roles.slice(0, 3).map((role, index) => (
+            <Badge
+              key={index}
+              content={role}
+              color="purple"
+              isDark={isDark}
+              className="!text-xs !rounded-full"
+            />
+          ))}
+          {project.roles.length > 3 && (
+            <span className="text-xs text-text-secondary">+{project.roles.length - 3}</span>
           )}
         </div>
+      </div>
+      <div className="flex justify-end">
         {isExplore ? (
           project.participationRequestMembers && project.participationRequestMembers.some(member => member.id === user?.id) ? (
             <button

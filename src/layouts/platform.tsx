@@ -46,7 +46,7 @@ export default function Platform() {
     const handleHeaderSearch = (event: Event) => {
       const customEvent = event as CustomEvent;
       const searchValue = customEvent.detail || '';
-      
+
       // Only update if value is different
       if (searchValue !== searchQuery) {
         setSearchQuery(searchValue);
@@ -55,7 +55,7 @@ export default function Platform() {
 
     // Add event listener
     window.addEventListener('headerSearch', handleHeaderSearch);
-    
+
     return () => {
       window.removeEventListener('headerSearch', handleHeaderSearch);
     };
@@ -71,7 +71,7 @@ export default function Platform() {
 
   useEffect(() => {
     if (isMounted.current) return;
-    
+
     const searchValue = searchParams?.get('search');
     if (searchValue !== null) {
       setSearchQuery(searchValue || '');
@@ -87,12 +87,12 @@ export default function Platform() {
     const lowercaseQuery = searchQuery.toLowerCase();
 
     return project.title.toLowerCase().includes(lowercaseQuery) ||
-           project.description.toLowerCase().includes(lowercaseQuery) ||
-           project.status.toLowerCase().includes(lowercaseQuery) ||
-           project.location.toLowerCase().includes(lowercaseQuery) ||
-           project.projectType.toLowerCase().includes(lowercaseQuery) ||
-           project.roles.some(role => role.toLowerCase().includes(lowercaseQuery)) ||
-           project.techStack.some(tech => tech.toLowerCase().includes(lowercaseQuery));
+      project.description.toLowerCase().includes(lowercaseQuery) ||
+      project.status.toLowerCase().includes(lowercaseQuery) ||
+      project.location.toLowerCase().includes(lowercaseQuery) ||
+      project.projectType.toLowerCase().includes(lowercaseQuery) ||
+      project.roles.some(role => role.toLowerCase().includes(lowercaseQuery)) ||
+      project.techStack.some(tech => tech.toLowerCase().includes(lowercaseQuery));
   })
 
   return (
@@ -111,7 +111,7 @@ export default function Platform() {
               <p className="text-text-secondary mb-2">새로운 프로젝트를 시작해보세요</p>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="text-point-color-indigo hover:text-point-color-indigo-hover"
+                className="text-point-color-indigo hover:text-point-color-indigo-hover hover:underline cursor-pointer"
               >+ 프로젝트 생성</button>
             </div>
           </div>

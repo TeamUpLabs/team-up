@@ -22,12 +22,12 @@ export default function MemberCard({
   onClick,
 }: MemberCardProps) {
   const { isDark } = useTheme();
-  
+
   const getContributionLevel = () => {
     const milestoneCount = member.projectDetails?.map((project) => project.milestones.map((milestone) => milestone.assignee_id.includes(member.id))).length || 0;
     const taskCount = member.currentTask?.length || 0;
     const contributionScore = (milestoneCount * 10) + (taskCount * 15);
-    
+
     if (contributionScore > 80) return { level: "상위 기여자", class: "purple" };
     if (contributionScore > 50) return { level: "활발한 기여자", class: "blue" };
     if (contributionScore > 20) return { level: "정기 기여자", class: "green" };
@@ -36,23 +36,23 @@ export default function MemberCard({
 
   const getRoleInfo = () => {
     if (isLeader) {
-      return { 
+      return {
         icon: <FontAwesomeIcon icon={faStar} className="text-yellow-500" />,
-        text: "리더", 
-        className: "yellow" 
+        text: "리더",
+        className: "yellow"
       };
     }
     if (isManager) {
-      return { 
+      return {
         icon: <FontAwesomeIcon icon={faShieldAlt} className="text-blue-500" />,
-        text: "관리자", 
-        className: "blue" 
+        text: "관리자",
+        className: "blue"
       };
     }
-    return { 
+    return {
       icon: <FontAwesomeIcon icon={faUser} className="text-gray-500" />,
-      text: "멤버", 
-      className: "gray" 
+      text: "멤버",
+      className: "gray"
     };
   };
 
@@ -64,7 +64,7 @@ export default function MemberCard({
     <div
       onClick={onClick}
       className="group bg-component-background rounded-xl overflow-hidden transition-all duration-300 cursor-pointer hover:translate-y-[-4px] border border-component-border hover:border-primary-500 hover:shadow-lg relative flex flex-col h-full"
-    > 
+    >
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="relative">
@@ -79,7 +79,7 @@ export default function MemberCard({
                   quality={90}
                 />
                 {!isExplore && (
-                  <span 
+                  <span
                     className={`absolute bottom-0 right-0 w-4 h-4 ${statusInfo.indicator} rounded-full border-2 border-white`}
                     title={statusInfo.label}
                   ></span>
@@ -91,7 +91,7 @@ export default function MemberCard({
                   {member.name.charAt(0).toUpperCase()}
                 </div>
                 {!isExplore && (
-                  <span 
+                  <span
                     className={`absolute bottom-0 right-0 w-4 h-4 ${statusInfo.indicator} rounded-full border-2 border-white`}
                     title={statusInfo.label}
                   ></span>
@@ -117,7 +117,7 @@ export default function MemberCard({
           <h3 className="text-xl font-bold text-text-primary flex items-center gap-2">
             {member.name}
           </h3>
-          
+
           <div className="flex items-center text-text-secondary">
             <p className="text-text-secondary font-medium">
               {member.role || "역할 미지정"}
@@ -139,18 +139,18 @@ export default function MemberCard({
           )}
         </div>
 
-          <div>
+        <div>
           <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3 flex items-center">
             <span className="mr-2">기술 스택</span>
             <span className="h-px flex-grow bg-component-border"></span>
           </h4>
-          
+
           {member.skills && member.skills.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {member.skills.map((skill, idx) => (
-                <Badge 
-                  key={idx} 
-                  content={skill} 
+                <Badge
+                  key={idx}
+                  content={skill}
                   color="blue"
                   isDark={isDark}
                 />
