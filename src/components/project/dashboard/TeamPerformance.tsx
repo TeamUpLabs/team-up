@@ -3,9 +3,10 @@ import Image from "next/image";
 
 interface TeamPerformanceProps {
   project: Project;
+  className?: string;
 }
 
-export default function TeamPerformance({ project }: TeamPerformanceProps) {
+export default function TeamPerformance({ project, className }: TeamPerformanceProps) {
   const getUserInitials = (name: string) => {
     if (!name) return '??';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
@@ -13,7 +14,7 @@ export default function TeamPerformance({ project }: TeamPerformanceProps) {
 
 
   return (
-    <div className="bg-component-background shadow-sm p-6 rounded-md border border-component-border">
+    <div className={`${className} bg-component-background shadow-sm p-6 rounded-md border border-component-border`}>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-text-primary text-base font-semibold">팀 성과</h2>
       </div>
