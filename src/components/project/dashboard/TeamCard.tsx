@@ -19,10 +19,10 @@ export default function ActiveTaskCard({ TotalMemberCount, ActiveMemberCount }: 
           <Users className="w-4 h-4 text-green-500" />
         </div>
       </div>
-      <p className="flex items-center text-xs text-text-secondary">
+      <div className="flex items-center text-xs text-text-secondary">
         <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
         {ActiveMemberCount} online now
-        </p>
+      </div>
     </div>
   )
 }
