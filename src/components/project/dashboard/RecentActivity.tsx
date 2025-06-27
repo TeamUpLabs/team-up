@@ -80,7 +80,7 @@ export default function RecentActivity({ project }: RecentActivityProps) {
   };
 
   return (
-    <div className="bg-component-background shadow-sm p-4 rounded-md border border-component-border">
+    <div className="bg-component-background shadow-sm p-6 rounded-md border border-component-border">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-text-primary text-base font-semibold">최근 활동</h2>
       </div>
