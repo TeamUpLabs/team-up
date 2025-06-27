@@ -46,7 +46,7 @@ export default function RecentActivity({ project }: RecentActivityProps) {
   };
   // Generate sample activities from project data
   const activities: Activity[] = [
-    ...(project.tasks?.slice(0, 3).map(task => ({
+    ...(project.tasks?.map(task => ({
       id: task.id,
       user: {
         name: project?.members?.find(member => member.id === task.createdBy)?.name || '담당자 없음',
@@ -58,7 +58,7 @@ export default function RecentActivity({ project }: RecentActivityProps) {
       action: `"${task.title}" 작업을 ${task.status === 'done' ? '완료했습니다' : '시작했습니다'}`,
       timestamp: new Date(task.updatedAt || task.createdAt)
     })) || []),
-    ...(project.milestones?.slice(0, 2).map(milestone => {
+    ...(project.milestones?.map(milestone => {
       return {
         id: milestone.id,
         user: {
@@ -82,7 +82,7 @@ export default function RecentActivity({ project }: RecentActivityProps) {
   return (
     <div className="bg-component-background shadow-sm p-4 rounded-md border border-component-border">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-text-primary text-sm font-semibold">최근 활동</h2>
+        <h2 className="text-text-primary text-base font-semibold">최근 활동</h2>
       </div>
       <div className="space-y-4">
         {activities.length > 0 ? (
