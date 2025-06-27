@@ -1,15 +1,17 @@
+
 import { Project } from "@/types/Project";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
-import Image from "next/image";
-import Badge from "@/components/ui/Badge";
+import { getStatusColorName } from "@/utils/getStatusColor";
+import { useState } from "react";
 import TaskModal from "@/components/project/task/TaskModal";
 import MilestoneModal from "@/components/project/milestone/MilestoneModal";
 import ScheduleModal from "@/components/project/calendar/ScheduleModal";
 import { Task } from "@/types/Task";
 import { MileStone } from "@/types/MileStone";
 import { Schedule } from "@/types/Schedule";
-import { useState } from "react";
+import { isMarkdown } from "@/utils/isMarkdown";
+import { summarizeMarkdown } from "@/utils/summarizeMarkdown";
 
 interface Activity {
   id: string;
@@ -19,27 +21,17 @@ interface Activity {
     image?: string;
     isActive?: string;
   };
+  title: string;
+  status: string;
+  description: string;
   type: 'task' | 'milestone' | 'meeting' | 'event';
-  action: string;
   timestamp: Date;
-  link?: string;
 }
-
-interface RecentActivityProps {
+interface UpcommingDeadlineProps {
   project: Project;
 }
 
-const getActivityTypeLabel = (type: string) => {
-  switch (type) {
-    case 'task': return '작업';
-    case 'milestone': return '마일스톤';
-    case 'meeting': return '회의';
-    case 'event': return '이벤트';
-    default: return type;
-  }
-};
-
-export default function RecentActivity({ project }: RecentActivityProps) {
+export default function UpcommingDeadline({ project }: UpcommingDeadlineProps) {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isMilestoneModalOpen, setIsMilestoneModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
@@ -56,8 +48,10 @@ export default function RecentActivity({ project }: RecentActivityProps) {
         isActive: project?.members?.find(member => member.id === task.createdBy)?.status || '활동 없음',
       },
       type: 'task' as const,
-      action: `"${task.title}" 작업을 ${task.status === 'done' ? '완료했습니다.' : '시작했습니다.'}`,
-      timestamp: new Date(task.updatedAt || task.createdAt)
+      title: task.title,
+      status: task.status,
+      description: task.description,
+      timestamp: new Date(task.endDate || "")
     })) || []),
 
     ...(project.milestones?.map(milestone => {
@@ -70,8 +64,10 @@ export default function RecentActivity({ project }: RecentActivityProps) {
           isActive: project?.members?.find(member => member.id === milestone.createdBy)?.status || '활동 없음',
         },
         type: 'milestone' as const,
-        action: `"${milestone.title}" 마일스톤을 ${milestone.status === 'done' ? '달성했습니다.' : '시작했습니다.'}`,
-        timestamp: new Date(milestone.updatedAt || milestone.createdAt)
+        title: milestone.title,
+        status: milestone.status,
+        description: milestone.description,
+        timestamp: new Date(milestone.endDate || "")
       };
     }) || []),
 
@@ -85,8 +81,10 @@ export default function RecentActivity({ project }: RecentActivityProps) {
           isActive: project?.members?.find(member => member.id === schedule.created_by)?.status || '활동 없음',
         },
         type: 'meeting' as const,
-        action: `"${schedule.title}" 회의를 ${schedule.status === 'completed' ? '참여했습니다.' : '시작했습니다.'}`,
-        timestamp: new Date(schedule.updated_at || schedule.created_at)
+        title: schedule.title,
+        status: schedule.status,
+        description: schedule.description,
+        timestamp: new Date(schedule.end_time || "")
       };
     }) || []),
 
@@ -100,16 +98,14 @@ export default function RecentActivity({ project }: RecentActivityProps) {
           isActive: project?.members?.find(member => member.id === schedule.created_by)?.status || '활동 없음',
         },
         type: 'event' as const,
-        action: `"${schedule.title}" 이벤트를 ${schedule.status === 'completed' ? '참여했습니다.' : '시작했습니다.'}`,
-        timestamp: new Date(schedule.updated_at || schedule.created_at)
+        title: schedule.title,
+        status: schedule.status,
+        description: schedule.description,
+        timestamp: new Date(schedule.end_time || "")
       };
     }) || []),
-  ].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+  ].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
 
-  const getUserInitials = (name: string) => {
-    if (!name) return '??';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-  };
 
   const handleModalOpen = (type: string, id: string) => {
     const itemId = id.split('-')[1]; // Extract the ID from the activity ID
@@ -145,92 +141,71 @@ export default function RecentActivity({ project }: RecentActivityProps) {
   return (
     <div className="bg-component-background shadow-sm p-6 rounded-md border border-component-border">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-text-primary text-base font-semibold">최근 활동</h2>
+        <h2 className="text-text-primary text-base font-semibold">마감 임박</h2>
       </div>
+
+      {/* Modals */}
+      {isTaskModalOpen && selectedItem && 'title' in selectedItem && (
+        <TaskModal
+          isOpen={isTaskModalOpen}
+          onClose={handleCloseModal}
+          task={selectedItem as Task}
+        />
+      )}
+      
+      {isMilestoneModalOpen && selectedItem && 'title' in selectedItem && (
+        <MilestoneModal
+          isOpen={isMilestoneModalOpen}
+          onClose={handleCloseModal}
+          milestone={selectedItem as MileStone}
+        />
+      )}
+      
+      {isScheduleModalOpen && selectedItem && 'title' in selectedItem && (
+        <ScheduleModal
+          isOpen={isScheduleModalOpen}
+          onClose={handleCloseModal}
+          schedule={selectedItem as Schedule}
+        />
+      )}
+
       <div className="divide-y divide-component-border max-h-[300px] overflow-y-auto">
-        {/* Task Modal */}
-        {isTaskModalOpen && selectedItem && 'title' in selectedItem && (
-          <TaskModal
-            isOpen={isTaskModalOpen}
-            onClose={handleCloseModal}
-            task={selectedItem as Task}
-          />
-        )}
-        
-        {/* Milestone Modal */}
-        {isMilestoneModalOpen && selectedItem && 'title' in selectedItem && (
-          <MilestoneModal
-            isOpen={isMilestoneModalOpen}
-            onClose={handleCloseModal}
-            milestone={selectedItem as MileStone}
-          />
-        )}
-        
-        {/* Schedule Modal */}
-        {isScheduleModalOpen && selectedItem && 'title' in selectedItem && (
-          <ScheduleModal
-            isOpen={isScheduleModalOpen}
-            onClose={handleCloseModal}
-            schedule={selectedItem as Schedule}
-          />
-        )}
-        {activities.length > 0 ? (
+        {activities.length > 0 ?
           activities.map((activity, index) => {
             const isFirst = index === 0;
             const isLast = index === activities.length - 1;
             return (
-              <div
+              <div 
+                key={activity.id} 
                 onClick={() => handleModalOpen(activity.type, activity.id)}
-                key={activity.id}
-                className={`flex items-center gap-3 p-3 ${isFirst ? "rounded-t-md" : ""} ${isLast ? "rounded-b-md" : ""} hover:bg-component-tertiary-background transition-all duration-200 cursor-pointer`}
+                className={`flex items-center justify-between gap-6 p-3 ${isFirst ? "rounded-t-md" : ""} ${isLast ? "rounded-b-md" : ""} hover:bg-component-tertiary-background transition-all duration-200 cursor-pointer`}
               >
-                <div className="relative">
-                  <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                    {activity.user.image ? (
-                      <Image
-                        src={activity.user.image}
-                        alt={activity.user.name}
-                        className="w-full h-full object-cover border border-component-border rounded-full"
-                        width={32}
-                        height={32}
-                      />
-                    ) : (
-                      <span className="text-xs text-gray-700">
-                        {getUserInitials(activity.user.name)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                    <div className={`w-3 h-3 ${activity.user.isActive ? "rounded-full bg-green-500" : "rounded-full bg-gray-500"}`}></div>
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-6 justify-between">
-                    <div className="flex gap-1">
-                      <p className="text-sm text-text-primary">
-                        {activity.user.name}님이 {activity.action}
-                      </p>
-                    </div>
-                    <span className="text-xs text-text-tertiary whitespace-nowrap ml-2">
-                      {formatDistanceToNow(activity.timestamp, { addSuffix: true, locale: ko })}
+                <div className="flex items-center gap-3">
+                  <div className={`w-2 h-2 rounded-full bg-${getStatusColorName(activity.status)}-500`}></div>
+                  <div className="flex flex-col">
+                    <p className="text-text-primary text-base font-semibold">{activity.title}</p>
+                    <span className="text-text-secondary text-sm line-clamp-1">
+                      {
+                        activity.description ? (isMarkdown(activity.description) ? summarizeMarkdown(activity.description) : activity.description || "설명이 없습니다.") : "설명이 없습니다."
+                      }
                     </span>
                   </div>
-                  <div className="mt-1">
-                    <Badge
-                      content={getActivityTypeLabel(activity.type)}
-                      color="blue"
-                      className="!text-xs !font-medium !px-2 !py-0.5 !rounded"
-                    />
-                  </div>
+                </div>
+
+                <div className="flex flex-col flex-shrink-0 items-end">
+                  <span className="text-text-secondary text-sm">
+                    {formatDistanceToNow(activity.timestamp, { addSuffix: true, locale: ko })}
+                  </span>
+                  <span className="text-text-secondary text-xs">
+                    Due {activity.timestamp.toLocaleDateString()}
+                  </span>
                 </div>
               </div>
             )
           })
-        ) : (
-          <p className="text-sm text-text-tertiary text-center py-4">
-            최근 활동이 없습니다
-          </p>
-        )}
+          : (
+            <p>마감 임박 활동이 없습니다.</p>
+          )}
       </div>
     </div>
   );
