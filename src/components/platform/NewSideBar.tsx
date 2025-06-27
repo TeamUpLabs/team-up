@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import React from "react";
 import {
   ChevronDown,
-  Users,
 } from "flowbite-react-icons/outline";
 import { useProject } from "@/contexts/ProjectContext";
 import CreateChannelButton from "@/components/ui/ChannelCreateBtn";
@@ -22,23 +21,19 @@ interface NavItem {
 interface SidebarProps {
   isSidebarOpen: boolean;
   title?: string | React.ReactNode;
-  miniTitle?: string | React.ReactNode;
   titleHref: string;
   navItems: NavItem[];
-  onMinimizeChange?: (isMinimized: boolean) => void;
+  isMinimized?: boolean;
 }
 
 export default function NewSideBar({
   isSidebarOpen,
   title,
-  miniTitle,
   titleHref,
   navItems,
-  onMinimizeChange,
+  isMinimized,
 }: SidebarProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(true);
-  const [showLabels, setShowLabels] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { project } = useProject();
   const user = useAuthStore((state) => state.user);
@@ -56,27 +51,25 @@ export default function NewSideBar({
 
   return (
     <div
-      className={`fixed h-full border-r border-component-border z-[8500] bg-background transition-all duration-300 lg:translate-x-0 ${isMobile ? "w-64" : isMinimized ? "w-64" : "w-64"
-        }`}
+      className={`fixed h-full border-r border-component-border z-[8500] 
+        bg-sidebar-background transition-all duration-300 
+        ${isMobile
+          ? (isSidebarOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-64')
+          : (isMinimized ? 'w-0 -translate-x-64' : 'w-64 translate-x-0')}`}
     >
       <div className="flex flex-col h-full">
-        <div className="flex items-center gap-3 p-6 border-b border-component-border">
-          <div className="bg-black p-2 rounded-lg">
-            <Users className="w-6 h-6 text-white" />
-          </div>
-          <div className="flex flex-col">
-            {project ? (
-              <>
-                <h1 className="text-lg font-bold">{project?.title}</h1>
-                <span className="text-xs text-text-secondary line-clamp-1">{project?.description}</span>
-              </>
-            ) : (
-              <div className="space-y-1">
-                <div className="h-6 bg-component-tertiary-background rounded w-16"></div>
-                <div className="h-6 bg-component-tertiary-background rounded w-32"></div>
-              </div>
-            )}
-          </div>
+        <div className="flex flex-col text-center p-6 border-b border-component-border">
+          {project ? (
+            <>
+              <span className="text-lg font-bold">{project?.title || title}</span>
+              <span className="text-xs text-text-secondary line-clamp-1">{project?.description || ""}</span>
+            </>
+          ) : (
+            <div className="space-y-1">
+              <div className="h-6 bg-component-tertiary-background rounded w-16"></div>
+              <div className="h-6 bg-component-tertiary-background rounded w-32"></div>
+            </div>
+          )}
         </div>
         <nav className="flex flex-col h-full">
           <div className="flex-1 overflow-y-auto py-4 px-2">
