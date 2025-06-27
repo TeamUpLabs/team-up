@@ -26,7 +26,7 @@ interface SidebarProps {
   isMinimized?: boolean;
 }
 
-export default function NewSideBar({
+export default function SideBar({
   isSidebarOpen,
   title,
   titleHref,
