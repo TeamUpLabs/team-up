@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -36,6 +36,21 @@ export default function CalendarPage() {
 
   const previousMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)));
   const nextMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)));
+
+  useEffect(() => {
+    const selectedScheduleId = localStorage.getItem('selectedScheduleId');
+    
+    if (selectedScheduleId && project?.schedules?.length) {
+      const scheduleToOpen = project?.schedules?.find(schedule => schedule.id === parseInt(selectedScheduleId));
+      
+      if (scheduleToOpen) {
+        setSelectedSchedule(scheduleToOpen);
+        setIsModalOpen(true);
+      }
+    
+      localStorage.removeItem('selectedScheduleId');
+    }
+  }, [project?.schedules]);
 
   const handleSelectTask = (task: Task) => {
     setSelectedTask(task);

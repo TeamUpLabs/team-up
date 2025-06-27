@@ -6,14 +6,14 @@ import Badge from "@/components/ui/Badge";
 import { useRouter } from "next/navigation";
 
 interface Activity {
-  id: number;
+  id: string;
   user: {
     name: string;
     email?: string;
     image?: string;
     isActive?: string;
   };
-  type: 'task' | 'milestone' | 'project';
+  type: 'task' | 'milestone' | 'meeting' | 'event';
   action: string;
   timestamp: Date;
   link?: string;
@@ -27,7 +27,8 @@ const getActivityTypeLabel = (type: string) => {
   switch (type) {
     case 'task': return '작업';
     case 'milestone': return '마일스톤';
-    case 'project': return '프로젝트';
+    case 'meeting': return '회의';
+    case 'event': return '이벤트';
     default: return type;
   }
 };
@@ -44,10 +45,15 @@ export default function RecentActivity({ project }: RecentActivityProps) {
     localStorage.setItem("selectedTaskId", taskId.toString());
     router.push(`/platform/${project?.id}/tasks`);
   };
+
+  const handleScheduleClick = (scheduleId: number) => {
+    localStorage.setItem("selectedScheduleId", scheduleId.toString());
+    router.push(`/platform/${project?.id}/calendar`);
+  };
   // Generate sample activities from project data
   const activities: Activity[] = [
     ...(project.tasks?.map(task => ({
-      id: task.id,
+      id: `task-${task.id}`,
       user: {
         name: project?.members?.find(member => member.id === task.createdBy)?.name || '담당자 없음',
         email: project?.members?.find(member => member.id === task.createdBy)?.email || '이메일 없음',
@@ -58,9 +64,10 @@ export default function RecentActivity({ project }: RecentActivityProps) {
       action: `"${task.title}" 작업을 ${task.status === 'done' ? '완료했습니다' : '시작했습니다'}`,
       timestamp: new Date(task.updatedAt || task.createdAt)
     })) || []),
+
     ...(project.milestones?.map(milestone => {
       return {
-        id: milestone.id,
+        id: `milestone-${milestone.id}`,
         user: {
           name: project?.members?.find(member => member.id === milestone.createdBy)?.name || '담당자 없음',
           email: project?.members?.find(member => member.id === milestone.createdBy)?.email || '이메일 없음',
@@ -71,7 +78,37 @@ export default function RecentActivity({ project }: RecentActivityProps) {
         action: `"${milestone.title}" 마일스톤을 ${milestone.status === 'done' ? '달성했습니다' : '시작했습니다'}`,
         timestamp: new Date(milestone.updatedAt || milestone.createdAt)
       };
-    }) || [])
+    }) || []),
+
+    ...(project.schedules?.filter(schedule => schedule.type === 'meeting').map(schedule => {
+      return {
+        id: `${schedule.type}-${schedule.id}`,
+        user: {
+          name: project?.members?.find(member => member.id === schedule.created_by)?.name || '담당자 없음',
+          email: project?.members?.find(member => member.id === schedule.created_by)?.email || '이메일 없음',
+          image: project?.members?.find(member => member.id === schedule.created_by)?.profileImage || '프로필 이미지 없음',
+          isActive: project?.members?.find(member => member.id === schedule.created_by)?.status || '활동 없음',
+        },
+        type: 'meeting' as const,
+        action: `"${schedule.title}" 회의를 ${schedule.status === 'completed' ? '참여했습니다' : '시작했습니다'}`,
+        timestamp: new Date(schedule.updated_at || schedule.created_at)
+      };
+    }) || []),
+
+    ...(project.schedules?.filter(schedule => schedule.type === 'event').map(schedule => {
+      return {
+        id: `${schedule.type}-${schedule.id}`,
+        user: {
+          name: project?.members?.find(member => member.id === schedule.created_by)?.name || '담당자 없음',
+          email: project?.members?.find(member => member.id === schedule.created_by)?.email || '이메일 없음',
+          image: project?.members?.find(member => member.id === schedule.created_by)?.profileImage || '프로필 이미지 없음',
+          isActive: project?.members?.find(member => member.id === schedule.created_by)?.status || '활동 없음',
+        },
+        type: 'event' as const,
+        action: `"${schedule.title}" 이벤트를 ${schedule.status === 'completed' ? '참여했습니다' : '시작했습니다'}`,
+        timestamp: new Date(schedule.updated_at || schedule.created_at)
+      };
+    }) || []),
   ].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, 5);
 
   const getUserInitials = (name: string) => {
@@ -90,9 +127,13 @@ export default function RecentActivity({ project }: RecentActivityProps) {
             <div
               onClick={() => {
                 if (activity.type === 'task') {
-                  handleTaskClick(activity.id);
+                  handleTaskClick(Number(activity.id.split('-')[1]));
                 } else if (activity.type === 'milestone') {
-                  handleMilestoneClick(activity.id);
+                  handleMilestoneClick(Number(activity.id.split('-')[1]));
+                } else if (activity.type === 'meeting') {
+                  handleScheduleClick(Number(activity.id.split('-')[1]));
+                } else if (activity.type === 'event') {
+                  handleScheduleClick(Number(activity.id.split('-')[1]));
                 }
               }}
               key={activity.id}
