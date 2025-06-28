@@ -86,7 +86,6 @@ export default function ProjectPage() {
         />
         <ActiveTaskCard 
           activeTaskCount={projectData?.tasks?.filter((task) => task.status !== "done").length || 0}
-          isLoading={isLoading}
         />
         <TeamCard 
           TotalMemberCount={projectData?.members?.length || 0} 
