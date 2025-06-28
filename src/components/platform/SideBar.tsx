@@ -59,7 +59,7 @@ export default function SideBar({
     >
       <div className="flex flex-col h-full">
         <div className="flex flex-col text-center p-6 border-b border-component-border">
-          {project ? (
+          {project || title ? (
             <>
               <span className="text-lg font-bold">{project?.title || title}</span>
               <span className="text-xs text-text-secondary line-clamp-1">{project?.description || ""}</span>
