@@ -1,4 +1,5 @@
 import { Check } from "flowbite-react-icons/outline"
+import { TrendingUp, TrendingDown } from "lucide-react"
 import { Project } from "@/types/Project"
 
 interface CompletionRateCardProps {
@@ -9,18 +10,18 @@ interface CompletionRateCardProps {
 // Function to calculate completion rate for last week
 const calculateLastWeekCompletionRate = (project: Project | null): number => {
   if (!project?.tasks?.length) return 0;
-  
+
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-  
+
   // Get tasks created before last week
   const tasksLastWeek = project.tasks.filter(task => {
     const taskDate = new Date(task.createdAt);
     return taskDate < oneWeekAgo;
   });
-  
+
   if (!tasksLastWeek.length) return 0;
-  
+
   const completedLastWeek = tasksLastWeek.filter(task => task.status === 'done').length;
   return Math.round((completedLastWeek / tasksLastWeek.length) * 100);
 };
@@ -30,7 +31,7 @@ export default function CompletionRateCard({ project, isLoading = false }: Compl
   const totalTasks = project.tasks?.length || 0;
   const completedTasks = project.tasks?.filter(task => task.status === 'done').length || 0;
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-  
+
   // Calculate week-over-week progress
   const weeklyProgress = completionRate - calculateLastWeekCompletionRate(project);
 
@@ -51,18 +52,22 @@ export default function CompletionRateCard({ project, isLoading = false }: Compl
           <Check className="w-4 h-4 text-pink-500" />
         </div>
       </div>
-      <div className="flex items-center text-xs text-text-secondary">
+      <div className="flex items-center gap-2 text-xs text-text-secondary">
         {weeklyProgress !== 0 ? (
           <>
-            <div className={`w-2 h-2 rounded-full mr-2 ${weeklyProgress > 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            {weeklyProgress > 0 ? (
+              <TrendingUp className="w-4 h-4 text-green-500" />
+            ) : (
+              <TrendingDown className="w-4 h-4 text-red-500" />
+            )}
             <span className={weeklyProgress > 0 ? 'text-green-500' : 'text-red-500'}>
               {weeklyProgress > 0 ? '+' : ''}{weeklyProgress}% this week
             </span>
           </>
         ) : (
-          <span>No change this week</span>
+          <span className="text-text-secondary">No change this week</span>
         )}
       </div>
-    </div>
+    </div >
   )
 }

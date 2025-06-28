@@ -25,15 +25,18 @@ export default function ActiveTaskCard({ TotalMemberCount, ActiveMemberCount, is
         </div>
       </div>
       <div className="flex items-center gap-1 text-xs text-text-secondary">
-        <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
-        {isLoading ? (
-          <div className="h-4 bg-gray-200 rounded w-3 animate-pulse"></div>
+        {ActiveMemberCount ? (
+          <>
+            <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+            <span className="text-text-secondary">
+              {ActiveMemberCount} online now
+            </span>
+          </>
         ) : (
-          <span className="text-text-primary">
-            {ActiveMemberCount}
+          <span className="text-text-secondary">
+            No one online
           </span>
         )}
-        online now
       </div>
     </div>
   )
