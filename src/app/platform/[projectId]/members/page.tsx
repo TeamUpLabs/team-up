@@ -5,6 +5,10 @@ import MemberDetailModal from "@/components/project/members/MemberDetailModal";
 import MemberCard from "@/components/project/members/MemberCard";
 import { Member } from "@/types/Member";
 import { useProject } from "@/contexts/ProjectContext";
+import TotalMemberCard from "@/components/project/members/TotalMemberCard";
+import ActiveMemberCard from "@/components/project/members/ActiveMemberCard";
+import DepartmentCard from "@/components/project/members/DepartmentCard";
+import AvgTaskCard from "@/components/project/members/AvgTaskCard";
 
 export default function MembersPage() {
   const { project } = useProject();
@@ -91,8 +95,14 @@ export default function MembersPage() {
   };
 
   return (
-    <div className="py-20 px-4">
-      {/* Header Section */}
+    <div className="p-6 flex flex-col gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <TotalMemberCard totalMemberCount={project?.members?.length ?? 0} />
+        <ActiveMemberCard totalMemberCount={project?.members?.length ?? 0} activeMemberCount={project?.members?.filter(member => member.status === '활성')?.length ?? 0} />
+        <DepartmentCard departments={project?.members?.map(member => member.role) ?? []} />
+        <AvgTaskCard avgTaskCount={project?.members?.length ? project.members.map(member => member.currentTask?.length ?? 0).reduce((a, b) => a + b, 0) / project.members.length : 0} />
+      </div>
+      {/* Header Section
       <div className="flex justify-between items-center mb-6 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">팀원</h1>
@@ -132,7 +142,7 @@ export default function MembersPage() {
             false
           }
         />
-      )}
+      )} */}
     </div>
   );
 }
