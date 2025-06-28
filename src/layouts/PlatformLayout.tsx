@@ -118,7 +118,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
     
           <SideBar 
             isSidebarOpen={isSidebarOpen}
-            title={<Logo className="!text-base" />}
+            title={<Logo className="!text-xl" />}
             titleHref="/platform"
             navItems={mainNavItems}
             isMinimized={isSidebarCollapsed}
