@@ -82,7 +82,6 @@ export default function ProjectPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <ActiveMilestoneCard 
           activeMilestoneCount={projectData?.milestones?.filter((milestone) => milestone.status !== "done").length || 0}
-          isLoading={isLoading}
         />
         <ActiveTaskCard 
           activeTaskCount={projectData?.tasks?.filter((task) => task.status !== "done").length || 0}
@@ -90,11 +89,9 @@ export default function ProjectPage() {
         <TeamCard 
           TotalMemberCount={projectData?.members?.length || 0} 
           ActiveMemberCount={projectData?.members?.filter((member) => member.status !== "done").length || 0}
-          isLoading={isLoading}
         />
         <CompletionRateCard 
           project={projectData} 
-          isLoading={isLoading}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
