@@ -1,4 +1,4 @@
-import { ClipboardList } from "flowbite-react-icons/solid";
+import { ClipboardList } from "flowbite-react-icons/outline";
 
 interface ActiveTaskCardProps {
   activeTaskCount: number;

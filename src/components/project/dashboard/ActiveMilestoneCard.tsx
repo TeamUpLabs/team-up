@@ -1,4 +1,4 @@
-import { Flag } from "flowbite-react-icons/solid";
+import { Flag } from "flowbite-react-icons/outline";
 
 interface ActiveMilestoneCardProps {
   activeMilestoneCount: number;

@@ -1,4 +1,4 @@
-import { Users } from "flowbite-react-icons/solid";
+import { Users } from "flowbite-react-icons/outline";
 
 interface ActiveTaskCardProps {
   TotalMemberCount: number;
