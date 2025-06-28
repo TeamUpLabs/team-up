@@ -7,15 +7,15 @@ import { Logo, MiniLogo } from "@/components/logo";
 import { useAuthStore } from "@/auth/authStore";
 import { usePathname } from "next/navigation";
 import { 
-  Home as HomeOutline,
-  Folder as FolderOutline,
-  UsersGroup as UsersGroupOutline,
+  Search as SearchOutline,
+  FolderOpen as FolderOpenOutline,
+  Users as UsersOutline,
   ArrowRightToBracket as ArrowRightToBracketOutline,
 } from "flowbite-react-icons/outline";
 import { 
-  Home as HomeSolid,
-  Folder as FolderSolid,
-  UsersGroup as UsersGroupSolid,
+  Search as SearchSolid,
+  FolderOpen as FolderOpenSolid,
+  Users as UsersSolid,
 } from "flowbite-react-icons/solid";
 import UserDropdown from "@/components/platform/UserDropdown";
 import NewProjectModal from "@/components/platform/NewProjectModal";
@@ -77,22 +77,22 @@ export default function PlatformLayout({ children, HeaderTitle }: { children: Re
 
   const mainNavItems = [
       { 
-        icon: HomeOutline, 
-        activeIcon: HomeSolid, 
+        icon: FolderOpenOutline, 
+        activeIcon: FolderOpenSolid, 
         label: "내 프로젝트", 
         href: "/platform", 
         isActive: pathname === "/platform" 
       },
       { 
-        icon: FolderOutline, 
-        activeIcon: FolderSolid, 
+        icon: SearchOutline, 
+        activeIcon: SearchSolid, 
         label: "프로젝트 찾기", 
         href: "/platform/projects", 
         isActive: pathname === "/platform/projects" 
       },
       { 
-        icon: UsersGroupOutline, 
-        activeIcon: UsersGroupSolid, 
+        icon: UsersOutline, 
+        activeIcon: UsersSolid, 
         label: "팀원 찾기", 
         href: "/platform/members", 
         isActive: pathname === "/platform/members" 

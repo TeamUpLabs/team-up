@@ -27,6 +27,7 @@ interface Activity {
 
 interface RecentActivityProps {
   project: Project;
+  isLoading?: boolean;
 }
 
 const getActivityTypeLabel = (type: string) => {
@@ -39,7 +40,22 @@ const getActivityTypeLabel = (type: string) => {
   }
 };
 
-export default function RecentActivity({ project }: RecentActivityProps) {
+const skeleton = () => {
+  return (
+    <div className="flex items-center gap-10 justify-between">
+      <div className="flex items-center gap-2">
+        <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden animate-pulse"></div>
+        <div className="flex flex-col gap-1">
+          <div className="h-4 w-40 bg-gray-200 rounded animate-pulse"></div>
+          <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+      </div>
+      <div className="h-4 w-15 bg-gray-200 rounded animate-pulse"></div>
+    </div>
+  )
+}
+
+export default function RecentActivity({ project, isLoading = false }: RecentActivityProps) {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isMilestoneModalOpen, setIsMilestoneModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
@@ -113,7 +129,7 @@ export default function RecentActivity({ project }: RecentActivityProps) {
 
   const handleModalOpen = (type: string, id: string) => {
     const itemId = id.split('-')[1]; // Extract the ID from the activity ID
-    
+
     if (type === 'task') {
       const task = project.tasks?.find(t => t.id.toString() === itemId);
       if (task) {
@@ -134,7 +150,7 @@ export default function RecentActivity({ project }: RecentActivityProps) {
       }
     }
   };
-  
+
   const handleCloseModal = () => {
     setSelectedItem(null);
     setIsTaskModalOpen(false);
@@ -156,7 +172,7 @@ export default function RecentActivity({ project }: RecentActivityProps) {
             task={selectedItem as Task}
           />
         )}
-        
+
         {/* Milestone Modal */}
         {isMilestoneModalOpen && selectedItem && 'title' in selectedItem && (
           <MilestoneModal
@@ -165,7 +181,7 @@ export default function RecentActivity({ project }: RecentActivityProps) {
             milestone={selectedItem as MileStone}
           />
         )}
-        
+
         {/* Schedule Modal */}
         {isScheduleModalOpen && selectedItem && 'title' in selectedItem && (
           <ScheduleModal
@@ -174,63 +190,68 @@ export default function RecentActivity({ project }: RecentActivityProps) {
             schedule={selectedItem as Schedule}
           />
         )}
-        {activities.length > 0 ? (
-          activities.map((activity, index) => {
-            const isFirst = index === 0;
-            const isLast = index === activities.length - 1;
-            return (
-              <div
-                onClick={() => handleModalOpen(activity.type, activity.id)}
-                key={activity.id}
-                className={`flex items-center gap-3 p-3 ${isFirst ? "rounded-t-md" : ""} ${isLast ? "rounded-b-md" : ""} hover:bg-component-tertiary-background transition-all duration-200 cursor-pointer`}
-              >
-                <div className="relative">
-                  <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                    {activity.user.image ? (
-                      <Image
-                        src={activity.user.image}
-                        alt={activity.user.name}
-                        className="w-full h-full object-cover border border-component-border rounded-full"
-                        width={32}
-                        height={32}
-                      />
-                    ) : (
-                      <span className="text-xs text-gray-700">
-                        {getUserInitials(activity.user.name)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                    <div className={`w-3 h-3 ${activity.user.isActive ? "rounded-full bg-green-500" : "rounded-full bg-gray-500"}`}></div>
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-6 justify-between">
-                    <div className="flex gap-1">
-                      <p className="text-sm text-text-primary">
-                        {activity.user.name}님이 {activity.action}
-                      </p>
-                    </div>
-                    <span className="text-xs text-text-tertiary whitespace-nowrap ml-2">
-                      {formatDistanceToNow(activity.timestamp, { addSuffix: true, locale: ko })}
-                    </span>
-                  </div>
-                  <div className="mt-1">
-                    <Badge
-                      content={getActivityTypeLabel(activity.type)}
-                      color="blue"
-                      className="!text-xs !font-medium !px-2 !py-0.5 !rounded"
-                    />
-                  </div>
-                </div>
-              </div>
-            )
-          })
+
+        {isLoading ? (
+          skeleton()
         ) : (
-          <p className="text-sm text-text-tertiary text-center py-4">
-            최근 활동이 없습니다
-          </p>
-        )}
+          activities.length > 0 ? (
+            activities.map((activity, index) => {
+              const isFirst = index === 0;
+              const isLast = index === activities.length - 1;
+              return (
+                <div
+                  onClick={() => handleModalOpen(activity.type, activity.id)}
+                  key={activity.id}
+                  className={`flex items-center gap-3 p-3 ${isFirst ? "rounded-t-md" : ""} ${isLast ? "rounded-b-md" : ""} hover:bg-component-tertiary-background transition-all duration-200 cursor-pointer`}
+                >
+                  <div className="relative">
+                    <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                      {activity.user.image ? (
+                        <Image
+                          src={activity.user.image}
+                          alt={activity.user.name}
+                          className="w-full h-full object-cover border border-component-border rounded-full"
+                          width={32}
+                          height={32}
+                        />
+                      ) : (
+                        <span className="text-xs text-gray-700">
+                          {getUserInitials(activity.user.name)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
+                      <div className={`w-3 h-3 ${activity.user.isActive ? "rounded-full bg-green-500" : "rounded-full bg-gray-500"}`}></div>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-6 justify-between">
+                      <div className="flex gap-1">
+                        <p className="text-sm text-text-primary">
+                          {activity.user.name}님이 {activity.action}
+                        </p>
+                      </div>
+                      <span className="text-xs text-text-tertiary whitespace-nowrap ml-2">
+                        {formatDistanceToNow(activity.timestamp, { addSuffix: true, locale: ko })}
+                      </span>
+                    </div>
+                    <div className="mt-1">
+                      <Badge
+                        content={getActivityTypeLabel(activity.type)}
+                        color="blue"
+                        className="!text-xs !font-medium !px-2 !py-0.5 !rounded"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )
+            })
+          )
+            : (
+              <p className="text-sm text-text-tertiary text-center py-4">
+                최근 활동이 없습니다
+              </p>
+            ))}
       </div>
     </div>
   );

@@ -29,9 +29,27 @@ interface Activity {
 }
 interface UpcommingDeadlineProps {
   project: Project;
+  isLoading?: boolean;
 }
 
-export default function UpcommingDeadline({ project }: UpcommingDeadlineProps) {
+const skeleton = () => {
+  return (
+    <div className="flex items-center gap-10 justify-between">
+      <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-1">
+          <div className="h-4 w-40 bg-gray-200 rounded animate-pulse"></div>
+          <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+      </div>
+      <div className="flex flex-col gap-1">
+        <div className="h-4 w-15 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-4 w-15 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+    </div>
+  )
+}
+
+export default function UpcommingDeadline({ project, isLoading = false }: UpcommingDeadlineProps) {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isMilestoneModalOpen, setIsMilestoneModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
@@ -170,7 +188,10 @@ export default function UpcommingDeadline({ project }: UpcommingDeadlineProps) {
       )}
 
       <div className="divide-y divide-component-border max-h-[300px] overflow-y-auto">
-        {activities.length > 0 ?
+        {isLoading ? (
+          skeleton()
+        ) :
+          activities.length > 0 ?
           activities.map((activity, index) => {
             const isFirst = index === 0;
             const isLast = index === activities.length - 1;

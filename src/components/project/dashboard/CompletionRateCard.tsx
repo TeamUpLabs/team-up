@@ -3,6 +3,7 @@ import { Project } from "@/types/Project"
 
 interface CompletionRateCardProps {
   project: Project;
+  isLoading?: boolean;
 }
 
 // Function to calculate completion rate for last week
@@ -24,7 +25,7 @@ const calculateLastWeekCompletionRate = (project: Project | null): number => {
   return Math.round((completedLastWeek / tasksLastWeek.length) * 100);
 };
 
-export default function CompletionRateCard({ project }: CompletionRateCardProps) {
+export default function CompletionRateCard({ project, isLoading = false }: CompletionRateCardProps) {
   // Calculate completion rate based on completed tasks vs total tasks
   const totalTasks = project.tasks?.length || 0;
   const completedTasks = project.tasks?.filter(task => task.status === 'done').length || 0;
@@ -38,9 +39,13 @@ export default function CompletionRateCard({ project }: CompletionRateCardProps)
       <div className="flex items-center justify-between">
         <div className="flex flex-col space-y-2">
           <span className="text-text-primary text-sm font-semibold">진행률</span>
-          <span className="text-text-primary text-3xl font-bold">
-            {completionRate}%
-          </span>
+          {isLoading ? (
+            <div className="h-8 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+          ) : (
+            <span className="text-text-primary text-3xl font-bold">
+              {completionRate}%
+            </span>
+          )}
         </div>
         <div className="bg-pink-500/20 rounded-full p-2">
           <Check className="w-4 h-4 text-pink-500" />
