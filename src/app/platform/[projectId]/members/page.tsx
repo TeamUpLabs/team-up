@@ -17,6 +17,7 @@ export default function MembersPage() {
   const [allTeamMembers, setAllTeamMembers] = useState<Member[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isMounted = useRef(false);
+  const [tab, setTab] = useState("전체");
 
   useEffect(() => {
     setAllTeamMembers(project?.members);
@@ -71,6 +72,8 @@ export default function MembersPage() {
   const filteredMembers = (allTeamMembers ?? [])
     .filter((member) => {
       const matchesSearch =
+        tab === '전체' ||
+        member.role === tab ||
         member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
         member.currentTask?.every((task) =>
@@ -102,21 +105,30 @@ export default function MembersPage() {
         <DepartmentCard departments={project?.members?.map(member => member.role) ?? []} />
         <AvgTaskCard avgTaskCount={project?.members?.length ? project.members.map(member => member.currentTask?.length ?? 0).reduce((a, b) => a + b, 0) / project.members.length : 0} />
       </div>
-      {/* Header Section
-      <div className="flex justify-between items-center mb-6 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">팀원</h1>
-          <p className="text-text-secondary mt-2">
-            프로젝트의 팀원을 관리하세요
-          </p>
-        </div>
+
+      <div className="flex gap-2 w-fit bg-component-tertiary-background rounded-md p-2">
+        <button
+          onClick={() => setTab('전체')}
+          className={`px-6 py-2 rounded-md text-sm font-semibold ${tab === '전체' ? 'bg-component-background text-text-primary' : 'bg-transparent text-text-secondary'} transition-colors duration-150 ease-in-out flex items-center justify-center cursor-pointer`}
+        >
+          <span>전체 ({project?.members?.length})</span>
+        </button>
+        {project?.members?.map((member) => member.role).filter((role, index, self) => self.indexOf(role) === index).map((role) => (
+          <button
+            key={role}
+            onClick={() => setTab(role)}
+            className={`px-6 py-2 rounded-md text-sm font-semibold ${tab === role ? 'bg-component-background text-text-primary' : 'bg-transparent text-text-secondary'} transition-colors duration-150 ease-in-out flex items-center justify-center cursor-pointer`}
+          >
+            <span>{role} ({project?.members?.filter((member) => member.role === role).length})</span>
+          </button>
+        ))}
       </div>
       {filteredMembers.length === 0 && (
         <div className="text-center text-text-secondary mt-8 p-8 bg-component-background rounded-lg border border-component-border">
           검색 결과가 없습니다.
         </div>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredMembers.map((member) => (
           <MemberCard
             key={member.id}
@@ -142,7 +154,7 @@ export default function MembersPage() {
             false
           }
         />
-      )} */}
+      )}
     </div>
   );
 }
