@@ -20,7 +20,7 @@ export default function SettingsPage() {
   const hasParticipationRequests = project?.participationRequestMembers && project.participationRequestMembers.length > 0;
 
   return (
-    <div className="py-20 px-4">
+    <div className="p-6">
       <div className="flex items-center justify-between mb-8 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">설정</h1>
@@ -31,7 +31,7 @@ export default function SettingsPage() {
       <div className="flex border-b border-component-border mb-6">
         <button
           onClick={() => setActiveTab("general")}
-          className={`px-4 py-2 font-medium ${
+          className={`px-4 py-2 font-medium cursor-pointer ${
             activeTab === "general" ? "text-blue-500 border-b-2 border-blue-500" : "text-text-secondary"
           }`}
         >
@@ -39,7 +39,7 @@ export default function SettingsPage() {
         </button>
         <button
           onClick={() => setActiveTab("team")}
-          className={`px-4 py-2 font-medium relative ${
+          className={`px-4 py-2 font-medium relative cursor-pointer ${
             activeTab === "team" ? "text-blue-500 border-b-2 border-blue-500" : "text-text-secondary"
           }`}
         >
@@ -56,7 +56,7 @@ export default function SettingsPage() {
         {isLeader && (
           <button
             onClick={() => setActiveTab("danger")}
-            className={`px-4 py-2 font-medium ${
+            className={`px-4 py-2 font-medium cursor-pointer ${
               activeTab === "danger" ? "text-red-500 border-b-2 border-red-500" : "text-text-secondary"
             }`}
           >
