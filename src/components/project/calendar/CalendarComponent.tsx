@@ -38,7 +38,7 @@ export default function Calendar({
           <div className="flex items-center space-x-3 sm:space-x-4">
             <button
               onClick={onPreviousMonth}
-              className="p-2 hover:bg-component-secondary-background active:bg-component-secondary-background rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              className="p-2 hover:bg-component-tertiary-background active:bg-component-tertiary-background rounded-lg transition-colors focus:outline-none cursor-pointer"
               aria-label="이전 달"
             >
               <FontAwesomeIcon icon={faChevronLeft} className="w-4 h-4 sm:w-5 sm:h-5 text-text-secondary" />
@@ -48,7 +48,7 @@ export default function Calendar({
             </h2>
             <button
               onClick={onNextMonth}
-              className="p-2 hover:bg-component-secondary-background active:bg-component-secondary-background rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              className="p-2 hover:bg-component-tertiary-background active:bg-component-tertiary-background rounded-lg transition-colors focus:outline-none cursor-pointer"
               aria-label="다음 달"
             >
               <FontAwesomeIcon icon={faChevronRight} className="w-4 h-4 sm:w-5 sm:h-5 text-text-secondary" />
