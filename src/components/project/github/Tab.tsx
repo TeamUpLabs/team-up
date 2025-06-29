@@ -69,7 +69,7 @@ export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
   return (
     <div
       ref={containerRef}
-      className="relative flex items-center w-full bg-component-tertiary-background rounded-lg p-2 text-xs md:text-sm"
+      className="relative flex items-center gap-2 w-full bg-component-tertiary-background rounded-lg p-2 text-xs md:text-sm"
     >
       {/* Animated Slider */}
       <div
@@ -89,7 +89,7 @@ export default function Tab({ selectedTab, setSelectedTab }: TabProps) {
           onClick={() => setSelectedTab(key as TabProps["selectedTab"])}
           className={`
             relative z-10 flex items-center gap-1 w-full px-1.5 py-1 md:px-3 md:py-2 justify-center rounded-lg
-            ${selectedTab === key ? "text-text-primary font-medium" : "text-text-secondary"}
+            ${selectedTab === key ? "text-text-primary font-medium" : "text-text-secondary hover:bg-component-background/50 hover:text-text-primary"}
             cursor-pointer
           `}
         >
