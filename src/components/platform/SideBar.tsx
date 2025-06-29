@@ -5,7 +5,7 @@ import {
   ChevronDown,
 } from "flowbite-react-icons/outline";
 import { useProject } from "@/contexts/ProjectContext";
-import CreateChannelButton from "@/components/ui/ChannelCreateBtn";
+import CreateChannelButton from "@/components/project/chat/ChannelCreateBtn";
 import { useAuthStore } from "@/auth/authStore";
 
 interface NavItem {
