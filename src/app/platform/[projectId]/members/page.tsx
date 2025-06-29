@@ -9,6 +9,7 @@ import TotalMemberCard from "@/components/project/members/TotalMemberCard";
 import ActiveMemberCard from "@/components/project/members/ActiveMemberCard";
 import DepartmentCard from "@/components/project/members/DepartmentCard";
 import AvgTaskCard from "@/components/project/members/AvgTaskCard";
+import TabSlider from "@/components/ui/TabSlider";
 
 export default function MembersPage() {
   const { project } = useProject();
@@ -18,6 +19,26 @@ export default function MembersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isMounted = useRef(false);
   const [tab, setTab] = useState("전체");
+  
+  // Get unique roles from project members
+  const uniqueRoles = Array.from(new Set(project?.members?.map(member => member.role) || []));
+  
+  // Create tabs object with '전체' tab and dynamic role tabs
+  const memberTabs = {
+    '전체': { 
+      label: '전체', 
+      count: project?.members?.length || 0 
+    },
+    ...Object.fromEntries(
+      uniqueRoles.map(role => [
+        role,
+        { 
+          label: role, 
+          count: project?.members?.filter(member => member.role === role).length || 0 
+        }
+      ])
+    )
+  };
 
   useEffect(() => {
     setAllTeamMembers(project?.members);
@@ -106,23 +127,14 @@ export default function MembersPage() {
         <AvgTaskCard avgTaskCount={project?.members?.length ? project.members.map(member => member.currentTask?.length ?? 0).reduce((a, b) => a + b, 0) / project.members.length : 0} />
       </div>
 
-      <div className="flex gap-2 w-fit bg-component-tertiary-background rounded-md p-2">
-        <button
-          onClick={() => setTab('전체')}
-          className={`px-6 py-2 rounded-md text-sm font-semibold ${tab === '전체' ? 'bg-component-background text-text-primary' : 'bg-transparent text-text-secondary'} transition-colors duration-150 ease-in-out flex items-center justify-center cursor-pointer`}
-        >
-          <span>전체 ({project?.members?.length})</span>
-        </button>
-        {project?.members?.map((member) => member.role).filter((role, index, self) => self.indexOf(role) === index).map((role) => (
-          <button
-            key={role}
-            onClick={() => setTab(role)}
-            className={`px-6 py-2 rounded-md text-sm font-semibold ${tab === role ? 'bg-component-background text-text-primary' : 'bg-transparent text-text-secondary'} transition-colors duration-150 ease-in-out flex items-center justify-center cursor-pointer`}
-          >
-            <span>{role} ({project?.members?.filter((member) => member.role === role).length})</span>
-          </button>
-        ))}
+      <div className="w-full md:w-1/2 lg:w-1/3">
+        <TabSlider 
+          tabs={memberTabs} 
+          selectedTab={tab} 
+          onTabChange={setTab} 
+        />
       </div>
+
       {filteredMembers.length === 0 && (
         <div className="text-center text-text-secondary mt-8 p-8 bg-component-background rounded-lg border border-component-border">
           검색 결과가 없습니다.
