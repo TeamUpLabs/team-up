@@ -41,15 +41,15 @@ export default function TasksPage() {
 
   useEffect(() => {
     const selectedTaskId = localStorage.getItem('selectedTaskId');
-    
+
     if (selectedTaskId && tasks.length > 0) {
       const taskToOpen = tasks.find(task => task.id === parseInt(selectedTaskId));
-      
+
       if (taskToOpen) {
         setSelectedTask(taskToOpen);
         setIsModalOpen(true);
       }
-    
+
       localStorage.removeItem('selectedTaskId');
     }
   }, [tasks]);
@@ -96,23 +96,27 @@ export default function TasksPage() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="py-20 px-4">
-        {/* Header Section */}
-        <div className="flex items-center justify-between mb-8 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
-          <div>
-            <h1 className="text-2xl font-bold text-text-primary">작업</h1>
-            <p className="text-text-secondary mt-2">프로젝트의 작업을 관리하세요</p>
-          </div>
-          <button 
+      <div className="p-6 flex flex-col gap-4">
+        <div className="flex items-center justify-end">
+          <button
             onClick={() => setIsSelectMilestoneModalOpen(true)}
-            className="flex items-center gap-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-lg transition-colors active:scale-95"
+            className="flex active:scale-95"
           >
-            <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
-            <span>작업 추가</span>
+            <Badge
+              content={
+                <div className="flex items-center gap-2">
+                  <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
+                  <span>작업 추가</span>
+                </div>
+              }
+              color={isDark ? 'white' : 'black'}
+              isDark={isDark}
+              className="!px-4 !py-2 !font-semibold"
+            />
           </button>
         </div>
 
-        {/* Tasks Columns */}
+        {/* Task Column */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {Object.entries(groupedTasks).map(([status, tasksList]) => (
             <div
