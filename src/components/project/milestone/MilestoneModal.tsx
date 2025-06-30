@@ -595,7 +595,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Assignees Accordian */}
       <Accordion
-        title="Assignees"
+        title={`Assignees (${milestoneData.assignee?.length ?? 0})`}
         icon={User}
       >
         <div className="space-y-2">
@@ -768,7 +768,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Tags Accordian */}
       <Accordion
-        title="Tags & Labels"
+        title={`Tags & Labels (${milestoneData.tags.length})`}
         icon={Tag}
       >
         <div className="flex flex-wrap gap-2 py-1">

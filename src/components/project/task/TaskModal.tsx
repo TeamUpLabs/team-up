@@ -192,7 +192,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           .getState()
           .setAlert("작업 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
-        onClose();
       } catch (error) {
         console.error("Error deleting task:", error);
         useAuthStore.getState().setAlert("작업 삭제에 실패했습니다.", "error");
@@ -704,7 +703,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Assignee Accordian */}
       <Accordion
-        title="Assignees"
+        title={`Assignees (${taskData.assignee?.length ?? 0})`}
         icon={User}
       >
         <div className="space-y-2">
@@ -877,7 +876,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Tag Accordian */}
       <Accordion
-        title="Tags & Labels"
+        title={`Tags & Labels (${taskData.tags.length})`}
         icon={Tag}
       >
         <div className="flex flex-wrap gap-2 py-1">
