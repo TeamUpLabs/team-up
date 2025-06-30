@@ -145,6 +145,8 @@ export default function ProjectLayout({
       label: "깃허브",
       href: `/platform/${projectId}/github`,
       isActive: pathname === `/platform/${projectId}/github`,
+      hasIndicator: true,
+      IndicatorColor: project?.github_repo_url ? "green" : "red",
     },
     {
       icon: CogOutline,

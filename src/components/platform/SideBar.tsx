@@ -15,6 +15,8 @@ interface NavItem {
   label: string;
   href: string;
   isActive?: boolean;
+  hasIndicator?: boolean;
+  IndicatorColor?: string;
 }
 
 interface SidebarProps {
@@ -164,6 +166,9 @@ export default function SideBar({
                                 <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
                                   {notificationCount}
                                 </span>
+                              )}
+                              {item.hasIndicator && (
+                                <span className={`relative inline-flex rounded-full h-2 w-2 bg-${item.IndicatorColor}-500 text-white text-xs flex items-center justify-center`}></span>
                               )}
                             </Link>
                           )}
