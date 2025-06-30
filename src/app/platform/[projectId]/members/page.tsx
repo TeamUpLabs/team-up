@@ -131,7 +131,7 @@ export default function MembersPage() {
   };
 
   return (
-    <div className="p-6 flex flex-col gap-4">
+    <div className="p-4 flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <TotalMemberCard totalMemberCount={project?.members?.length ?? 0} />
         <ActiveMemberCard totalMemberCount={project?.members?.length ?? 0} activeMemberCount={project?.members?.filter(member => member.status === '활성')?.length ?? 0} />

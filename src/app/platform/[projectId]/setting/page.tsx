@@ -20,7 +20,7 @@ export default function SettingsPage() {
   const hasParticipationRequests = project?.participationRequestMembers && project.participationRequestMembers.length > 0;
 
   return (
-    <div className="p-6">
+    <div className="p-4">
       <div className="flex items-center justify-between mb-8 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">설정</h1>

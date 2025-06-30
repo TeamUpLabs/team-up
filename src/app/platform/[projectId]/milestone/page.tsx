@@ -92,7 +92,7 @@ export default function MilestonePage() {
   }, [project]);
 
   return (
-    <div className="p-6 flex flex-col gap-4">
+    <div className="p-4 flex flex-col gap-4">
       <div className="flex justify-end">
         <button
           onClick={() => setIsCreateModalOpen(true)}
