@@ -223,7 +223,7 @@ const TimePicker = ({
   const inputId = generatedId;
 
   return (
-    <div className={`relative ${className}`} ref={containerRef}>
+    <div className="relative" ref={containerRef}>
       {label && (
         <div className="flex items-center gap-2 relative group mb-1">
           <label
@@ -244,11 +244,11 @@ const TimePicker = ({
       )}
       <div
         className={`flex items-center gap-2 w-full px-3 py-2 border border-input-border rounded-lg cursor-pointer transition-all duration-200 ${disabled
-          ? "opacity-50 cursor-not-allowed bg-gray-50"
+          ? "opacity-70 !cursor-not-allowed"
           : isOpen
             ? "ring-1 ring-input-border-hover"
             : "hover:border-input-border-hover"
-          }`}
+          } ${className}`}
         onClick={() => !disabled && setIsOpen(!isOpen)}
       >
         <Clock className="flex-shrink-0 w-4 h-4 text-text-secondary" />
@@ -259,7 +259,7 @@ const TimePicker = ({
           placeholder={placeholder}
           readOnly
           disabled={disabled}
-          className="bg-transparent outline-none cursor-pointer text-text-secondary"
+          className={`bg-transparent outline-none text-text-secondary cursor-pointer ${disabled ? "!opacity-70 !cursor-not-allowed" : ""}`}
         />
       </div>
 

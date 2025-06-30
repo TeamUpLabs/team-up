@@ -6,6 +6,7 @@ import { faChevronDown, faXmark, faCheck } from "@fortawesome/free-solid-svg-ico
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { BadgeColor } from "@/components/ui/Badge";
+import { faPencil } from "@fortawesome/free-solid-svg-icons";
 
 export interface SelectOption {
   name: string;
@@ -17,6 +18,8 @@ export interface SelectOption {
 interface SelectProps {
   label?: string;
   isRequired?: boolean;
+  isEditable?: boolean;
+  EditOnClick?: () => void;
   options: SelectOption[];
   value?: string | string[];
   onChange: (value: string | string[]) => void;
@@ -37,6 +40,8 @@ interface SelectProps {
 export default function Select({
   label,
   isRequired,
+  isEditable,
+  EditOnClick,
   options,
   value,
   onChange,
@@ -258,13 +263,24 @@ export default function Select({
 
   return (
     <div className="w-full">
-      <label
-        htmlFor={inputId}
-        className="block text-sm font-medium leading-6 text-text-primary mb-1"
-      >
-        {label}
-        {isRequired && <span className="text-point-color-purple ml-1">*</span>}
-      </label>
+      {label && (
+        <div className="flex items-center gap-2 relative group mb-1">
+          <label
+            htmlFor={inputId}
+            className="block text-sm font-medium leading-6 text-text-primary"
+          >
+            {label}
+            {isRequired && <span className="text-point-color-purple ml-1">*</span>}
+          </label>
+          {isEditable && EditOnClick &&
+            <FontAwesomeIcon
+              icon={faPencil}
+              size="xs"
+              className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              onClick={EditOnClick}
+            />}
+        </div>
+      )}
       <div
         ref={selectRef}
         className={`relative ${badgeColors[color as BadgeColor]} 
@@ -282,7 +298,7 @@ export default function Select({
           disabled={disabled}
           className={`
           w-full focus:outline-none focus:ring-0 text-left text-text-secondary
-          ${disabled ? "bg-gray-100 cursor-not-allowed" : "hover:border-gray-400 cursor-pointer"}
+          ${disabled ? "bg-input-background cursor-not-allowed opacity-70" : "cursor-pointer"}
         `}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
