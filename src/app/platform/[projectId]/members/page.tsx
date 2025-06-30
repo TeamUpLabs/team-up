@@ -66,8 +66,8 @@ export default function MembersPage() {
   useEffect(() => {
     const handleHeaderSearch = (event: Event) => {
       const customEvent = event as CustomEvent;
-      const searchValue = customEvent.detail || "";
-
+      const searchValue = customEvent.detail || '';
+      
       // Only update if value is different
       if (searchValue !== searchQuery) {
         setSearchQuery(searchValue);
@@ -75,10 +75,10 @@ export default function MembersPage() {
     };
 
     // Add event listener
-    window.addEventListener("headerSearch", handleHeaderSearch);
-
+    window.addEventListener('headerSearch', handleHeaderSearch);
+    
     return () => {
-      window.removeEventListener("headerSearch", handleHeaderSearch);
+      window.removeEventListener('headerSearch', handleHeaderSearch);
     };
   }, [searchQuery]);
 
@@ -92,21 +92,33 @@ export default function MembersPage() {
 
   const filteredMembers = (allTeamMembers ?? [])
     .filter((member) => {
-      const matchesSearch =
-        tab === '전체' ||
-        member.role === tab ||
-        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.currentTask?.every((task) =>
-          task.title.toLowerCase().includes(searchQuery.toLowerCase())
+      // Filter by tab
+      const matchesTab = 
+        tab === '전체' || 
+        (member.role === tab);
+      
+      // If there's no search query, just return tab matches
+      if (!searchQuery.trim()) return matchesTab;
+
+      // Filter by search query
+      const searchLower = searchQuery.toLowerCase();
+      const matchesSearch = 
+        member.name.toLowerCase().includes(searchLower) ||
+        member.role.toLowerCase().includes(searchLower) ||
+        member.email?.toLowerCase().includes(searchLower) ||
+        member.currentTask?.some(task => 
+          task.title.toLowerCase().includes(searchLower)
         );
 
-      return matchesSearch;
+      return matchesTab && matchesSearch;
     })
     .sort((a, b) => {
+      // Leader always comes first
       if (a.id === project?.leader.id) return -1;
       if (b.id === project?.leader.id) return 1;
-      return 0;
+      
+      // Finally sort by name
+      return a.name.localeCompare(b.name);
     });
 
   const handleMemberClick = (member: Member) => {

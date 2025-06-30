@@ -37,15 +37,44 @@ export default function MilestonePage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState<MileStone | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [searchQuery, setSearchQuery] = useState('');
   const { isDark } = useTheme();
 
+  // Listen for header search events
+  useEffect(() => {
+    const handleHeaderSearch = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const searchValue = customEvent.detail || '';
+
+      // Only update if value is different
+      if (searchValue !== searchQuery) {
+        setSearchQuery(searchValue);
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('headerSearch', handleHeaderSearch);
+
+    return () => {
+      window.removeEventListener('headerSearch', handleHeaderSearch);
+    };
+  }, [searchQuery]);
+
   const filteredMilestones = project?.milestones.filter(milestone => {
-    if (tab === 'all') return true;
-    if (tab === 'not-started') return milestone.status === 'not-started';
-    if (tab === 'in-progress') return milestone.status === 'in-progress';
-    if (tab === 'done') return milestone.status === 'done';
-    return true;
+    const matchesTab = 
+      tab === 'all' || 
+      (milestone.status === tab);
+    
+    // If there's no search query, just return tab matches
+    if (!searchQuery.trim()) return matchesTab;
+
+    // Filter by search query
+    const searchLower = searchQuery.toLowerCase();
+    const matchesSearch = 
+      milestone.title.toLowerCase().includes(searchLower) ||
+      milestone.description?.toLowerCase().includes(searchLower);
+
+    return matchesTab && matchesSearch;
   }) ?? [];
 
   useEffect(() => {

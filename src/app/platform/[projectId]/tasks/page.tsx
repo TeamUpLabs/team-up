@@ -23,6 +23,7 @@ export default function TasksPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSelectMilestoneModalOpen, setIsSelectMilestoneModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (!project?.tasks) return;
@@ -38,6 +39,26 @@ export default function TasksPage() {
       console.error('Error fetching tasks:', error);
     }
   }, [project])
+
+    // Listen for header search events
+    useEffect(() => {
+      const handleHeaderSearch = (event: Event) => {
+        const customEvent = event as CustomEvent;
+        const searchValue = customEvent.detail || '';
+        
+        // Only update if value is different
+        if (searchValue !== searchQuery) {
+          setSearchQuery(searchValue);
+        }
+      };
+  
+      // Add event listener
+      window.addEventListener('headerSearch', handleHeaderSearch);
+      
+      return () => {
+        window.removeEventListener('headerSearch', handleHeaderSearch);
+      };
+    }, [searchQuery]);
 
   useEffect(() => {
     const selectedTaskId = localStorage.getItem('selectedTaskId');
@@ -65,10 +86,22 @@ export default function TasksPage() {
     }
   };
 
+  const filterTasks = (taskList: Task[]) => {
+    if (!searchQuery.trim()) return taskList;
+    
+    const query = searchQuery.toLowerCase();
+    return taskList.filter(task => 
+      task.title.toLowerCase().includes(query) ||
+      task.description?.toLowerCase().includes(query) ||
+      project?.members?.some(member => member.name.toLowerCase().includes(query)) ||
+      task.tags?.some(tag => tag.toLowerCase().includes(query))
+    );
+  };
+
   const groupedTasks = {
-    'not-started': tasks.filter(task => task.status === 'not-started'),
-    'in-progress': tasks.filter(task => task.status === 'in-progress'),
-    'done': tasks.filter(task => task.status === 'done'),
+    'not-started': filterTasks(tasks.filter(task => task.status === 'not-started')),
+    'in-progress': filterTasks(tasks.filter(task => task.status === 'in-progress')),
+    'done': filterTasks(tasks.filter(task => task.status === 'done')),
   };
 
   const moveTask = async (taskId: number, newStatus: Task['status']) => {
@@ -137,7 +170,9 @@ export default function TasksPage() {
                       isDark={isDark}
                       className="!inline-flex !px-2 !py-1 !rounded-md !text-xs !font-medium !mr-2"
                     />
-                    <span className="text-text-secondary text-sm">{tasksList.length}</span>
+                    <span className="text-text-secondary text-sm">
+                      {tasksList.length}
+                    </span>
                   </div>
                 </div>
               </div>
