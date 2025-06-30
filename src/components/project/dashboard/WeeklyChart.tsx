@@ -144,7 +144,7 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
               bottom: 5,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--component-border)" />
             <XAxis 
               dataKey="name" 
               tick={{ fontSize: 12 }}
@@ -159,10 +159,10 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
             />
             <Tooltip 
               contentStyle={{
-                backgroundColor: 'white',
+                backgroundColor: 'var(--component-secondary-background)',
                 borderRadius: '8px',
                 boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-                border: '1px solid #e5e7eb',
+                border: '1px solid var(--component-border)',
                 fontSize: '12px',
               }}
               labelFormatter={(label, payload) => {

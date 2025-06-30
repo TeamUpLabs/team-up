@@ -43,23 +43,23 @@ export default function RepoPopularityChart({ stars, forks, watchers }: RepoPopu
       </div>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--component-border)" />
           <XAxis dataKey="name" />
           <YAxis allowDecimals={false} />
           <Tooltip
             contentStyle={{
-              backgroundColor: "var(--color-component-secondary-background)",
-              borderColor: "var(--color-component-border)",
+              backgroundColor: "var(--component-secondary-background)",
+              borderColor: "var(--component-border)",
               borderRadius: "0.375rem",
               boxShadow:
                 "0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.05)",
               padding: "8px 12px",
             }}
-            labelStyle={{ color: "var(--color-text-primary)", marginBottom: 4, fontWeight: 500 }}
-            itemStyle={{ color: "var(--color-text-secondary)" }}
+            labelStyle={{ color: "var(--text-primary)", marginBottom: 4, fontWeight: 500 }}
+            itemStyle={{ color: "var(--text-secondary)" }}
           />
           <Legend formatter={(value) => <span className="text-text-secondary ml-2">{value}</span>} />
-          <Bar dataKey="count" fill="#60A5FA" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="count" fill="#60A5FA" radius={[4, 4, 0, 0]} stroke="var(--component-border)" />
         </BarChart>
       </ResponsiveContainer>
     </div>
