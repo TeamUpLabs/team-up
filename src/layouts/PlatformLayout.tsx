@@ -82,7 +82,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
       { 
         icon: FolderOpenOutline, 
         activeIcon: FolderOpenSolid, 
-        category: "NAVIGATION",
+        category: "내 활동",
         label: "내 프로젝트", 
         href: "/platform", 
         isActive: pathname === "/platform" 
@@ -90,7 +90,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
       { 
         icon: SearchOutline, 
         activeIcon: SearchSolid, 
-        category: "NAVIGATION",
+        category: "탐색",
         label: "프로젝트 찾기", 
         href: "/platform/projects", 
         isActive: pathname === "/platform/projects" 
@@ -98,7 +98,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
       { 
         icon: UsersOutline, 
         activeIcon: UsersSolid, 
-        category: "NAVIGATION",
+        category: "탐색",
         label: "팀원 찾기", 
         href: "/platform/members", 
         isActive: pathname === "/platform/members" 
