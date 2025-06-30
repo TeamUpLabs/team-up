@@ -4,6 +4,8 @@ import React from "react"
 
 import { useState, useEffect, useRef } from "react"
 import { CalendarMonth, ChevronLeft, ChevronRight } from "flowbite-react-icons/outline"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPencil } from "@fortawesome/free-solid-svg-icons";
 
 // 타입 정의
 interface DatePickerProps {
@@ -11,6 +13,8 @@ interface DatePickerProps {
   isRequired?: boolean;
   value?: Date
   onChange?: (date: Date | undefined) => void
+  isEditable?: boolean;
+  EditOnClick?: () => void;
   placeholder?: string
   disabled?: boolean
   minDate?: Date
@@ -226,6 +230,8 @@ export default function DatePicker({
   label,
   isRequired,
   value,
+  isEditable,
+  EditOnClick,
   onChange,
   placeholder = "날짜를 선택하세요",
   disabled = false,
@@ -318,13 +324,22 @@ export default function DatePicker({
   return (
     <div className={`relative`} ref={containerRef}>
       {label && (
-        <label
-          htmlFor={inputId}
-          className="block text-sm font-medium leading-6 text-text-primary mb-1"
-        >
-          {label}
-          {isRequired && <span className="text-point-color-purple ml-1">*</span>}
-        </label>
+        <div className="flex items-center gap-2 relative group mb-1">
+          <label
+            htmlFor={inputId}
+            className="block text-sm font-medium leading-6 text-text-primary"
+          >
+            {label}
+            {isRequired && <span className="text-point-color-purple ml-1">*</span>}
+          </label>
+          {isEditable && EditOnClick &&
+            <FontAwesomeIcon
+              icon={faPencil}
+              size="xs"
+              className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              onClick={EditOnClick}
+            />}
+        </div>
       )}
       <button
         type="button"

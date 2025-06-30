@@ -1,9 +1,15 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import { Clock, ChevronUp, ChevronDown } from "flowbite-react-icons/outline"
+import React, { useState, useEffect, useRef, useCallback } from "react"
+import { Clock, ChevronUp, ChevronDown } from "flowbite-react-icons/outline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPencil } from "@fortawesome/free-solid-svg-icons";
 
 interface TimePickerProps {
+  label?: string;
+  isEditable?: boolean;
+  EditOnClick?: () => void;
+  isRequired?: boolean;
   value?: string
   onChange?: (time: string) => void
   format?: "12" | "24"
@@ -24,6 +30,10 @@ interface TimeState {
 }
 
 const TimePicker = ({
+  label,
+  isEditable,
+  EditOnClick,
+  isRequired,
   value = "",
   onChange,
   format = "24",
@@ -207,18 +217,38 @@ const TimePicker = ({
     }
   }, [minTime, value, format, isTimeValid, formatTime, onChange])
 
-  const displayValue = value || formatTime(timeState)
+  const displayValue = value || formatTime(timeState);
+
+  const generatedId = React.useId();
+  const inputId = generatedId;
 
   return (
     <div className={`relative ${className}`} ref={containerRef}>
+      {label && (
+        <div className="flex items-center gap-2 relative group mb-1">
+          <label
+            htmlFor={inputId}
+            className="block text-sm font-medium leading-6 text-text-primary"
+          >
+            {label}
+            {isRequired && <span className="text-point-color-purple ml-1">*</span>}
+          </label>
+          {isEditable && EditOnClick &&
+            <FontAwesomeIcon
+              icon={faPencil}
+              size="xs"
+              className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              onClick={EditOnClick}
+            />}
+        </div>
+      )}
       <div
-        className={`flex items-center gap-2 w-full px-3 py-2 border border-input-border rounded-lg cursor-pointer transition-all duration-200 ${
-          disabled
-            ? "opacity-50 cursor-not-allowed bg-gray-50"
-            : isOpen
-              ? "ring-1 ring-input-border-hover"
-              : "hover:border-input-border-hover"
-        }`}
+        className={`flex items-center gap-2 w-full px-3 py-2 border border-input-border rounded-lg cursor-pointer transition-all duration-200 ${disabled
+          ? "opacity-50 cursor-not-allowed bg-gray-50"
+          : isOpen
+            ? "ring-1 ring-input-border-hover"
+            : "hover:border-input-border-hover"
+          }`}
         onClick={() => !disabled && setIsOpen(!isOpen)}
       >
         <Clock className="flex-shrink-0 w-4 h-4 text-text-secondary" />
@@ -478,11 +508,10 @@ const TimeSelector = ({ time, onChange, format, showSeconds, step, minTime, maxT
             type="button"
             onClick={togglePeriod}
             disabled={isPeriodToggleDisabled()}
-            className={`px-3 py-2 rounded-lg font-medium transition-colors ${
-              isPeriodToggleDisabled()
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-blue-100 hover:bg-blue-200 text-blue-800"
-            }`}
+            className={`px-3 py-2 rounded-lg font-medium transition-colors ${isPeriodToggleDisabled()
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-blue-100 hover:bg-blue-200 text-blue-800"
+              }`}
           >
             {time.period}
           </button>
@@ -518,11 +547,10 @@ const TimeColumn = ({
           type="button"
           onClick={onIncrement}
           disabled={incrementDisabled}
-          className={`p-1 rounded transition-colors ${
-            incrementDisabled
-              ? "text-gray-300 cursor-not-allowed"
-              : "hover:bg-component-tertiary-background text-text-primary-color"
-          }`}
+          className={`p-1 rounded transition-colors ${incrementDisabled
+            ? "text-gray-300 cursor-not-allowed"
+            : "hover:bg-component-tertiary-background text-text-primary-color"
+            }`}
         >
           <ChevronUp className="w-4 h-4" />
         </button>
@@ -535,11 +563,10 @@ const TimeColumn = ({
           type="button"
           onClick={onDecrement}
           disabled={decrementDisabled}
-          className={`p-1 rounded transition-colors ${
-            decrementDisabled
-              ? "text-gray-300 cursor-not-allowed"
-              : "hover:bg-component-tertiary-background text-text-primary-color"
-          }`}
+          className={`p-1 rounded transition-colors ${decrementDisabled
+            ? "text-gray-300 cursor-not-allowed"
+            : "hover:bg-component-tertiary-background text-text-primary-color"
+            }`}
         >
           <ChevronDown className="w-4 h-4" />
         </button>
