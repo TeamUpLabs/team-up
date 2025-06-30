@@ -83,7 +83,7 @@ export default function TabSlider({
               cursor-pointer rounded-md transition-colors duration-200
             `}
           >
-            <span>{label}</span>
+            <span className="flex-shrink-0">{label}</span>
             {count !== undefined && (
               <span className="text-xs text-text-secondary">
                 ({count})
