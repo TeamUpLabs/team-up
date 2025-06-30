@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import SideBar from "@/components/platform/SideBar";
 import NotificationSidebar from "@/components/platform/NotificationSidebar";
 import { Logo } from "@/components/logo";
@@ -35,6 +35,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] = useState(false);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const inputRef = useRef<HTMLInputElement>(null);
   
   // 인증 상태 확인
   useEffect(() => {
@@ -57,6 +58,20 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
   const toggleNotificationSidebar = () => {
     setIsNotificationSidebarOpen(!isNotificationSidebarOpen);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 사용자가 "/"를 눌렀고, input이 아닌 곳에 포커스가 있을 때만
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
+        e.preventDefault(); // "/" 입력 방지
+        inputRef.current?.focus(); // input에 포커스 주기
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // 로딩 중이거나 인증되지 않은 상태면 내용을 표시하지 않음
   if (isLoading) {
@@ -155,6 +170,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
               </div>
               <div className="relative flex-1 max-w-2xl">
                 <Input
+                  ref={inputRef}
                   placeholder="Search projects, tasks, or team members..."
                   value={headerSearchQuery}
                   onChange={(e) => {
@@ -186,6 +202,9 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
                   }}
                   startAdornment={
                     <Search className="w-5 h-5 text-text-secondary" />
+                  }
+                  endAdornment={
+                    <span className="text-text-secondary p-1 border border-component-border rounded w-6 h-6 flex items-center justify-center">/</span>
                   }
                 />
               </div>

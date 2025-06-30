@@ -1,7 +1,7 @@
 "use client";
 
 import SideBar from "@/components/platform/SideBar";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, useRef } from "react";
 import { Project } from "@/types/Project";
 import { usePathname } from "next/navigation";
 import { getProjectById } from "@/hooks/getProjectData";
@@ -49,8 +49,8 @@ export default function ProjectLayout({
   const [project, setProjects] = useState<Project>();
   const [headerSearchQuery, setHeaderSearchQuery] = useState("");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] =
-    useState(false);
+  const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchProjects = async (project_id: string) => {
@@ -74,6 +74,20 @@ export default function ProjectLayout({
   const toggleNotificationSidebar = () => {
     setIsNotificationSidebarOpen(!isNotificationSidebarOpen);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 사용자가 "/"를 눌렀고, input이 아닌 곳에 포커스가 있을 때만
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
+        e.preventDefault(); // "/" 입력 방지
+        inputRef.current?.focus(); // input에 포커스 주기
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const projectNavItems = [
     {
@@ -207,6 +221,7 @@ export default function ProjectLayout({
               </div>
               <div className="relative flex-1 max-w-2xl">
                 <Input
+                  ref={inputRef}
                   placeholder="Search projects, tasks, or team members..."
                   value={headerSearchQuery}
                   onChange={(e) => {
@@ -238,6 +253,9 @@ export default function ProjectLayout({
                   }}
                   startAdornment={
                     <Search className="w-5 h-5 text-text-secondary" />
+                  }
+                  endAdornment={
+                    <span className="text-text-secondary p-1 border border-component-border rounded w-6 h-6 flex items-center justify-center">/</span>
                   }
                 />
               </div>

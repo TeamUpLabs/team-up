@@ -45,7 +45,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             text-text-primary placeholder:text-text-secondary focus:outline-none
             focus:ring-1 focus:ring-point-color-indigo focus:border-transparent 
             transition-all duration-200 hover:border-input-border-hover
-            sm:text-sm sm:leading-6 border border-input-border
+            text-sm sm:leading-6 border border-input-border
             ${error ? 'ring-red-500 focus:ring-red-500' : ''}
             ${className}
           `}
