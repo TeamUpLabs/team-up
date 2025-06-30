@@ -8,6 +8,7 @@ interface TabSliderProps {
   onTabChange: (tab: string) => void;
   className?: string;
   sliderClassName?: string;
+  fullWidth?: boolean;
 }
 
 export default function TabSlider({
@@ -16,6 +17,7 @@ export default function TabSlider({
   onTabChange,
   className = "",
   sliderClassName = "bg-component-background",
+  fullWidth = false,
 }: TabSliderProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const tabRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -49,7 +51,7 @@ export default function TabSlider({
   return (
     <div
       ref={containerRef}
-      className={`relative flex gap-2 items-center w-fit bg-component-tertiary-background rounded-lg p-1 text-xs md:text-sm ${className}`}
+      className={`relative flex gap-2 items-center ${fullWidth ? "w-full" : "w-fit"} bg-component-tertiary-background rounded-lg p-1 text-xs md:text-sm ${className}`}
     >
       {/* Animated Slider */}
       <div
@@ -72,7 +74,7 @@ export default function TabSlider({
             }}
             onClick={() => onTabChange(key)}
             className={`
-              relative z-10 flex items-center justify-center px-6 py-2 gap-1 font-semibold
+              relative z-10 flex ${fullWidth ? "w-full" : "w-fit"} items-center justify-center px-6 py-2 gap-1 font-semibold
               ${
                 selectedTab === key
                   ? "text-text-primary"
