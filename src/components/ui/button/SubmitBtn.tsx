@@ -13,7 +13,7 @@ interface SubmitBtnProps {
 
 export default function SubmitBtn({ submitStatus, onClick, buttonText = "제출", successText = "제출 완료", errorText = "오류 발생", className, fit, withIcon }: SubmitBtnProps) {
   return (
-    <div className={`${fit ? "w-full" : "w-fit"}`}>
+    <div className={`${fit ? "w-fit" : "w-full"}`}>
       <button
         type="submit"
         disabled={submitStatus === 'submitting' || submitStatus === 'error'}

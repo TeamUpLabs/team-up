@@ -1,11 +1,11 @@
 "use client";
 
 import Badge from "@/components/ui/Badge";
-import { Settings, Camera, User } from "lucide-react";
+import { Camera, User } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { updateUserProfileImage } from "@/hooks/getMemberData";
+import { updateUserProfileImage, updateUserProfile } from "@/hooks/getMemberData";
 import { Member } from "@/types/Member";
 import { useAuthStore } from "@/auth/authStore";
 import ImageCropModal from "@/components/platform/profile/ImageCropModal";
@@ -18,6 +18,8 @@ import { TextArea } from "@/components/ui/TextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faLinkedin, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { Globe } from "lucide-react";
+import CancelBtn from "@/components/ui/button/CancelBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
 
 interface PersonalInfoProps {
   user: Member;
@@ -35,6 +37,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   const [newSkill, setNewSkill] = useState<string>("");
   const [newLanguage, setNewLanguage] = useState<string>("");
   const [isComposing, setIsComposing] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -267,6 +270,26 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
     }));
   };
 
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    setSubmitStatus('submitting');
+    try {
+      const response = await updateUserProfile(user?.id || 0, formData);
+      if (response) {
+        useAuthStore.getState().setUser(response);
+        useAuthStore.getState().setAlert("프로필이 업데이트되었습니다.", "success");
+        setIsEditing("none");
+        setSubmitStatus('success');
+      }
+    } catch (error) {
+      console.error("프로필 업데이트 중 오류:", error);
+      useAuthStore.getState().setAlert("프로필 업데이트 중 오류가 발생했습니다.", "error");
+      setSubmitStatus('error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 border border-component-border rounded-lg p-6">
       <div className="flex items-center gap-4">
@@ -432,9 +455,10 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
                   color="blue"
                   isEditable={isEditing === "skills"}
                   onRemove={() => removeSkill(skill)}
+                  isDark={isDark}
                 />
               ) : (
-                <Badge key={index} content={skill} color="blue" />
+                <Badge key={index} content={skill} color="blue" isDark={isDark} />
               )
             ))}
           </div>
@@ -464,9 +488,10 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
                   color="green"
                   isEditable={isEditing === "languages"}
                   onRemove={() => removeLanguage(language)}
+                  isDark={isDark}
                 />
               ) : (
-                <Badge key={index} content={language} color="green" />
+                <Badge key={index} content={language} color="green" isDark={isDark} />
               )
             ))}
           </div>
@@ -540,23 +565,18 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
       </div>
       
       {isEditing !== "none" && (
-        <div className="flex justify-end">
-          <button
-            onClick={() => setIsEditing("none")}
-            className="flex cursor-pointer active:scale-95"
-          >
-          <Badge
-            content={
-              <div className="flex items-center gap-2">
-                <Settings className="w-5 h-5" />
-                <span>프로필 편집</span>
-              </div>
-            }
-            color={isDark ? 'white' : 'black'}
-            isDark={isDark}
-            className="!px-4 !py-2 !font-semibold"
+        <div className="flex gap-2 justify-end">
+          <CancelBtn
+            handleCancel={() => setIsEditing("none")}
+            withIcon
           />
-        </button>
+          <SubmitBtn
+            onClick={handleSubmit}
+            buttonText="저장"
+            submitStatus={submitStatus}
+            withIcon
+            fit
+          />
       </div>
     )}
     </div>
