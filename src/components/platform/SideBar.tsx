@@ -15,7 +15,6 @@ interface NavItem {
   label: string;
   href: string;
   isActive?: boolean;
-  hasNotification?: boolean;
 }
 
 interface SidebarProps {
@@ -99,69 +98,79 @@ export default function SideBar({
                     {category}
                   </h3>
                   <ul className="space-y-1">
-                    {items.map((item) => (
-                      <li key={item.href}>
-                        {item.label === '채팅' ? (
-                          <>
-                            <button
-                              onClick={() => setIsChatOpen(!isChatOpen)}
-                              className={`flex items-center justify-between w-full px-4 py-2 text-sm rounded-md transition-colors ${item.isActive
+                    {items.map((item) => {
+                      const notificationCount = project?.participationRequestMembers?.length || 0;
+
+                      return (
+                        <li key={item.href}>
+                          {item.label === '채팅' ? (
+                            <>
+                              <button
+                                onClick={() => setIsChatOpen(!isChatOpen)}
+                                className={`flex items-center justify-between w-full px-4 py-2 text-sm rounded-md transition-colors ${item.isActive
+                                  ? 'bg-component-active-background text-component-active-foreground font-medium'
+                                  : 'text-text-secondary hover:bg-component-hover-background hover:text-text-primary cursor-pointer'
+                                  }`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <span>
+                                    {item.isActive
+                                      ? React.createElement(item.activeIcon, { className: 'w-5 h-5' })
+                                      : React.createElement(item.icon, { className: 'w-5 h-5' })}
+                                  </span>
+                                  <span>{item.label}</span>
+                                </div>
+                                {(!isMobile) && (
+                                  <ChevronDown className={`transition-all duration-200 ${isChatOpen ? 'rotate-180' : ''}`} />
+                                )}
+                              </button>
+                              {isChatOpen && (
+                                <div className="mt-2">
+                                  <CreateChannelButton />
+                                  <div className="mt-2 ml-8 space-y-1">
+                                    {project?.channels
+                                      ?.filter((channel) => channel.member_id.includes(user?.id || 0))
+                                      .map((channel) => (
+                                        <Link
+                                          key={channel.channelId}
+                                          href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.channelId}`}
+                                          className="block text-sm text-text-secondary hover:text-text-primary px-2 py-1 rounded hover:bg-component-hover-background"
+                                        >
+                                          # {channel.channelName}
+                                        </Link>
+                                      ))}
+                                  </div>
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <Link
+                              href={item.href}
+                              className={`flex items-center justify-between px-4 py-2 text-sm rounded-md transition-colors ${item.isActive
                                 ? 'bg-component-active-background text-component-active-foreground font-medium'
-                                : 'text-text-secondary hover:bg-component-hover-background hover:text-text-primary cursor-pointer'
+                                : 'text-text-secondary hover:bg-component-hover-background hover:text-text-primary'
                                 }`}
                             >
-                              <div className="flex items-center">
-                                <span className="mr-3">
+                              <div className="flex items-center gap-3">
+                                <span>
                                   {item.isActive
                                     ? React.createElement(item.activeIcon, { className: 'w-5 h-5' })
                                     : React.createElement(item.icon, { className: 'w-5 h-5' })}
                                 </span>
                                 <span>{item.label}</span>
                               </div>
-                              {(!isMobile) && (
-                                <ChevronDown className={`transition-all duration-200 ${isChatOpen ? 'rotate-180' : ''}`} />
+
+                              {notificationCount > 0 && item.label === '설정' && (
+                                <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
+                                  {notificationCount}
+                                </span>
                               )}
-                            </button>
-                            {isChatOpen && (
-                              <div className="mt-2">
-                                <CreateChannelButton />
-                                <div className="mt-2 ml-8 space-y-1">
-                                  {project?.channels
-                                    ?.filter((channel) => channel.member_id.includes(user?.id || 0))
-                                    .map((channel) => (
-                                      <Link
-                                        key={channel.channelId}
-                                        href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.channelId}`}
-                                        className="block text-sm text-text-secondary hover:text-text-primary px-2 py-1 rounded hover:bg-component-hover-background"
-                                      >
-                                        # {channel.channelName}
-                                      </Link>
-                                    ))}
-                                </div>
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <Link
-                            href={item.href}
-                            className={`flex items-center px-4 py-2 text-sm rounded-md transition-colors ${item.isActive
-                              ? 'bg-component-active-background text-component-active-foreground font-medium'
-                              : 'text-text-secondary hover:bg-component-hover-background hover:text-text-primary'
-                              }`}
-                          >
-                            <span className="mr-3">
-                              {item.isActive
-                                ? React.createElement(item.activeIcon, { className: 'w-5 h-5' })
-                                : React.createElement(item.icon, { className: 'w-5 h-5' })}
-                            </span>
-                            <span>{item.label}</span>
-                            {item.hasNotification && (
-                              <span className="ml-auto w-2 h-2 bg-red-500 rounded-full"></span>
-                            )}
-                          </Link>
-                        )}
-                      </li>
-                    ))}
+                            </Link>
+                          )}
+                        </li>
+                      )
+                    }
+                    )}
                   </ul>
                 </div>
               ));
@@ -189,9 +198,6 @@ export default function SideBar({
                         React.createElement(exitItem.icon, { className: 'w-5 h-5' })}
                     </span>
                     <span>{exitItem.label}</span>
-                    {exitItem.hasNotification && (
-                      <span className="ml-auto w-2 h-2 bg-red-500 rounded-full"></span>
-                    )}
                   </Link>
                 );
               })()}
