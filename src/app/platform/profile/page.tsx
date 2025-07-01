@@ -7,10 +7,13 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import PersonalInfo from "@/components/platform/profile/PersonalInfo";
 import Security from "@/components/platform/profile/Security";
+import Notification from "@/components/platform/profile/Notification";
 import { useAuthStore } from "@/auth/authStore";
 import { Member } from "@/types/Member";
 
-const profileTabs = {
+type ProfileTab = 'personal-info' | 'security' | 'notifications';
+
+const profileTabs: Record<ProfileTab, { label: string }> = {
   'personal-info': {
     label: '개인 정보',
   },
@@ -60,7 +63,7 @@ const blankUser: Member = {
 };
 
 export default function ProfilePage() {
-  const [selectedTab, setSelectedTab] = useState('personal-info');
+  const [selectedTab, setSelectedTab] = useState<ProfileTab>('personal-info');
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
 
@@ -75,17 +78,18 @@ export default function ProfilePage() {
           >
             <FontAwesomeIcon icon={faArrowLeft} />
           </button>
-          <h1 className="text-2xl font-bold text-text-primary">내 프로필</h1>
+          <h1 className="text-2xl font-bold text-text-primary">{profileTabs[selectedTab].label}</h1>
         </div>
       </div>
       <TabSlider
         tabs={profileTabs}
         selectedTab={selectedTab}
-        onTabChange={setSelectedTab}
+        onTabChange={setSelectedTab as (tab: string) => void}
         fullWidth
       />
       {selectedTab === 'personal-info' && <PersonalInfo user={user || blankUser} />}
       {selectedTab === 'security' && <Security />}
+      {selectedTab === 'notifications' && <Notification />}
     </div>
   );
 }

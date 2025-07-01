@@ -14,11 +14,10 @@ export default function Security() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   return (
-    <div className="flex flex-col gap-4 border border-component-border rounded-lg p-6">
-      <h1 className="text-xl font-bold text-text-primary">비밀번호 변경 & 보안</h1>
+    <div className="flex flex-col gap-4 border border-component-border rounded-lg px-6">
       <div className="divide-y divide-component-border">
         <div className="flex flex-col gap-4 py-6">
-          <h2 className="text-lg font-semibold text-text-primary">비밀번호 변경</h2>
+          <h2 className="text-lg font-semibold text-text-secondary">비밀번호 변경</h2>
           <Input
             type="password"
             placeholder="현재 비밀번호를 입력해주세요."
@@ -62,7 +61,7 @@ export default function Security() {
         </div>
 
         <div className="flex flex-col gap-4 py-6">
-          <h2 className="text-lg font-semibold text-text-primary mb-4">활성 세션</h2>
+          <h2 className="text-lg font-semibold text-text-secondary mb-4">활성 세션</h2>
           <div className="flex flex-col gap-4">
             <div className="border border-component-border rounded-lg p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
