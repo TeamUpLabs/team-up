@@ -79,9 +79,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className={`absolute inset-y-0 right-0 flex items-center pr-3 ${
             isPassword ? 'pointer-events-auto' : 'pointer-events-none'
           }`}
-          style={{
-            visibility: (endAdornment || isPassword) ? 'visible' : 'hidden'
-          }}
+          style={endAdornment || isPassword ? { visibility: 'visible' } : { visibility: 'hidden' }}
         >
           {endAdornmentContent}
         </div>
