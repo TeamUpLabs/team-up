@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil } from '@fortawesome/free-solid-svg-icons';
+import { Eye, EyeOff } from 'lucide-react';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -12,6 +13,7 @@ export interface InputProps
   fullWidth?: boolean;
   startAdornment?: React.ReactNode;
   endAdornment?: React.ReactNode;
+  isPassword?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -26,6 +28,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       fullWidth = false,
       startAdornment,
       endAdornment,
+      isPassword,
       id,
       ...props
     },
@@ -33,6 +36,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const generatedId = React.useId();
     const inputId = id || generatedId;
+    const [showPassword, setShowPassword] = React.useState(false);
 
     const inputElement = (
       <div className={`relative ${fullWidth ? 'w-full' : ''}`}>
@@ -47,7 +51,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className={`
             block w-full rounded-md bg-input-background py-2
             ${startAdornment ? 'pl-10' : 'pl-3'}
-            ${endAdornment ? 'pr-10' : 'pr-3'}
+            ${endAdornment || isPassword ? 'pr-10' : 'pr-3'}
             text-text-primary placeholder:text-text-secondary focus:outline-none
             focus:ring-1 focus:ring-point-color-indigo focus:border-transparent 
             transition-all duration-200 hover:border-input-border-hover
@@ -56,10 +60,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ${className}
           `}
           {...props}
+          type={isPassword ? (showPassword ? 'text' : 'password') : props.type}
         />
-        {endAdornment && (
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+        {endAdornment || isPassword && (
+          <div className={`absolute inset-y-0 right-0 flex items-center pr-3 ${isPassword ? 'pointer-events-auto' : 'pointer-events-none'}`}>
             {endAdornment}
+            {isPassword && (
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+              >
+                {showPassword ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+              </button>
+            )}
           </div>
         )}
       </div>
