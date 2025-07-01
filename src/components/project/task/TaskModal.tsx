@@ -608,7 +608,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Progress & Subtasks Accordian */}
       <Accordion
-        title={`Progress & Subtasks (${taskData.subtasks.filter(subtask => subtask.completed).length}/${taskData.subtasks.length})`}
+        title={`Progress & Subtasks (${taskData.subtasks && taskData.subtasks.filter(subtask => subtask.completed).length}/${taskData.subtasks && taskData.subtasks.length || 0})`}
         icon={FileCheck}
         defaultOpen
       >
@@ -703,7 +703,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Assignee Accordian */}
       <Accordion
-        title={`Assignees (${taskData.assignee?.length ?? 0})`}
+        title={`Assignees (${taskData.assignee && taskData.assignee.length || 0})`}
         icon={User}
       >
         <div className="space-y-2">
@@ -876,7 +876,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Tag Accordian */}
       <Accordion
-        title={`Tags & Labels (${taskData.tags.length})`}
+        title={`Tags & Labels (${taskData.tags && taskData.tags.length || 0})`}
         icon={Tag}
       >
         <div className="flex flex-wrap gap-2 py-1">
@@ -929,7 +929,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Comment Accordian */}
       <Accordion
-        title={`Comments (${taskData?.comments?.length ?? 0})`}
+        title={`Comments (${taskData?.comments && taskData?.comments.length || 0})`}
         icon={MessageDots}
       >
         <div className="flex flex-col gap-2">
