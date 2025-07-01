@@ -93,7 +93,7 @@ export default function ProjectLayout({
     {
       icon: GridOutline,
       activeIcon: GridSolid,
-      category: "NAVIGATION",
+      category: "프로젝트",
       label: "대시보드",
       href: `/platform/${projectId}`,
       isActive: pathname === `/platform/${projectId}`,
@@ -101,7 +101,7 @@ export default function ProjectLayout({
     {
       icon: UsersOutline,
       activeIcon: UsersSolid,
-      category: "NAVIGATION",
+      category: "팀",
       label: "팀원",
       href: `/platform/${projectId}/members`,
       isActive: pathname === `/platform/${projectId}/members`,
@@ -109,7 +109,7 @@ export default function ProjectLayout({
     {
       icon: MessagesOutline,
       activeIcon: MessagesSolid,
-      category: "NAVIGATION",
+      category: "팀",
       label: "채팅",
       href: `/platform/${projectId}/chat`,
       isActive: pathname === `/platform/${projectId}/chat`,
@@ -117,7 +117,7 @@ export default function ProjectLayout({
     {
       icon: ClipboardListOutline,
       activeIcon: ClipboardListSolid,
-      category: "NAVIGATION",
+      category: "프로젝트",
       label: "작업",
       href: `/platform/${projectId}/tasks`,
       isActive: pathname === `/platform/${projectId}/tasks`,
@@ -125,7 +125,7 @@ export default function ProjectLayout({
     {
       icon: CalendarMonthOutline,
       activeIcon: CalendarMonthSolid,
-      category: "NAVIGATION",
+      category: "프로젝트",
       label: "일정",
       href: `/platform/${projectId}/calendar`,
       isActive: pathname === `/platform/${projectId}/calendar`,
@@ -133,10 +133,18 @@ export default function ProjectLayout({
     {
       icon: FlagOutline,
       activeIcon: FlagSolid,
-      category: "NAVIGATION",
+      category: "프로젝트",
       label: "마일스톤",
       href: `/platform/${projectId}/milestone`,
       isActive: pathname === `/platform/${projectId}/milestone`,
+    },
+    {
+      icon: CogOutline,
+      activeIcon: CogSolid,
+      category: "환경 설정",
+      label: "설정",
+      href: `/platform/${projectId}/setting`,
+      isActive: pathname === `/platform/${projectId}/setting`,
     },
     {
       icon: GithubSolid,
@@ -147,14 +155,6 @@ export default function ProjectLayout({
       isActive: pathname === `/platform/${projectId}/github`,
       hasIndicator: true,
       IndicatorColor: project?.github_repo_url ? "green" : "red",
-    },
-    {
-      icon: CogOutline,
-      activeIcon: CogSolid,
-      category: "NAVIGATION",
-      label: "설정",
-      href: `/platform/${projectId}/setting`,
-      isActive: pathname === `/platform/${projectId}/setting`,
     },
     {
       icon: ArrowRightToBracketOutline,
