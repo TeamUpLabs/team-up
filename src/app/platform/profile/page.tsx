@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import PersonalInfo from "@/components/platform/profile/PersonalInfo";
+import Security from "@/components/platform/profile/Security";
 import { useAuthStore } from "@/auth/authStore";
 import { Member } from "@/types/Member";
 
@@ -84,6 +85,7 @@ export default function ProfilePage() {
         fullWidth
       />
       {selectedTab === 'personal-info' && <PersonalInfo user={user || blankUser} />}
+      {selectedTab === 'security' && <Security />}
     </div>
   );
 }
