@@ -38,6 +38,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || generatedId;
     const [showPassword, setShowPassword] = React.useState(false);
 
+    // Always render the endAdornment container for consistent hydration
+    // but control its content based on the props
+    const endAdornmentContent = endAdornment || (isPassword ? (
+      <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+      >
+        {showPassword ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+      </button>
+    ) : null);
+
     const inputElement = (
       <div className={`relative ${fullWidth ? 'w-full' : ''}`}>
         {startAdornment && (
@@ -63,20 +75,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
           type={isPassword ? (showPassword ? 'text' : 'password') : props.type}
         />
-        {(endAdornment || isPassword) && (
-          <div className={`absolute inset-y-0 right-0 flex items-center pr-3 ${isPassword ? 'pointer-events-auto' : 'pointer-events-none'}`}>
-            {endAdornment}
-            {isPassword && (
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
-              >
-                {showPassword ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-              </button>
-            )}
-          </div>
-        )}
+        <div 
+          className={`absolute inset-y-0 right-0 flex items-center pr-3 ${
+            isPassword ? 'pointer-events-auto' : 'pointer-events-none'
+          }`}
+          style={{
+            visibility: (endAdornment || isPassword) ? 'visible' : 'hidden'
+          }}
+        >
+          {endAdornmentContent}
+        </div>
       </div>
     );
 
