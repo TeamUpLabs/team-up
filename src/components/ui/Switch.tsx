@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface SwitchProps {
   checked: boolean;
@@ -19,6 +20,7 @@ export function Switch({
 }: SwitchProps) {
   const [isChecked, setIsChecked] = useState(checked);
   const id = `switch-${Math.random().toString(36).substring(2, 9)}`;
+  const { isDark } = useTheme();
 
   useEffect(() => {
     setIsChecked(checked);
@@ -58,14 +60,14 @@ export function Switch({
           ${disabled 
             ? 'bg-gray-200 cursor-not-allowed' 
             : 'cursor-pointer active:scale-95'}
-          ${isChecked && !disabled ? 'bg-black' : 'bg-component-border'}
+          ${isChecked && !disabled ? (isDark ? 'bg-white' : 'bg-black') : (isDark ? 'bg-gray-800' : 'bg-gray-200')}
         `}
         disabled={disabled}
       >
         <span 
           className={`
             inline-block h-5 w-5 transform rounded-full transition-transform
-            ${disabled ? 'bg-gray-400' : 'bg-white'}
+            ${disabled ? (isDark ? 'bg-gray-400' : 'bg-white') : (isDark ? 'bg-black' : 'bg-white')}
             ${isChecked ? 'translate-x-6' : 'translate-x-1'}
           `}
         />
