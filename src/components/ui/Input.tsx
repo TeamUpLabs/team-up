@@ -58,11 +58,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             text-sm sm:leading-6 border border-input-border
             ${error ? 'ring-red-500 focus:ring-red-500' : ''}
             ${className}
+            appearance-none
           `}
           {...props}
           type={isPassword ? (showPassword ? 'text' : 'password') : props.type}
         />
-        {endAdornment || isPassword && (
+        {(endAdornment || isPassword) && (
           <div className={`absolute inset-y-0 right-0 flex items-center pr-3 ${isPassword ? 'pointer-events-auto' : 'pointer-events-none'}`}>
             {endAdornment}
             {isPassword && (
