@@ -8,6 +8,7 @@ export default function Notification() {
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [taskNotification, setTaskNotification] = useState(true);
   const [milestoneNotification, setMilestoneNotification] = useState(true);
+  const [scheduleNotification, setScheduleNotification] = useState(true);
   const [deadlineNotification, setDeadlineNotification] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(true);
   const [pushNotification, setPushNotification] = useState(true);
@@ -43,6 +44,13 @@ export default function Notification() {
         setEmailEnabled(true);
       }
       setMilestoneNotification(checked);
+    }
+
+    if (name === 'scheduleNotification') {
+      if (emailEnabled === false) {
+        setEmailEnabled(true);
+      }
+      setScheduleNotification(checked);
     }
 
     if (name === 'deadlineNotification') {
@@ -84,6 +92,13 @@ export default function Notification() {
             onChange={() => handleEmailToggle('milestoneNotification', !milestoneNotification)}
             label="Milestone 할당 알림"
             description="Milestone이 할당되면 알림을 받을 수 있습니다."
+            className="justify-between"
+          />
+          <Switch
+            checked={scheduleNotification}
+            onChange={() => handleEmailToggle('scheduleNotification', !scheduleNotification)}
+            label="회의 및 이벤트 알림"
+            description="다가오는 회의 및 이벤트에 알림을 받을 수 있습니다."
             className="justify-between"
           />
           <Switch
