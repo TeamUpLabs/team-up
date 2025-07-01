@@ -240,12 +240,12 @@ export default function MemberDetailModal({
 
       {/* Current Tasks Accordian */}
       <Accordion
-        title="Current Tasks"
+        title={`Current Tasks (${member.currentTask && member.currentTask.length || 0})`}
         icon={ClipboardClean}
         defaultOpen
       >
         <div className="space-y-2">
-          {member.currentTask.length > 0 ? (
+          {member.currentTask && member.currentTask.length > 0 ? (
             member.currentTask.map((task, idx) => (
               <div
                 key={idx}
@@ -267,7 +267,7 @@ export default function MemberDetailModal({
 
       {/* Skills Accordian */}
       <Accordion
-        title="Skills"
+        title={`Skills (${member.skills && member.skills.length || 0})`}
         icon={ShieldCheck}
       >
         <div className="space-x-2">
@@ -285,7 +285,7 @@ export default function MemberDetailModal({
 
       {/* Languages Accordian */}
       <Accordion
-        title="Languages"
+        title={`Languages (${member.languages && member.languages.length || 0})`}
         icon={Language}
       >
         <div className="space-x-2">
@@ -303,7 +303,7 @@ export default function MemberDetailModal({
 
       {/* Social Links Accordian */}
       <Accordion
-        title="Social Links"
+        title={`Social Links (${member.socialLinks && member.socialLinks.length || 0})`}
         icon={LinkIcon}
       >
         <div className="flex flex-wrap gap-2">

@@ -5,6 +5,11 @@ import MemberDetailModal from "@/components/project/members/MemberDetailModal";
 import MemberCard from "@/components/project/members/MemberCard";
 import { Member } from "@/types/Member";
 import { useProject } from "@/contexts/ProjectContext";
+import TotalMemberCard from "@/components/project/members/TotalMemberCard";
+import ActiveMemberCard from "@/components/project/members/ActiveMemberCard";
+import DepartmentCard from "@/components/project/members/DepartmentCard";
+import AvgTaskCard from "@/components/project/members/AvgTaskCard";
+import TabSlider from "@/components/ui/TabSlider";
 
 export default function MembersPage() {
   const { project } = useProject();
@@ -13,6 +18,27 @@ export default function MembersPage() {
   const [allTeamMembers, setAllTeamMembers] = useState<Member[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isMounted = useRef(false);
+  const [tab, setTab] = useState("전체");
+  
+  // Get unique roles from project members
+  const uniqueRoles = Array.from(new Set(project?.members?.map(member => member.role) || []));
+  
+  // Create tabs object with '전체' tab and dynamic role tabs
+  const memberTabs = {
+    '전체': { 
+      label: '전체', 
+      count: project?.members?.length || 0 
+    },
+    ...Object.fromEntries(
+      uniqueRoles.map(role => [
+        role,
+        { 
+          label: role, 
+          count: project?.members?.filter(member => member.role === role).length || 0 
+        }
+      ])
+    )
+  };
 
   useEffect(() => {
     setAllTeamMembers(project?.members);
@@ -40,8 +66,8 @@ export default function MembersPage() {
   useEffect(() => {
     const handleHeaderSearch = (event: Event) => {
       const customEvent = event as CustomEvent;
-      const searchValue = customEvent.detail || "";
-
+      const searchValue = customEvent.detail || '';
+      
       // Only update if value is different
       if (searchValue !== searchQuery) {
         setSearchQuery(searchValue);
@@ -49,10 +75,10 @@ export default function MembersPage() {
     };
 
     // Add event listener
-    window.addEventListener("headerSearch", handleHeaderSearch);
-
+    window.addEventListener('headerSearch', handleHeaderSearch);
+    
     return () => {
-      window.removeEventListener("headerSearch", handleHeaderSearch);
+      window.removeEventListener('headerSearch', handleHeaderSearch);
     };
   }, [searchQuery]);
 
@@ -66,19 +92,33 @@ export default function MembersPage() {
 
   const filteredMembers = (allTeamMembers ?? [])
     .filter((member) => {
-      const matchesSearch =
-        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.currentTask?.every((task) =>
-          task.title.toLowerCase().includes(searchQuery.toLowerCase())
+      // Filter by tab
+      const matchesTab = 
+        tab === '전체' || 
+        (member.role === tab);
+      
+      // If there's no search query, just return tab matches
+      if (!searchQuery.trim()) return matchesTab;
+
+      // Filter by search query
+      const searchLower = searchQuery.toLowerCase();
+      const matchesSearch = 
+        member.name.toLowerCase().includes(searchLower) ||
+        member.role.toLowerCase().includes(searchLower) ||
+        member.email?.toLowerCase().includes(searchLower) ||
+        member.currentTask?.some(task => 
+          task.title.toLowerCase().includes(searchLower)
         );
 
-      return matchesSearch;
+      return matchesTab && matchesSearch;
     })
     .sort((a, b) => {
+      // Leader always comes first
       if (a.id === project?.leader.id) return -1;
       if (b.id === project?.leader.id) return 1;
-      return 0;
+      
+      // Finally sort by name
+      return a.name.localeCompare(b.name);
     });
 
   const handleMemberClick = (member: Member) => {
@@ -91,22 +131,28 @@ export default function MembersPage() {
   };
 
   return (
-    <div className="py-20 px-4">
-      {/* Header Section */}
-      <div className="flex justify-between items-center mb-6 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">팀원</h1>
-          <p className="text-text-secondary mt-2">
-            프로젝트의 팀원을 관리하세요
-          </p>
-        </div>
+    <div className="p-4 flex flex-col gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <TotalMemberCard totalMemberCount={project?.members?.length ?? 0} />
+        <ActiveMemberCard totalMemberCount={project?.members?.length ?? 0} activeMemberCount={project?.members?.filter(member => member.status === '활성')?.length ?? 0} />
+        <DepartmentCard departments={project?.members?.map(member => member.role) ?? []} />
+        <AvgTaskCard avgTaskCount={project?.members?.length ? project.members.map(member => member.currentTask?.length ?? 0).reduce((a, b) => a + b, 0) / project.members.length : 0} />
       </div>
+
+      <div className="w-full md:w-1/2 lg:w-1/3">
+        <TabSlider 
+          tabs={memberTabs} 
+          selectedTab={tab} 
+          onTabChange={setTab} 
+        />
+      </div>
+
       {filteredMembers.length === 0 && (
         <div className="text-center text-text-secondary mt-8 p-8 bg-component-background rounded-lg border border-component-border">
           검색 결과가 없습니다.
         </div>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredMembers.map((member) => (
           <MemberCard
             key={member.id}

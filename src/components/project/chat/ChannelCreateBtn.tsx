@@ -4,10 +4,13 @@ import { useState, useEffect } from "react"
 import { Plus } from "flowbite-react-icons/outline"
 import ChannelCreateModal from "@/components/project/chat/ChannelCreateModal"
 import { createPortal } from "react-dom"
+import Badge from "@/components/ui/Badge"
+import { useTheme } from "@/contexts/ThemeContext"
 
 export default function CreateChannelButton() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const { isDark } = useTheme()
 
   useEffect(() => {
     setMounted(true)
@@ -16,14 +19,18 @@ export default function CreateChannelButton() {
 
   return (
     <>
-      <button
-        type="button"
-        className="flex items-center justify-between bg-point-color-indigo text-white px-3 py-2 rounded-lg mx-auto w-full hover:bg-point-color-indigo-hover active:scale-95 transition-all duration-200 cursor-pointer"
+      <Badge
+        color="violet"
+        content={
+          <div className="flex items-center gap-2">
+            <Plus className="h-5 w-5" />
+            <span>채널 추가</span>
+          </div>
+        }
+        className="flex !px-3 !py-2 active:scale-95 cursor-pointer"
         onClick={() => setIsModalOpen(true)}
-      >
-        <span className="text-sm">채널 추가</span>
-        <Plus className="h-5 w-5" />
-      </button>
+        isDark={isDark}
+      />
       {mounted && isModalOpen && createPortal(
         <ChannelCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />,
         document.body

@@ -1,8 +1,7 @@
 "use client";
 
-
-import Sidebar from "@/components/platform/sidebar";
-import { useState, useEffect, use } from "react";
+import SideBar from "@/components/platform/SideBar";
+import { useState, useEffect, use, useRef } from "react";
 import { Project } from "@/types/Project";
 import { usePathname } from "next/navigation";
 import { getProjectById } from "@/hooks/getProjectData";
@@ -21,7 +20,9 @@ import {
   Flag as FlagOutline,
   Cog as CogOutline,
   ArrowRightToBracket as ArrowRightToBracketOutline,
-  Bars as BarsOutline,
+  Search,
+  OpenSidebarAlt,
+  CloseSidebarAlt,
 } from "flowbite-react-icons/outline";
 import {
   Grid as GridSolid,
@@ -33,6 +34,7 @@ import {
   Cog as CogSolid,
   Github as GithubSolid,
 } from "flowbite-react-icons/solid";
+import { Input } from "@/components/ui/Input";
 
 export default function ProjectLayout({
   children,
@@ -45,13 +47,10 @@ export default function ProjectLayout({
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [project, setProjects] = useState<Project>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchVisible, setSearchVisible] = useState(false);
   const [headerSearchQuery, setHeaderSearchQuery] = useState("");
-  const [isMinimized, setIsMinimized] = useState(true);
-  const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] =
-    useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchProjects = async (project_id: string) => {
@@ -62,8 +61,6 @@ export default function ProjectLayout({
         console.error("Error fetching projects:", error);
         alert("프로젝트를 가져오는 데 실패했습니다.");
         window.location.href = "/platform";
-      } finally {
-        setIsLoading(false);
       }
     };
     fetchProjects(projectId);
@@ -74,27 +71,29 @@ export default function ProjectLayout({
     setIsSidebarOpen(false);
   }, [pathname]);
 
-  // Handle search animations
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isSearchOpen) {
-      setSearchVisible(true);
-    } else {
-      timer = setTimeout(() => {
-        setSearchVisible(false);
-      }, 300); // match this to your animation duration
-    }
-    return () => clearTimeout(timer);
-  }, [isSearchOpen]);
-
   const toggleNotificationSidebar = () => {
     setIsNotificationSidebarOpen(!isNotificationSidebarOpen);
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // 사용자가 "/"를 눌렀고, input이 아닌 곳에 포커스가 있을 때만
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
+        e.preventDefault(); // "/" 입력 방지
+        inputRef.current?.focus(); // input에 포커스 주기
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const projectNavItems = [
     {
       icon: GridOutline,
       activeIcon: GridSolid,
+      category: "프로젝트",
       label: "대시보드",
       href: `/platform/${projectId}`,
       isActive: pathname === `/platform/${projectId}`,
@@ -102,6 +101,7 @@ export default function ProjectLayout({
     {
       icon: UsersOutline,
       activeIcon: UsersSolid,
+      category: "팀",
       label: "팀원",
       href: `/platform/${projectId}/members`,
       isActive: pathname === `/platform/${projectId}/members`,
@@ -109,6 +109,7 @@ export default function ProjectLayout({
     {
       icon: MessagesOutline,
       activeIcon: MessagesSolid,
+      category: "팀",
       label: "채팅",
       href: `/platform/${projectId}/chat`,
       isActive: pathname === `/platform/${projectId}/chat`,
@@ -116,6 +117,7 @@ export default function ProjectLayout({
     {
       icon: ClipboardListOutline,
       activeIcon: ClipboardListSolid,
+      category: "프로젝트",
       label: "작업",
       href: `/platform/${projectId}/tasks`,
       isActive: pathname === `/platform/${projectId}/tasks`,
@@ -123,6 +125,7 @@ export default function ProjectLayout({
     {
       icon: CalendarMonthOutline,
       activeIcon: CalendarMonthSolid,
+      category: "프로젝트",
       label: "일정",
       href: `/platform/${projectId}/calendar`,
       isActive: pathname === `/platform/${projectId}/calendar`,
@@ -130,23 +133,28 @@ export default function ProjectLayout({
     {
       icon: FlagOutline,
       activeIcon: FlagSolid,
+      category: "프로젝트",
       label: "마일스톤",
       href: `/platform/${projectId}/milestone`,
       isActive: pathname === `/platform/${projectId}/milestone`,
     },
     {
-      icon: GithubSolid,
-      activeIcon: GithubSolid,
-      label: "깃허브",
-      href: `/platform/${projectId}/github`,
-      isActive: pathname === `/platform/${projectId}/github`,
-    },
-    {
       icon: CogOutline,
       activeIcon: CogSolid,
+      category: "환경 설정",
       label: "설정",
       href: `/platform/${projectId}/setting`,
       isActive: pathname === `/platform/${projectId}/setting`,
+    },
+    {
+      icon: GithubSolid,
+      activeIcon: GithubSolid,
+      category: "INTEGRATIONS",
+      label: "깃허브",
+      href: `/platform/${projectId}/github`,
+      isActive: pathname === `/platform/${projectId}/github`,
+      hasIndicator: true,
+      IndicatorColor: project?.github_repo_url ? "green" : "red",
     },
     {
       icon: ArrowRightToBracketOutline,
@@ -174,135 +182,87 @@ export default function ProjectLayout({
         />
       )}
 
-      <Sidebar
+      <SideBar
         isSidebarOpen={isSidebarOpen}
         title={project?.title}
-        miniTitle={project?.title.charAt(0)}
         titleHref={`/platform/${projectId}`}
         navItems={projectNavItems}
-        onMinimizeChange={setIsMinimized}
+        isMinimized={isSidebarCollapsed}
       />
 
       <div
-        className={`w-full flex-1 transition-all duration-300 ${isMinimized ? "lg:ml-16" : "lg:ml-64"
-          } ${isNotificationSidebarOpen ? "lg:mr-72" : ""}`}
+        className={`w-full flex-1 transition-all duration-300 
+          ${isSidebarCollapsed ? "lg:ml-0" : "lg:ml-64"}
+          ${isNotificationSidebarOpen ? "lg:mr-72" : ""}`}
       >
         <header
-          className={`h-auto bg-component-background min-h-16 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isMinimized ? "lg:left-16" : "lg:left-64"
+          className={`h-auto bg-component-background min-h-16 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isSidebarCollapsed ? "lg:left-0" : "lg:left-64"
             } ${isNotificationSidebarOpen ? "lg:right-72" : ""
             } z-40 content-center transition-all duration-300`}
         >
-          <div className="h-full px-3 py-2 sm:px-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                className="text-text-secondary lg:hidden mt-1"
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              >
-                <BarsOutline />
-              </button>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                {isLoading ? (
-                  <div className="h-6 bg-component-tertiary-background rounded w-32"></div>
-                ) : (
-                  <p className="text-sm md:text-base text-text-secondary line-clamp-1 pr-2">
-                    {project?.description}
-                  </p>
-                )}
-                {isLoading ? (
-                  <div className="h-6 bg-component-tertiary-background rounded w-16"></div>
-                ) : (
-                  <span className="px-2 py-0.5 text-xs font-semibold text-green-800 bg-green-100 rounded-full w-fit whitespace-nowrap">
-                    {project?.status}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center relative gap-2">
-                {searchVisible && (
-                  <div
-                    className={`${isSearchOpen
-                      ? "animate-searchAppear"
-                      : "animate-searchDisappear"
-                      } origin-right overflow-hidden`}
-                    style={{ width: isSearchOpen ? "240px" : "0" }}
-                  >
-                    <input
-                      type="text"
-                      placeholder="Search..."
-                      className="bg-component-background border border-component-border rounded-full py-1 px-4 w-full focus:outline-none focus:border-point-color-indigo hover:border-point-color-indigo"
-                      autoFocus
-                      value={headerSearchQuery}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setHeaderSearchQuery(value);
-
-                        const searchEvent = new CustomEvent(
-                          "headerSearch",
-                          {
-                            detail: value,
-                            bubbles: true,
-                            cancelable: true,
-                          }
-                        );
-                        window.dispatchEvent(searchEvent);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          const searchEvent = new CustomEvent(
-                            "headerSearch",
-                            {
-                              detail: headerSearchQuery,
-                              bubbles: true,
-                              cancelable: true,
-                            }
-                          );
-                          window.dispatchEvent(searchEvent);
-                        }
-                      }}
-                    />
-                  </div>
-                )}
+          <div className="h-full px-3 py-2 sm:px-4 flex items-center gap-3 justify-between">
+            <div className="flex items-center gap-4 w-full">
+              <div className="flex items-center gap-2">
                 <button
-                  aria-label="Search"
-                  onClick={() => setIsSearchOpen(!isSearchOpen)}
-                  className="rounded-full p-2 hover:bg-component-secondary-background transition-colors duration-200"
+                  onClick={() => {
+                    if (window.innerWidth < 1024) {
+                      setIsSidebarOpen(!isSidebarOpen);
+                    } else {
+                      setIsSidebarCollapsed(!isSidebarCollapsed);
+                    }
+                  }}
+                  className="p-2 rounded-md text-text-secondary hover:bg-component-tertiary-background hover:text-text-primary cursor-pointer"
                 >
-                  {isSearchOpen ? (
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 18L18 6M6 6L18 18"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                  {isSidebarCollapsed ? (
+                    <OpenSidebarAlt className="w-5 h-5" />
                   ) : (
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    <CloseSidebarAlt className="w-5 h-5" />
                   )}
                 </button>
+                <div className="h-6 w-px bg-component-border mx-2"></div>
               </div>
+              <div className="relative flex-1 max-w-2xl">
+                <Input
+                  ref={inputRef}
+                  placeholder="Search projects, tasks, or team members..."
+                  value={headerSearchQuery}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setHeaderSearchQuery(value);
+
+                    const searchEvent = new CustomEvent(
+                      "headerSearch",
+                      {
+                        detail: value,
+                        bubbles: true,
+                        cancelable: true,
+                      }
+                    );
+                    window.dispatchEvent(searchEvent);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const searchEvent = new CustomEvent(
+                        "headerSearch",
+                        {
+                          detail: headerSearchQuery,
+                          bubbles: true,
+                          cancelable: true,
+                        }
+                      );
+                      window.dispatchEvent(searchEvent);
+                    }
+                  }}
+                  startAdornment={
+                    <Search className="w-5 h-5 text-text-secondary" />
+                  }
+                  endAdornment={
+                    <span className="text-text-secondary p-1 border border-component-border rounded w-6 h-6 flex items-center justify-center">/</span>
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-shrink-0 items-center gap-3">
               <NotificationDropdown
                 onToggleSidebar={toggleNotificationSidebar}
               />
@@ -311,12 +271,10 @@ export default function ProjectLayout({
           </div>
         </header>
 
-        <main>
-          {children}
-        </main>
+        <main className="mt-16">{children}</main>
       </div>
     </>
-  )
+  );
 
   if (!project) {
     return (
@@ -334,7 +292,7 @@ export default function ProjectLayout({
       <VoiceCallProvider>
         <div className="flex min-h-screen bg-background">
           {defaultLayout(children)}
-          
+
           {/* Voice Call Container always present but conditionally rendered */}
           <VoiceCallContainer />
           <NotificationSidebar

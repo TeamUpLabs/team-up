@@ -23,6 +23,7 @@ export default function TasksPage() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSelectMilestoneModalOpen, setIsSelectMilestoneModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (!project?.tasks) return;
@@ -39,17 +40,37 @@ export default function TasksPage() {
     }
   }, [project])
 
+    // Listen for header search events
+    useEffect(() => {
+      const handleHeaderSearch = (event: Event) => {
+        const customEvent = event as CustomEvent;
+        const searchValue = customEvent.detail || '';
+        
+        // Only update if value is different
+        if (searchValue !== searchQuery) {
+          setSearchQuery(searchValue);
+        }
+      };
+  
+      // Add event listener
+      window.addEventListener('headerSearch', handleHeaderSearch);
+      
+      return () => {
+        window.removeEventListener('headerSearch', handleHeaderSearch);
+      };
+    }, [searchQuery]);
+
   useEffect(() => {
     const selectedTaskId = localStorage.getItem('selectedTaskId');
-    
+
     if (selectedTaskId && tasks.length > 0) {
       const taskToOpen = tasks.find(task => task.id === parseInt(selectedTaskId));
-      
+
       if (taskToOpen) {
         setSelectedTask(taskToOpen);
         setIsModalOpen(true);
       }
-    
+
       localStorage.removeItem('selectedTaskId');
     }
   }, [tasks]);
@@ -65,10 +86,22 @@ export default function TasksPage() {
     }
   };
 
+  const filterTasks = (taskList: Task[]) => {
+    if (!searchQuery.trim()) return taskList;
+    
+    const query = searchQuery.toLowerCase();
+    return taskList.filter(task => 
+      task.title.toLowerCase().includes(query) ||
+      task.description?.toLowerCase().includes(query) ||
+      project?.members?.some(member => member.name.toLowerCase().includes(query)) ||
+      task.tags?.some(tag => tag.toLowerCase().includes(query))
+    );
+  };
+
   const groupedTasks = {
-    'not-started': tasks.filter(task => task.status === 'not-started'),
-    'in-progress': tasks.filter(task => task.status === 'in-progress'),
-    'done': tasks.filter(task => task.status === 'done'),
+    'not-started': filterTasks(tasks.filter(task => task.status === 'not-started')),
+    'in-progress': filterTasks(tasks.filter(task => task.status === 'in-progress')),
+    'done': filterTasks(tasks.filter(task => task.status === 'done')),
   };
 
   const moveTask = async (taskId: number, newStatus: Task['status']) => {
@@ -96,23 +129,27 @@ export default function TasksPage() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="py-20 px-4">
-        {/* Header Section */}
-        <div className="flex items-center justify-between mb-8 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
-          <div>
-            <h1 className="text-2xl font-bold text-text-primary">작업</h1>
-            <p className="text-text-secondary mt-2">프로젝트의 작업을 관리하세요</p>
-          </div>
-          <button 
+      <div className="p-4 flex flex-col gap-4">
+        <div className="flex items-center justify-end">
+          <button
             onClick={() => setIsSelectMilestoneModalOpen(true)}
-            className="flex items-center gap-2 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white px-4 py-2 rounded-lg transition-colors active:scale-95"
+            className="flex active:scale-95"
           >
-            <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
-            <span>작업 추가</span>
+            <Badge
+              content={
+                <div className="flex items-center gap-2">
+                  <FontAwesomeIcon icon={faPlus} className="w-5 h-5" />
+                  <span>작업 추가</span>
+                </div>
+              }
+              color={isDark ? 'white' : 'black'}
+              isDark={isDark}
+              className="!px-4 !py-2 !font-semibold"
+            />
           </button>
         </div>
 
-        {/* Tasks Columns */}
+        {/* Task Column */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {Object.entries(groupedTasks).map(([status, tasksList]) => (
             <div
@@ -133,7 +170,9 @@ export default function TasksPage() {
                       isDark={isDark}
                       className="!inline-flex !px-2 !py-1 !rounded-md !text-xs !font-medium !mr-2"
                     />
-                    <span className="text-text-secondary text-sm">{tasksList.length}</span>
+                    <span className="text-text-secondary text-sm">
+                      {tasksList.length}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { server } from "@/auth/server";
-import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
+import { getCurrentKoreanTime } from "@/utils/dateUtils";
 
 interface ScheduleFormData {
   project_id: string;
@@ -21,8 +21,8 @@ export const createSchedule = async (project_id: string, formData: ScheduleFormD
   try {
     const res = await server.post(`/project/${project_id}/schedule`, {
       ...formData,
-      created_at: getCurrentKoreanTimeDate(),
-      updated_at: getCurrentKoreanTimeDate(),
+      created_at: getCurrentKoreanTime(),
+      updated_at: getCurrentKoreanTime(),
     }, {
       headers: {
         "Content-Type": "application/json",
@@ -75,7 +75,7 @@ export const updateSchedule = async (project_id: string, schedule_id: number, fo
   try {
     const res = await server.put(`/project/${project_id}/schedule/${schedule_id}`, {
       ...formData,
-      updated_at: getCurrentKoreanTimeDate(),
+      updated_at: getCurrentKoreanTime(),
     }, {
       headers: {
         "Content-Type": "application/json",

@@ -77,7 +77,7 @@ export default function ChatPage({ params }: PageProps) {
   };
 
   return (
-    <div className="flex flex-col h-screen pt-16">
+    <div className="flex flex-col h-[calc(100vh-64px)]">
       {/* 채널 헤더 - 고정 */}
       <div className="top-0 bg-background">
         {channel ? (
@@ -122,4 +122,4 @@ export default function ChatPage({ params }: PageProps) {
       </div>
     </div>
   );
-} 
+}

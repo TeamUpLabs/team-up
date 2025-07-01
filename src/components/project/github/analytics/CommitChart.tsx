@@ -55,19 +55,19 @@ export default function CommitChart({ commits }: CommitChartProps) {
       </div>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={commitData}>
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--component-border)" />
           <XAxis dataKey="date" tickFormatter={(value) => new Date(value).getDate().toString()} />
           <YAxis allowDecimals={false} />
           <Tooltip
             contentStyle={{
-              backgroundColor: "var(--color-component-secondary-background)",
-              borderColor: "var(--color-component-border)",
+              backgroundColor: "var(--component-secondary-background)",
+              borderColor: "var(--component-border)",
               borderRadius: "0.375rem",
               boxShadow: "0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.05)",
               padding: "8px 12px",
             }}
-            labelStyle={{ color: "var(--color-text-primary)", marginBottom: "4px", fontWeight: "500" }}
-            itemStyle={{ color: "var(--color-text-secondary)" }}
+            labelStyle={{ color: "var(--text-primary)", marginBottom: "4px", fontWeight: "500" }}
+            itemStyle={{ color: "var(--text-secondary)" }}
             labelFormatter={(value) => new Date(value).toLocaleDateString("ko-KR")}
             formatter={(value, name) => [value, name === "commits" ? "커밋" : name]}
           />

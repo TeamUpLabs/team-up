@@ -1,13 +1,19 @@
 import React from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPencil } from '@fortawesome/free-solid-svg-icons';
+import { Eye, EyeOff } from 'lucide-react';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   isRequired?: boolean;
+  isEditable?: boolean;
+  EditOnClick?: () => void;
   error?: string;
   fullWidth?: boolean;
   startAdornment?: React.ReactNode;
   endAdornment?: React.ReactNode;
+  isPassword?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -16,10 +22,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       className = '',
       label,
       isRequired,
+      isEditable,
+      EditOnClick,
       error,
       fullWidth = false,
       startAdornment,
       endAdornment,
+      isPassword,
       id,
       ...props
     },
@@ -27,6 +36,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const generatedId = React.useId();
     const inputId = id || generatedId;
+    const [showPassword, setShowPassword] = React.useState(false);
+
+    // Always render the endAdornment container for consistent hydration
+    // but control its content based on the props
+    const endAdornmentContent = endAdornment || (isPassword ? (
+      <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
+      >
+        {showPassword ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+      </button>
+    ) : null);
 
     const inputElement = (
       <div className={`relative ${fullWidth ? 'w-full' : ''}`}>
@@ -41,21 +63,26 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className={`
             block w-full rounded-md bg-input-background py-2
             ${startAdornment ? 'pl-10' : 'pl-3'}
-            ${endAdornment ? 'pr-10' : 'pr-3'}
+            ${endAdornment || isPassword ? 'pr-10' : 'pr-3'}
             text-text-primary placeholder:text-text-secondary focus:outline-none
             focus:ring-1 focus:ring-point-color-indigo focus:border-transparent 
             transition-all duration-200 hover:border-input-border-hover
-            sm:text-sm sm:leading-6 border border-input-border
+            text-sm sm:leading-6 border border-input-border
             ${error ? 'ring-red-500 focus:ring-red-500' : ''}
             ${className}
+            appearance-none
           `}
           {...props}
+          type={isPassword ? (showPassword ? 'text' : 'password') : props.type}
         />
-        {endAdornment && (
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            {endAdornment}
-          </div>
-        )}
+        <div 
+          className={`absolute inset-y-0 right-0 flex items-center pr-3 ${
+            isPassword ? 'pointer-events-auto' : 'pointer-events-none'
+          }`}
+          style={endAdornment || isPassword ? { visibility: 'visible' } : { visibility: 'hidden' }}
+        >
+          {endAdornmentContent}
+        </div>
       </div>
     );
 
@@ -66,13 +93,22 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={fullWidth ? 'w-full' : ''}>
         {label && (
-          <label
-            htmlFor={inputId}
-            className="block text-sm font-medium leading-6 text-text-primary mb-1"
-          >
-            {label}
-            {isRequired && <span className="text-point-color-purple ml-1">*</span>}
-          </label>
+          <div className="flex items-center gap-2 relative group mb-1">
+            <label
+              htmlFor={inputId}
+              className="block text-sm font-medium leading-6 text-text-primary"
+            >
+              {label}
+              {isRequired && <span className="text-point-color-purple ml-1">*</span>}
+            </label>
+            {isEditable && EditOnClick &&
+              <FontAwesomeIcon
+                icon={faPencil}
+                size="xs"
+                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                onClick={EditOnClick}
+              />}
+          </div>
         )}
         {inputElement}
         {error && (

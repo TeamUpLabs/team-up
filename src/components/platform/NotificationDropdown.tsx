@@ -8,6 +8,7 @@ import { acceptScout, rejectScout } from "@/hooks/getMemberData";
 import { checkAndRefreshAuth } from "@/auth/authStore";
 import { useNotifications } from "@/providers/NotificationProvider";
 import { formatRelativeTime } from "@/utils/dateUtils";
+import { Bell } from "flowbite-react-icons/outline";
 
 interface NotificationDropdownProps {
   onToggleSidebar: () => void;
@@ -332,25 +333,10 @@ export default function NotificationDropdown({
         aria-label="알림 보기"
         aria-haspopup="true"
         aria-expanded={isOpen}
-        className="rounded-full p-2 hover:bg-component-secondary-background focus:outline-none focus-visible:ring-2 focus-visible:ring-point-color-indigo focus-visible:ring-opacity-75 transition-colors duration-200 relative"
+        className="rounded-full p-2 hover:bg-component-tertiary-background relative cursor-pointer"
         onClick={toggleDropdown}
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.63 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <Bell />
         {unreadCount > 0 && (
           <span
             className="absolute top-0 right-0 -mt-0.5 -mr-0.5 px-1.5 py-0.5 bg-point-color-indigo text-white text-[10px] font-bold rounded-full flex items-center justify-center pointer-events-none"
@@ -529,20 +515,7 @@ export default function NotificationDropdown({
               ) : (
                 <div className="py-8 sm:py-10 flex flex-col items-center justify-center text-center px-4">
                   <div className="bg-component-tertiary-background p-2.5 sm:p-3 rounded-full mb-3">
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="text-text-secondary w-[20px] h-[20px] sm:w-[24px] sm:h-[24px]"
-                    >
-                      <path
-                        d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22ZM18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.63 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                    <Bell />
                   </div>
                   <p className="text-text-primary font-semibold text-sm mb-1">
                     새로운 알림이 없습니다.

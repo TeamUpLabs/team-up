@@ -482,7 +482,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
 
       {/* Assignee Accordian */}
       <Accordion
-        title="Assignees"
+        title={`Assignees (${scheduleData.assignee && scheduleData.assignee.length || 0})`}
         icon={User}
       >
         <div className="space-y-2">

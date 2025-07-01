@@ -75,7 +75,7 @@ export default function OrgCard({ isDark, orgData }: OrgDataProps) {
                 <span className="text-sm text-text-secondary">{orgData.description || "설명 없음"}</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 md:gap-4 text-xs md:text-sm text-text-secondary">
+            <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-text-secondary">
               <div className="flex items-center gap-1">
                 <Book className="w-4 h-4 text-text-secondary" />
                 <span>{orgData.public_repos || 0} 저장소</span>

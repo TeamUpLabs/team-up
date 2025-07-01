@@ -521,7 +521,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Progress & tasks Accordian */}
       <Accordion
-        title={`Progress & Tasks (${milestoneData.subtasks.filter(st => st.status === "done").length}/${milestoneData.subtasks.length})`}
+        title={`Progress & Tasks (${milestoneData.subtasks && milestoneData.subtasks.filter(st => st.status === "done").length}/${milestoneData.subtasks && milestoneData.subtasks.length || 0})`}
         icon={FileCheck}
         defaultOpen
       >
@@ -537,7 +537,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
           </div>
 
           <div className="space-y-2">
-            {milestoneData.subtasks.length === 0 ? (
+            {milestoneData.subtasks && milestoneData.subtasks.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-4 text-center">
                 <span className="text-text-secondary">하위 작업이 없습니다.</span>
                 {isMarkdown(milestoneData.description) && (
@@ -550,7 +550,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 )}
               </div>
             ) : (
-              milestoneData.subtasks.map((subtask) => (
+              milestoneData.subtasks && milestoneData.subtasks.map((subtask) => (
                 <div key={subtask.id} className="flex flex-col bg-component-secondary-background border border-component-border p-3 rounded-lg">
                   <div className="flex gap-2">
                     <input
@@ -573,7 +573,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                   </div>
                   <div className="ml-8 mt-2">
                     {
-                      subtask.subtasks.map((sub, idx) => (
+                      subtask.subtasks && subtask.subtasks.map((sub, idx) => (
                         <div key={idx} className='space-x-2'>
                           <input
                             type="checkbox"
@@ -595,7 +595,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Assignees Accordian */}
       <Accordion
-        title="Assignees"
+        title={`Assignees (${milestoneData.assignee && milestoneData.assignee.length || 0})`}
         icon={User}
       >
         <div className="space-y-2">
@@ -604,7 +604,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               <div className="mb-3">
                 <p className="text-sm text-text-secondary">
                   선택된 담당자:{" "}
-                  {milestoneData.assignee?.length ?? 0 > 0
+                  {milestoneData.assignee && milestoneData.assignee.length || 0 > 0
                     ? `${milestoneData.assignee?.length}명`
                     : "없음"}
                 </p>
@@ -768,13 +768,13 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Tags Accordian */}
       <Accordion
-        title="Tags & Labels"
+        title={`Tags & Labels (${milestoneData.tags && milestoneData.tags.length || 0})`}
         icon={Tag}
       >
         <div className="flex flex-wrap gap-2 py-1">
           {isEditing === "tags" ? (
             <>
-              {milestoneData.tags.map((tag, index) => (
+              {milestoneData.tags && milestoneData.tags.map((tag, index) => (
                 <Badge
                   key={index}
                   content={tag}
@@ -798,7 +798,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             </>
           ) : (
             <div className="flex items-center gap-2 group relative">
-              {milestoneData?.tags.map((tag, index) => (
+              {milestoneData.tags && milestoneData.tags.map((tag, index) => (
                 <Badge key={index} content={tag} color="pink" isDark={isDark} />
               ))}
               <FontAwesomeIcon

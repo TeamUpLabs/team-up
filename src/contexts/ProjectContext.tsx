@@ -5,10 +5,12 @@ import { Project } from "@/types/Project";
 
 type ProjectContextType = {
   project: Project | null;
+  isLoading: boolean;
 };
 
 const ProjectContext = createContext<ProjectContextType>({ 
   project: null,
+  isLoading: true,
 });
 
 export const useProject = () => useContext(ProjectContext);
@@ -20,8 +22,16 @@ export const ProjectProvider = ({
   children: React.ReactNode;
   project: Project;
 }) => {
-  const [project, setProject] = useState<Project>(initialProject);
+  const [project, setProject] = useState<Project | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const eventSourceRef = useRef<EventSource | null>(null);
+
+  useEffect(() => {
+    if (initialProject) {
+      setProject(initialProject);
+      setIsLoading(false);
+    }
+  }, [initialProject]);
 
   useEffect(() => {
     if (!project?.id) {
@@ -77,7 +87,7 @@ export const ProjectProvider = ({
   }, [project?.id]);
 
   return (
-    <ProjectContext.Provider value={{ project }}>
+    <ProjectContext.Provider value={{ project, isLoading }}>
       {children}
     </ProjectContext.Provider>
   );
