@@ -1,7 +1,8 @@
 import { server } from "@/auth/server";
-import { Member } from "@/types/Member";
+import { NotificationSetting, User, TechStack, Interest, SocialLink, CollaborationPreference } from "@/types/User";
+import { useAuthStore } from "@/auth/authStore";
 
-export const getAllMembers = async (): Promise<Member[]> => {
+export const getAllMembers = async (): Promise<User[]> => {
   try { 
     const res = await server.get("/member", {
       headers: {
@@ -134,29 +135,33 @@ export const cancelParticipationRequest = async (project_id: string, member_id: 
   }
 }
 
-interface UpdateMemberData {
+interface UpdateUserProfileData {
   name?: string;
   email?: string;
+  profile_image?: string;
   role?: string;
-  contactNumber?: string;
-  birthDate?: string;
-  introduction?: string;
-  skills?: string[];
+  status?: string;
+  bio?: string;
   languages?: string[];
-  workingHours?: {
-    start: string;
-    end: string;
-    timezone: string;
-  };
-  socialLinks?: {
-    name: string;
-    url: string;
-  }[];
+  phone?: string;
+  birth_date?: string;
+  last_login?: string;
+  notification_settings?: NotificationSetting;
+  collaboration_preference?: CollaborationPreference;
+  tech_stacks?: TechStack[];
+  interests?: Interest[];
+  social_links?: SocialLink[];
 }
 
-export const updateUserProfile = async (memberId: number, memberData: UpdateMemberData) => {
+export const updateUserProfile = async (memberData: UpdateUserProfileData) => {
   try {
-    const res = await server.put(`/member/${memberId}`, memberData);
+    const token = useAuthStore.getState().token;
+    const res = await server.put(`/users/me`, memberData, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
     if (res.status === 200) {
       return res.data;
     } else {

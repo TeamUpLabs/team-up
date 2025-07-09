@@ -6,8 +6,8 @@ export interface CollaborationPreference {
     preferred_project_type: string;
     preferred_role: string;
     available_time_zone: string;
-    work_hours_start: number;
-    work_hours_end: number;
+    work_hours_start: string;
+    work_hours_end: string;
     preferred_project_length: string;
 }
 
@@ -54,6 +54,7 @@ export interface User {
     profile_image: string;
     role: string;
     status: string;
+    bio: string;
     languages: string[];
     phone: string;
     birth_date: string;
@@ -70,4 +71,48 @@ export interface User {
     social_links: SocialLink[];
     received_notifications: Notification[];
     sent_notifications: Notification[];
+}
+
+export const blankUser: User = {
+    id: 0,
+    name: "",
+    email: "",
+    profile_image: "",
+    role: "",
+    status: "",
+    bio: "",
+    languages: [],
+    phone: "",
+    birth_date: "",
+    last_login: "",
+    auth_provider: "",
+    auth_provider_id: "",
+    auth_provider_access_token: "",
+    notification_settings: {
+        emailEnable: 1,
+        taskNotification: 1,
+        milestoneNotification: 1,
+        scheduleNotification: 1,
+        deadlineNotification: 1,
+        weeklyNotification: 1,
+        weeklyReport: 1,
+        pushNotification: 1,
+        securityNotification: 1,
+    },
+    projects: [],
+    participation_requests: [],
+    collaboration_preference: {
+        collaboration_style: "",
+        preferred_project_type: "",
+        preferred_role: "",
+        available_time_zone: "",
+        work_hours_start: "",
+        work_hours_end: "",
+        preferred_project_length: "",
+    },
+    tech_stacks: [],
+    interests: [],
+    social_links: [],
+    received_notifications: [],
+    sent_notifications: [],
 }

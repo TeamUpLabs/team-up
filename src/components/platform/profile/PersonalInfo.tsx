@@ -6,7 +6,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { updateUserProfileImage, updateUserProfile } from "@/hooks/getMemberData";
-import { Member } from "@/types/Member";
+import { User as UserType } from "@/types/User";
 import { useAuthStore } from "@/auth/authStore";
 import ImageCropModal from "@/components/platform/profile/ImageCropModal";
 import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";
@@ -21,8 +21,9 @@ import { Globe } from "lucide-react";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 
+
 interface PersonalInfoProps {
-  user: Member;
+  user: UserType;
 }
 
 export default function PersonalInfo({ user }: PersonalInfoProps) {
@@ -33,57 +34,81 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   const [cropImage, setCropImage] = useState<string | null>(null);
   const [showCropModal, setShowCropModal] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [originalProfileData, setOriginalProfileData] = useState<Member | null>(user);
+  const [originalProfileData, setOriginalProfileData] = useState<UserType | null>(user);
   const [newSkill, setNewSkill] = useState<string>("");
   const [newLanguage, setNewLanguage] = useState<string>("");
   const [isComposing, setIsComposing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserType>({
+    id: user.id || 0,
     name: "",
     email: "",
+    profile_image: "",
     role: "",
-    contactNumber: "",
-    birthDate: "",
-    introduction: "",
-    skills: [] as string[],
-    languages: [] as string[],
-    workingHours: {
-      start: "",
-      end: "",
-      timezone: "",
+    status: "",
+    bio: "",
+    languages: [],
+    phone: "",
+    birth_date: "",
+    last_login: "",
+    auth_provider: "",
+    auth_provider_id: "",
+    auth_provider_access_token: "",
+    notification_settings: {
+      emailEnable: 0,
+      taskNotification: 0,
+      milestoneNotification: 0,
+      scheduleNotification: 0,
+      deadlineNotification: 0,
+      weeklyNotification: 0,
+      weeklyReport: 0,
+      pushNotification: 0,
+      securityNotification: 0,
     },
-    socialLinks: [
-      {
-        name: "",
-        url: "",
-      },
-    ],
+    projects: [],
+    participation_requests: [],
+    collaboration_preference: {
+      collaboration_style: "",
+      preferred_project_type: "",
+      preferred_role: "",
+      available_time_zone: "",
+      work_hours_start: "",
+      work_hours_end: "",
+      preferred_project_length: "",
+    },
+    tech_stacks: [],
+    interests: [],
+    social_links: [],
+    received_notifications: [],
+    sent_notifications: [],
   });
 
   useEffect(() => {
-    if (user) {
-      setFormData({
-        name: user.name,
-        email: user.email || "",
-        role: user.role,
-        contactNumber: user.contactNumber || "",
-        birthDate: user.birthDate || "",
-        introduction: user.introduction || "",
-        skills: user.skills || [],
-        languages: user.languages || [],
-        workingHours: user.workingHours || {
-          start: "",
-          end: "",
-          timezone: "",
-        },
-        socialLinks: user.socialLinks || [
-          {
-            name: "",
-            url: "",
-          },
-        ],
-      });
-    }
+    setFormData({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      profile_image: user.profile_image,
+      role: user.role,
+      status: user.status,
+      bio: user.bio,
+      languages: user.languages,
+      phone: user.phone,
+      birth_date: user.birth_date,
+      last_login: user.last_login,
+      auth_provider: user.auth_provider,
+      auth_provider_id: user.auth_provider_id,
+      auth_provider_access_token: user.auth_provider_access_token,
+      notification_settings: user.notification_settings,
+      projects: user.projects,
+      participation_requests: user.participation_requests,
+      collaboration_preference: user.collaboration_preference,
+      tech_stacks: user.tech_stacks,
+      interests: user.interests,
+      social_links: user.social_links,
+      received_notifications: user.received_notifications,
+      sent_notifications: user.sent_notifications,
+    });
   }, [user]);
 
   const handleEdit = (name: string) => {
@@ -102,20 +127,47 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   const handleCancelEdit = () => {
     if (originalProfileData) {
       setFormData({
+        id: originalProfileData.id,
         name: originalProfileData.name,
-        email: originalProfileData.email || "",
+        email: originalProfileData.email,
+        profile_image: originalProfileData.profile_image,
         role: originalProfileData.role,
-        contactNumber: originalProfileData.contactNumber || "",
-        birthDate: originalProfileData.birthDate || "",
-        introduction: originalProfileData.introduction || "",
-        skills: originalProfileData.skills || [],
-        languages: originalProfileData.languages || [],
-        workingHours: originalProfileData.workingHours || {
-          start: "",
-          end: "",
-          timezone: "",
+        status: originalProfileData.status,
+        bio: originalProfileData.bio,
+        languages: originalProfileData.languages,
+        phone: originalProfileData.phone,
+        birth_date: originalProfileData.birth_date,
+        last_login: originalProfileData.last_login,
+        auth_provider: originalProfileData.auth_provider,
+        auth_provider_id: originalProfileData.auth_provider_id,
+        auth_provider_access_token: originalProfileData.auth_provider_access_token,
+        notification_settings: {
+          emailEnable: originalProfileData.notification_settings.emailEnable,
+          taskNotification: originalProfileData.notification_settings.taskNotification,
+          milestoneNotification: originalProfileData.notification_settings.milestoneNotification,
+          scheduleNotification: originalProfileData.notification_settings.scheduleNotification,
+          deadlineNotification: originalProfileData.notification_settings.deadlineNotification,
+          weeklyNotification: originalProfileData.notification_settings.weeklyNotification,
+          weeklyReport: originalProfileData.notification_settings.weeklyReport,
+          pushNotification: originalProfileData.notification_settings.pushNotification,
+          securityNotification: originalProfileData.notification_settings.securityNotification,
         },
-        socialLinks: originalProfileData.socialLinks || [],
+        projects: originalProfileData.projects,
+        participation_requests: originalProfileData.participation_requests,
+        collaboration_preference: {
+          collaboration_style: originalProfileData.collaboration_preference.collaboration_style,
+          preferred_project_type: originalProfileData.collaboration_preference.preferred_project_type,
+          preferred_role: originalProfileData.collaboration_preference.preferred_role,
+          available_time_zone: originalProfileData.collaboration_preference.available_time_zone,
+          work_hours_start: originalProfileData.collaboration_preference.work_hours_start,
+          work_hours_end: originalProfileData.collaboration_preference.work_hours_end,
+          preferred_project_length: originalProfileData.collaboration_preference.preferred_project_length,
+        },
+        tech_stacks: originalProfileData.tech_stacks,
+        interests: originalProfileData.interests,
+        social_links: originalProfileData.social_links,
+        received_notifications: originalProfileData.received_notifications,
+        sent_notifications: originalProfileData.sent_notifications,
       });
     }
 
@@ -148,7 +200,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
     if (user) {
       useAuthStore.getState().setUser({
         ...user,
-        profileImage: response
+        profile_image: response
       });
     }
 
@@ -187,21 +239,20 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   const handleBirthDateChange = (date: Date | undefined) => {
     setFormData(prevData => ({
       ...prevData,
-      birthDate: date ? formatDateToString(date) : "",
+      birth_date: date ? formatDateToString(date) : "",
     }));
   };
 
-  const handleKeyDown = (type: "skills" | "languages", e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (type: "tech_stacks" | "languages", e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !isComposing) {
       e.preventDefault();
-
-      if (type === "skills") {
+      if (type === "tech_stacks") {
         const trimmedInput = newSkill.trim();
-        if (trimmedInput && !formData.skills.includes(trimmedInput)) {
-          const updatedSkills = [...formData.skills, trimmedInput];
+        if (trimmedInput && !formData.tech_stacks.some(stack => stack.tech === trimmedInput)) {
+          const updatedTechStacks = [...formData.tech_stacks, { tech: trimmedInput, level: 1 }];
           setFormData((prev) => ({
             ...prev,
-            skills: updatedSkills,
+            tech_stacks: updatedTechStacks,
           }));
           setNewSkill("");
         }
@@ -219,13 +270,12 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
     }
   }
 
-  const removeSkill = (skill: string) => {
+  const removeSkill = (tech: string) => {
     setFormData((prev) => ({
       ...prev,
-      skills: prev.skills.filter((s) => s !== skill),
+      tech_stacks: prev.tech_stacks.filter((s) => s.tech !== tech),
     }));
   };
-
   const removeLanguage = (language: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -236,45 +286,57 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   const handleTimeZoneChange = (value: string) => {
     setFormData(prev => ({
       ...prev,
-      workingHours: {
-        ...prev.workingHours,
-        timezone: value,
+      collaboration_preference: {
+        ...prev.collaboration_preference,
+        available_time_zone: value,
       },
     }));
   };
-
   const handleStartTimeChange = (value: string) => {
+    // "HH:MM" 형식을 숫자 형식으로 변환
+    const [hours, minutes] = value.split(":").map(Number);
+    const timeValue = hours * 100 + (minutes || 0);
     setFormData(prev => ({
       ...prev,
-      workingHours: {
-        ...prev.workingHours,
-        start: value,
+      collaboration_preference: {
+        ...prev.collaboration_preference,
+        work_hours_start: timeValue.toString(),
       },
     }));
   };
-
   const handleEndTimeChange = (value: string) => {
+    // "HH:MM" 형식을 숫자 형식으로 변환
+    const [hours, minutes] = value.split(":").map(Number);
+    const timeValue = hours * 100 + (minutes || 0);
     setFormData(prev => ({
       ...prev,
-      workingHours: {
-        ...prev.workingHours,
-        end: value,
+      collaboration_preference: {
+        ...prev.collaboration_preference,
+        work_hours_end: timeValue.toString(),
       },
     }));
   };
-
-  const handleSocialLinkChange = (name: string, value: string) => {
+  const handleSocialLinkChange = (platform: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      socialLinks: prev.socialLinks.map(link => link.name === name ? { ...link, url: value } : link),
+      social_links: prev.social_links.map(link => link.platform === platform ? { ...link, url: value } : link),
     }));
+  };
+
+  // 숫자 형식의 시간을 HH:MM 형식으로 변환
+  const formatTimeFromNumber = (timeNumber: string | number): string => {
+    if (!timeNumber) return "";
+    const num = Number(timeNumber);
+    const hours = Math.floor(num / 100);
+    const minutes = num % 100;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
   const handleSubmit = async () => {
     setIsLoading(true);
     setSubmitStatus('submitting');
     try {
-      const response = await updateUserProfile(user?.id || 0, formData);
+      const response = await updateUserProfile(formData);
       if (response) {
         useAuthStore.getState().setUser(response);
         useAuthStore.getState().setAlert("프로필이 업데이트되었습니다.", "success");
@@ -293,15 +355,16 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   return (
     <div className="flex flex-col gap-4 border border-component-border rounded-lg p-6">
       <div className="flex items-center gap-4">
-        {user?.profileImage ? (
+        {user?.profile_image ? (
           <div className="h-24 w-24 relative rounded-full border-4 border-component-border bg-component-secondary-background flex items-center justify-center overflow-hidden group cursor-pointer" onClick={handleProfilePictureClick}>
             <Image
-              src={user.profileImage}
+              src={user.profile_image}
               alt="Profile"
               className="w-full h-full object-fit rounded-full"
               quality={100}
               width={100}
               height={100}
+              priority
             />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <Camera className="text-white text-xl" />
@@ -367,66 +430,66 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
 
         <Input
           label="연락처"
-          name="contactNumber"
+          name="phone"
           placeholder="연락처를 입력해주세요."
           isRequired
-          value={formData.contactNumber}
+          value={formData.phone}
           onChange={handleOnChange}
           isEditable
-          EditOnClick={() => isEditing === "contactNumber" ? handleCancelEdit() : handleEdit("contactNumber")}
-          disabled={isEditing !== "contactNumber"}
+          EditOnClick={() => isEditing === "phone" ? handleCancelEdit() : handleEdit("phone")}
+          disabled={isEditing !== "phone"}
           className="disabled:cursor-not-allowed disabled:opacity-70"
         />
 
         <DatePicker
-          value={formData.birthDate ? parseStringToDate(formData.birthDate) : undefined}
+          value={formData.birth_date ? parseStringToDate(formData.birth_date) : undefined}
           onChange={handleBirthDateChange}
           label="생년월일"
           isRequired
           isEditable
-          EditOnClick={() => isEditing === "birthDate" ? handleCancelEdit() : handleEdit("birthDate")}
-          disabled={isEditing !== "birthDate"}
+          EditOnClick={() => isEditing === "birth_date" ? handleCancelEdit() : handleEdit("birth_date")}
+          disabled={isEditing !== "birth_date"}
           className="disabled:cursor-not-allowed disabled:opacity-70 disabled:text-text-secondary"
         />
 
         <Select
           label="시간대"
-          value={formData.workingHours.timezone}
+          value={formData.collaboration_preference.available_time_zone}
           onChange={(value) => handleTimeZoneChange(value as string)}
           options={[
-            { name: "workingHours.timezone", value: "Asia/Seoul", label: "한국 표준시 (KST)" },
-            { name: "workingHours.timezone", value: "UTC", label: "세계 표준시 (UTC)" },
-            { name: "workingHours.timezone", value: "America/New_York", label: "동부 표준시 (EST)" },
-            { name: "workingHours.timezone", value: "America/Los_Angeles", label: "태평양 표준시 (PST)" },
+            { name: "collaboration_preference.available_time_zone", value: "Asia/Seoul", label: "한국 표준시 (KST)" },
+            { name: "collaboration_preference.available_time_zone", value: "UTC", label: "세계 표준시 (UTC)" },
+            { name: "collaboration_preference.available_time_zone", value: "America/New_York", label: "동부 표준시 (EST)" },
+            { name: "collaboration_preference.available_time_zone", value: "America/Los_Angeles", label: "태평양 표준시 (PST)" },
           ]}
           isRequired
-          disabled={isEditing !== "workingHours.timezone"}
+          disabled={isEditing !== "collaboration_preference.available_time_zone"}
           isEditable
-          EditOnClick={() => isEditing === "workingHours.timezone" ? handleCancelEdit() : handleEdit("workingHours.timezone")}
+          EditOnClick={() => isEditing === "collaboration_preference.available_time_zone" ? handleCancelEdit() : handleEdit("collaboration_preference.available_time_zone")}
           dropDownClassName="!w-full"
         />
 
         <div className="grid grid-cols-2 gap-2">
           <TimePicker
-            value={formData.workingHours.start}
-            onChange={(value) => handleStartTimeChange(value)}
-            disabled={isEditing !== "workingHours.start"}
+            value={formatTimeFromNumber(formData.collaboration_preference.work_hours_start)}
+            onChange={handleStartTimeChange}
+            disabled={isEditing !== "collaboration_preference.work_hours_start"}
             className="w-full !bg-input-background !disabled:cursor-not-allowed !disabled:opacity-70"
             step={30}
             label="시작 시간"
             isEditable
-            EditOnClick={() => isEditing === "workingHours.start" ? handleCancelEdit() : handleEdit("workingHours.start")}
+            EditOnClick={() => isEditing === "collaboration_preference.work_hours_start" ? handleCancelEdit() : handleEdit("collaboration_preference.work_hours_start")}
             isRequired
           />
           <TimePicker
-            value={formData.workingHours.end}
-            onChange={(value) => handleEndTimeChange(value)}
-            disabled={isEditing !== "workingHours.end"}
+            value={formatTimeFromNumber(formData.collaboration_preference.work_hours_end)}
+            onChange={handleEndTimeChange}
+            disabled={isEditing !== "collaboration_preference.work_hours_end"}
             className="w-full !bg-input-background !disabled:cursor-not-allowed !disabled:opacity-70"
             step={30}
             label="종료 시간"
             isEditable
-            EditOnClick={() => isEditing === "workingHours.end" ? handleCancelEdit() : handleEdit("workingHours.end")}
+            EditOnClick={() => isEditing === "collaboration_preference.work_hours_end" ? handleCancelEdit() : handleEdit("collaboration_preference.work_hours_end")}
             isRequired
           />
         </div>
@@ -434,31 +497,31 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
         <div className="flex flex-col gap-2">
           <Input
             label="기술"
-            name="skills"
+            name="tech_stacks"
             placeholder="기술을 입력해주세요."
             value={newSkill}
             onChange={(e) => setNewSkill(e.target.value)}
             isEditable
-            EditOnClick={() => isEditing === "skills" ? handleCancelEdit() : handleEdit("skills")}
-            disabled={isEditing !== "skills"}
-            onKeyDown={(e) => handleKeyDown("skills", e)}
+            EditOnClick={() => isEditing === "tech_stacks" ? handleCancelEdit() : handleEdit("tech_stacks")}
+            disabled={isEditing !== "tech_stacks"}
+            onKeyDown={(e) => handleKeyDown("tech_stacks", e)}
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
             className="disabled:cursor-not-allowed disabled:opacity-70"
           />
           <div className="flex flex-wrap gap-2">
-            {formData.skills.map((skill, index) => (
-              isEditing === "skills" ? (
+            {formData.tech_stacks.map((stack, index) => (
+              isEditing === "tech_stacks" ? (
                 <Badge
                   key={index}
-                  content={skill}
+                  content={stack.tech}
                   color="blue"
-                  isEditable={isEditing === "skills"}
-                  onRemove={() => removeSkill(skill)}
+                  isEditable={isEditing === "tech_stacks"}
+                  onRemove={() => removeSkill(stack.tech)}
                   isDark={isDark}
                 />
               ) : (
-                <Badge key={index} content={skill} color="blue" isDark={isDark} />
+                <Badge key={index} content={stack.tech} color="blue" isDark={isDark} />
               )
             ))}
           </div>
@@ -500,13 +563,13 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
         <div className="col-span-2">
           <TextArea
             label="소개글"
-            name="introduction"
+            name="bio"
             placeholder="소개글을 입력해주세요."
-            value={formData.introduction}
+            value={formData.bio}
             onChange={handleOnChange}
             isEditable
-            EditOnClick={() => isEditing === "introduction" ? handleCancelEdit() : handleEdit("introduction")}
-            disabled={isEditing !== "introduction"}
+            EditOnClick={() => isEditing === "bio" ? handleCancelEdit() : handleEdit("bio")}
+            disabled={isEditing !== "bio"}
             className="disabled:cursor-not-allowed disabled:opacity-70"
           />
         </div>
@@ -515,7 +578,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           label="Website"
           name="website"
           placeholder="Website URL을 입력해주세요."
-          value={formData.socialLinks.find((link) => link.name === "website")?.url || ""}
+          value={formData.social_links.find((link) => link.platform === "website")?.url || ""}
           onChange={(e) => handleSocialLinkChange("website", e.target.value)}
           isEditable
           EditOnClick={() => isEditing === "website" ? handleCancelEdit() : handleEdit("website")}
@@ -528,7 +591,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           label="Github"
           name="github"
           placeholder="Github URL을 입력해주세요."
-          value={formData.socialLinks.find((link) => link.name === "github")?.url.split("/")[3] || ""}
+          value={formData.social_links.find((link) => link.platform === "github")?.url.split("/")[3] || ""}
           onChange={(e) => handleSocialLinkChange("github", e.target.value)}
           isEditable
           EditOnClick={() => isEditing === "github" ? handleCancelEdit() : handleEdit("github")}
@@ -541,7 +604,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           label="Linkedin"
           name="linkedin"
           placeholder="Linkedin URL을 입력해주세요."
-          value={formData.socialLinks.find((link) => link.name === "linkedin")?.url.split("/")[4] || ""}
+          value={formData.social_links.find((link) => link.platform === "linkedin")?.url.split("/")[4] || ""}
           onChange={(e) => handleSocialLinkChange("linkedin", e.target.value)}
           isEditable
           EditOnClick={() => isEditing === "linkedin" ? handleCancelEdit() : handleEdit("linkedin")}
@@ -554,7 +617,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           label="Instagram"
           name="instagram"
           placeholder="Instagram URL을 입력해주세요."
-          value={formData.socialLinks.find((link) => link.name === "instagram")?.url.split("/")[3] || ""}
+          value={formData.social_links.find((link) => link.platform === "instagram")?.url.split("/")[3] || ""}
           onChange={(e) => handleSocialLinkChange("instagram", e.target.value)}
           isEditable
           EditOnClick={() => isEditing === "instagram" ? handleCancelEdit() : handleEdit("instagram")}

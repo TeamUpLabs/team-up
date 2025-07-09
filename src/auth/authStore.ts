@@ -83,3 +83,15 @@ export const checkAndRefreshAuth = async () => {
     return false;
   }
 };
+
+export const fetchUserDetail = async (url: string) => {
+  const token = useAuthStore.getState().token;
+  if (!token) return null;
+  const res = await server.get(url, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  return res.data;
+};

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/auth/authStore";
-import { Notification } from "@/types/Member";
+import { Notification } from "@/types/Notification";
 import { acceptScout, rejectScout } from "@/hooks/getMemberData";
 import { checkAndRefreshAuth } from "@/auth/authStore";
 import { useNotifications } from "@/providers/NotificationProvider";
@@ -219,7 +219,7 @@ export default function NotificationDropdown({
 
   const handleNotificationClick = useCallback(
     async (notification: Notification) => {
-      if (!notification.isRead) {
+      if (!notification.is_read) {
         try {
           await markAsRead(notification.id);
         } catch (error) {
@@ -253,7 +253,7 @@ export default function NotificationDropdown({
       e.stopPropagation();
       if (!user?.id) return;
       try {
-        if (!notification.isRead) {
+        if (!notification.is_read) {
           await markAsRead(notification.id);
         }
         await acceptScout(user.id, notification.id);
@@ -276,7 +276,7 @@ export default function NotificationDropdown({
       e.stopPropagation();
       if (!user?.id) return;
       try {
-        if (!notification.isRead) {
+        if (!notification.is_read) {
           await markAsRead(notification.id);
         }
         await rejectScout(user.id, notification.id);
@@ -393,7 +393,7 @@ export default function NotificationDropdown({
                   <div
                     key={notification.id}
                     className={`p-3 hover:bg-component-secondary-background focus-within:bg-component-secondary-background cursor-pointer transition-colors duration-150 group ${
-                      !notification.isRead
+                      !notification.is_read
                         ? "bg-point-color-indigo/5"
                         : "bg-transparent"
                     }`}
@@ -409,7 +409,7 @@ export default function NotificationDropdown({
                     aria-label={`알림: ${
                       notification.title
                     } - ${notification.message.substring(0, 30)}...${
-                      notification.isRead ? " (읽음)" : " (읽지 않음)"
+                      notification.is_read ? " (읽음)" : " (읽지 않음)"
                     }`}
                   >
                     <div className="flex gap-2.5 sm:gap-3 items-start">
@@ -420,14 +420,14 @@ export default function NotificationDropdown({
                         <div className="flex justify-between items-center mb-0.5 sm:mb-1">
                           <p
                             className={`font-medium text-sm truncate ${
-                              notification.isRead
+                              notification.is_read
                                 ? "text-text-secondary group-hover:text-text-primary"
                                 : "text-text-primary"
                             }`}
                           >
                             {notification.title}
                           </p>
-                          {!notification.isRead && (
+                          {!notification.is_read && (
                             <div
                               className="w-2 h-2 rounded-full bg-point-color-indigo flex-shrink-0 ml-2 mt-1 self-start"
                               title="읽지 않음"

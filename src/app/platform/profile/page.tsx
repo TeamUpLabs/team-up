@@ -8,8 +8,9 @@ import { useRouter } from "next/navigation";
 import PersonalInfo from "@/components/platform/profile/PersonalInfo";
 import Security from "@/components/platform/profile/Security";
 import Notification from "@/components/platform/profile/Notification";
-import { useAuthStore } from "@/auth/authStore";
-import { Member } from "@/types/Member";
+import { blankUser } from "@/types/User";
+import { fetchUserDetail } from "@/auth/authStore";
+import useSWR from "swr";
 
 type ProfileTab = 'personal-info' | 'security' | 'notifications';
 
@@ -25,47 +26,12 @@ const profileTabs: Record<ProfileTab, { label: string }> = {
   },
 };
 
-const blankUser: Member = {
-  id: 0,
-  name: '',
-  email: '',
-  role: '',
-  currentTask: [],
-  status: '',
-  lastLogin: new Date().toISOString(),
-  createdAt: new Date().toISOString(),
-  skills: [],
-  projects: [],
-  projectDetails: [],
-  profileImage: '',
-  contactNumber: '',
-  birthDate: '',
-  introduction: '',
-  workingHours: {
-    start: '',
-    end: '',
-    timezone: '',
-  },
-  languages: [],
-  socialLinks: [],
-  participationRequests: [],
-  notification: [],
-  isGithub: false,
-  github_id: '',
-  github_access_token: '',
-  isGoogle: false,
-  google_id: '',
-  google_access_token: '',
-  isApple: false,
-  apple_id: '',
-  apple_access_token: '',
-  signupMethod: 'local',
-};
-
 export default function ProfilePage() {
   const [selectedTab, setSelectedTab] = useState<ProfileTab>('personal-info');
   const router = useRouter();
-  const user = useAuthStore((state) => state.user);
+  const { data } = useSWR('/users/me', fetchUserDetail);
+  const user = data;
+  console.log(user);
 
   return (
     <div className="max-w-5xl mx-auto p-4 space-y-4">
