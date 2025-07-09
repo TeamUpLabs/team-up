@@ -14,7 +14,9 @@ interface ProjectCardProps {
 export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
   const { isDark } = useTheme();
   const user = useAuthStore((state) => state.user);
-
+    
+  const statusColor = project.status === "planning" ? "indigo" : project.status === "in_progress" ? "blue" : project.status === "completed" ? "green" : "gray";
+  const statusLabel = project.status === "planning" ? "모집중" : project.status === "in_progress" ? "진행중" : project.status === "completed" ? "완료" : "보류";
   return (
     <div
       className="bg-component-background rounded-lg p-8
@@ -26,10 +28,10 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
           content={
             <span className="flex items-center gap-1">
               <Clock className="w-3 h-3" />
-              {project.status}
+              {statusLabel}
             </span>
           }
-          color="indigo"
+          color={statusColor}
           isDark={isDark}
           className="!text-xs !rounded-full"
         />
