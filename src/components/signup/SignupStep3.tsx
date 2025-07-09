@@ -1,4 +1,5 @@
-import { JSX } from "react";
+import React from "react";
+import { Braces, Palette, Brain } from "lucide-react";
 
 interface Step3Props {
   selectedRole: string;
@@ -9,46 +10,34 @@ interface RoleOption {
   value: string;
   label: string;
   description: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
 }
 
 export default function SignupStep3({ selectedRole, onSelectRole }: Step3Props) {
   const roles: RoleOption[] = [
     {
-      value: "개발자",
+      value: "developer",
       label: "개발자",
       description: "프로젝트 구현 및 개발",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mb-3 text-point-color-indigo" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-        </svg>
-      ),
+      icon: <Braces className="h-10 w-10 mb-3 text-point-color-indigo" />,
     },
     {
-      value: "디자이너",
+      value: "designer",
       label: "디자이너",
       description: "UI/UX 디자인 및 시각화",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mb-3 text-point-color-indigo" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-        </svg>
-      ),
+      icon: <Palette className="h-10 w-10 mb-3 text-point-color-indigo" />,
     },
     {
-      value: "기획자",
+      value: "planner",
       label: "기획자",
       description: "프로젝트 기획 및 관리",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mb-3 text-point-color-indigo" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-      ),
+      icon: <Brain className="h-10 w-10 mb-3 text-point-color-indigo" />,
     },
   ];
 
   return (
-    <div className="mb-8">
-      <label className="block text-sm font-medium text-text-secondary mb-3">역할을 선택해주세요</label>
+    <div className="space-y-3">
+      <label className="block text-sm font-medium text-text-secondary">역할을 선택해주세요 <span className="text-purple-500">*</span></label>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {roles.map((role) => (
           <button
@@ -59,7 +48,7 @@ export default function SignupStep3({ selectedRole, onSelectRole }: Step3Props) 
               selectedRole === role.value
                 ? "border-point-color-indigo bg-point-color-indigo/30"
                 : "border-component-border bg-component-secondary-background hover:bg-component-tertiary-background hover:border-point-color-indigo"
-            } transition-all duration-200 flex flex-col items-center`}
+            } transition-all duration-200 flex flex-col items-center cursor-pointer`}
           >
             {role.icon}
             <span className="text-lg font-medium text-text-primary">{role.label}</span>

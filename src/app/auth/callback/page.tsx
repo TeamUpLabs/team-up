@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from '@/auth/authStore';
 import { server } from '@/auth/server';
-import { getCurrentKoreanTime } from '@/utils/dateUtils';
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -16,30 +15,21 @@ export default function AuthCallback() {
         const social = url.searchParams.get("social");
         if (!code || !social) return;
 
-        const res = await server.get(`/auth/callback?social=${social}&code=${code}`);
+        // Use relative URL that will be proxied through Next.js
+        const res = await server.get(`/auth/social/${social}/callback?code=${code}`, {
+          withCredentials: true,
+        });
         const data = res.data;
 
-        if (data.access_token) {
-          try {
-            const res = await server.put(`/member/${data.user_info.id}`, {
-              status: "활성",
-              lastLogin: getCurrentKoreanTime()
-            });
-            if (res.status === 200) {
-              useAuthStore.getState().setToken(data.access_token);
-              useAuthStore.getState().setUser(data.user_info);
-              useAuthStore.getState().setAlert("로그인 성공", "success");
-              window.location.href = '/';
-            } else {
-              throw new Error('Failed to update user status');
-            }
-          } catch (error: unknown) {
-            console.error("Failed to update user status:", error);
-            useAuthStore.getState().logout();
-            useAuthStore.getState().setAlert("Status를 업데이트하는데 실패했습니다.", "error");
-          }
+        console.log(res);
+
+        if (data.status === "logged_in") {
+          useAuthStore.getState().setToken(data.access_token);
+          useAuthStore.getState().setUser(data.user_info);
+          useAuthStore.getState().setAlert("로그인 성공", "success");
+          window.location.href = "/";
         } else if (data.status === "need_additional_info") {
-          // 추가 정보 입력 페이지로 이동
+          // Redirect to additional info page
           localStorage.setItem("partial_user", JSON.stringify(data.user_info));
           router.push(`/auth/extra-info?social=${social}`);
         }

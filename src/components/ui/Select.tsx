@@ -267,7 +267,7 @@ export default function Select({
         <div className="flex items-center gap-2 relative group mb-1">
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium leading-6 text-text-primary"
+            className="block text-sm font-medium leading-6 text-text-secondary"
           >
             {label}
             {isRequired && <span className="text-point-color-purple ml-1">*</span>}

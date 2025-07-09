@@ -21,7 +21,7 @@ export default function SignIn() {
   };
 
   const handleGithubLogin = () => {
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&scope=user:email,repo,admin:org`;
+    const githubAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/social/github/login`;
     window.location.href = githubAuthUrl;
   }
     

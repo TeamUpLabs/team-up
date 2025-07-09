@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Member } from "@/types/Member";
+import { AuthUser } from "@/types/AuthUser";
 import { Notification } from "@/types/Member";
 import { server } from '@/auth/server';
 
@@ -9,12 +9,12 @@ type NotificationAlertType = "info" | "message" | "task" | "milestone" | "chat" 
 
 type AuthState = {
   token: string | null;
-  user: Member | null;
+  user: AuthUser | null;
   alert: { message: string; type: AlertType } | null;
   confirm: { message: string; onConfirm?: () => void } | null;
   notificationAlert: { message: Notification; type: NotificationAlertType } | null;
   setToken: (token: string) => void;
-  setUser: (user: Member) => void;
+  setUser: (user: AuthUser) => void;
   setAlert: (message: string, type: AlertType) => void;
   setConfirm: (message: string, onConfirm?: () => void) => void;
   setNotificationAlert: (message: Notification, type: NotificationAlertType) => void;
@@ -34,7 +34,7 @@ export const useAuthStore = create<AuthState>()(
       confirm: null,
       notificationAlert: null,
       setToken: (token: string) => set({ token }),
-      setUser: (user: Member) => set({ user }),
+      setUser: (user: AuthUser) => set({ user }),
       setAlert: (message: string, type: AlertType) => set({ alert: { message, type } }),
       setConfirm: (message: string, onConfirm?: () => void) => set({ confirm: { message, onConfirm } }),
       setNotificationAlert: (message: Notification, type: NotificationAlertType) => set({ notificationAlert: { message, type } }),
