@@ -1,4 +1,4 @@
-import { CommitData } from "@/types/CommitData";
+import { CommitData } from "@/types/github/CommitData";
 import Link from "next/link";
 import { useTheme } from "@/contexts/ThemeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

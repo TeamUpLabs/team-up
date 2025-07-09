@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeCommit } from "@fortawesome/free-solid-svg-icons";
 import { formatDate } from "@/utils/formatDate";
-import { CommitData } from "@/types/CommitData";
+import { CommitData } from "@/types/github/CommitData";
 
 interface CommitCardProps {
   commitData: CommitData[] | null;

@@ -1,4 +1,4 @@
-import { IssueData } from "@/types/IssueData";
+import { IssueData } from "@/types/github/IssueData";
 import Badge from "@/components/ui/Badge";
 import { hexToRgba, isColorDark } from "@/utils/hexToRgba";
 import { summarizeMarkdown } from "@/utils/summarizeMarkdown";

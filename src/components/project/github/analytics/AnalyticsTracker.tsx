@@ -1,5 +1,5 @@
-import { CommitData } from "@/types/CommitData";
-import { RepoData } from "@/types/RepoData";
+import { CommitData } from "@/types/github/CommitData";
+import { RepoData } from "@/types/github/RepoData";
 import LineCountCard from "@/components/project/github/commit/LineCountCard";
 import TotalStarCountCard from "@/components/project/github/analytics/TotalStarCountCard";
 import ForkCountCard from "@/components/project/github/analytics/ForkCountCard";
@@ -10,8 +10,8 @@ import WatcherCountCard from "@/components/project/github/analytics/WatcherCount
 import RepoPopularityChart from "@/components/project/github/analytics/RepoPopularityChart";
 import WeeklyReport from "@/components/project/github/analytics/WeeklyReport";
 
-import { PrData } from "@/types/PrData";
-import { IssueData } from "@/types/IssueData";
+import { PrData } from "@/types/github/PrData";
+import { IssueData } from "@/types/github/IssueData";
 
 interface AnalyticsTrackerProps {
   commits: CommitData[];

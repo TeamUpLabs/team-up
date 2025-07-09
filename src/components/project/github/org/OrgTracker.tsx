@@ -1,4 +1,4 @@
-import { OrgData } from "@/types/OrgData";
+import { OrgData } from "@/types/github/OrgData";
 import OrgCountCard from "@/components/project/github/org/OrgCountCard";
 import OrgMemberCountCard from "@/components/project/github/org/OrgMemberCountCard";
 import OrgPublicRepoCountCard from "@/components/project/github/org/OrgPublicRepoCountCard";

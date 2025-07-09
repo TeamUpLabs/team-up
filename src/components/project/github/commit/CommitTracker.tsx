@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CommitData } from "@/types/CommitData";
+import { CommitData } from "@/types/github/CommitData";
 import CommitCountCard from "@/components/project/github/CommitCountCard";
 import ContributorCountCard from "@/components/project/github/commit/ContributorCountCard";
 import LineCountCard from "@/components/project/github/commit/LineCountCard";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PrData } from "@/types/PrData";
+import { PrData } from "@/types/github/PrData";
 import PRCountCard from "@/components/project/github/PRCountCard";
 import PRAverageResolutionTimeCard from "@/components/project/github/pr/PRAverageResolutionTimeCard";
 import { Input } from "@/components/ui/Input";

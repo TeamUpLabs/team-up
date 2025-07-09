@@ -1,9 +1,11 @@
+import { CollaborationPreference, TechStack, Interest } from "@/types/User";
+
 export interface SignUpFormData {
   name: string;
   email: string;
   password: string;
   role: string;
-  contactNumber: string;
+  phone: string;
   skills: string[];
   birthDate: string;
   workingHours: {
@@ -16,16 +18,13 @@ export interface SignUpFormData {
 }
 
 export interface ExtraInfoFormData {
-  status: string;
   role: string;
-  contactNumber: string;
-  skills: string[];
-  birthDate: string;
-  workingHours: {
-    timezone: string;
-    start: string;
-    end: string;
-  };
+  status: string;
   languages: string[];
-  introduction: string;
+  phone: string;
+  birth_date: string;
+  last_login: string;
+  collaboration_preference: CollaborationPreference;
+  tech_stacks: TechStack[];
+  interests: Interest[];
 }

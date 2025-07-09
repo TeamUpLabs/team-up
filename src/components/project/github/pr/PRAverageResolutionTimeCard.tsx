@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { PrData } from "@/types/PrData";
+import { PrData } from "@/types/github/PrData";
 
 interface PRAverageResolutionTimeCardProps {
   prs: PrData[];

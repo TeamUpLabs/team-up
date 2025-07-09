@@ -1,7 +1,7 @@
-import { CommitData } from "@/types/CommitData";
-import { RepoData } from "@/types/RepoData";
-import { PrData } from "@/types/PrData";
-import { IssueData } from "@/types/IssueData";
+import { CommitData } from "@/types/github/CommitData";
+import { RepoData } from "@/types/github/RepoData";
+import { PrData } from "@/types/github/PrData";
+import { IssueData } from "@/types/github/IssueData";
 import { Award, CalendarWeek, Clock, CodeBranch } from "flowbite-react-icons/outline";
 import { useTheme } from "@/contexts/ThemeContext";
 

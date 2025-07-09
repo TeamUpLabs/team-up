@@ -1,4 +1,4 @@
-import { CommitData } from "@/types/CommitData";
+import { CommitData } from "@/types/github/CommitData";
 
 export interface PrDataBase {
   id: number;

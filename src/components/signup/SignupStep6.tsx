@@ -8,18 +8,11 @@ import {
   BookOpen,
 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { Interest } from "@/types/User";
 
 interface SignupStep6Props {
-  interests: {
-    interest_category: string;
-    interest_name: string;
-  }[];
-  setInterests: (
-    interests: {
-      interest_category: string;
-      interest_name: string;
-    }[]
-  ) => void;
+  interests: Interest[];
+  setInterests: (interests: Interest[]) => void;
   addInterest: (category: string, interest: string) => void;
   removeInterest: (category: string, interest: string) => void;
 }

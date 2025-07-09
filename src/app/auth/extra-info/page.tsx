@@ -11,10 +11,6 @@ import SignupStep6 from "@/components/signup/SignupStep6";
 import SignupStep7 from "@/components/signup/SignupStep7";
 import { server } from "@/auth/server";
 import {
-  getCurrentKoreanTimeDate,
-  getCurrentKoreanTime,
-} from "@/utils/dateUtils";
-import {
   ArrowLeft,
   Users,
   Info,
@@ -25,15 +21,6 @@ import {
 
 const ExtraInfoPage = () => {
   const router = useRouter();
-  const [social, setSocial] = useState<string | null>(null);
-
-  useEffect(() => {
-    // This code runs only on the client side
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      setSocial(url.searchParams.get("social"));
-    }
-  }, []);
 
   const [partialUser, setPartialUser] = useState({
     name: "",
@@ -46,18 +33,23 @@ const ExtraInfoPage = () => {
     auth_provider_access_token: "",
   });
   const [formData, setFormData] = useState<ExtraInfoFormData>({
-    status: "활성",
-    contactNumber: "",
-    birthDate: "",
     role: "",
-    introduction: "",
-    skills: [],
-    workingHours: {
-      timezone: "",
-      start: "",
-      end: "",
-    },
+    status: "inactive",
     languages: [],
+    phone: "",
+    birth_date: "",
+    last_login: "",
+    collaboration_preference: {
+      collaboration_style: "",
+      preferred_project_type: "",
+      preferred_role: "",
+      available_time_zone: "",
+      work_hours_start: 0,
+      work_hours_end: 0,
+      preferred_project_length: "",
+    },
+    tech_stacks: [],
+    interests: [],
   });
 
   const [step, setStep] = useState(3);
@@ -99,17 +91,9 @@ const ExtraInfoPage = () => {
 
   const [languageInput, setLanguageInput] = useState("");
   const [skillsInput, setSkillsInput] = useState("");
-  const [languages, setLanguages] = useState<string[]>([]);
-  const [collaborationStyle, setCollaborationStyle] = useState<string>("");
-  const [projectType, setProjectType] = useState<string>("");
-  const [preferredRole, setPreferredRole] = useState<string>("");
-  const [interests, setInterests] = useState<{
-    interest_category: string;
-    interest_name: string;
-  }[]>([]);
-  const [skills, setSkills] = useState<string[]>([]);
 
-  const [isComposing, setIsComposing] = useState(false);
+  const [isLanguageComposing, setIsLanguageComposing] = useState(false);
+  const [isSkillComposing, setIsSkillComposing] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem("partial_user");
@@ -129,7 +113,7 @@ const ExtraInfoPage = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    if (name === "contactNumber") {
+    if (name === "phone") {
       const onlyNums = value.replace(/\D/g, ""); // 숫자만 추출
 
       let formatted = onlyNums;
@@ -178,7 +162,7 @@ const ExtraInfoPage = () => {
   const handleBirthDateChange = (date: Date | undefined) => {
     setFormData((prevData) => ({
       ...prevData,
-      birthDate: date ? formatDateToString(date) : "",
+      birth_date: date ? formatDateToString(date) : "",
     }));
   };
 
@@ -188,10 +172,9 @@ const ExtraInfoPage = () => {
   };
 
   const handleRemoveLanguage = (languageToRemove: string) => {
-    const updatedLanguages = languages.filter(
+    const updatedLanguages = formData.languages.filter(
       (language) => language !== languageToRemove
     );
-    setLanguages(updatedLanguages);
     setFormData((prev) => ({
       ...prev,
       languages: updatedLanguages,
@@ -199,11 +182,10 @@ const ExtraInfoPage = () => {
   };
 
   const handleRemoveSkill = (skillToRemove: string) => {
-    const updatedSkills = skills.filter((skill) => skill !== skillToRemove);
-    setSkills(updatedSkills);
+    const updatedSkills = formData.tech_stacks.filter((skill) => skill.tech !== skillToRemove);
     setFormData((prev) => ({
       ...prev,
-      skills: updatedSkills,
+      tech_stacks: updatedSkills,
     }));
   };
 
@@ -211,13 +193,12 @@ const ExtraInfoPage = () => {
     type: "language" | "skill",
     e: React.KeyboardEvent<HTMLInputElement>
   ) => {
-    if (e.key === "Enter" && !isComposing) {
+    if (e.key === "Enter" && !isLanguageComposing && !isSkillComposing) {
       e.preventDefault();
       if (type === "language") {
         const trimmedInput = languageInput.trim();
-        if (trimmedInput && !languages.includes(trimmedInput)) {
-          const updatedLanguages = [...languages, trimmedInput];
-          setLanguages(updatedLanguages);
+        if (trimmedInput && !formData.languages.includes(trimmedInput)) {
+          const updatedLanguages = [...formData.languages, trimmedInput];
           setFormData((prev) => ({
             ...prev,
             languages: updatedLanguages,
@@ -227,26 +208,45 @@ const ExtraInfoPage = () => {
       } else if (type === "skill") {
         const trimmedInput = skillsInput.trim();
         setSkillsInput("");
-        if (trimmedInput && !skills.includes(trimmedInput)) {
-          const updatedSkills = [...skills, trimmedInput];
-          setSkills(updatedSkills);
+        if (trimmedInput && !formData.tech_stacks.some(skill => skill.tech === trimmedInput)) {
+          const newTechStack = {
+            tech: trimmedInput,
+            level: 1,
+          };
+          const updatedSkills = [...formData.tech_stacks, newTechStack];
           setFormData((prev) => ({
             ...prev,
-            skills: updatedSkills,
+            tech_stacks: updatedSkills,
           }));
         }
       }
     }
   };
 
-  const handleWorkingHoursChange = (name: string, value: string) => {
+  const handleCollaborationPreferenceChange = (field: string, value: string | number) => {
     setFormData((prev) => ({
       ...prev,
-      workingHours: {
-        ...prev.workingHours,
-        [name]: value,
+        collaboration_preference: {
+        ...prev.collaboration_preference,
+        [field]: value,
       },
     }));
+  };
+
+  const handleWorkingHoursChange = (name: string, value: string) => {
+    if (name === "timezone") {
+      handleCollaborationPreferenceChange("available_time_zone", value);
+    } else if (name === "start") {
+      const [hours, minutes] = value.split(":").map(Number);
+      const timeValue = hours * 100 + (minutes || 0);
+      handleCollaborationPreferenceChange("work_hours_start", timeValue);
+    } else if (name === "end") {
+      const [hours, minutes] = value.split(":").map(Number);
+      const timeValue = hours * 100 + (minutes || 0);
+      handleCollaborationPreferenceChange("work_hours_end", timeValue);
+    } else if (name === "preferred_project_length") {
+      handleCollaborationPreferenceChange("preferred_project_length", value);
+    }
   };
 
   const addInterest = (category: string, interest: string) => {
@@ -257,41 +257,49 @@ const ExtraInfoPage = () => {
       interest_category: category,
       interest_name: interest,
     }
-    const exists = interests.some(
+    const exists = formData.interests.some(
       (item) => item.interest_category === category && item.interest_name === interest,
     )
     if (!exists) {
-      setInterests([...interests, newInterest])
+      setFormData((prev) => ({
+        ...prev,
+        interests: [
+          ...prev.interests,
+          {
+            ...newInterest,
+          },
+        ],
+      }));
     }
   }
 
   const removeInterest = (category: string, interest: string) => {
-    const filtered = interests.filter(
+    const filtered = formData.interests.filter(
       (item) => !(item.interest_category === category && item.interest_name === interest),
     )
-    setInterests(filtered)
+    setFormData((prev) => ({
+      ...prev,
+      interests: filtered,
+    }));
   }
+
+  const handleSkillLevelChange = (tech: string, level: number) => {
+    const updatedSkills = formData.tech_stacks.map((skill) =>
+      skill.tech === tech ? { ...skill, level } : skill
+    );
+    setFormData((prev) => ({
+      ...prev,
+      tech_stacks: updatedSkills,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step - 2 === 5) {
-      const res = await server.post(`/auth/signup`, {
+      console.log({...formData, ...partialUser});
+      const res = await server.post(`/users/oauth`, {
         ...formData,
-        name: partialUser.name,
-        email: partialUser.email,
-        profile_image: partialUser.profile_image,
-        social_links: partialUser.social_links,
-        bio: partialUser.bio,
-        auth_provider: partialUser.auth_provider,
-        auth_provider_id: partialUser.auth_provider_id,
-        auth_provider_access_token: partialUser.auth_provider_access_token,
-        github_id: social === "github" ? partialUser.auth_provider_id : "",
-        isGithub: social === "github",
-        signupMethod: social,
-        createdAt: getCurrentKoreanTimeDate(),
-        lastLogin: getCurrentKoreanTime(),
-        github_access_token:
-          social === "github" ? partialUser.auth_provider_access_token : "",
+        ...partialUser,
       });
 
       const data = res.data;
@@ -369,37 +377,49 @@ const ExtraInfoPage = () => {
 
           {step === 4 && (
             <SignupStep4
-              contactNumber={formData.contactNumber}
-              birthDate={formData.birthDate}
+              phone={formData.phone}
+              birth_date={formData.birth_date}
               languageInput={languageInput}
-              languages={languages}
+              languages={formData.languages}
               onChange={handleInputChange}
               onBirthDateChange={handleBirthDateChange}
               handleLanguageInput={handleLanguageInput}
               onKeyDown={handleKeyDown}
               onRemoveLanguage={handleRemoveLanguage}
-              setIsComposing={setIsComposing}
+              setIsComposing={setIsLanguageComposing}
             />
           )}
 
           {step === 5 && (
             <SignupStep5
-              collaborationStyle={collaborationStyle}
-              setCollaborationStyle={setCollaborationStyle}
-              projectType={projectType}
-              setProjectType={setProjectType}
+              collaborationStyle={formData.collaboration_preference.collaboration_style}
+              setCollaborationStyle={(style) => handleCollaborationPreferenceChange("collaboration_style", style)}
+              projectType={formData.collaboration_preference.preferred_project_type}
+              setProjectType={(type) => handleCollaborationPreferenceChange("preferred_project_type", type)}
               role={formData.role}
-              preferred_role={preferredRole}
-              setPreferredRole={setPreferredRole}
-              workingHours={formData.workingHours}
+              preferred_role={formData.collaboration_preference.preferred_role}
+              setPreferredRole={(role) => handleCollaborationPreferenceChange("preferred_role", role)}
+              workingHours={{
+                timezone: formData.collaboration_preference.available_time_zone,
+                start: formData.collaboration_preference.work_hours_start ? 
+                  `${Math.floor(formData.collaboration_preference.work_hours_start / 100).toString().padStart(2, '0')}:${(formData.collaboration_preference.work_hours_start % 100).toString().padStart(2, '0')}` : "",
+                end: formData.collaboration_preference.work_hours_end ? 
+                  `${Math.floor(formData.collaboration_preference.work_hours_end / 100).toString().padStart(2, '0')}:${(formData.collaboration_preference.work_hours_end % 100).toString().padStart(2, '0')}` : "",
+                preferred_project_length: formData.collaboration_preference.preferred_project_length,
+              }}
               onWorkingHoursChange={handleWorkingHoursChange}
             />
           )}
 
           {step === 6 && (
             <SignupStep6
-              interests={interests}
-              setInterests={setInterests}
+              interests={formData.interests}
+              setInterests={(interests) => setFormData(prev => ({ 
+                ...prev, 
+                interests: interests.map(interest => ({
+                  ...interest,
+                }))
+              }))}
               addInterest={addInterest}
               removeInterest={removeInterest}
             />
@@ -407,12 +427,13 @@ const ExtraInfoPage = () => {
 
           {step === 7 && (
             <SignupStep7
-              skills={skills}
-              setIsComposing={setIsComposing}
+              skills={formData.tech_stacks}
+              setIsComposing={setIsSkillComposing}
               onKeyDown={handleKeyDown}
               skillsInput={skillsInput}
               setSkillsInput={setSkillsInput}
               onRemoveSkill={handleRemoveSkill}
+              onChangeSkillLevel={handleSkillLevelChange}
             />
           )}
 

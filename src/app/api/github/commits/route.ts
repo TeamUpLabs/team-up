@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { CommitData } from '@/types/CommitData';
+import { CommitData } from '@/types/github/CommitData';
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization');

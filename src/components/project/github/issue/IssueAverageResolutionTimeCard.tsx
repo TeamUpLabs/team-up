@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
-import { IssueData } from "@/types/IssueData";
+import { IssueData } from "@/types/github/IssueData";
 
 interface IssueAverageResolutionTimeCardProps {
   issues: IssueData[];

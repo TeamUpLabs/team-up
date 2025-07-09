@@ -4,8 +4,8 @@ import DatePicker from "@/components/ui/DatePicker";
 import { useTheme } from "@/contexts/ThemeContext";
 
 interface SignupStep4Props {
-  contactNumber: string;
-  birthDate: string;
+  phone: string;
+  birth_date: string;
   languageInput: string;
   languages: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -20,8 +20,8 @@ interface SignupStep4Props {
 }
 
 export default function SignupStep4({
-  contactNumber,
-  birthDate,
+  phone,
+  birth_date,
   languageInput,
   languages,
   onChange,
@@ -51,9 +51,9 @@ export default function SignupStep4({
     <div className="space-y-6">
       <Input
         type="tel"
-        id="contactNumber"
-        name="contactNumber"
-        value={contactNumber}
+        id="phone"
+        name="phone"
+        value={phone}
         onChange={onChange}
         pattern="[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}"
         placeholder="전화번호를 입력하세요"
@@ -62,7 +62,7 @@ export default function SignupStep4({
       />
 
       <DatePicker
-        value={birthDate ? parseStringToDate(birthDate) : undefined}
+        value={birth_date ? parseStringToDate(birth_date) : undefined}
         onChange={onBirthDateChange}
         label="생년월일"
         isRequired

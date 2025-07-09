@@ -1,4 +1,4 @@
-import { OrgData } from "@/types/OrgData";
+import { OrgData } from "@/types/github/OrgData";
 import Image from "next/image";
 import Link from "next/link";
 import { Book, Users, CalendarWeek } from "flowbite-react-icons/outline";

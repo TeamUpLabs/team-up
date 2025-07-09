@@ -1,11 +1,11 @@
 import { useTheme } from "@/contexts/ThemeContext";
 import OrgCard from "@/components/project/github/overview/OrgCard";
 import RecentActivityCard from "@/components/project/github/overview/RecentActivityCard";
-import { CommitData } from "@/types/CommitData";
-import { OrgData } from "@/types/OrgData";
-import { IssueData } from "@/types/IssueData";
-import { PrData } from "@/types/PrData";
-import { Activity } from "@/types/ActivityData";
+import { CommitData } from "@/types/github/CommitData";
+import { OrgData } from "@/types/github/OrgData";
+import { IssueData } from "@/types/github/IssueData";
+import { PrData } from "@/types/github/PrData";
+import { Activity } from "@/types/github/ActivityData";
 
 interface OverviewProps {
   issueData: IssueData[];

@@ -5,7 +5,7 @@ import Badge from "@/components/ui/Badge";
 import { Book, Users, Building, MapPinAlt, Refresh } from "flowbite-react-icons/outline";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Member } from "@/types/Member";
-import { GithubUser } from "@/types/GithubUser";
+import { GithubUser } from "@/types/github/GithubUser";
 import RateLimitWarning from "@/components/project/github/RateLimitWarning";
 import { useAuthStore } from "@/auth/authStore";
 

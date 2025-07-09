@@ -7,7 +7,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { CommitData } from "@/types/CommitData";
+import { CommitData } from "@/types/github/CommitData";
 
 interface CommitChartProps {
   commits: CommitData[];

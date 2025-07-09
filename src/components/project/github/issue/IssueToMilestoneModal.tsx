@@ -1,7 +1,7 @@
 "use client";
 
 import ModalTemplete from "@/components/ModalTemplete";
-import { IssueData } from "@/types/IssueData";
+import { IssueData } from "@/types/github/IssueData";
 import { Flag } from "flowbite-react-icons/outline";
 import { useState, useCallback } from "react";
 import { Input } from "@/components/ui/Input";

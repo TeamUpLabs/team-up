@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrDataBase } from '@/types/PrData';
+import { PrDataBase } from '@/types/github/PrData';
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization');

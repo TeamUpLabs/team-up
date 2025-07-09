@@ -14,6 +14,7 @@ interface SignupStep5Props {
     timezone: string;
     start: string;
     end: string;
+    preferred_project_length?: string;
   };
   onWorkingHoursChange: (name: string, value: string) => void;
 }
@@ -388,8 +389,8 @@ export default function SignupStep5({
             label: "길음",
           },
         ]}
-        value={workingHours.end}
-        onChange={(value) => onWorkingHoursChange("end", value as string)}
+        value={workingHours.preferred_project_length || ""}
+        onChange={(value) => onWorkingHoursChange("preferred_project_length", value as string)}
         dropDownClassName="!w-full"
         placeholder="선호 프로젝트 기간을 선택해주세요"
         className="!w-full"

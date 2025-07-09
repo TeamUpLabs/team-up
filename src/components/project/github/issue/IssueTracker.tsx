@@ -2,7 +2,7 @@ import IssueCard from "@/components/project/github/issue/IssueCard";
 import Select from "@/components/ui/Select";
 import { Search } from "flowbite-react-icons/outline";
 import { useState } from "react";
-import { IssueData } from "@/types/IssueData";
+import { IssueData } from "@/types/github/IssueData";
 import IssueCountCard from "@/components/project/github/IssueCountCard";
 import IssueAverageResolutionTimeCard from "@/components/project/github/issue/IssueAverageResolutionTimeCard";
 import { Input } from "@/components/ui/Input";

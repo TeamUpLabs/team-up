@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { IssueData } from '@/types/IssueData';
+import { IssueData } from '@/types/github/IssueData';
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization');

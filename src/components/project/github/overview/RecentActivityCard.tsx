@@ -4,7 +4,7 @@ import Link from "next/link";
 import { faCodeCommit, faCodePullRequest, faExclamation } from "@fortawesome/free-solid-svg-icons";
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Activity } from "@/types/ActivityData";
+import { Activity } from "@/types/github/ActivityData";
 import { useTheme } from "@/contexts/ThemeContext";
 
 interface RecentActivityCardProps {

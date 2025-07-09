@@ -1,9 +1,10 @@
 import { Input } from "@/components/ui/Input";
 import Badge from "@/components/ui/Badge";
+import { TechStack } from "@/types/User";
 import { useTheme } from "@/contexts/ThemeContext";
 
 interface SignupStep7Props {
-  skills: string[];
+  skills: TechStack[];
   setIsComposing: (isComposing: boolean) => void;
   onKeyDown: (
     type: "language" | "skill",
@@ -12,6 +13,7 @@ interface SignupStep7Props {
   skillsInput: string;
   setSkillsInput: (input: string) => void;
   onRemoveSkill: (skillToRemove: string) => void;
+  onChangeSkillLevel: (tech: string, level: number) => void;
 }
 
 export default function SignupStep7({
@@ -21,6 +23,7 @@ export default function SignupStep7({
   skillsInput,
   setSkillsInput,
   onRemoveSkill,
+  onChangeSkillLevel,
 }: SignupStep7Props) {
   const { isDark } = useTheme();
 
@@ -36,16 +39,54 @@ export default function SignupStep7({
         onCompositionEnd={() => setIsComposing(false)}
         label="기술 스택 추가"
       />
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-4">
         {skills.map((skill) => (
-          <Badge
-            key={skill}
-            content={skill}
-            color="blue"
-            isDark={isDark}
-            onRemove={() => onRemoveSkill(skill)}
-            isEditable
-          />
+          <div
+            key={skill.tech}
+            className="relative flex flex-col gap-2 rounded-xl bg-component-secondary-background border border-component-secondary-border p-6 shadow-sm w-full"
+          >
+            <button
+              type="button"
+              className="absolute top-4 right-4 text-text-secondary hover:text-text-primary cursor-pointer"
+              onClick={() => onRemoveSkill(skill.tech)}
+              aria-label="Remove skill"
+            >
+              &times;
+            </button>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-lg font-bold text-text-primary">
+                {skill.tech}
+              </span>
+              <Badge
+                content={
+                  skill.level === 0
+                    ? "초급"
+                    : skill.level === 1
+                    ? "중급"
+                    : "고급"
+                }
+                color={skill.level === 0 ? "green" : skill.level === 1 ? "blue" : "red"}
+                isDark={isDark}
+              />
+            </div>
+            <div className="flex flex-col gap-2 mt-2">
+              <span className="text-base font-semibold text-text-secondary">
+                Skill Level
+              </span>
+              <div className="flex gap-2">
+                {[0, 1, 2].map((level) => (
+                  <Badge
+                    key={level}
+                    content={level === 0 ? "초급" : level === 1 ? "중급" : "고급"}
+                    color={skill.level === level ? level === 0 ? "green" : level === 1 ? "blue" : "red" : "gray"}
+                    isDark={isDark}
+                    onClick={() => onChangeSkillLevel(skill.tech, level)}
+                    className="cursor-pointer !rounded-full"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>

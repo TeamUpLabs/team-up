@@ -1,4 +1,4 @@
-import { PrData } from "@/types/PrData";
+import { PrData } from "@/types/github/PrData";
 import { CodePullRequest, CodeMerge, CodeBranch, Clock, User, Messages } from "flowbite-react-icons/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeCommit } from "@fortawesome/free-solid-svg-icons";
