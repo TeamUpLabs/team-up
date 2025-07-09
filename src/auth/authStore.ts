@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AuthUser } from "@/types/AuthUser";
-import { Notification } from "@/types/Member";
+import { Notification } from "@/types/Notification";
 import { server } from '@/auth/server';
 
 type AlertType = "success" | "error" | "info" | "warning";

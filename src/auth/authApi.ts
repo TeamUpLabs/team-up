@@ -30,9 +30,15 @@ export const login = async (email: string, password: string) => {
       
       if (userRes.data) {
         try {
-          const res = await server.put(`/member/${userRes.data.id}`, {
-            status: "활성",
-            lastLogin: getCurrentKoreanTime()
+          const res = await server.put(`/users/me`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: {
+              status: "active",
+              last_login: getCurrentKoreanTime()
+            }
           });
           if (res.status === 200) {
             useAuthStore.getState().setUser(userRes.data);
@@ -72,12 +78,14 @@ export const logout = async () => {
   if (!user) {
     throw new Error('User not found');
   }
-  useAuthStore.getState().logout();
   try {
-    const res = await server.put(`/member/${user.id}`, {
-      status: "비활성"
-    });
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error('Token not found');
+    }
+    const res = await server.post(`/users/${user.id}/logout`);
     if (res.status === 200) {
+      useAuthStore.getState().logout();
       useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");
       window.location.href = '/';
     } else {

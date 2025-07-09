@@ -30,8 +30,8 @@ export default function UserDropdown() {
       >
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 relative rounded-full flex items-center justify-center bg-component-tertiary-background border border-component-secondary-border text-text-primary">
-            {user?.profileImage ? (
-              <Image src={user.profileImage} alt="Profile" className="object-fit rounded-full" quality={100} width={32} height={32} />
+            {user?.profile_image ? (
+              <Image src={user.profile_image} alt="Profile" className="object-fit rounded-full" quality={100} width={32} height={32} />
             ) : (
               <p>{user?.name.charAt(0) || "??"}</p>
             )}
@@ -52,7 +52,7 @@ export default function UserDropdown() {
                 text={
                   <div className="flex flex-col">
                     <span className="font-semibold">{user?.name}</span>
-                    <span className="text-text-secondary">{user?.email}</span>
+                    <span className="text-text-secondary">{user?.role}</span>
                   </div>
                 }
                 isHover={false}
