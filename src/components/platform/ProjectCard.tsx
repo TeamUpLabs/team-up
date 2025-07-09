@@ -35,7 +35,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
         />
         <div className="flex items-center gap-1 text-sm text-text-secondary">
           <Users className="w-4 h-4" />
-          <span className="">{project.members.length}/{project.teamSize}명</span>
+          <span className="">{project.members.length || 0}/{project.team_size}명</span>
         </div>
       </div>
       <div className="space-y-1">
@@ -48,23 +48,23 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
           <span className="h-px flex-grow bg-component-border"></span>
         </h4>
         <div className="flex flex-wrap items-center gap-2 mb-4">
-          {project.roles.slice(0, 3).map((role, index) => (
+          {project.tags.slice(0, 3).map((tag, index) => (
             <Badge
               key={index}
-              content={role}
+              content={tag}
               color="purple"
               isDark={isDark}
               className="!text-xs !rounded-full"
             />
           ))}
-          {project.roles.length > 3 && (
-            <span className="text-xs text-text-secondary">+{project.roles.length - 3}</span>
+          {project.tags.length > 3 && (
+            <span className="text-xs text-text-secondary">+{project.tags.length - 3}</span>
           )}
         </div>
       </div>
       <div className="flex justify-end">
         {isExplore ? (
-          project.participationRequestMembers && project.participationRequestMembers.some(member => member.id === user?.id) ? (
+          project.participation_requests && project.participation_requests.some(request => request.user_id === user?.id) ? (
             <button
               onClick={() => {
                 if (!user) {
@@ -92,7 +92,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
                   useAuthStore.getState().setAlert("로그인이 필요합니다.", "error");
                   return;
                 }
-                if (project.members.length >= project.teamSize) {
+                if (project.members.length >= project.team_size) {
                   useAuthStore.getState().setAlert("모집 인원이 다 찼습니다. 다른 프로젝트를 찾아보세요.", "error");
                   return;
                 }

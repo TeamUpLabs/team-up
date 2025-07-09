@@ -15,9 +15,9 @@ import {
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuthStore } from "@/auth/authStore";
-import { Notification } from "@/types/Member";
+import { Notification, NotificationAlertType } from "@/types/Notification";
 
-export type AlertType = Notification["type"] | "success" | "error" | "info_general" | undefined;
+export type AlertType = NotificationAlertType | "success" | "error" | "info_general" | undefined;
 
 interface AlertContent {
   message: Pick<Notification, "id" | "title" | "message">;

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Project } from "@/types/Project";
 import { useAuthStore } from "@/auth/authStore";
-import { getProjectByMemberId } from "@/hooks/getProjectData";
+import { getProjectsByUser } from "@/hooks/getProjectData";
 import ProjectCard from "@/components/platform/ProjectCard";
 import NewProjectModal from "@/components/platform/NewProjectModal";
 import { useSearchParams } from "next/navigation";
@@ -20,12 +20,12 @@ export default function Platform() {
   // 프로젝트 데이터 가져오기
   useEffect(() => {
     let didFetch = false;
-    const fetchProjects = async (member_id: number) => {
+    const fetchProjects = async () => {
       if (didFetch) return;
       didFetch = true;
 
       try {
-        const data = await getProjectByMemberId(member_id);
+        const data = await getProjectsByUser();
         setProjects(data);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -33,7 +33,7 @@ export default function Platform() {
       }
     };
     if (user) {
-      fetchProjects(user.id);
+      fetchProjects();
     }
 
     return () => {
@@ -90,9 +90,8 @@ export default function Platform() {
       project.description.toLowerCase().includes(lowercaseQuery) ||
       project.status.toLowerCase().includes(lowercaseQuery) ||
       project.location.toLowerCase().includes(lowercaseQuery) ||
-      project.projectType.toLowerCase().includes(lowercaseQuery) ||
-      project.roles.some(role => role.toLowerCase().includes(lowercaseQuery)) ||
-      project.techStack.some(tech => tech.toLowerCase().includes(lowercaseQuery));
+      project.project_type.toLowerCase().includes(lowercaseQuery) ||
+      project.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery));
   })
 
   return (

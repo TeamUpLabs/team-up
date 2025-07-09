@@ -9,8 +9,10 @@ import {
   useCallback,
 } from "react";
 import { useAuthStore } from "@/auth/authStore";
-import { Notification } from "@/types/Member";
+import { Notification, NotificationAlertType } from "@/types/Notification";
 import { server } from "@/auth/server";
+import { fetchUserDetail } from "@/auth/authStore";
+import useSWR from "swr";
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -41,7 +43,8 @@ export function NotificationProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const user = useAuthStore((state) => state.user);
+  const { data } = useSWR('/users/me', fetchUserDetail);
+  const user = data;
   const setNotificationAlert = useAuthStore((state) => state.setNotificationAlert);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -58,7 +61,7 @@ export function NotificationProvider({
         if (response.status === 200 && Array.isArray(response.data)) {
           initialNotifications = response.data;
         } else {
-          initialNotifications = user.notification || [];
+          initialNotifications = user.received_notifications || [];
           console.warn("Fetched initial notifications from user.notification due to API issue or unexpected data.", response);
         }
         
@@ -69,7 +72,7 @@ export function NotificationProvider({
 
         if (initialNotifications.length > 0) {
           const mostRecentInitialNotification = initialNotifications.sort(
-            (a, b) =>
+            (a: Notification, b: Notification) =>
               new Date(b.timestamp).getTime() -
               new Date(a.timestamp).getTime()
           )[0];
@@ -81,14 +84,14 @@ export function NotificationProvider({
 
       } catch (error) {
         console.error("Failed to fetch initial notifications:", error);
-        const fallbackNotifications = user.notification || [];
+        const fallbackNotifications = user.received_notifications || [];
         setNotifications(fallbackNotifications);
         lastProcessedNotificationIds.current = new Set(
             fallbackNotifications.map((n: Notification) => n.id)
         );
         if (fallbackNotifications.length > 0) {
           const mostRecentFallbackNotification = fallbackNotifications.sort(
-            (a, b) =>
+            (a: Notification, b: Notification) =>
               new Date(b.timestamp).getTime() -
               new Date(a.timestamp).getTime()
           )[0];
@@ -104,7 +107,7 @@ export function NotificationProvider({
       lastAlertedNotificationId.current = null;
       initialNotificationsHydrated.current = false;
     }
-  }, [user?.id, user?.notification]);
+  }, [user?.id, user?.received_notifications]);
 
   useEffect(() => {
     fetchInitialNotifications();
@@ -173,7 +176,7 @@ export function NotificationProvider({
             const hasRequiredFields = 
               typeof n.id === 'number' && 
               typeof n.timestamp === 'string' && 
-              typeof n.isRead === 'boolean';
+              typeof n.is_read === 'boolean';
 
             if (!hasRequiredFields) {
               console.warn(`Skipping invalid notification:`, n);
@@ -196,7 +199,7 @@ export function NotificationProvider({
 
           if (newNotifications.length > 0) {
             const mostRecentNewNotification = newNotifications.sort(
-              (a, b) =>
+              (a: Notification, b: Notification) =>
                 new Date(b.timestamp).getTime() -
                 new Date(a.timestamp).getTime()
             )[0];
@@ -204,7 +207,7 @@ export function NotificationProvider({
             if (initialNotificationsHydrated.current && mostRecentNewNotification && mostRecentNewNotification.id !== lastAlertedNotificationId.current) {
               setNotificationAlert(
                 mostRecentNewNotification,
-                mostRecentNewNotification.type || "info"
+                mostRecentNewNotification.type as NotificationAlertType || "info"
               );
               lastAlertedNotificationId.current = mostRecentNewNotification.id;
             }
@@ -272,7 +275,7 @@ export function NotificationProvider({
     };
   }, [user?.id, setNotificationAlert]);
 
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   const markAsRead = async (id: number) => {
     if (!user?.id) return;
@@ -289,14 +292,14 @@ export function NotificationProvider({
     setNotifications((prevNotifications) =>
       prevNotifications.map((notification) =>
         notification.id === id
-          ? { ...notification, isRead: true }
+          ? { ...notification, is_read: true }
           : notification
       )
     );
 
     try {
       const res = await server.put(`/member/${user.id}/notification/${id}`, {
-        isRead: true,
+        is_read: true,
       });
 
       if (res.status !== 200) {
@@ -317,7 +320,7 @@ export function NotificationProvider({
     if (!user?.id || unreadCount === 0) return;
 
     const unreadNotificationIds = notifications
-      .filter((n) => !n.isRead)
+      .filter((n) => !n.is_read)
       .map((n) => n.id);
 
     if (unreadNotificationIds.length === 0) return;

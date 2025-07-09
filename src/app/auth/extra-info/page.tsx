@@ -44,8 +44,8 @@ const ExtraInfoPage = () => {
       preferred_project_type: "",
       preferred_role: "",
       available_time_zone: "",
-      work_hours_start: 0,
-      work_hours_end: 0,
+      work_hours_start: "",
+      work_hours_end: "",
       preferred_project_length: "",
     },
     tech_stacks: [],
@@ -296,7 +296,6 @@ const ExtraInfoPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step - 2 === 5) {
-      console.log({...formData, ...partialUser});
       const res = await server.post(`/users/oauth`, {
         ...formData,
         ...partialUser,
@@ -402,9 +401,9 @@ const ExtraInfoPage = () => {
               workingHours={{
                 timezone: formData.collaboration_preference.available_time_zone,
                 start: formData.collaboration_preference.work_hours_start ? 
-                  `${Math.floor(formData.collaboration_preference.work_hours_start / 100).toString().padStart(2, '0')}:${(formData.collaboration_preference.work_hours_start % 100).toString().padStart(2, '0')}` : "",
+                  `${Math.floor(Number(formData.collaboration_preference.work_hours_start) / 100).toString().padStart(2, '0')}:${(Number(formData.collaboration_preference.work_hours_start) % 100).toString().padStart(2, '0')}` : "",
                 end: formData.collaboration_preference.work_hours_end ? 
-                  `${Math.floor(formData.collaboration_preference.work_hours_end / 100).toString().padStart(2, '0')}:${(formData.collaboration_preference.work_hours_end % 100).toString().padStart(2, '0')}` : "",
+                  `${Math.floor(Number(formData.collaboration_preference.work_hours_end) / 100).toString().padStart(2, '0')}:${(Number(formData.collaboration_preference.work_hours_end) % 100).toString().padStart(2, '0')}` : "",
                 preferred_project_length: formData.collaboration_preference.preferred_project_length,
               }}
               onWorkingHoursChange={handleWorkingHoursChange}

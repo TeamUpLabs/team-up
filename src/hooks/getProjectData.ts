@@ -1,5 +1,6 @@
 import { server } from "@/auth/server";
 import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
+import { useAuthStore } from "@/auth/authStore";
 
 export const getAllProjects = async () => {
   try {
@@ -20,11 +21,14 @@ export const getAllProjects = async () => {
   }
 };
 
-export const getProjectByMemberId = async (member_id: number) => {
+export const getProjectsByUser = async () => {
   try {
-    const res = await server.get(`/member/${member_id}/project`, {
+    const token = useAuthStore.getState().token;
+    const user = useAuthStore.getState().user;
+    const res = await server.get(`/users/${user?.id}/projects`, {
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
       },
     });
 
