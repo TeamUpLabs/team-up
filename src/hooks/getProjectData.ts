@@ -43,6 +43,25 @@ export const getProjectsByUser = async () => {
   }
 };
 
+export const getProjectsByUserId = async (user_id: number) => {
+  try {
+    const res = await server.get(`/users/${user_id}/projects`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      throw new Error("Failed to fetch project data");
+    }
+  } catch (error) {
+    console.error("Error fetching project data:", error);
+    throw error;
+  }
+}
+
 export const getProjectById = async (project_id: string) => {
   try {
     const res = await server.get(`/projects/${project_id}`, {

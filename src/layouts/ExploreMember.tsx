@@ -3,15 +3,15 @@
 import { useState, useEffect, useRef } from "react"
 import { getAllMembers } from "@/hooks/getMemberData";
 import { useAuthStore } from "@/auth/authStore";
-import { Member } from "@/types/Member";
+import { User } from "@/types/User";
 import MemberCard from "@/components/project/members/MemberCard";
 import MemberScoutDetailModal from "@/components/platform/MemberScoutDetailModal";
 
 export default function ExploreMember() {
-  const [members, setMembers] = useState<Member[]>([]);
+  const [members, setMembers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const user = useAuthStore((state) => state.user);
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [selectedMember, setSelectedMember] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isMounted = useRef(false);
 
@@ -21,7 +21,7 @@ export default function ExploreMember() {
       try {
         const data = await getAllMembers();
         // Filter out the current user from the members list
-        const filteredMembers = user ? data.filter((member: Member) => member.id !== user.id) : data;
+        const filteredMembers = user ? data.filter((member: User) => member.id !== user.id) : data;
         setMembers(filteredMembers);
       } catch (error) {
         console.error("Error fetching members:", error);
@@ -69,14 +69,14 @@ export default function ExploreMember() {
     // Comprehensive search across all relevant fields
     return member.id.toString().includes(lowercaseQuery) ||
       member.name.toLowerCase().includes(lowercaseQuery) ||
-      member.skills.some(skill => skill.toLowerCase().includes(lowercaseQuery)) ||
+      member.tech_stacks.some(skill => skill.tech.toLowerCase().includes(lowercaseQuery)) ||
       member.role.toLowerCase().includes(lowercaseQuery) ||
       (member.email && member.email.toLowerCase().includes(lowercaseQuery)) ||
-      (member.contactNumber && member.contactNumber.toLowerCase().includes(lowercaseQuery)) ||
+      (member.phone && member.phone.toLowerCase().includes(lowercaseQuery)) ||
       member.languages.some(lang => lang.toLowerCase().includes(lowercaseQuery));
   });
-
-  const handleMemberClick = (member: Member) => {
+  
+  const handleMemberClick = (member: User) => {
     setSelectedMember(member);
     setIsModalOpen(true);
   };

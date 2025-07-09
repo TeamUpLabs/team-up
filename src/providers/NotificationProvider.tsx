@@ -56,7 +56,7 @@ export function NotificationProvider({
     initialNotificationsHydrated.current = false;
     if (user?.id) {
       try {
-        const response = await server.get(`/member/${user.id}/notifications`);
+        const response = await server.get(`/notifications/user/${user.id}/sse`);
         let initialNotifications: Notification[] = [];
         if (response.status === 200 && Array.isArray(response.data)) {
           initialNotifications = response.data;
@@ -133,12 +133,12 @@ export function NotificationProvider({
         return;
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/api";
       if (!apiUrl) {
         console.error("NEXT_PUBLIC_API_URL is not defined.");
         return;
       }
-      const sseUrl = `${apiUrl}/member/${user.id}/notifications/sse`;
+      const sseUrl = `${apiUrl}/notifications/user/${user.id}/sse`;
       
       console.log("Attempting to connect to SSE:", sseUrl);
       const newEventSource = new EventSource(sseUrl);

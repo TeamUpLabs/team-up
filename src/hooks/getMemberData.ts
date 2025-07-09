@@ -4,7 +4,7 @@ import { useAuthStore } from "@/auth/authStore";
 
 export const getAllMembers = async (): Promise<User[]> => {
   try { 
-    const res = await server.get("/member", {
+    const res = await server.get("/users", {
       headers: {
         "Content-Type": "application/json",
       },

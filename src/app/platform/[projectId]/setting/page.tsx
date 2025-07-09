@@ -12,12 +12,10 @@ export default function SettingsPage() {
   const user = useAuthStore((state) => state.user);
   const [activeTab, setActiveTab] = useState("general");
 
-  const isLeader = Array.isArray(project?.leader)
-    ? project.leader.some((leader: { id: number | string }) => leader.id === user?.id)
-    : project?.leader?.id === user?.id;
+  const isLeader = project?.members.some((member) => member.user.id === user?.id && member.is_leader) || project?.owner.id === user?.id;
     
   // 참여 요청이 있는지 확인
-  const hasParticipationRequests = project?.participationRequestMembers && project.participationRequestMembers.length > 0;
+  const hasParticipationRequests = project?.participation_requests && project.participation_requests.length > 0;
 
   return (
     <div className="p-4">
@@ -48,7 +46,7 @@ export default function SettingsPage() {
             <span className="absolute -top-1 -right-1 flex h-5 w-5">
               <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-100"></span>
               <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
-                {project.participationRequestMembers.length}
+                {project.participation_requests.length}
               </span>
             </span>
           )}

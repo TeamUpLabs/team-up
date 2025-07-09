@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { Project } from "@/types/Project";
-import { getProjectByMemberId } from "@/hooks/getProjectData";
+import { getProjectsByUserId } from "@/hooks/getProjectData";
 import { sendScout } from "@/hooks/getMemberData";
 import ModalTemplete from "@/components/ModalTemplete";
 
@@ -28,7 +28,7 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
       
       try {
         setLoading(true);
-        const data = await getProjectByMemberId(user.id);
+        const data = await getProjectsByUserId(user.id);
         
         // Filter out projects that the member is already participating in
         const memberProjectIds = memberProjects.map((project: Project) => project.id);
@@ -110,14 +110,14 @@ export default function SelectProjectModal({ isOpen, onClose, memberToScout, mem
               </div>
               <div className="mt-2 text-sm text-text-secondary">{project.description}</div>
               <div className="mt-3 flex flex-wrap gap-2">
-                {project.techStack?.slice(0, 3).map((tech, idx) => (
+                {project.tags?.slice(0, 3).map((tag, idx) => (
                   <span key={idx} className="px-2 py-1 rounded-md text-xs bg-component-secondary-background text-text-secondary">
-                    {tech}
+                    {tag}
                   </span>
                 ))}
-                {project.techStack?.length > 3 && (
+                {project.tags?.length > 3 && (
                   <span className="px-2 py-1 rounded-md text-xs bg-component-secondary-background text-text-secondary">
-                    +{project.techStack.length - 3}
+                    +{project.tags.length - 3}
                   </span>
                 )}
               </div>
