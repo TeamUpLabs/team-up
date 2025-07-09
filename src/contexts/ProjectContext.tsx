@@ -46,7 +46,7 @@ export const ProjectProvider = ({
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
       }
-      const newEventSource = new EventSource(`${process.env.NEXT_PUBLIC_API_URL}/project/${project.id}/sse`);
+      const newEventSource = new EventSource(`${process.env.NEXT_PUBLIC_API_URL}/api/projects/${project.id}/sse`);
       eventSourceRef.current = newEventSource;
 
       newEventSource.onmessage = (event) => {

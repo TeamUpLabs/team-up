@@ -4,7 +4,7 @@ import { useAuthStore } from "@/auth/authStore";
 
 export const getAllProjects = async () => {
   try {
-    const res = await server.get(`/project`, {
+    const res = await server.get(`/projects`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -45,7 +45,7 @@ export const getProjectsByUser = async () => {
 
 export const getProjectById = async (project_id: string) => {
   try {
-    const res = await server.get(`/project/${project_id}`, {
+    const res = await server.get(`/projects/${project_id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -65,7 +65,7 @@ export const getProjectById = async (project_id: string) => {
 
 export const getAllProjectsExceptMyProject = async (member_id: number) => {
   try {
-    const res = await server.get(`/project/exclude/${member_id}`, {
+    const res = await server.get(`/projects/exclude/${member_id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -84,7 +84,7 @@ export const getAllProjectsExceptMyProject = async (member_id: number) => {
 
 export const getMemberByProject = async (project_id: string) => {
   try {
-    const res = await server.get(`/project/${project_id}/member`, {
+    const res = await server.get(`/projects/${project_id}/members`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -123,7 +123,7 @@ export const generateProjectId = async (): Promise<string> => {
     result += characters.charAt(randomIndex);
   }
 
-  const res = await server.get(`/project/id`);
+  const res = await server.get(`/projects/ids`);
   const data = res.data;
   if (data.includes(result)) {
     return generateProjectId();
@@ -136,7 +136,7 @@ export const createProject = async (formData: ProjectFormData) => {
   try {
     const projectId = await generateProjectId();
 
-    const res = await server.post('/project', {
+    const res = await server.post('/projects', {
       id: projectId,
       title: formData.title,
       description: formData.description,
@@ -169,7 +169,7 @@ export const createProject = async (formData: ProjectFormData) => {
 
 export const deleteProject = async (project_id: string) => {
   try {
-    const res = await server.delete(`/project/${project_id}`, {
+    const res = await server.delete(`/projects/${project_id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -203,7 +203,7 @@ interface UpdateProjectFormData {
 
 export const updateProject = async (project_id: string, formData: UpdateProjectFormData) => {
   try {
-    const res = await server.put(`/project/${project_id}`, {
+    const res = await server.put(`/projects/${project_id}`, {
       title: formData.title,
       description: formData.description,
       techStack: formData.techStack,
@@ -233,7 +233,7 @@ export const updateProject = async (project_id: string, formData: UpdateProjectF
 
 export const updateProjectMemberPermission = async (project_id: string, member_id: number, permission: string) => {
   try {
-    const res = await server.put(`/project/${project_id}/member/${member_id}/permission`, {
+    const res = await server.put(`/projects/${project_id}/members/${member_id}/permission`, {
       permission: permission,
     }, {
       headers: {
@@ -254,7 +254,7 @@ export const updateProjectMemberPermission = async (project_id: string, member_i
 
 export const allowParticipationRequest = async (project_id: string, member_id: number) => {
   try {
-    const res = await server.put(`/project/${project_id}/participationRequest/${member_id}/allow`, {
+    const res = await server.put(`/projects/${project_id}/participationRequest/${member_id}/allow`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -273,7 +273,7 @@ export const allowParticipationRequest = async (project_id: string, member_id: n
 
 export const rejectParticipationRequest = async (project_id: string, member_id: number) => {
   try {
-    const res = await server.put(`/project/${project_id}/participationRequest/${member_id}/reject`, {
+    const res = await server.put(`/projects/${project_id}/participationRequest/${member_id}/reject`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -292,7 +292,7 @@ export const rejectParticipationRequest = async (project_id: string, member_id: 
 
 export const kickOutMemberFromProject = async (project_id: string, member_id: number) => {
   try {
-    const res = await server.put(`/project/${project_id}/member/${member_id}/kick`, {
+    const res = await server.put(`/projects/${project_id}/members/${member_id}/kick`, {
       headers: {
         'Content-Type': 'application/json',
       },

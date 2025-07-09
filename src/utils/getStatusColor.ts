@@ -20,13 +20,13 @@ export const getStatusColorName = (status: string) => {
 
 export const getStatusInfo = (status: string) => {
   switch (status) {
-    case "활성":
+    case "active":
       return { 
         indicator: "bg-green-500", 
         label: "온라인",
         ringColor: "ring-green-500"
       };
-    case "자리비움":
+    case "away":
       return { 
         indicator: "bg-yellow-400", 
         label: "자리비움",

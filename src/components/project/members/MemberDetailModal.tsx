@@ -1,4 +1,4 @@
-import { Member } from "@/types/Member";
+import { User } from "@/types/User";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/auth/authStore";
@@ -18,7 +18,7 @@ import { getStatusInfo } from "@/utils/getStatusColor";
 import { useTheme } from "@/contexts/ThemeContext";
 
 interface MemberDetailModalProps {
-  member: Member;
+  member: User;
   isOpen: boolean;
   onClose: () => void;
   isLeader?: boolean;
@@ -59,6 +59,15 @@ export default function MemberDetailModal({
     });
   };
 
+  // 숫자 형식의 시간을 HH:MM 형식으로 변환
+  const formatTimeFromNumber = (timeNumber: string | number): string => {
+    if (!timeNumber) return "";
+    const num = Number(timeNumber);
+    const hours = Math.floor(num / 100);
+    const minutes = num % 100;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  };
+
   const getRoleInfo = () => {
     if (isLeader) {
       return {
@@ -92,9 +101,9 @@ export default function MemberDetailModal({
                         flex items-center justify-center text-2xl font-bold text-text-primary overflow-hidden
                         ring-2 ${statusInfo.ringColor} ring-offset-2`}
         >
-          {member.profileImage ? (
+          {member.profile_image ? (
             <Image
-              src={member.profileImage}
+              src={member.profile_image}
               alt="Profile"
               className="rounded-full object-cover"
               quality={100}
@@ -128,10 +137,10 @@ export default function MemberDetailModal({
             <span
               className={`w-2.5 h-2.5 rounded-full mr-2 ${statusInfo.indicator} animate-pulse`}
             />
-            <span className="text-sm">{member.status}</span>
+            <span className="text-sm">{statusInfo.label}</span>
           </div>
           <span className="text-text-secondary text-sm">
-            마지막 로그인: {formatRelativeTime(member.lastLogin)}
+            마지막 로그인: {formatRelativeTime(member.last_login)}
           </span>
         </div>
       </div>
@@ -140,7 +149,7 @@ export default function MemberDetailModal({
 
   // Footer content for ModalTemplete
   const footerContent =
-    user?.id === project?.leader.id && user?.id != member.id ? (
+    user?.id === project?.owner.id && user?.id != member.id ? (
       <button
         onClick={handleKickOutMember}
         className="w-full px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400
@@ -167,8 +176,8 @@ export default function MemberDetailModal({
         <div className="space-y-4">
           <div className="space-y-2">
             <h4 className="font-medium">Introduction</h4>
-            {member.introduction ? (
-              <p className="text-muted-foreground leading-relaxed">{member.introduction}</p>
+            {member.bio ? (
+              <p className="text-muted-foreground leading-relaxed">{member.bio}</p>
             ) : (
               <p className="text-text-secondary">소개글이 없습니다.</p>
             )}
@@ -185,8 +194,8 @@ export default function MemberDetailModal({
             </div>
             <div>
               <h4 className="font-medium">Phone Number</h4>
-              {member.contactNumber ? (
-                <p className="text-muted-foreground">{member.contactNumber}</p>
+              {member.phone ? (
+                <p className="text-muted-foreground">{member.phone}</p>
               ) : (
                 <p className="text-text-secondary">연락처가 없습니다.</p>
               )}
@@ -201,7 +210,7 @@ export default function MemberDetailModal({
         icon={Clock}
       >
         <div className="space-y-2">
-          {member.workingHours ? (
+          {member.collaboration_preference.available_time_zone ? (
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
                 <div className="flex items-center gap-2">
@@ -209,15 +218,15 @@ export default function MemberDetailModal({
                   <h4 className="font-medium">Timezone</h4>
                 </div>
                 <p className="text-muted-foreground">
-                  {member.workingHours.timezone === "Asia/Seoul"
+                  {member.collaboration_preference.available_time_zone === "Asia/Seoul"
                     ? "한국 표준시 (KST)"
-                    : member.workingHours.timezone === "UTC"
+                    : member.collaboration_preference.available_time_zone === "UTC"
                       ? "세계 표준시 (UTC)"
-                      : member.workingHours.timezone === "America/New_York"
+                      : member.collaboration_preference.available_time_zone === "America/New_York"
                         ? "동부 표준시 (EST)"
-                        : member.workingHours.timezone === "America/Los_Angeles"
+                        : member.collaboration_preference.available_time_zone === "America/Los_Angeles"
                           ? "태평양 표준시 (PST)"
-                          : member.workingHours.timezone}
+                          : member.collaboration_preference.available_time_zone}
                 </p>
               </div>
               <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
@@ -226,7 +235,7 @@ export default function MemberDetailModal({
                   <h4 className="font-medium">Time</h4>
                 </div>
                 <p className="text-muted-foreground">
-                  {member.workingHours.start} - {member.workingHours.end}
+                  {formatTimeFromNumber(member.collaboration_preference.work_hours_start)} - {formatTimeFromNumber(member.collaboration_preference.work_hours_end)}
                 </p>
               </div>
             </div>
@@ -240,13 +249,13 @@ export default function MemberDetailModal({
 
       {/* Current Tasks Accordian */}
       <Accordion
-        title={`Current Tasks (${member.currentTask && member.currentTask.length || 0})`}
+        title={`Current Tasks (${project?.tasks?.filter(task => task.assignee_id?.includes(member.id)).length || 0})`}
         icon={ClipboardClean}
         defaultOpen
       >
         <div className="space-y-2">
-          {member.currentTask && member.currentTask.length > 0 ? (
-            member.currentTask.map((task, idx) => (
+          {project?.tasks && project?.tasks.length > 0 ? (
+            project?.tasks.map((task, idx) => (
               <div
                 key={idx}
                 className="p-3 bg-component-secondary-background border border-component-border rounded-lg cursor-pointer transition-colors"
@@ -267,13 +276,13 @@ export default function MemberDetailModal({
 
       {/* Skills Accordian */}
       <Accordion
-        title={`Skills (${member.skills && member.skills.length || 0})`}
+        title={`Skills (${member.tech_stacks && member.tech_stacks.length || 0})`}
         icon={ShieldCheck}
       >
         <div className="space-x-2">
-          {member.skills && member.skills.length > 0 ? (
-            member.skills.map((skill, index) => (
-              <Badge key={index} content={skill} color="blue" isDark={isDark} />
+          {member.tech_stacks && member.tech_stacks.length > 0 ? (
+            member.tech_stacks.map((skill, index) => (
+              <Badge key={index} content={skill.tech} color="blue" isDark={isDark} />
             ))
           ) : (
             <p className="text-text-secondary">
@@ -290,7 +299,7 @@ export default function MemberDetailModal({
       >
         <div className="space-x-2">
           {member.languages && member.languages.length > 0 ? (
-            member.languages.map((language, index) => (
+            member.languages.map((language: string, index: number) => (
               <Badge key={index} content={language} color="purple" isDark={isDark} />
             ))
           ) : (
@@ -303,12 +312,12 @@ export default function MemberDetailModal({
 
       {/* Social Links Accordian */}
       <Accordion
-        title={`Social Links (${member.socialLinks && member.socialLinks.length || 0})`}
+        title={`Social Links (${member.social_links && member.social_links.length || 0})`}
         icon={LinkIcon}
       >
         <div className="flex flex-wrap gap-2">
-          {member.socialLinks && member.socialLinks.length > 0 ? (
-            member.socialLinks.map((link, index) => (
+          {member.social_links && member.social_links.length > 0 ? (
+            member.social_links.map((link, index) => (
               <Link
                 key={index}
                 href={link.url}
@@ -319,30 +328,30 @@ export default function MemberDetailModal({
                 <Badge
                   content={
                     <div className="flex items-center gap-2">
-                      {link.name.toLowerCase() === "github" && (
+                      {link.platform.toLowerCase() === "github" && (
                         <Github className="w-5 h-5" />
                       )}
-                      {link.name.toLowerCase() === "linkedin" && (
+                      {link.platform.toLowerCase() === "linkedin" && (
                         <Linkedin className="w-5 h-5" />
                       )}
-                      {link.name.toLowerCase() === "twitter" && (
+                      {link.platform.toLowerCase() === "twitter" && (
                         <Twitter className="w-5 h-5" />
                       )}
-                      {link.name.toLowerCase() === "facebook" && (
+                      {link.platform.toLowerCase() === "facebook" && (
                         <Facebook className="w-5 h-5" />
                       )}
-                      {link.name.toLowerCase() === "instagram" && (
+                      {link.platform.toLowerCase() === "instagram" && (
                         <Instagram className="w-5 h-5" />
                       )}
-                      {link.name.toLowerCase() === "website" && (
+                      {link.platform.toLowerCase() === "website" && (
                         <Globe className="w-5 h-5" />
                       )}
                       {!["github", "linkedin", "twitter", "facebook", "instagram", "website"].includes(
-                        link.name.toLowerCase()
+                        link.platform.toLowerCase()
                       ) && (
                           <LinkIcon className="w-5 h-5" />
                         )}
-                      <span>{link.name}</span>
+                      <span>{link.platform}</span>
                     </div>
                   }
                   color="pink"

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import MemberDetailModal from "@/components/project/members/MemberDetailModal";
 import MemberCard from "@/components/project/members/MemberCard";
-import { Member } from "@/types/Member";
+import { User } from "@/types/User";
 import { useProject } from "@/contexts/ProjectContext";
 import TotalMemberCard from "@/components/project/members/TotalMemberCard";
 import ActiveMemberCard from "@/components/project/members/ActiveMemberCard";
@@ -14,14 +14,14 @@ import TabSlider from "@/components/ui/TabSlider";
 export default function MembersPage() {
   const { project } = useProject();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
-  const [allTeamMembers, setAllTeamMembers] = useState<Member[]>();
+  const [selectedMember, setSelectedMember] = useState<User | null>(null);
+  const [allTeamMembers, setAllTeamMembers] = useState<User[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isMounted = useRef(false);
   const [tab, setTab] = useState("전체");
   
   // Get unique roles from project members
-  const uniqueRoles = Array.from(new Set(project?.members?.map(member => member.role) || []));
+  const uniqueRoles = Array.from(new Set(project?.members?.map(member => member.user.role) || []));
   
   // Create tabs object with '전체' tab and dynamic role tabs
   const memberTabs = {
@@ -34,14 +34,14 @@ export default function MembersPage() {
         role,
         { 
           label: role, 
-          count: project?.members?.filter(member => member.role === role).length || 0 
+          count: project?.members?.filter(member => member.user.role === role).length || 0 
         }
       ])
     )
   };
 
   useEffect(() => {
-    setAllTeamMembers(project?.members);
+    setAllTeamMembers(project?.members.map(member => member.user));
   }, [project]);
 
   useEffect(() => {
@@ -50,11 +50,11 @@ export default function MembersPage() {
 
     if (selectedAssiId && memberCount > 0) {
       const memberToOpen = project?.members.find(
-        (member) => member.id === Number(selectedAssiId)
+        (member) => member.user.id === Number(selectedAssiId)
       );
 
       if (memberToOpen) {
-        setSelectedMember(memberToOpen);
+        setSelectedMember(memberToOpen.user);
         setIsModalOpen(true);
       }
 
@@ -106,7 +106,7 @@ export default function MembersPage() {
         member.name.toLowerCase().includes(searchLower) ||
         member.role.toLowerCase().includes(searchLower) ||
         member.email?.toLowerCase().includes(searchLower) ||
-        member.currentTask?.some(task => 
+        project?.tasks?.some(task => 
           task.title.toLowerCase().includes(searchLower)
         );
 
@@ -114,14 +114,14 @@ export default function MembersPage() {
     })
     .sort((a, b) => {
       // Leader always comes first
-      if (a.id === project?.leader.id) return -1;
-      if (b.id === project?.leader.id) return 1;
+      if (a.id === project?.owner.id) return -1;
+      if (b.id === project?.owner.id) return 1;
       
       // Finally sort by name
       return a.name.localeCompare(b.name);
     });
 
-  const handleMemberClick = (member: Member) => {
+  const handleMemberClick = (member: User) => {
     setSelectedMember(member);
     setIsModalOpen(true);
   };
@@ -134,9 +134,9 @@ export default function MembersPage() {
     <div className="p-4 flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <TotalMemberCard totalMemberCount={project?.members?.length ?? 0} />
-        <ActiveMemberCard totalMemberCount={project?.members?.length ?? 0} activeMemberCount={project?.members?.filter(member => member.status === '활성')?.length ?? 0} />
-        <DepartmentCard departments={project?.members?.map(member => member.role) ?? []} />
-        <AvgTaskCard avgTaskCount={project?.members?.length ? project.members.map(member => member.currentTask?.length ?? 0).reduce((a, b) => a + b, 0) / project.members.length : 0} />
+        <ActiveMemberCard totalMemberCount={project?.members?.length ?? 0} activeMemberCount={project?.members?.filter(member => member.user.status === 'active')?.length ?? 0} />
+        <DepartmentCard departments={project?.members?.map(member => member.user.role) ?? []} />
+        <AvgTaskCard avgTaskCount={project?.members?.length ? project.members.map(member => project.tasks?.filter(task => task.assignee_id?.includes(member.user.id)).length ?? 0).reduce((a, b) => a + b, 0) / project.members.length : 0} />
       </div>
 
       <div className="w-full md:w-1/2 lg:w-1/3">
@@ -157,10 +157,9 @@ export default function MembersPage() {
           <MemberCard
             key={member.id}
             member={member}
-            isLeader={member.id === project?.leader.id}
+            isLeader={project?.members.some((member) => member.user.id === member.user.id && member.is_leader) || project?.owner.id === member.id}
             isManager={
-              project?.manager.some((manager) => manager.id === member.id) ||
-              false
+              project?.members.some((manager) => manager.user.id === member.id && manager.is_manager) || project?.owner.id === member.id
             }
             onClick={() => handleMemberClick(member)}
           />
@@ -172,10 +171,9 @@ export default function MembersPage() {
           member={selectedMember}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          isLeader={selectedMember.id === project?.leader.id}
+          isLeader={project?.members.some((member) => member.user.id === selectedMember.id && member.is_leader) || project?.owner.id === selectedMember.id}
           isManager={
-            project?.manager.some((manager) => manager.id === selectedMember.id) ||
-            false
+            project?.members.some((manager) => manager.user.id === selectedMember.id && manager.is_manager) || project?.owner.id === selectedMember.id
           }
         />
       )}

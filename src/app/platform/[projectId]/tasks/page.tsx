@@ -93,7 +93,7 @@ export default function TasksPage() {
     return taskList.filter(task => 
       task.title.toLowerCase().includes(query) ||
       task.description?.toLowerCase().includes(query) ||
-      project?.members?.some(member => member.name.toLowerCase().includes(query)) ||
+      project?.members?.some(member => member.user.name.toLowerCase().includes(query)) ||
       task.tags?.some(tag => tag.toLowerCase().includes(query))
     );
   };

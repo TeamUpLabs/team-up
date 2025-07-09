@@ -1,4 +1,5 @@
 import { AuthUser } from "@/types/AuthUser";
+import { User } from "@/types/User";
 import { Task } from "@/types/Task";
 import { MileStone } from "@/types/MileStone";
 import { ParticipationRequest } from "@/types/ParticipationRequest";
@@ -19,7 +20,13 @@ export interface Project {
   github_url: string;
   completed_at: string;
   owner: AuthUser;
-  members: AuthUser[];
+  members: {
+    user: User;
+    is_leader: boolean;
+    is_manager: boolean;
+    joined_at: string;
+    role: string;
+  }[];
   tasks: Task[];
   milestones: MileStone[];
   participation_requests: ParticipationRequest[];

@@ -2,7 +2,7 @@ import { Project } from "@/types/Project";
 import Image from "next/image";
 import MemberDetailModal from "@/components/project/members/MemberDetailModal";
 import { useState } from "react";
-import { Member } from "@/types/Member";
+import { AuthUser } from "@/types/AuthUser";
 
 interface TeamPerformanceProps {
   project: Project;
@@ -12,14 +12,14 @@ interface TeamPerformanceProps {
 
 export default function TeamPerformance({ project, isLoading = false, className }: TeamPerformanceProps) {
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [selectedMember, setSelectedMember] = useState<AuthUser | null>(null);
 
   const getUserInitials = (name: string) => {
     if (!name) return '??';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
   };
 
-  const handleModalOpen = (member: Member) => {
+  const handleModalOpen = (member: AuthUser) => {
     setSelectedMember(member);
     setIsMemberModalOpen(true);
   };
@@ -65,33 +65,33 @@ export default function TeamPerformance({ project, isLoading = false, className 
 
             return (
               <div
-                key={member.id}
-                onClick={() => handleModalOpen(member)}
+                key={member.user.id}
+                onClick={() => handleModalOpen(member.user)}
                 className={`flex items-center gap-10 p-3 ${isFirst ? "rounded-t-md" : ""} ${isLast ? "rounded-b-md" : ""} justify-between hover:bg-component-tertiary-background transition-all duration-200 cursor-pointer`}
               >
                 <div className="flex flex-2 items-center gap-2">
                   <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                    {member.profileImage ? (
+                    {member.user.profile_image ? (
                       <Image
-                        src={member.profileImage}
-                        alt={member.name}
+                        src={member.user.profile_image}
+                        alt={member.user.name}
                         className="w-full h-full object-cover border border-component-border rounded-full"
                         width={24}
                         height={24}
                       />
                     ) : (
                       <span className="text-xs text-gray-700">
-                        {getUserInitials(member.name)}
+                        {getUserInitials(member.user.name)}
                       </span>
                     )}
                   </div>
                   <div className="flex flex-col">
-                    <p className="text-text-primary font-semibold text-sm">{member.name}</p>
+                    <p className="text-text-primary font-semibold text-sm">{member.user.name}</p>
                     <span className="text-text-secondary text-xs">
                       {project.tasks?.filter(task =>
                         Array.isArray(task.assignee_id)
-                          ? task.assignee_id.includes(member.id)
-                          : task.assignee_id === member.id
+                          ? task.assignee_id.includes(member.user.id)
+                          : task.assignee_id === member.user.id
                       ).filter(task => task.status === "done").length || 0} {" "}
                       tasks completed
                     </span>
@@ -105,12 +105,12 @@ export default function TeamPerformance({ project, isLoading = false, className 
                       style={{
                         width: `${(project.tasks?.filter(task =>
                           (Array.isArray(task.assignee_id)
-                            ? task.assignee_id.includes(member.id)
-                            : task.assignee_id === member.id) && task.status === 'done'
+                            ? task.assignee_id.includes(member.user.id)
+                            : task.assignee_id === member.user.id) && task.status === 'done'
                         ).length / (project.tasks?.filter(task =>
                           Array.isArray(task.assignee_id)
-                            ? task.assignee_id.includes(member.id)
-                            : task.assignee_id === member.id
+                            ? task.assignee_id.includes(member.user.id)
+                            : task.assignee_id === member.user.id
                         ).length || 1) * 100) || 0}%`
                       }}
                     />
@@ -118,12 +118,12 @@ export default function TeamPerformance({ project, isLoading = false, className 
                   <span className="text-xs font-medium text-text-secondary">
                     {Math.round((project.tasks?.filter(task =>
                       (Array.isArray(task.assignee_id)
-                        ? task.assignee_id.includes(member.id)
-                        : task.assignee_id === member.id) && task.status === 'done'
+                        ? task.assignee_id.includes(member.user.id)
+                        : task.assignee_id === member.user.id) && task.status === 'done'
                     ).length / (project.tasks?.filter(task =>
                       Array.isArray(task.assignee_id)
-                        ? task.assignee_id.includes(member.id)
-                        : task.assignee_id === member.id
+                        ? task.assignee_id.includes(member.user.id)
+                        : task.assignee_id === member.user.id
                     ).length || 1) * 100) || 0)}%
                   </span>
                 </div>
@@ -139,9 +139,12 @@ export default function TeamPerformance({ project, isLoading = false, className 
           member={selectedMember}
           isOpen={isMemberModalOpen}
           onClose={handleCloseModal}
-          isLeader={selectedMember.id === project?.leader.id}
+          isLeader={
+            project?.members.some((member) => member.user.id === selectedMember.id && member.is_leader) ||
+            project?.owner.id === selectedMember.id
+          }
           isManager={
-            project?.manager.some((manager) => manager.id === selectedMember.id) ||
+            project?.members.some((member) => member.user.id === selectedMember.id && member.is_manager) ||
             false
           }
         />

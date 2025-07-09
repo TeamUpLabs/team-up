@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { AuthUser } from "@/types/AuthUser";
 import { Notification } from "@/types/Notification";
 import { server } from '@/auth/server';
+import { logout } from "@/auth/authApi";
 
 type AlertType = "success" | "error" | "info" | "warning";
 type NotificationAlertType = "info" | "message" | "task" | "milestone" | "chat" | "scout";
@@ -76,6 +77,7 @@ export const checkAndRefreshAuth = async () => {
   } catch (error: unknown) {
     console.error("Auth check failed:", error);
     if ((error as { response?: { status: number } }).response?.status === 401) {
+      await logout();
       useAuthStore.getState().logout();
       useAuthStore.getState().setAlert('세션이 만료되었습니다. 다시 로그인 해주세요.', 'error');
       window.location.href = '/signin';

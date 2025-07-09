@@ -1,13 +1,14 @@
-import { Member } from "@/types/Member";
+import { User } from "@/types/User";
 import Badge, { BadgeColor } from "@/components/ui/Badge";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt, faStar, faShieldAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useProject } from "@/contexts/ProjectContext";
 
 interface MemberCardProps {
-  member: Member;
+  member: User;
   isLeader: boolean;
   isManager: boolean;
   isExplore?: boolean;
@@ -22,10 +23,11 @@ export default function MemberCard({
   onClick,
 }: MemberCardProps) {
   const { isDark } = useTheme();
+  const { project } = useProject();
 
   const getContributionLevel = () => {
-    const milestoneCount = member.projectDetails?.map((project) => project.milestones.map((milestone) => milestone.assignee_id.includes(member.id))).length || 0;
-    const taskCount = member.currentTask?.length || 0;
+    const milestoneCount = project?.milestones?.filter((milestone) => milestone.assignee_id.includes(member.id)).length || 0;
+    const taskCount = project?.tasks?.filter((task) => task.assignee_id?.includes(member.id)).length || 0;
     const contributionScore = (milestoneCount * 10) + (taskCount * 15);
 
     if (contributionScore > 80) return { level: "상위 기여자", class: "purple" };
@@ -68,10 +70,10 @@ export default function MemberCard({
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="relative">
-            {member.profileImage ? (
+            {member.profile_image ? (
               <div className="relative">
                 <Image
-                  src={member.profileImage}
+                  src={member.profile_image}
                   alt={`${member.name} 프로필`}
                   width={70}
                   height={70}
@@ -145,12 +147,12 @@ export default function MemberCard({
             <span className="h-px flex-grow bg-component-border"></span>
           </h4>
 
-          {member.skills && member.skills.length > 0 ? (
+          {member.tech_stacks && member.tech_stacks.length > 0 ? (
             <div className="flex flex-wrap gap-2">
-              {member.skills.map((skill, idx) => (
+              {member.tech_stacks.map((skill, idx) => (
                 <Badge
                   key={idx}
-                  content={skill}
+                  content={skill.tech}
                   color="blue"
                   isDark={isDark}
                 />
@@ -168,11 +170,11 @@ export default function MemberCard({
         <div className="flex items-center space-x-4 text-xs text-text-secondary">
           <div title="참여 프로젝트 수" className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-blue-400"></span>
-            <span>{member.projectDetails?.map((project) => project.milestones.map((milestone) => milestone.assignee_id.includes(member.id))).length || 0} 마일스톤</span>
+            <span>{project?.milestones?.filter((milestone) => milestone.assignee_id?.includes(member.id)).length || 0} 마일스톤</span>
           </div>
           <div title="진행중인 태스크" className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-green-400"></span>
-            <span>{member.currentTask?.length || 0} 작업</span>
+            <span>{project?.tasks?.filter((task) => task.assignee_id?.includes(member.id)).length || 0} 작업</span>
           </div>
         </div>
         <div className="text-xs text-text-secondary font-medium hover:text-text-primary">상세보기</div>

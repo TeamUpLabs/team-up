@@ -46,7 +46,7 @@ export default function ProjectLayout({
   const { projectId } = use(params);
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [project, setProjects] = useState<Project>();
+  const [project, setProject] = useState<Project>();
   const [headerSearchQuery, setHeaderSearchQuery] = useState("");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] = useState(false);
@@ -56,7 +56,8 @@ export default function ProjectLayout({
     const fetchProjects = async (project_id: string) => {
       try {
         const data = await getProjectById(project_id);
-        setProjects(data);
+        console.log(data);
+        setProject(data);
       } catch (error) {
         console.error("Error fetching projects:", error);
         alert("프로젝트를 가져오는 데 실패했습니다.");
@@ -154,7 +155,7 @@ export default function ProjectLayout({
       href: `/platform/${projectId}/github`,
       isActive: pathname === `/platform/${projectId}/github`,
       hasIndicator: true,
-      IndicatorColor: project?.github_repo_url ? "green" : "red",
+      IndicatorColor: project?.github_url ? "green" : "red",
     },
     {
       icon: ArrowRightToBracketOutline,
