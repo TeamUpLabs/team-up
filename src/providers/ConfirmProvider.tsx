@@ -99,6 +99,7 @@ export default function ConfirmProvider() {
                   successText="완료"
                   errorText="오류"
                   withIcon
+                  fit
                 />
               </div>
             </div>

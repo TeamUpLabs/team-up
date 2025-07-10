@@ -1,36 +1,30 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react"
-import { getAllMembers } from "@/hooks/getMemberData";
-import { useAuthStore } from "@/auth/authStore";
 import { User } from "@/types/User";
 import MemberCard from "@/components/project/members/MemberCard";
 import MemberScoutDetailModal from "@/components/platform/MemberScoutDetailModal";
+import { fetcher } from "@/auth/server";
+import useSWR from "swr";
+import { useAuthStore } from "@/auth/authStore";
 
 export default function ExploreMember() {
-  const [members, setMembers] = useState<User[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const user = useAuthStore((state) => state.user);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isMounted = useRef(false);
+  const { data, error } = useSWR(`/users/exclude/${user?.id}`, fetcher, {
+    revalidateOnFocus: false,  // 탭 다시 돌아왔을 때 다시 요청 안 함
+    dedupingInterval: 1000 * 60 * 10, // 10분 간 재요청 방지
+  });
 
-  // Fetch members data
-  useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const data = await getAllMembers();
-        // Filter out the current user from the members list
-        const filteredMembers = user ? data.filter((member: User) => member.id !== user.id) : data;
-        setMembers(filteredMembers);
-      } catch (error) {
-        console.error("Error fetching members:", error);
-        alert("멤버 목록을 가져오는 데 실패했습니다.");
-      }
-    };
+  const members = data;
 
-    fetchMembers();
-  }, [user]);
+  if (error) {
+    console.error("Error fetching members:", error);
+    alert("멤버 목록을 가져오는 데 실패했습니다.");
+  }
 
   // Listen for header search events
   useEffect(() => {
@@ -60,7 +54,7 @@ export default function ExploreMember() {
     };
   }, []);
 
-  const filteredMembers = (members ?? []).filter(member => {
+  const filteredMembers = (members ?? []).filter((member: User) => {
     // If no search query, show all members
     if (!searchQuery.trim()) return true;
     
@@ -94,7 +88,7 @@ export default function ExploreMember() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
-        {filteredMembers.map(member => (
+        {filteredMembers.map((member: User) => (
           <MemberCard key={member.id} member={member} onClick={() => handleMemberClick(member)} isLeader={false} isManager={false} isExplore={true} />
         ))}
       </div>

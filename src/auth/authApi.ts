@@ -1,13 +1,17 @@
 import { server } from '@/auth/server';
 import { useAuthStore } from '@/auth/authStore';
 import { AxiosError } from 'axios';
-import { getCurrentKoreanTime } from '@/utils/dateUtils';
 
 export const login = async (email: string, password: string) => {
   try {
-    const res = await server.post('/login', {
-      userEmail: email,
-      password: password,
+    const formData = new FormData();
+    formData.append('username', email);
+    formData.append('password', password);
+    
+    const res = await server.post('/auth/login', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     });
 
     const data = res.data;
@@ -15,51 +19,11 @@ export const login = async (email: string, password: string) => {
       throw new Error('Invalid response from server');
     }
 
-    console.log(data);
-
     const token = data.access_token;
     useAuthStore.getState().setToken(token);
-
-    try {
-      const userRes = await server.get('/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (userRes.data) {
-        try {
-          const res = await server.put(`/users/me`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: {
-              status: "active",
-              last_login: getCurrentKoreanTime()
-            }
-          });
-          if (res.status === 200) {
-            useAuthStore.getState().setUser(userRes.data);
-            useAuthStore.getState().setAlert("로그인 성공", "success");
-            window.location.href = '/platform';
-          } else {
-            throw new Error('Failed to update user status');
-          }
-        } catch (error: unknown) {
-          console.error("Failed to update user status:", error);
-          useAuthStore.getState().logout();
-          useAuthStore.getState().setAlert("Status를 업데이트하는데 실패했습니다.", "error");
-        }
-      } else {
-        throw new Error('User data not found');
-      }
-    } catch (userError: unknown) {
-      console.error("Failed to fetch user data:", userError);
-      useAuthStore.getState().logout();
-      useAuthStore.getState().setAlert("사용자 정보를 가져오는데 실패했습니다.", "error");
-    }
+    useAuthStore.getState().setUser(data.user_info);
+    useAuthStore.getState().setAlert("로그인 성공", "success");
+    window.location.href = '/';
   } catch (error: unknown) {
     console.error("Login error:", error);
     if (error instanceof AxiosError) {
@@ -83,7 +47,12 @@ export const logout = async () => {
     if (!token) {
       throw new Error('Token not found');
     }
-    const res = await server.post(`/users/${user.id}/logout`);
+    const res = await server.post(`/auth/${user.id}/logout`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
     if (res.status === 200) {
       useAuthStore.getState().logout();
       useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");

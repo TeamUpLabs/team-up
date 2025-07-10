@@ -29,9 +29,11 @@ const profileTabs: Record<ProfileTab, { label: string }> = {
 export default function ProfilePage() {
   const [selectedTab, setSelectedTab] = useState<ProfileTab>('personal-info');
   const router = useRouter();
-  const { data } = useSWR('/users/me', fetchUserDetail);
+  const { data } = useSWR('/users/me', fetchUserDetail, {
+    revalidateOnFocus: false,
+    dedupingInterval: 1000 * 60 * 10,
+  });
   const user = data;
-  console.log(user);
 
   return (
     <div className="max-w-5xl mx-auto p-4 space-y-4">

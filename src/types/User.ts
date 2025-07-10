@@ -116,3 +116,12 @@ export const blankUser: User = {
     received_notifications: [],
     sent_notifications: [],
 }
+
+export interface UserBrief {
+    id: number;
+    name: string;
+    email: string;
+    profile_image: string;
+    role: string;
+    status: string;
+}

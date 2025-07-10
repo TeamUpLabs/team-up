@@ -46,7 +46,7 @@ export default function SettingsPage() {
             <span className="absolute -top-1 -right-1 flex h-5 w-5">
               <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-100"></span>
               <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
-                {project.participation_requests.length}
+                {project.participation_request_count}
               </span>
             </span>
           )}

@@ -1,51 +1,40 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Project } from "@/types/Project";
 import { useAuthStore } from "@/auth/authStore";
-import { getProjectsByUser } from "@/hooks/getProjectData";
+import { Project } from "@/types/Project";
 import ProjectCard from "@/components/platform/ProjectCard";
 import NewProjectModal from "@/components/platform/NewProjectModal";
 import { useSearchParams } from "next/navigation";
+import { fetcher } from "@/auth/server";
+import useSWR from "swr";
 
 export default function Platform() {
   const searchParams = useSearchParams();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const initialSearchQuery = searchParams?.get('search') || '';
+  const initialSearchQuery = searchParams?.get("search") || "";
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
   const isMounted = useRef(false);
 
-  // 프로젝트 데이터 가져오기
-  useEffect(() => {
-    let didFetch = false;
-    const fetchProjects = async () => {
-      if (didFetch) return;
-      didFetch = true;
+  const { data, error } = useSWR(`/users/${user?.id}/projects`, fetcher, {
+    revalidateOnFocus: false,  // 탭 다시 돌아왔을 때 다시 요청 안 함
+    dedupingInterval: 1000 * 60 * 10, // 10분 간 재요청 방지
+  });
 
-      try {
-        const data = await getProjectsByUser();
-        setProjects(data);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-        alert("프로젝트를 가져오는 데 실패했습니다.");
-      }
-    };
-    if (user) {
-      fetchProjects();
-    }
+  const projects = data;
 
-    return () => {
-      didFetch = true; // cleanup에서 재호출 방지
-    }
-  }, [user]);
+  if (error) {
+    console.error("Error fetching projects:", error);
+    alert("프로젝트를 가져오는 데 실패했습니다.");
+  }
+
 
   // Listen for header search events
   useEffect(() => {
     const handleHeaderSearch = (event: Event) => {
       const customEvent = event as CustomEvent;
-      const searchValue = customEvent.detail || '';
+      const searchValue = customEvent.detail || "";
 
       // Only update if value is different
       if (searchValue !== searchQuery) {
@@ -54,10 +43,10 @@ export default function Platform() {
     };
 
     // Add event listener
-    window.addEventListener('headerSearch', handleHeaderSearch);
+    window.addEventListener("headerSearch", handleHeaderSearch);
 
     return () => {
-      window.removeEventListener('headerSearch', handleHeaderSearch);
+      window.removeEventListener("headerSearch", handleHeaderSearch);
     };
   }, [searchQuery]);
 
@@ -72,9 +61,9 @@ export default function Platform() {
   useEffect(() => {
     if (isMounted.current) return;
 
-    const searchValue = searchParams?.get('search');
+    const searchValue = searchParams?.get("search");
     if (searchValue !== null) {
-      setSearchQuery(searchValue || '');
+      setSearchQuery(searchValue || "");
     }
   }, [searchParams]);
 
@@ -83,7 +72,7 @@ export default function Platform() {
     setIsModalOpen(false);
   };
 
-  const filteredProjects = (projects ?? []).filter(project => {
+  const filteredProjects = (projects ?? []).filter((project: Project) => {
     const lowercaseQuery = searchQuery.toLowerCase();
 
     return project.title.toLowerCase().includes(lowercaseQuery) ||
@@ -91,7 +80,7 @@ export default function Platform() {
       project.status.toLowerCase().includes(lowercaseQuery) ||
       project.location.toLowerCase().includes(lowercaseQuery) ||
       project.project_type.toLowerCase().includes(lowercaseQuery) ||
-      project.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery));
+      project.tags.some((tag: string) => tag.toLowerCase().includes(lowercaseQuery));
   })
 
   return (
@@ -99,7 +88,7 @@ export default function Platform() {
       {/* 프로젝트 그리드 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
         {/* 프로젝트 카드 */}
-        {filteredProjects.map(project => (
+        {filteredProjects.map((project: Project) => (
           <ProjectCard key={project.id} project={project} isExplore={false} />
         ))}
 

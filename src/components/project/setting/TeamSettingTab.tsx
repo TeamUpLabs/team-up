@@ -11,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Users } from "lucide-react";
 import { User } from "@/types/User";
+import { ParticipationRequest } from "@/types/ParticipationRequest";
 import PermissionChangeModal from "@/components/project/setting/PermissionChangeModal";
 import {
   updateProjectMemberPermission,
@@ -234,7 +235,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
               {showJoinRequests && (
                 <div className="divide-y divide-component-border">
                   {project.participation_requests &&
-                    project.participation_requests.map((request) => (
+                    project.participation_requests.map((request: ParticipationRequest) => (
                       <div
                         key={request.id}
                         className="px-4 py-3 bg-component-secondary-background hover:bg-component-secondary-background/60 transition-colors"
@@ -242,9 +243,9 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 relative bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
-                              {project.members.find((member) => member.user.id === request.user_id)?.user.profile_image ? (
+                              {request.user.profile_image ? (
                                 <Image
-                                  src={project.members.find((member) => member.user.id === request.user_id)?.user.profile_image || ""}
+                                  src={request.user.profile_image || ""}
                                   alt="Profile"
                                   className="w-full h-full object-fit rounded-full"
                                   quality={100}
@@ -252,20 +253,20 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                                   height={32}
                                 />
                               ) : (
-                                <p>{project.members.find((member) => member.user.id === request.user_id)?.user.name.charAt(0)}</p>
+                                <p>{request.user.name.charAt(0)}</p>
                               )}
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
                                 <p className="text-text-primary font-medium">
-                                  {project.members.find((member) => member.user.id === request.user_id)?.user.name}
+                                  {request.user.name}
                                 </p>
                                 <span className="bg-component-tertiary-background text-text-secondary text-xs px-2 py-0.5 rounded-md">
-                                  {project.members.find((member) => member.user.id === request.user_id)?.role}
+                                  {request.user.role}
                                 </span>
                               </div>
                               <p className="text-text-secondary text-xs">
-                                {project.members.find((member) => member.user.id === request.user_id)?.user.email}
+                                {request.user.email}
                               </p>
                             </div>
                           </div>
@@ -273,7 +274,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                             <button
                               className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm transition-colors"
                               onClick={() =>
-                                handleApproveRequest(request.id, project.members.find((member) => member.user.id === request.user_id)?.user.name || "알 수 없는 사용자")
+                                handleApproveRequest(request.id, request.user.name || "알 수 없는 사용자")
                               }
                             >
                               <FontAwesomeIcon
@@ -285,7 +286,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                             <button
                               className="bg-gray-700 hover:bg-gray-600 text-gray-200 px-3 py-1.5 rounded text-sm transition-colors"
                               onClick={() =>
-                                handleRejectRequest(request.id, project.members.find((member) => member.user.id === request.user_id)?.user.name || "알 수 없는 사용자")
+                                handleRejectRequest(request.id, request.user.name || "알 수 없는 사용자")
                               }
                             >
                               <FontAwesomeIcon

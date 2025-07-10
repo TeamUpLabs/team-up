@@ -56,7 +56,6 @@ export default function ProjectLayout({
     const fetchProjects = async (project_id: string) => {
       try {
         const data = await getProjectById(project_id);
-        console.log(data);
         setProject(data);
       } catch (error) {
         console.error("Error fetching projects:", error);

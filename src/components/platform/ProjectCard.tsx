@@ -85,7 +85,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
                   }
                 });
               }}
-              className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover"
+              className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover hover:underline"
             > 참여 요청 취소 </button>
           ) : (
             <button

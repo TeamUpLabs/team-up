@@ -1,4 +1,5 @@
 import React from "react";
+import { Input } from "@/components/ui/Input";
 
 interface Step1Props {
   name: string;
@@ -8,34 +9,28 @@ interface Step1Props {
 
 export default function SignupStep1({ name, email, onChange }: Step1Props) {
   return (
-    <>
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-text-secondary mb-1">이름</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={name}
-          onChange={onChange}
-          className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
-          placeholder="이름을 입력하세요"
-          required
-        />
-      </div>
+    <div className="space-y-4">
+      <Input
+        type="text"
+        label="이름"
+        id="name"
+        name="name"
+        value={name}
+        onChange={onChange}
+        placeholder="이름을 입력하세요"
+        isRequired
+      />
 
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-text-secondary mb-1">이메일</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={email}
-          onChange={onChange}
-          className="w-full px-4 py-3 rounded-md bg-input-background border border-input-border hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
-          placeholder="이메일 주소를 입력하세요"
-          required
-        />
-      </div>
-    </>
-  )
+      <Input
+        type="email"
+        label="이메일"
+        id="email"
+        name="email"
+        value={email}
+        onChange={onChange}
+        placeholder="이메일 주소를 입력하세요"
+        isRequired
+      />
+    </div>
+  );
 }

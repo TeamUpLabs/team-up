@@ -1,3 +1,5 @@
+import { UserBrief } from "@/types/User";
+
 export interface ParticipationRequest {
   id: number;
   project_id: number;
@@ -7,4 +9,5 @@ export interface ParticipationRequest {
   message: string;
   created_at: string;
   processed_at: string;
+  user: UserBrief;
 }

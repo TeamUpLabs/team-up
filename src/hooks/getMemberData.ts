@@ -2,13 +2,10 @@ import { server } from "@/auth/server";
 import { NotificationSetting, User, TechStack, Interest, SocialLink, CollaborationPreference } from "@/types/User";
 import { useAuthStore } from "@/auth/authStore";
 
-export const getAllMembers = async (): Promise<User[]> => {
+export const getMembersExceptMe = async (): Promise<User[]> => {
   try { 
-    const res = await server.get("/users", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const user = useAuthStore.getState().user;
+    const res = await server.get(`/users/exclude/${user?.id}`);
     
     if (res.status === 200) {
       return res.data;
@@ -23,9 +20,7 @@ export const getAllMembers = async (): Promise<User[]> => {
 
 export const checkMember = async (email: string) => {
   try {
-    const res = await server.post(`/member/check`, {
-      email: email
-    });
+    const res = await server.get(`/users/check?email=${email}`);
     if (res.status === 200) {
       if (res.data.status === "exists") {
         return true;
@@ -107,9 +102,14 @@ export const rejectScout = async (member_id: number, notification_id: number) =>
   }
 }
 
-export const sendParticipationRequest = async (project_id: string, member_id: number) => {
+export const sendParticipationRequest = async (project_id: string, user_id: number) => {
   try {
-    const res = await server.put(`/project/${project_id}/participationRequest/${member_id}/send`);
+    const res = await server.post(`/participation-requests`, {
+      project_id: project_id,
+      user_id: user_id,
+      request_type: "request",
+      message: "해당 프로젝트에 참여하고 싶습니다!",
+    });
     if (res.status === 200) {
       return res.data;
     } else {

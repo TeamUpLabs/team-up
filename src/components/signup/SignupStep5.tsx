@@ -304,7 +304,6 @@ export default function SignupStep5({
         options={preferred_roles[role as keyof typeof preferred_roles]}
         value={preferred_role}
         onChange={(value) => setPreferredRole(value as string)}
-        dropDownClassName="!w-full"
         placeholder="선호 역할을 선택해주세요"
         label="선호 역할"
       />
@@ -339,8 +338,7 @@ export default function SignupStep5({
                 label: "태평양 표준시 (PST)",
               },
             ]}
-            dropDownClassName="!w-full"
-            placeholder="시간대를 선택해주세요"
+            placeholder="시간대"
             className="!w-full"
           />
 
@@ -354,8 +352,7 @@ export default function SignupStep5({
                 onWorkingHoursChange("end", "");
               }
             }}
-            dropDownClassName="!w-full"
-            placeholder="시작 시간을 선택해주세요"
+            placeholder="시작 시간"
             className="!w-full"
           />
 
@@ -363,8 +360,7 @@ export default function SignupStep5({
             options={getEndTimeOptions()}
             value={workingHours.end}
             onChange={(value) => onWorkingHoursChange("end", value as string)}
-            dropDownClassName="!w-full"
-            placeholder={workingHours.start ? "종료 시간을 선택해주세요" : "시작 시간을 먼저 선택해주세요"}
+            placeholder={workingHours.start ? "종료 시간" : "시작 시간을 먼저 선택"}
             className="!w-full"
             disabled={!workingHours.start}
           />
@@ -391,7 +387,6 @@ export default function SignupStep5({
         ]}
         value={workingHours.preferred_project_length || ""}
         onChange={(value) => onWorkingHoursChange("preferred_project_length", value as string)}
-        dropDownClassName="!w-full"
         placeholder="선호 프로젝트 기간을 선택해주세요"
         className="!w-full"
         label="선호 프로젝트 기간"

@@ -4,17 +4,17 @@ export interface SignUpFormData {
   name: string;
   email: string;
   password: string;
+  profile_image: string;
   role: string;
-  phone: string;
-  skills: string[];
-  birthDate: string;
-  workingHours: {
-    timezone: string;
-    start: string;
-    end: string;
-  };
   languages: string[];
-  introduction: string;
+  phone: string;
+  status: string;
+  bio: string;
+  birth_date: string;
+  last_login: string;
+  collaboration_preference: CollaborationPreference;
+  tech_stacks: TechStack[];
+  interests: Interest[];
 }
 
 export interface ExtraInfoFormData {

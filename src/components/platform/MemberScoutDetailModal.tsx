@@ -2,19 +2,22 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { Member } from '@/types/Member';
-import SelectProjectModal from './SelectProjectModal';
+import { User, TechStack, SocialLink } from '@/types/User';
+import SelectProjectModal from '@/components/platform/SelectProjectModal';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/ui/Badge';
 import { UserAdd } from 'flowbite-react-icons/outline';
+import { Project } from '@/types/Project';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface MemberScoutDetailModalProps {
-  member: Member;
+  member: User;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export default function MemberScoutDetailModal({ member, isOpen, onClose }: MemberScoutDetailModalProps) {
+  const { isDark } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const header = (
@@ -22,8 +25,8 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
       <div className="flex-shrink-0">
         <div className="w-12 h-12 relative rounded-full border border-component-border bg-component-secondary-background
                     flex items-center justify-center text-xl font-bold text-text-primary">
-          {member.profileImage ? (
-            <Image src={member.profileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+          {member.profile_image ? (
+            <Image src={member.profile_image} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
           ) : (
             <p>{member.name.charAt(0)}</p>
           )}
@@ -97,7 +100,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
             연락처
           </h3>
           <div className="px-4 py-3 bg-component-secondary-background rounded-lg text-text-secondary">
-            {member.contactNumber}
+            {member.phone}
           </div>
         </div>
 
@@ -110,7 +113,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
             생년월일
           </h3>
           <div className="px-4 py-3 bg-component-secondary-background rounded-lg text-text-secondary">
-            {member.birthDate || "정보 없음"}
+            {member.birth_date || "정보 없음"}
           </div>
         </div>
       </div>
@@ -123,9 +126,9 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
           참여중인 프로젝트
         </h3>
         <div className="px-4 py-3 bg-component-secondary-background rounded-lg">
-          {member.projectDetails?.length > 0 ? (
+          {member.projects?.length > 0 ? (
             <div className="flex flex-wrap gap-2">
-              {member.projectDetails.map((project, idx) => (
+              {member.projects.map((project: Project, idx: number) => (
                 <div key={idx} className="inline-flex items-center px-3 py-1.5 border border-component-border rounded-md bg-component-secondary-background backdrop-blur-sm text-text-secondary text-sm hover:bg-component-secondary-background-hover transition-colors group">
                   <span className="w-1.5 h-1.5 rounded-full bg-point-color-indigo mr-2 group-hover:bg-point-color-indigo-hover"></span>
                   {project.title}
@@ -148,8 +151,8 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
           전문 분야
         </h3>
         <div className="flex flex-wrap gap-2 ">
-          {member.skills?.map((skill, index) => (
-            <Badge key={index} content={skill} color="blue" />
+          {member.tech_stacks.map((tech_stack: TechStack, idx: number) => (
+            <Badge key={idx} content={tech_stack.tech} color="blue" isDark={isDark} />
           )) || "등록된 전문 분야가 없습니다."}
         </div>
       </div>
@@ -163,7 +166,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
           소개
         </h3>
         <div className="px-4 py-3 bg-component-secondary-background rounded-lg text-text-secondary">
-          {member.introduction || "소개 정보가 없습니다."}
+          {member.bio || "소개 정보가 없습니다."}
         </div>
       </div>
 
@@ -176,16 +179,12 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
         </h3>
         <div className="px-4 py-3 bg-component-secondary-background rounded-lg text-text-secondary">
           <div className="flex items-center">
-            {member.workingHours ? (
+            {member.collaboration_preference.work_hours_start ? (
               <>
-                <span className="font-medium">{member.workingHours.start} - {member.workingHours.end}</span>
-                {member.workingHours.timezone && (
+                <span className="font-medium">{member.collaboration_preference.work_hours_start} - {member.collaboration_preference.work_hours_end}</span>
+                {member.collaboration_preference.available_time_zone && (
                   <span className="ml-2 text-text-secondary text-sm">
-                    {member.workingHours.timezone === "Asia/Seoul" ? "한국 표준시 (KST)" :
-                      member.workingHours.timezone === "UTC" ? "세계 표준시 (UTC)" :
-                        member.workingHours.timezone === "America/New_York" ? "동부 표준시 (EST)" :
-                          member.workingHours.timezone === "America/Los_Angeles" ? "태평양 표준시 (PST)" :
-                            member.workingHours.timezone}
+                    {member.collaboration_preference.available_time_zone}
                   </span>
                 )}
               </>
@@ -207,7 +206,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
         <div className="flex flex-wrap gap-2">
           {member.languages?.length > 0 ? (
             member.languages.map((language, index) => (
-              <Badge key={index} content={language} color="purple" />
+              <Badge key={index} content={language} color="purple" isDark={isDark} />
             ))
           ) : (
             <p className="text-text-secondary">등록된 언어가 없습니다.</p>
@@ -224,8 +223,8 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
           소셜 링크
         </h3>
         <div className="flex space-x-3">
-          {member.socialLinks && member.socialLinks.length > 0 ? (
-            member.socialLinks.map((link, index) => (
+          {member.social_links && member.social_links.length > 0 ? (
+            member.social_links.map((link: SocialLink, index: number) => (
               <a
                 key={index}
                 href={link.url}
@@ -233,22 +232,22 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
                 rel="noopener noreferrer"
                 className="px-3 py-2 bg-component-secondary-background hover:bg-component-secondary-background-hover rounded-lg text-text-secondary transition-colors flex items-center"
               >
-                {link.name.toLowerCase() === 'github' && (
+                {link.platform.toLowerCase() === 'github' && (
                   <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.268 2.75 1.026A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.026 2.747-1.026.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z" />
                   </svg>
                 )}
-                {link.name.toLowerCase() === 'linkedin' && (
+                {link.platform.toLowerCase() === 'linkedin' && (
                   <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
                   </svg>
                 )}
-                {!['github', 'linkedin'].includes(link.name.toLowerCase()) && (
+                {!['github', 'linkedin'].includes(link.platform.toLowerCase()) && (
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 )}
-                {link.name}
+                {link.platform}
               </a>
             ))
           ) : (
@@ -278,7 +277,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
             id: member.id,
             name: member.name
           }}
-          memberProjects={member.projectDetails || []}
+          memberProjects={member.projects || []}
         />
       )}
     </>
