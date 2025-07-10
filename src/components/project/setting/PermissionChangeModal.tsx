@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserShield, faUser, faCheck } from '@fortawesome/free-solid-svg-icons';
-import { Member } from '@/types/Member';
+import { User } from '@/types/User';
 import { Project } from '@/types/Project';
 import ModalTemplete from '@/components/ModalTemplete';
 import CancelBtn from '@/components/ui/button/CancelBtn';
@@ -9,7 +9,7 @@ import SubmitBtn from '@/components/ui/button/SubmitBtn';
 
 interface PermissionChangeModalProps {
   submitStatus: 'idle' | 'submitting' | 'success' | 'error';
-  selectedMember: Member;
+  selectedMember: User;
   isOpen: boolean;
   onClose: () => void;
   selectedRole: string;
@@ -47,6 +47,7 @@ export default function PermissionChangeModal({ submitStatus, selectedMember, is
         successText="변경 완료"
         errorText="변경 실패"
         className="!text-sm !bg-blue-600 hover:!bg-blue-700"
+        fit
         withIcon
       />
     </div>

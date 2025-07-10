@@ -9,7 +9,8 @@ import {
   faUserGroup,
   faShield,
 } from "@fortawesome/free-solid-svg-icons";
-import { Member } from "@/types/Member";
+import { Users } from "lucide-react";
+import { User } from "@/types/User";
 import PermissionChangeModal from "@/components/project/setting/PermissionChangeModal";
 import {
   updateProjectMemberPermission,
@@ -31,7 +32,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [showJoinRequests, setShowJoinRequests] = useState(true);
   const [showRoleModal, setShowRoleModal] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [selectedMember, setSelectedMember] = useState<User | null>(null);
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [isCurrentUserLeaderOrManager, setIsCurrentUserLeaderOrManager] = useState(false);
   const { user } = useAuthStore();
@@ -39,11 +40,11 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
 
   // Check if current user is leader or manager
   useEffect(() => {
-    if (user && project && project.leader) {
-      const isLeader = project.leader.id === user.id;
+    if (user && project && project.members.some((member) => member.user.id === user.id)) {
+      const isLeader = project.members.some((member) => member.user.id === user.id && member.is_leader);
       const isManager =
-        Array.isArray(project.manager) &&
-        project.manager.some((manager) => manager.id === user.id);
+        Array.isArray(project.members) &&
+        project.members.some((member) => member.user.id === user.id && member.is_manager);
       setIsCurrentUserLeaderOrManager(isLeader || isManager);
     }
   }, [user, project]);
@@ -51,27 +52,27 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   const filteredMembers = (project?.members || [])
     .filter(
       (member) =>
-        member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.email?.toLowerCase().includes(searchTerm.toLowerCase())
+        member.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        member.user.email?.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
       // Leader has highest priority
-      if (a.id === project.leader.id) return -1;
-      if (b.id === project.leader.id) return 1;
+      if (a.user.id === project.members.find((member) => member.is_leader)?.user.id) return -1;
+      if (b.user.id === project.members.find((member) => member.is_leader)?.user.id) return 1;
 
       // Managers have second priority
       const aIsManager =
-        Array.isArray(project.manager) &&
-        project.manager.some((manager) => manager.id === a.id);
+        Array.isArray(project.members) &&
+        project.members.some((member) => member.user.id === a.user.id && member.is_manager);
       const bIsManager =
-        Array.isArray(project.manager) &&
-        project.manager.some((manager) => manager.id === b.id);
+        Array.isArray(project.members) &&
+        project.members.some((member) => member.user.id === b.user.id && member.is_manager);
 
       if (aIsManager && !bIsManager) return -1;
       if (!aIsManager && bIsManager) return 1;
 
       // Otherwise sort by name
-      return a.name.localeCompare(b.name);
+      return a.user.name.localeCompare(b.user.name);
     });
 
   // Role descriptions for tooltip
@@ -82,12 +83,12 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
     default: "기본 권한, 작업 확인만 가능",
   };
 
-  const openRoleModal = (member: Member) => {
+  const openRoleModal = (member: User) => {
     setSelectedMember(member);
     setSelectedRole(
-      project.leader.id == member.id
+      project.members.find((member) => member.user.id === member.user.id && member.is_leader)
         ? "leader"
-        : project.manager.some((manager) => manager.id == member.id)
+        : project.members.some((member) => member.user.id === member.user.id && member.is_manager)
         ? "manager"
         : "member"
     );
@@ -127,7 +128,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
     setSelectedMember(null);
   };
 
-  const handleKickOutMember = (member: Member) => {
+  const handleKickOutMember = (member: User) => {
     try {
       useAuthStore
         .getState()
@@ -144,7 +145,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
     }
   };
 
-  const handleApproveRequest = async (user_id: number, name: string) => {
+  const handleApproveRequest = async (user_id: number, name: string | undefined) => {
     if (!isCurrentUserLeaderOrManager) {
       useAuthStore.getState().setAlert("권한이 없습니다.", "error");
       return;
@@ -153,7 +154,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
       useAuthStore
         .getState()
         .setConfirm(`${name}님의 참여 요청을 승인하시겠습니까?`, async () => {
-          if (project.members.length >= project.teamSize) {
+          if (project.members.length >= project.team_size) {
             useAuthStore
               .getState()
               .setAlert(
@@ -176,7 +177,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
     }
   };
 
-  const handleRejectRequest = async (user_id: number, name: string) => {
+  const handleRejectRequest = async (user_id: number, name: string | undefined) => {
     if (!isCurrentUserLeaderOrManager) {
       useAuthStore.getState().setAlert("권한이 없습니다.", "error");
       return;
@@ -202,28 +203,14 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
   return (
     <div className="bg-component-background border border-component-border rounded-xl overflow-hidden">
       <h2 className="text-lg font-semibold text-text-primary border-b border-component-border px-6 py-4 flex items-center gap-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-5 h-5 text-blue-400"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-          <circle cx="9" cy="7" r="4"></circle>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-        </svg>
+        <Users className="w-5 h-5 text-blue-400" />
         팀 관리
       </h2>
 
       <div className="p-6 space-y-6">
         {/* Join Requests Section */}
-        {project.participationRequestMembers &&
-          project.participationRequestMembers.length > 0 && (
+        {project.participation_requests &&
+          project.participation_requests.length > 0 && (
             <div className="rounded-lg border border-component-border overflow-hidden">
               <div className="bg-component-tertiary-background px-4 py-3 flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -233,7 +220,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                   />
                   <h3 className="font-medium text-text-primary">참여 요청</h3>
                   <span className="bg-blue-500/20 text-blue-300 text-xs px-2 py-0.5 rounded-full">
-                    {project.participationRequestMembers.length}
+                    {project.participation_requests.length}
                   </span>
                 </div>
                 <button
@@ -246,8 +233,8 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
 
               {showJoinRequests && (
                 <div className="divide-y divide-component-border">
-                  {project.participationRequestMembers &&
-                    project.participationRequestMembers.map((request) => (
+                  {project.participation_requests &&
+                    project.participation_requests.map((request) => (
                       <div
                         key={request.id}
                         className="px-4 py-3 bg-component-secondary-background hover:bg-component-secondary-background/60 transition-colors"
@@ -255,9 +242,9 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 relative bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
-                              {request.profileImage ? (
+                              {project.members.find((member) => member.user.id === request.user_id)?.user.profile_image ? (
                                 <Image
-                                  src={request.profileImage}
+                                  src={project.members.find((member) => member.user.id === request.user_id)?.user.profile_image || ""}
                                   alt="Profile"
                                   className="w-full h-full object-fit rounded-full"
                                   quality={100}
@@ -265,20 +252,20 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                                   height={32}
                                 />
                               ) : (
-                                <p>{request.name.charAt(0)}</p>
+                                <p>{project.members.find((member) => member.user.id === request.user_id)?.user.name.charAt(0)}</p>
                               )}
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
                                 <p className="text-text-primary font-medium">
-                                  {request.name}
+                                  {project.members.find((member) => member.user.id === request.user_id)?.user.name}
                                 </p>
                                 <span className="bg-component-tertiary-background text-text-secondary text-xs px-2 py-0.5 rounded-md">
-                                  {request.role}
+                                  {project.members.find((member) => member.user.id === request.user_id)?.role}
                                 </span>
                               </div>
                               <p className="text-text-secondary text-xs">
-                                {request.email}
+                                {project.members.find((member) => member.user.id === request.user_id)?.user.email}
                               </p>
                             </div>
                           </div>
@@ -286,7 +273,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                             <button
                               className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm transition-colors"
                               onClick={() =>
-                                handleApproveRequest(request.id, request.name)
+                                handleApproveRequest(request.id, project.members.find((member) => member.user.id === request.user_id)?.user.name || "알 수 없는 사용자")
                               }
                             >
                               <FontAwesomeIcon
@@ -298,7 +285,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                             <button
                               className="bg-gray-700 hover:bg-gray-600 text-gray-200 px-3 py-1.5 rounded text-sm transition-colors"
                               onClick={() =>
-                                handleRejectRequest(request.id, request.name)
+                                handleRejectRequest(request.id, project.members.find((member) => member.user.id === request.user_id)?.user.name || "알 수 없는 사용자")
                               }
                             >
                               <FontAwesomeIcon
@@ -342,15 +329,15 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
             {filteredMembers &&
               filteredMembers?.map((member) => (
                 <div
-                  key={member.id}
+                  key={member.user.id}
                   className="px-4 py-3 bg-component-secondary-background hover:bg-component-secondary-background/60 transition-colors"
                 >
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 relative border border-component-border bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
-                        {member.profileImage ? (
+                        {member.user.profile_image ? (
                           <Image
-                            src={member.profileImage}
+                            src={member.user.profile_image}
                             alt="Profile"
                             className="w-full h-full object-fit rounded-full"
                             quality={100}
@@ -361,24 +348,24 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                             }}
                           />
                         ) : (
-                          <p>{member.name.charAt(0)}</p>
+                          <p>{member.user.name.charAt(0)}</p>
                         )}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
                           <p className="text-text-primary font-medium">
-                            {member.name}
+                            {member.user.name}
                           </p>
-                          {project.leader && member.id === project.leader.id ? (
+                          {project.members.find((member) => member.is_leader)?.user.id === member.user.id ? (
                             <Badge
                               content="프로젝트 리더"
                               color="yellow"
                               isDark={isDark}
                               className="!text-xs !px-2 !py-0.5"
                             />
-                          ) : Array.isArray(project.manager) &&
-                            project.manager.some(
-                              (manager) => manager.id === member.id
+                          ) : Array.isArray(project.members) &&
+                            project.members.some(
+                              (member) => member.user.id === member.user.id && member.is_manager
                             ) ? (
                             <Badge
                               content="관리자"
@@ -395,30 +382,29 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                             />
                           )}
                           <Badge
-                            content={member.role}
+                            content={member.user.role}
                             color="cyan"
                             isDark={isDark}
                             className="!text-xs !px-2 !py-0.5"
                           />
                         </div>
                         <p className="text-text-secondary text-xs">
-                          {member.email}
+                          {member.user.email || "이메일 없음"}
                         </p>
                       </div>
                     </div>
                     {isCurrentUserLeaderOrManager &&
-                      project.leader &&
-                      member.id !== project.leader.id && (
+                      project.members.find((member) => member.user.id === member.user.id && !member.is_leader) && (
                         <div className="flex items-center gap-2">
                           <button
                             className="bg-component-secondary-background hover:bg-component-secondary-background/80 text-text-primary rounded px-3 py-1.5 text-sm transition-colors border border-component-border"
-                            onClick={() => openRoleModal(member)}
+                            onClick={() => openRoleModal(member.user)}
                           >
                             권한 변경
                           </button>
                           <button
                             className="text-text-secondary hover:text-red-400 p-2 rounded transition-colors"
-                            onClick={() => handleKickOutMember(member)}
+                            onClick={() => handleKickOutMember(member.user)}
                           >
                             <FontAwesomeIcon icon={faTrash} />
                           </button>
