@@ -21,8 +21,6 @@ export default function AuthCallback() {
         });
         const data = res.data;
 
-        console.log(res);
-
         if (data.status === "logged_in") {
           useAuthStore.getState().setToken(data.access_token);
           useAuthStore.getState().setUser(data.user_info);

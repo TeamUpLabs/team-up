@@ -208,14 +208,14 @@ export const deleteProject = async (project_id: string) => {
 interface UpdateProjectFormData {
   title: string;
   description: string;
-  techStack: string[];
-  roles: string[];
-  startDate: string;
-  endDate: string;
-  teamSize: number;
-  location: string;
-  projectType: string;
   status: string;
+  visibility: string;
+  tags: string[];
+  start_date: string;
+  end_date: string;
+  team_size: number;
+  location: string;
+  project_type: string;
 }
 
 
@@ -225,14 +225,14 @@ export const updateProject = async (project_id: string, formData: UpdateProjectF
     const res = await server.put(`/projects/${project_id}`, {
       title: formData.title,
       description: formData.description,
-      techStack: formData.techStack,
-      roles: formData.roles,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      teamSize: Number(formData.teamSize),
+      start_date: formData.start_date,
+      end_date: formData.end_date,
+      team_size: Number(formData.team_size),
       location: formData.location,
-      projectType: formData.projectType,
+      project_type: formData.project_type,
       status: formData.status,
+      visibility: formData.visibility,
+      tags: formData.tags,
     }, {
       headers: {
         'Content-Type': 'application/json', 

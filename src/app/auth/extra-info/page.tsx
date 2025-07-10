@@ -301,12 +301,10 @@ const ExtraInfoPage = () => {
         ...partialUser,
       });
 
-      const data = res.data;
-      if (data.access_token) {
-        useAuthStore.getState().setToken(data.access_token);
-        useAuthStore.getState().setUser(data.user_info);
-        useAuthStore.getState().setAlert("로그인 성공", "success");
-        router.push("/platform");
+      if (res.status === 200) {
+        localStorage.removeItem("partial_user");
+        useAuthStore.getState().setAlert("회원가입 성공", "success");
+        router.push("/signin");
       }
     } else {
       if (step - 2 === 1 && !formData.role) {

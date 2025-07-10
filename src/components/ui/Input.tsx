@@ -14,6 +14,7 @@ export interface InputProps
   startAdornment?: React.ReactNode;
   endAdornment?: React.ReactNode;
   isPassword?: boolean;
+  isEndAdornmentClickable?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -28,6 +29,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       fullWidth = false,
       startAdornment,
       endAdornment,
+      isEndAdornmentClickable,
       isPassword,
       id,
       ...props
@@ -77,7 +79,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         />
         <div 
           className={`absolute inset-y-0 right-0 flex items-center pr-3 ${
-            isPassword ? 'pointer-events-auto' : 'pointer-events-none'
+            isPassword || isEndAdornmentClickable ? 'pointer-events-auto' : 'pointer-events-none'
           }`}
           style={endAdornment || isPassword ? { visibility: 'visible' } : { visibility: 'hidden' }}
         >

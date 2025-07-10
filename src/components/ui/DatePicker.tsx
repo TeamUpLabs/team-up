@@ -23,6 +23,7 @@ interface DatePickerProps {
   locale?: string
   dateFormat?: (date: Date) => string
   className?: string
+  calendarPosition?: "top" | "bottom"
 }
 
 // 유틸리티 함수들
@@ -241,6 +242,7 @@ export default function DatePicker({
   locale = "ko-KR",
   dateFormat,
   className = "",
+  calendarPosition = "bottom",
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -358,7 +360,9 @@ export default function DatePicker({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 z-50 mt-1">
+        <div
+          className={`absolute left-0 z-50 ${calendarPosition === "top" ? "bottom-full mb-2" : "top-full mt-2"}`}
+        >
           <Calendar
             currentDate={currentDate}
             selectedDate={value}

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from 'react-dom';
 import { faChevronDown, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -34,7 +35,6 @@ interface SelectProps {
   maxHeight?: number;
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
   renderValue?: (value: string | string[]) => React.ReactNode;
-  dropdownAlign?: "start" | "center" | "end";
 }
 
 export default function Select({
@@ -56,11 +56,15 @@ export default function Select({
   maxHeight = 200,
   renderOption,
   renderValue,
-  dropdownAlign = "center",
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [focusedIndex, setFocusedIndex] = useState(-1)
+  const [isMounted, setIsMounted] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+
+  const generatedId = React.useId();
+  const inputId = generatedId;
 
   const selectRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -98,15 +102,47 @@ export default function Select({
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
-        setSearchTerm("")
-        setFocusedIndex(-1)
+        // Check if the click is outside the dropdown as well
+        const dropdown = document.getElementById(`select-dropdown-${generatedId}`);
+        if (dropdown && !dropdown.contains(event.target as Node)) {
+          setIsOpen(false);
+          setSearchTerm("");
+          setFocusedIndex(-1);
+        }
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [generatedId]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const updateDropdownPosition = useCallback(() => {
+    if (isOpen && selectRef.current) {
+      const rect = selectRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width,
+      });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      updateDropdownPosition();
+      window.addEventListener('resize', updateDropdownPosition);
+      window.addEventListener('scroll', updateDropdownPosition, true);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateDropdownPosition);
+      window.removeEventListener('scroll', updateDropdownPosition, true);
+    };
+  }, [isOpen, updateDropdownPosition]);
 
   // 드롭다운이 열릴 때 검색 입력에 포커스
   useEffect(() => {
@@ -226,7 +262,7 @@ export default function Select({
     }
 
     if (selectedValues.length === 0) {
-      return <span className="text-text-secondary">{placeholder}</span>
+      return <span className="text-text-secondary text-xs">{placeholder}</span>
     }
 
     if (multiple) {
@@ -258,8 +294,14 @@ export default function Select({
     return selectedOption ? selectedOption.label : placeholder
   }
 
-  const generatedId = React.useId();
-  const inputId = generatedId;
+  const DropdownPortal = ({ children }: { children: React.ReactNode }) => {
+    if (!isMounted) return null;
+
+    return createPortal(
+      children,
+      document.body
+    );
+  };
 
   return (
     <div className="w-full">
@@ -298,7 +340,7 @@ export default function Select({
           disabled={disabled}
           className={`
           w-full focus:outline-none focus:ring-0 text-left text-text-secondary
-          ${disabled ? "bg-input-background cursor-not-allowed opacity-70" : "cursor-pointer"}
+          ${disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"}
         `}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
@@ -316,90 +358,78 @@ export default function Select({
           </div>
         </button>
 
-        {/* 드롭다운 옵션들 */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, scaleY: 0.95, y: -4 }}
-              animate={{ opacity: 1, scaleY: 1, y: 0 }}
-              exit={{ opacity: 0, scaleY: 0.95, y: -4 }}
-              transition={{ duration: 0.1, ease: "easeOut" }}
-              className={`absolute z-50 w-max mt-3 bg-component-background border border-component-border rounded-md shadow-lg ${(() => {
-                if (dropdownAlign === 'center') return 'left-1/2 -translate-x-1/2';
-                if (dropdownAlign === 'end') return 'right-0';
-                return 'left-0';
-              })()} ${dropDownClassName}`}
-              style={{ maxHeight: `${maxHeight}px` }}
-            >
-              {searchable && (
-                <div className="p-2 border-b border-component-border">
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="검색..."
-                    className="w-full px-2 py-1 border border-component-border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              )}
-
-              <div
-                ref={optionsRef}
-                className="max-h-60 overflow-auto divide-y divide-component-border"
-                style={{ maxHeight: `${maxHeight}px` }}
-                role="listbox"
+        <DropdownPortal>
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                id={`select-dropdown-${generatedId}`}
+                initial={{ opacity: 0, scaleY: 0.95 }}
+                animate={{ opacity: 1, scaleY: 1 }}
+                exit={{ opacity: 0, scaleY: 0.95 }}
+                transition={{ duration: 0.1, ease: "easeOut" }}
+                className={`absolute z-50 bg-component-background border border-component-border rounded-md shadow-lg ${dropDownClassName}`}
+                style={{
+                  top: `${dropdownPosition.top + 4}px`,
+                  left: `${dropdownPosition.left}px`,
+                  width: `${dropdownPosition.width}px`,
+                }}
               >
-                {filteredOptions.length === 0 ? (
-                  <div className="px-3 py-2 text-text-secondary text-center">검색 결과가 없습니다</div>
-                ) : (
-                  filteredOptions.map((option, index) => {
-                    const isSelected = selectedValues.includes(option.value)
-                    const isFocused = index === focusedIndex
-
-                    let itemRoundedClass = "";
-                    if (filteredOptions.length > 0) {
-                      if (filteredOptions.length === 1) {
-                        itemRoundedClass = "rounded-md";
-                      } else {
-                        if (index === 0) {
-                          itemRoundedClass = "rounded-t-md";
-                        } else if (index === filteredOptions.length - 1) {
-                          itemRoundedClass = "rounded-b-md";
-                        }
-                      }
-                    }
-
-                    return (
-                      <div
-                        key={option.value}
-                        onClick={() => handleOptionSelect(option)}
-                        className={`
-                      px-3 py-2 cursor-pointer text-sm
-                      ${option.disabled ? "text-text-secondary cursor-not-allowed" : "hover:bg-component-secondary-background"}
-                      ${isSelected ? "bg-component-secondary-background text-text-primary" : "bg-transparent text-text-primary"}
-                      ${isFocused ? "bg-component-secondary-background" : ""}
-                      ${itemRoundedClass}
-                    `}
-                        role="option"
-                        aria-selected={isSelected}
-                      >
-                        {renderOption ? (
-                          renderOption(option, isSelected)
-                        ) : (
-                          <div className="flex items-center gap-2 justify-between">
-                            <span className="text-text-primary">{option.label}</span>
-                            {isSelected && <FontAwesomeIcon icon={faCheck} />}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })
+                {searchable && (
+                  <div className="p-2 border-b border-component-border">
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="검색..."
+                      className="w-full px-2 py-1 border-input-border bg-input-background rounded focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
+                    />
+                  </div>
                 )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+
+                <div
+                  ref={optionsRef}
+                  className="overflow-auto"
+                  style={{ maxHeight: `${maxHeight}px` }}
+                  role="listbox"
+                >
+                  {filteredOptions.length === 0 ? (
+                    <div className="px-3 py-2 text-text-secondary text-center">검색 결과가 없습니다</div>
+                  ) : (
+                    filteredOptions.map((option, index) => {
+                      const isSelected = selectedValues.includes(option.value)
+                      const isFocused = index === focusedIndex
+
+                      return (
+                        <div
+                          key={option.value}
+                          onClick={() => handleOptionSelect(option)}
+                          className={`
+                            px-3 py-2 cursor-pointer text-sm
+                            ${option.disabled ? "text-text-secondary cursor-not-allowed" : "hover:bg-component-secondary-background"}
+                            ${isSelected ? "bg-component-secondary-background text-text-primary" : "text-text-primary"}
+                            ${isFocused ? "bg-component-secondary-background" : ""}
+                          `}
+                          role="option"
+                          aria-selected={isSelected}
+                        >
+                          {renderOption ? (
+                            renderOption(option, isSelected)
+                          ) : (
+                            <div className="flex items-center gap-2 justify-between">
+                              <span>{option.label}</span>
+                              {isSelected && <FontAwesomeIcon icon={faCheck} size="sm" />}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </DropdownPortal>
       </div>
     </div>
   )
