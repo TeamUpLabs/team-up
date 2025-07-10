@@ -44,10 +44,10 @@ export default function GithubPage() {
     | "analytics"
   >("overview");
   const org = "TeamUpLabs";
-  const repo = project?.github_repo_url?.split("/").pop() || "";
+  const repo = project?.github_url?.split("/").pop() || "";
 
   const fetchAllData = useCallback(async (org: string, repo: string) => {
-    if (project?.github_repo_url && user) {
+    if (project?.github_url && user) {
       const { repoData, commitData, prData, issueData, githubUser, orgData } = await fetchAllGithubData(org, repo, user);
       setRepoData(repoData);
       setCommitData(commitData);
@@ -59,7 +59,7 @@ export default function GithubPage() {
   }, [project, user]);
 
   useEffect(() => {
-    if (project?.github_repo_url) {
+    if (project?.github_url) {
       fetchAllData(org, repo);
     }
   }, [fetchAllData, project, org, repo]);
@@ -106,7 +106,7 @@ export default function GithubPage() {
             프로젝트를 불러오는 중입니다. 잠시만 기다려주세요...
           </p>
         </div>
-      ) : project?.github_repo_url ? (
+      ) : project?.github_url ? (
         <div className="w-full space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             <RepoCard repoData={repoData || {}} />

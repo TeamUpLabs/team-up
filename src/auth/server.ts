@@ -21,6 +21,11 @@ server.interceptors.response.use(
   }
 );
 
-export const fetcher = (url: string) => server.get(url, {
+export const fetcher = (url: string, token?: string) => server.get(url, {
   withCredentials: true,
+  ...(token ? {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  } : {}),
 }).then((res) => res.data);

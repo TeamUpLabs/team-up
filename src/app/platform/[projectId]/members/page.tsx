@@ -15,7 +15,6 @@ export default function MembersPage() {
   const { project } = useProject();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
-  const [allTeamMembers, setAllTeamMembers] = useState<User[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isMounted = useRef(false);
   const [tab, setTab] = useState("전체");
@@ -39,10 +38,6 @@ export default function MembersPage() {
       ])
     )
   };
-
-  useEffect(() => {
-    setAllTeamMembers(project?.members.map(member => member.user));
-  }, [project]);
 
   useEffect(() => {
     const selectedAssiId = localStorage.getItem("selectedAssiId");
@@ -90,12 +85,12 @@ export default function MembersPage() {
     };
   }, []);
 
-  const filteredMembers = (allTeamMembers ?? [])
+  const filteredMembers = (project?.members ?? [])
     .filter((member) => {
       // Filter by tab
       const matchesTab = 
         tab === '전체' || 
-        (member.role === tab);
+        (member.user.role === tab);
       
       // If there's no search query, just return tab matches
       if (!searchQuery.trim()) return matchesTab;
@@ -103,9 +98,9 @@ export default function MembersPage() {
       // Filter by search query
       const searchLower = searchQuery.toLowerCase();
       const matchesSearch = 
-        member.name.toLowerCase().includes(searchLower) ||
-        member.role.toLowerCase().includes(searchLower) ||
-        member.email?.toLowerCase().includes(searchLower) ||
+        member.user.name.toLowerCase().includes(searchLower) ||
+        member.user.role.toLowerCase().includes(searchLower) ||
+        member.user.email?.toLowerCase().includes(searchLower) ||
         project?.tasks?.some(task => 
           task.title.toLowerCase().includes(searchLower)
         );
@@ -114,11 +109,11 @@ export default function MembersPage() {
     })
     .sort((a, b) => {
       // Leader always comes first
-      if (a.id === project?.owner.id) return -1;
-      if (b.id === project?.owner.id) return 1;
+      if (a.user.id === project?.owner.id) return -1;
+      if (b.user.id === project?.owner.id) return 1;
       
       // Finally sort by name
-      return a.name.localeCompare(b.name);
+      return a.user.name.localeCompare(b.user.name);
     });
 
   const handleMemberClick = (member: User) => {
@@ -155,13 +150,13 @@ export default function MembersPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredMembers.map((member) => (
           <MemberCard
-            key={member.id}
-            member={member}
-            isLeader={project?.members.some((member) => member.user.id === member.user.id && member.is_leader) || project?.owner.id === member.id}
+            key={member.user.id}
+            member={member.user}
+            isLeader={member.is_leader || project?.owner.id === member.user.id}
             isManager={
-              project?.members.some((manager) => manager.user.id === member.id && manager.is_manager) || project?.owner.id === member.id
+              project?.members.some((manager) => manager.is_manager) || project?.owner.id === member.user.id
             }
-            onClick={() => handleMemberClick(member)}
+            onClick={() => handleMemberClick(member.user)}
           />
         ))}
       </div>
@@ -171,9 +166,9 @@ export default function MembersPage() {
           member={selectedMember}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          isLeader={project?.members.some((member) => member.user.id === selectedMember.id && member.is_leader) || project?.owner.id === selectedMember.id}
+          isLeader={project?.members.some((member) => member.is_leader) || project?.owner.id === selectedMember.id}
           isManager={
-            project?.members.some((manager) => manager.user.id === selectedMember.id && manager.is_manager) || project?.owner.id === selectedMember.id
+            project?.members.some((manager) => manager.is_manager) || project?.owner.id === selectedMember.id
           }
         />
       )}

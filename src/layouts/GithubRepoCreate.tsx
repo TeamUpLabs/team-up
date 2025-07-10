@@ -8,6 +8,10 @@ import { useProject } from "@/contexts/ProjectContext";
 import { Github } from "flowbite-react-icons/solid";
 import { Globe, Lock } from "flowbite-react-icons/outline";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import useAuthHydration from "@/hooks/useAuthHydration";
+import { fetcher } from "@/auth/server";
+import { User } from "@/types/User";
+import useSWR from "swr";
 
 interface CreateRepositoryData {
   repo_name: string;
@@ -16,7 +20,8 @@ interface CreateRepositoryData {
 }
 
 export default function GithubRepoCreate() {
-  const { user } = useAuthStore((state) => state);
+  const token = useAuthStore((state) => state.token);
+  const hydrated = useAuthHydration();
   const { project } = useProject();
   const [formData, setFormData] = useState<CreateRepositoryData>({
     repo_name: "",
@@ -25,6 +30,18 @@ export default function GithubRepoCreate() {
   });
   const [errors, setErrors] = useState<Partial<CreateRepositoryData>>({})
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const { data: user, error, isLoading } = useSWR<User>(
+    hydrated && token ? `/users/me` : null,
+    (url: string) => fetcher(url, token || undefined)
+  );
+
+  if (error) {
+    return <div className="text-center text-text-secondary p-8">프로필 정보를 가져오는 데 실패했습니다.</div>;
+  }
+
+  if (isLoading) {
+    return <div className="text-center text-text-secondary p-8">로딩 중...</div>;
+  }
 
   const handleChange = (field: keyof CreateRepositoryData, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -66,19 +83,24 @@ export default function GithubRepoCreate() {
   const handleConnect = async () => {
     if (!project?.id) return;
 
+    if (user?.auth_provider !== "github") {
+      useAuthStore.getState().setAlert("Github 계정이 연동되지 않았습니다. 계정 연동 후 다시 시도해주세요.", "error");
+      return;
+    }
+
     if (!validateForm()) {
       return
     }
 
     setSubmitStatus('submitting');
     try {
-      const res = await server.post(`project/${project?.id}/github/org/create-repo`, {
+      const res = await server.post(`/projects/${project?.id}/github/org/create-repo`, {
         ...formData,
-        github_access_token: user?.github_access_token,
+        github_access_token: user?.auth_provider === "github" ? user?.auth_provider_access_token : null,
       }, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user?.github_access_token}`,
+          'Authorization': `Bearer ${user?.auth_provider === "github" ? user?.auth_provider_access_token : null}`,
         },
       })
 
