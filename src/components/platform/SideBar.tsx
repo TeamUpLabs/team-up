@@ -7,6 +7,7 @@ import {
 import { useProject } from "@/contexts/ProjectContext";
 import CreateChannelButton from "@/components/project/chat/ChannelCreateBtn";
 import { useAuthStore } from "@/auth/authStore";
+import { ParticipationRequest } from "@/types/ParticipationRequest";
 
 interface NavItem {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -101,7 +102,7 @@ export default function SideBar({
                   </h3>
                   <ul className="space-y-1">
                     {items.map((item) => {
-                      const notificationCount = item.label === '설정' ? project?.participation_request_count || 0 : 0;
+                      const notificationCount = item.label === '설정' ? project?.participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length || 0 : 0;
 
                       return (
                         <li key={item.href}>

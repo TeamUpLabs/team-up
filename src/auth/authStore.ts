@@ -14,6 +14,7 @@ type AuthState = {
   alert: { message: string; type: AlertType } | null;
   confirm: { message: string; onConfirm?: () => void } | null;
   notificationAlert: { message: Notification; type: NotificationAlertType } | null;
+  isInitialized: boolean;
   setToken: (token: string) => void;
   setUser: (user: AuthUser) => void;
   setAlert: (message: string, type: AlertType) => void;
@@ -31,6 +32,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       token: null,
       user: null,
+      isInitialized: false,
       alert: null,
       confirm: null,
       notificationAlert: null,
@@ -50,6 +52,11 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "teamup-auth",
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.isInitialized = true;
+        }
+      },
       storage: {
         getItem: (name) => {
           const item = sessionStorage.getItem(name);

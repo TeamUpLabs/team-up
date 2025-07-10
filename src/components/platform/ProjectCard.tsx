@@ -66,7 +66,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
       </div>
       <div className="flex justify-end">
         {isExplore ? (
-          project.participation_requests && project.participation_requests.some(request => request.user_id === user?.id) ? (
+          project.participation_requests && project.participation_requests.some(request => request.user_id === user?.id && request.status === "pending") ? (
             <button
               onClick={() => {
                 if (!user) {

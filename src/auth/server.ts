@@ -21,4 +21,6 @@ server.interceptors.response.use(
   }
 );
 
-export const fetcher = (url: string) => server.get(url).then((res) => res.data);
+export const fetcher = (url: string) => server.get(url, {
+  withCredentials: true,
+}).then((res) => res.data);

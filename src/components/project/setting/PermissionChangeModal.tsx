@@ -5,22 +5,59 @@ import { Project } from '@/types/Project';
 import ModalTemplete from '@/components/ModalTemplete';
 import CancelBtn from '@/components/ui/button/CancelBtn';
 import SubmitBtn from '@/components/ui/button/SubmitBtn';
-
+import { updateProjectMemberPermission } from '@/hooks/getProjectData';
+import { useAuthStore } from '@/auth/authStore';
+import { useState } from 'react';
 
 interface PermissionChangeModalProps {
-  submitStatus: 'idle' | 'submitting' | 'success' | 'error';
   selectedMember: User;
   isOpen: boolean;
   onClose: () => void;
-  selectedRole: string;
-  setSelectedRole: (role: string) => void;
   setShowRoleModal: (show: boolean) => void;
-  handlePermissionChange: () => void;
   roleDescriptions: Record<string, string>;
   project: Project;
 }
 
-export default function PermissionChangeModal({ submitStatus, selectedMember, isOpen, onClose, selectedRole, setSelectedRole, setShowRoleModal, handlePermissionChange, roleDescriptions }: PermissionChangeModalProps) {
+export default function PermissionChangeModal({ selectedMember, isOpen, onClose, setShowRoleModal, roleDescriptions, project }: PermissionChangeModalProps) {
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [selectedRole, setSelectedRole] = useState<string>(
+    project.members.find((member) => member.user.id === selectedMember.id && member.is_leader)
+      ? "leader"
+      : project.members.some((member) => member.user.id === selectedMember.id && member.is_manager)
+      ? "manager"
+      : "member"
+  );
+
+  const handlePermissionChange = async () => {
+    if (selectedMember) {
+      setSubmitStatus('submitting');
+      try {
+        await updateProjectMemberPermission(
+          project.id,
+          selectedMember.id,
+          selectedRole
+        );
+        useAuthStore
+          .getState()
+          .setAlert(
+            `${selectedMember.name}님의 권한이 ${
+              selectedRole === "manager" ? "관리자" : "멤버"
+            }로 변경되었습니다.`,
+            "success"
+          );
+          setSubmitStatus('success');
+      } catch (error) {
+        console.error("Error updating project member permission:", error);
+        useAuthStore.getState().setAlert("권한 변경에 실패했습니다.", "error");
+        setSubmitStatus('error');
+      } finally {
+        setShowRoleModal(false);
+        setSubmitStatus('idle');
+      }
+    }
+    // Close modal and reset state
+    setShowRoleModal(false);
+  };
 
   const header = (
     <div className="flex flex-col space-y-1">

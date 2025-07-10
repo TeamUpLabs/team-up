@@ -6,6 +6,7 @@ import { useState } from "react";
 import GeneralSettingTab from "@/components/project/setting/GeneralSettingTab";
 import TeamSettingTab from "@/components/project/setting/TeamSettingTab";
 import DangerSettingTab from "@/components/project/setting/DangerSettingTab";
+import { ParticipationRequest } from "@/types/ParticipationRequest";
 
 export default function SettingsPage() {
   const { project } = useProject();
@@ -15,7 +16,7 @@ export default function SettingsPage() {
   const isLeader = project?.members.some((member) => member.user.id === user?.id && member.is_leader) || project?.owner.id === user?.id;
     
   // 참여 요청이 있는지 확인
-  const hasParticipationRequests = project?.participation_requests && project.participation_requests.length > 0;
+  const hasParticipationRequests = project?.participation_requests && project.participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length > 0;
 
   return (
     <div className="p-4">
@@ -46,7 +47,7 @@ export default function SettingsPage() {
             <span className="absolute -top-1 -right-1 flex h-5 w-5">
               <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-100"></span>
               <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
-                {project.participation_request_count}
+                {project.participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length}
               </span>
             </span>
           )}

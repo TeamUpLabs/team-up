@@ -1,5 +1,5 @@
 import { server } from "@/auth/server";
-import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
+import { getCurrentKoreanTime, getCurrentKoreanTimeDate } from "@/utils/dateUtils";
 import { useAuthStore } from "@/auth/authStore";
 
 export const getAllProjects = async () => {
@@ -252,9 +252,7 @@ export const updateProject = async (project_id: string, formData: UpdateProjectF
 
 export const updateProjectMemberPermission = async (project_id: string, member_id: number, permission: string) => {
   try {
-    const res = await server.put(`/projects/${project_id}/members/${member_id}/permission`, {
-      permission: permission,
-    }, {
+    const res = await server.put(`/projects/${project_id}/member/${member_id}?permission=${permission}`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -271,9 +269,12 @@ export const updateProjectMemberPermission = async (project_id: string, member_i
   }
 }
 
-export const allowParticipationRequest = async (project_id: string, member_id: number) => {
+export const allowParticipationRequest = async (request_id: number) => {
   try {
-    const res = await server.put(`/projects/${project_id}/participationRequest/${member_id}/allow`, {
+    const res = await server.put(`/participation-requests/${request_id}`, {
+      status: "accepted",
+      processed_at: getCurrentKoreanTime(),
+    }, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -290,9 +291,11 @@ export const allowParticipationRequest = async (project_id: string, member_id: n
   }
 }
 
-export const rejectParticipationRequest = async (project_id: string, member_id: number) => {
+export const rejectParticipationRequest = async (request_id: number) => {
   try {
-    const res = await server.put(`/projects/${project_id}/participationRequest/${member_id}/reject`, {
+    const res = await server.put(`/participation-requests/${request_id}`, {
+      status: "rejected",
+      processed_at: getCurrentKoreanTime(),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -311,7 +314,7 @@ export const rejectParticipationRequest = async (project_id: string, member_id: 
 
 export const kickOutMemberFromProject = async (project_id: string, member_id: number) => {
   try {
-    const res = await server.put(`/projects/${project_id}/members/${member_id}/kick`, {
+    const res = await server.put(`/projects/${project_id}/member/${member_id}/kick`, {
       headers: {
         'Content-Type': 'application/json',
       },

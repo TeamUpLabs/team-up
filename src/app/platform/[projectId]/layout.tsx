@@ -4,13 +4,15 @@ import SideBar from "@/components/platform/SideBar";
 import { useState, useEffect, use, useRef } from "react";
 import { Project } from "@/types/Project";
 import { usePathname } from "next/navigation";
-import { getProjectById } from "@/hooks/getProjectData";
 import { ProjectProvider } from "@/contexts/ProjectContext";
 import UserDropdown from "@/components/platform/UserDropdown";
 import NotificationDropdown from "@/components/platform/NotificationDropdown";
 import NotificationSidebar from "@/components/platform/NotificationSidebar";
 import { VoiceCallProvider } from "@/contexts/VoiceCallContext";
 import VoiceCallContainer from "@/components/project/VoiceCall/VoiceCallContainer";
+import useAuthHydration from "@/hooks/useAuthHydration";
+import { fetcher } from "@/auth/server";
+import useSWR from "swr";
 import {
   Grid as GridOutline,
   Users as UsersOutline,
@@ -46,25 +48,16 @@ export default function ProjectLayout({
   const { projectId } = use(params);
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [project, setProject] = useState<Project>();
   const [headerSearchQuery, setHeaderSearchQuery] = useState("");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const fetchProjects = async (project_id: string) => {
-      try {
-        const data = await getProjectById(project_id);
-        setProject(data);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-        alert("프로젝트를 가져오는 데 실패했습니다.");
-        window.location.href = "/platform";
-      }
-    };
-    fetchProjects(projectId);
-  }, [projectId]);
+  const hydrated = useAuthHydration();
+  const { data: project, error, isLoading } = useSWR<Project>(
+    hydrated ? `/projects/${projectId}` : null,
+    fetcher
+  );
 
   // Close sidebar on navigation change (for mobile)
   useEffect(() => {
@@ -77,15 +70,12 @@ export default function ProjectLayout({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // 사용자가 "/"를 눌렀고, input이 아닌 곳에 포커스가 있을 때만
       if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
-        e.preventDefault(); // "/" 입력 방지
-        inputRef.current?.focus(); // input에 포커스 주기
+        e.preventDefault();
+        inputRef.current?.focus();
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
-
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
@@ -165,23 +155,20 @@ export default function ProjectLayout({
     },
   ];
 
-  const defaultLayout = (children: React.ReactNode) => (
-    <>
+  const layoutContent = (
+    <div className="flex min-h-screen bg-background">
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-background/70 z-[8400] lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
-
-      {/* 모바일 알림 사이드바 오버레이 */}
       {isNotificationSidebarOpen && (
         <div
           className="fixed inset-0 bg-background/70 z-[8400] lg:hidden"
           onClick={() => setIsNotificationSidebarOpen(false)}
         />
       )}
-
       <SideBar
         isSidebarOpen={isSidebarOpen}
         title={project?.title}
@@ -189,16 +176,13 @@ export default function ProjectLayout({
         navItems={projectNavItems}
         isMinimized={isSidebarCollapsed}
       />
-
       <div
         className={`w-full flex-1 transition-all duration-300 
           ${isSidebarCollapsed ? "lg:ml-0" : "lg:ml-64"}
           ${isNotificationSidebarOpen ? "lg:mr-72" : ""}`}
       >
         <header
-          className={`h-auto bg-component-background min-h-16 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isSidebarCollapsed ? "lg:left-0" : "lg:left-64"
-            } ${isNotificationSidebarOpen ? "lg:right-72" : ""
-            } z-40 content-center transition-all duration-300`}
+          className={`h-auto bg-component-background min-h-16 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isSidebarCollapsed ? "lg:left-0" : "lg:left-64"} ${isNotificationSidebarOpen ? "lg:right-72" : ""} z-40 content-center transition-all duration-300`}
         >
           <div className="h-full px-3 py-2 sm:px-4 flex items-center gap-3 justify-between">
             <div className="flex items-center gap-4 w-full">
@@ -229,60 +213,53 @@ export default function ProjectLayout({
                   onChange={(e) => {
                     const value = e.target.value;
                     setHeaderSearchQuery(value);
-
-                    const searchEvent = new CustomEvent(
-                      "headerSearch",
-                      {
-                        detail: value,
-                        bubbles: true,
-                        cancelable: true,
-                      }
-                    );
+                    const searchEvent = new CustomEvent("headerSearch", { detail: value, bubbles: true, cancelable: true });
                     window.dispatchEvent(searchEvent);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      const searchEvent = new CustomEvent(
-                        "headerSearch",
-                        {
-                          detail: headerSearchQuery,
-                          bubbles: true,
-                          cancelable: true,
-                        }
-                      );
+                      const searchEvent = new CustomEvent("headerSearch", { detail: headerSearchQuery, bubbles: true, cancelable: true });
                       window.dispatchEvent(searchEvent);
                     }
                   }}
-                  startAdornment={
-                    <Search className="w-5 h-5 text-text-secondary" />
-                  }
-                  endAdornment={
-                    <span className="text-text-secondary p-1 border border-component-border rounded w-6 h-6 flex items-center justify-center">/</span>
-                  }
+                  startAdornment={<Search className="w-5 h-5 text-text-secondary" />}
+                  endAdornment={<span className="text-text-secondary p-1 border border-component-border rounded w-6 h-6 flex items-center justify-center">/</span>}
                 />
               </div>
             </div>
             <div className="flex flex-shrink-0 items-center gap-3">
-              <NotificationDropdown
-                onToggleSidebar={toggleNotificationSidebar}
-              />
+              <NotificationDropdown onToggleSidebar={toggleNotificationSidebar} />
               <UserDropdown />
             </div>
           </div>
         </header>
-
         <main className="mt-16">{children}</main>
       </div>
-    </>
+      <NotificationSidebar isOpen={isNotificationSidebarOpen} onClose={() => setIsNotificationSidebarOpen(false)} />
+    </div>
   );
 
-  if (!project) {
+  if (isLoading || !hydrated) {
     return (
-      <div className="flex min-h-screen bg-background">
-        <VoiceCallProvider>
-          {defaultLayout(children)}
-          <VoiceCallContainer />
-        </VoiceCallProvider>
+      <div className="flex items-center justify-center min-h-screen bg-background text-text-secondary">
+        로딩 중...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background text-red-500">
+        프로젝트를 불러오는 데 실패했습니다.
+      </div>
+    );
+  }
+
+  if (!project) {
+    // 데이터가 없고 로딩도 끝났으며 에러도 없는 경우 (예: 권한 없음 또는 존재하지 않는 프로젝트)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background text-text-secondary">
+        프로젝트를 찾을 수 없습니다.
       </div>
     );
   }
@@ -290,16 +267,8 @@ export default function ProjectLayout({
   return (
     <ProjectProvider project={project}>
       <VoiceCallProvider>
-        <div className="flex min-h-screen bg-background">
-          {defaultLayout(children)}
-
-          {/* Voice Call Container always present but conditionally rendered */}
-          <VoiceCallContainer />
-          <NotificationSidebar
-            isOpen={isNotificationSidebarOpen}
-            onClose={() => setIsNotificationSidebarOpen(false)}
-          />
-        </div>
+        {layoutContent}
+        <VoiceCallContainer />
       </VoiceCallProvider>
     </ProjectProvider>
   );
