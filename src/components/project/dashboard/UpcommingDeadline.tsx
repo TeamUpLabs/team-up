@@ -60,32 +60,32 @@ export default function UpcommingDeadline({ project, isLoading = false }: Upcomm
     ...(project.tasks?.map(task => ({
       id: `task-${task.id}`,
       user: {
-        name: project?.members?.find(member => member.id === task.createdBy)?.name || '담당자 없음',
-        email: project?.members?.find(member => member.id === task.createdBy)?.email || '이메일 없음',
-        image: project?.members?.find(member => member.id === task.createdBy)?.profileImage || '프로필 이미지 없음',
-        isActive: project?.members?.find(member => member.id === task.createdBy)?.status || '활동 없음',
+        name: project?.members?.find(member => member.user.id === task.creator.id)?.user.name || '담당자 없음',
+        email: project?.members?.find(member => member.user.id === task.creator.id)?.user.email || '이메일 없음',
+        image: project?.members?.find(member => member.user.id === task.creator.id)?.user.profile_image || '프로필 이미지 없음',
+        isActive: project?.members?.find(member => member.user.id === task.creator.id)?.user.status || '활동 없음',
       },
       type: 'task' as const,
       title: task.title,
       status: task.status,
       description: task.description,
-      timestamp: new Date(task.endDate || "")
+      timestamp: new Date(task.due_date || "")
     })) || []),
 
     ...(project.milestones?.map(milestone => {
       return {
         id: `milestone-${milestone.id}`,
         user: {
-          name: project?.members?.find(member => member.id === milestone.createdBy)?.name || '담당자 없음',
-          email: project?.members?.find(member => member.id === milestone.createdBy)?.email || '이메일 없음',
-          image: project?.members?.find(member => member.id === milestone.createdBy)?.profileImage || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.id === milestone.createdBy)?.status || '활동 없음',
+          name: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.name || '담당자 없음',
+          email: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.email || '이메일 없음',
+          image: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.profile_image || '프로필 이미지 없음',
+          isActive: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.status || '활동 없음',
         },
         type: 'milestone' as const,
         title: milestone.title,
         status: milestone.status,
         description: milestone.description,
-        timestamp: new Date(milestone.endDate || "")
+        timestamp: new Date(milestone.due_date || "")
       };
     }) || []),
 
@@ -93,10 +93,10 @@ export default function UpcommingDeadline({ project, isLoading = false }: Upcomm
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
-          name: project?.members?.find(member => member.id === schedule.created_by)?.name || '담당자 없음',
-          email: project?.members?.find(member => member.id === schedule.created_by)?.email || '이메일 없음',
-          image: project?.members?.find(member => member.id === schedule.created_by)?.profileImage || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.id === schedule.created_by)?.status || '활동 없음',
+          name: project?.members?.find(member => member.user.id === schedule.created_by)?.user.name || '담당자 없음',
+          email: project?.members?.find(member => member.user.id === schedule.created_by)?.user.email || '이메일 없음',
+          image: project?.members?.find(member => member.user.id === schedule.created_by)?.user.profile_image || '프로필 이미지 없음',
+          isActive: project?.members?.find(member => member.user.id === schedule.created_by)?.user.status || '활동 없음',
         },
         type: 'meeting' as const,
         title: schedule.title,
@@ -110,10 +110,10 @@ export default function UpcommingDeadline({ project, isLoading = false }: Upcomm
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
-          name: project?.members?.find(member => member.id === schedule.created_by)?.name || '담당자 없음',
-          email: project?.members?.find(member => member.id === schedule.created_by)?.email || '이메일 없음',
-          image: project?.members?.find(member => member.id === schedule.created_by)?.profileImage || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.id === schedule.created_by)?.status || '활동 없음',
+          name: project?.members?.find(member => member.user.id === schedule.created_by)?.user.name || '담당자 없음',
+          email: project?.members?.find(member => member.user.id === schedule.created_by)?.user.email || '이메일 없음',
+          image: project?.members?.find(member => member.user.id === schedule.created_by)?.user.profile_image || '프로필 이미지 없음',
+          isActive: project?.members?.find(member => member.user.id === schedule.created_by)?.user.status || '활동 없음',
         },
         type: 'event' as const,
         title: schedule.title,
@@ -122,7 +122,17 @@ export default function UpcommingDeadline({ project, isLoading = false }: Upcomm
         timestamp: new Date(schedule.end_time || "")
       };
     }) || []),
-  ].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+  ].sort((a, b) => {
+    const dateA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+    const dateB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+    
+    // Handle invalid dates by putting them at the end
+    if (isNaN(dateA) && isNaN(dateB)) return 0;
+    if (isNaN(dateA)) return 1;
+    if (isNaN(dateB)) return -1;
+    
+    return dateA - dateB;
+  });
 
 
   const handleModalOpen = (type: string, id: string) => {
@@ -215,10 +225,16 @@ export default function UpcommingDeadline({ project, isLoading = false }: Upcomm
 
                 <div className="flex flex-col flex-shrink-0 items-end">
                   <span className="text-text-secondary text-sm">
-                    {formatDistanceToNow(activity.timestamp, { addSuffix: true, locale: ko })}
+                    {activity.timestamp && !isNaN(new Date(activity.timestamp).getTime()) 
+                      ? formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true, locale: ko })
+                      : '날짜 없음'
+                    }
                   </span>
                   <span className="text-text-secondary text-xs">
-                    Due {activity.timestamp.toLocaleDateString()}
+                    {activity.timestamp && !isNaN(new Date(activity.timestamp).getTime())
+                      ? `Due ${new Date(activity.timestamp).toLocaleDateString()}`
+                      : '날짜 없음'
+                    }
                   </span>
                 </div>
               </div>

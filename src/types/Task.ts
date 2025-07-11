@@ -1,34 +1,63 @@
-import { Member } from "@/types/Member";
+import { User, blankUser } from "@/types/User";
+import { MileStone, blankMileStone } from "@/types/MileStone";
 
 export interface SubTask {
   id: number;
   title: string;
-  completed: boolean;
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Comment {
   id: number;
-  author_id: number;
   content: string;
-  createdAt: string;
+  created_at: string;
+  updated_at: string;
+  created_by: number;
+  creator: User;
 }
 
 export interface Task {
   id: number;
+  project_id: string;
   title: string;
   description: string;
-  status: 'not-started' | 'in-progress' | 'done';
-  priority: 'low' | 'medium' | 'high';
-  assignee?: Member[];
-  assignee_id?: number[];
-  startDate?: string;
-  endDate?: string;
-  tags: string[];
+  status: "not_started" | "in_progress" | "completed" | "on_hold";
+  priority: "low" | "medium" | "high";
+  estimated_hours: number;
+  actual_hours: number;
+  start_date: string;
+  due_date: string;
+  milestone_id: number;
+  created_at: string;
+  updated_at: string;
+  completed_at: string;
+  milestone: MileStone;
+  assignee: User[];
+  creator: User;
   subtasks: SubTask[];
   comments: Comment[];
-  milestone_id: number;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: number;
-  updatedBy: number;
+}
+
+export const blankTask: Task = {
+  id: 0,
+  project_id: "",
+  title: "",
+  description: "",
+  status: "not_started",
+  priority: "low",
+  estimated_hours: 0,
+  actual_hours: 0,
+  start_date: "",
+  due_date: "",
+  milestone_id: 0,
+  created_at: "",
+  updated_at: "",
+  completed_at: "",
+  milestone: blankMileStone,
+  assignee: [],
+  creator: blankUser,
+  subtasks: [],
+  comments: [],
 }

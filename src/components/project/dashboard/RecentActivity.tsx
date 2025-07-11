@@ -66,28 +66,28 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
     ...(project.tasks?.map(task => ({
       id: `task-${task.id}`,
       user: {
-        name: project?.members?.find(member => member.id === task.createdBy)?.name || '담당자 없음',
-        email: project?.members?.find(member => member.id === task.createdBy)?.email || '이메일 없음',
-        image: project?.members?.find(member => member.id === task.createdBy)?.profileImage || '프로필 이미지 없음',
-        isActive: project?.members?.find(member => member.id === task.createdBy)?.status || '활동 없음',
+        name: project?.members?.find(member => member.user.id === task.creator.id)?.user.name || '담당자 없음',
+        email: project?.members?.find(member => member.user.id === task.creator.id)?.user.email || '이메일 없음',
+        image: project?.members?.find(member => member.user.id === task.creator.id)?.user.profile_image || '프로필 이미지 없음',
+        isActive: project?.members?.find(member => member.user.id === task.creator.id)?.user.status || '활동 없음',
       },
       type: 'task' as const,
-      action: `"${task.title}" 작업을 ${task.status === 'done' ? '완료했습니다.' : '시작했습니다.'}`,
-      timestamp: new Date(task.updatedAt || task.createdAt)
+      action: `"${task.title}" 작업을 ${task.status === 'completed' ? '완료했습니다.' : '시작했습니다.'}`,
+      timestamp: new Date(task.updated_at || task.created_at)
     })) || []),
 
     ...(project.milestones?.map(milestone => {
       return {
         id: `milestone-${milestone.id}`,
         user: {
-          name: project?.members?.find(member => member.id === milestone.createdBy)?.name || '담당자 없음',
-          email: project?.members?.find(member => member.id === milestone.createdBy)?.email || '이메일 없음',
-          image: project?.members?.find(member => member.id === milestone.createdBy)?.profileImage || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.id === milestone.createdBy)?.status || '활동 없음',
+          name: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.name || '담당자 없음',
+          email: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.email || '이메일 없음',
+          image: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.profile_image || '프로필 이미지 없음',
+          isActive: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.status || '활동 없음',
         },
         type: 'milestone' as const,
-        action: `"${milestone.title}" 마일스톤을 ${milestone.status === 'done' ? '달성했습니다.' : '시작했습니다.'}`,
-        timestamp: new Date(milestone.updatedAt || milestone.createdAt)
+        action: `"${milestone.title}" 마일스톤을 ${milestone.status === 'completed' ? '달성했습니다.' : '시작했습니다.'}`,
+        timestamp: new Date(milestone.updated_at || milestone.created_at)
       };
     }) || []),
 
@@ -95,10 +95,10 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
-          name: project?.members?.find(member => member.id === schedule.created_by)?.name || '담당자 없음',
-          email: project?.members?.find(member => member.id === schedule.created_by)?.email || '이메일 없음',
-          image: project?.members?.find(member => member.id === schedule.created_by)?.profileImage || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.id === schedule.created_by)?.status || '활동 없음',
+          name: project?.members?.find(member => member.user.id === schedule.created_by)?.user.name || '담당자 없음',
+          email: project?.members?.find(member => member.user.id === schedule.created_by)?.user.email || '이메일 없음',
+          image: project?.members?.find(member => member.user.id === schedule.created_by)?.user.profile_image || '프로필 이미지 없음',
+          isActive: project?.members?.find(member => member.user.id === schedule.created_by)?.user.status || '활동 없음',
         },
         type: 'meeting' as const,
         action: `"${schedule.title}" 회의를 ${schedule.status === 'completed' ? '참여했습니다.' : '시작했습니다.'}`,
@@ -110,10 +110,10 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
-          name: project?.members?.find(member => member.id === schedule.created_by)?.name || '담당자 없음',
-          email: project?.members?.find(member => member.id === schedule.created_by)?.email || '이메일 없음',
-          image: project?.members?.find(member => member.id === schedule.created_by)?.profileImage || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.id === schedule.created_by)?.status || '활동 없음',
+          name: project?.members?.find(member => member.user.id === schedule.created_by)?.user.name || '담당자 없음',
+          email: project?.members?.find(member => member.user.id === schedule.created_by)?.user.email || '이메일 없음',
+          image: project?.members?.find(member => member.user.id === schedule.created_by)?.user.profile_image || '프로필 이미지 없음',
+          isActive: project?.members?.find(member => member.user.id === schedule.created_by)?.user.status || '활동 없음',
         },
         type: 'event' as const,
         action: `"${schedule.title}" 이벤트를 ${schedule.status === 'completed' ? '참여했습니다.' : '시작했습니다.'}`,
