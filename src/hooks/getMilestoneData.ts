@@ -1,21 +1,9 @@
 import { server } from "@/auth/server";
 import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
+import { MilestoneCreateFormData, MilestoneUpdateFormData } from "@/types/MileStone";
 
-interface MilestoneFormData {
-  project_id: string;
-  title: string;
-  description: string;
-  startDate: string;
-  endDate?: string;
-  status: string;
-  priority: string;
-  tags: string[];
-  assignee_id: number[];
-  createdBy: number;
-  updatedBy: number;
-}
 
-export const createMilestone = async (project_id: string, milestone: MilestoneFormData) => {
+export const createMilestone = async (project_id: string, milestone: MilestoneCreateFormData) => {
   try {
     const res = await server.post(`/project/${project_id}/milestone`, {
       ...milestone,
@@ -52,7 +40,7 @@ export const deleteMilestone = async (project_id: string, milestoneId: number) =
 };
 
 
-export const updateMilestone = async (project_id: string, milestone_id: number, milestone: MilestoneFormData) => {
+export const updateMilestone = async (project_id: string, milestone_id: number, milestone: MilestoneUpdateFormData) => {
   try {
     const res = await server.put(`/project/${project_id}/milestone/${milestone_id}`, milestone);
     if (res.status === 200) {

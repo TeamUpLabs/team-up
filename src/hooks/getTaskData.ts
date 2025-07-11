@@ -1,24 +1,8 @@
 import { server } from "@/auth/server";
 import { getCurrentKoreanTime } from "@/utils/dateUtils";
-import { Comment, SubTask } from "@/types/Task";
+import { Comment, SubTask, TaskCreateFormData, TaskUpdateFormData } from "@/types/Task";
 
-interface TaskFormData {
-  project_id: string;
-  title: string;
-  description: string;
-  status: string;
-  assignee_id: number[];
-  tags: string[];
-  priority: string;
-  subtasks: string[];
-  milestone_id: number;
-  startDate: string;
-  endDate: string;
-  createdBy: number;
-  updatedBy: number;
-}
-
-export const createTask = async (project_id: string, task: TaskFormData) => {
+export const createTask = async (project_id: string, task: TaskCreateFormData) => {
   try {
     const res = await server.post(`/project/${project_id}/task`, {
       project_id: task.project_id,
@@ -26,20 +10,14 @@ export const createTask = async (project_id: string, task: TaskFormData) => {
       title: task.title,
       description: task.description,
       status: task.status,
-      startDate: task.startDate,
-      endDate: task.endDate,
-      assignee_id: task.assignee_id,
-      tags: task.tags,
+      start_date: task.start_date,
+      due_date: task.due_date,
+      assignee_ids: task.assignee_ids,
       priority: task.priority,
-      subtasks: task.subtasks.map((subtask) => ({
-        id: Date.now() + Math.floor(Math.random() * 10000),
-        title: subtask,
-        completed: false,
-      })),
-      createdBy: task.createdBy,
-      updatedBy: task.updatedBy,
-      createdAt: getCurrentKoreanTime(),
-      updatedAt: getCurrentKoreanTime(),
+      subtasks: task.subtasks,
+      created_by: task.created_by,
+      created_at: getCurrentKoreanTime(),
+      updated_at: getCurrentKoreanTime(),
     });
     if (res.status === 200) {
       return res.data;
@@ -82,23 +60,7 @@ export const updateTaskStatus = async (project_id: string, task_id: number, stat
   }
 }
 
-interface UpdateTaskFormData {
-  title: string;
-  description: string;
-  status: string;
-  priority: string;
-  startDate: string;
-  endDate: string;
-  assignee_id: number[];
-  tags: string[];
-  subtasks: SubTask[];
-  comments: Comment[];
-  milestone_id: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export const updateTask = async (project_id: string, task_id: number, task: UpdateTaskFormData) => {
+export const updateTask = async (project_id: string, task_id: number, task: TaskUpdateFormData) => {
   try {
     const res = await server.put(`/project/${project_id}/task/${task_id}`, task);
     if (res.status === 200) {
@@ -115,7 +77,7 @@ export const updateTask = async (project_id: string, task_id: number, task: Upda
 export const updateSubtask = async (project_id: string, task_id: number, subtask: SubTask) => {
   try {
     const res = await server.put(`/project/${project_id}/task/${task_id}/subtask/${subtask.id}/state`, {
-      completed: subtask.completed,
+      is_completed: subtask.is_completed,
     });
     if (res.status === 200) {
       return res.data;

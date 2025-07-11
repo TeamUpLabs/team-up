@@ -61,3 +61,34 @@ export const blankTask: Task = {
   subtasks: [],
   comments: [],
 }
+
+export interface TaskCreateFormData {
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  estimated_hours: number;
+  start_date: string;
+  due_date: string;
+  project_id: string;
+  milestone_id: number;
+  assignee_ids: number[];
+  created_by: number;
+  subtasks: {
+    title: string;
+    is_completed: boolean;
+  }[];
+}
+
+export interface TaskUpdateFormData {
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  estimated_hours: number;
+  actual_hours: number;
+  start_date: string;
+  due_date: string;
+  milestone_id: number;
+  assignee_ids: number[];
+}

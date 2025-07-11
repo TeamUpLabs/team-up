@@ -125,3 +125,12 @@ export interface UserBrief {
     role: string;
     status: string;
 }
+
+export const blankUserBrief: UserBrief = {
+    id: 0,
+    name: "",
+    email: "",
+    profile_image: "",
+    role: "",
+    status: "",
+}

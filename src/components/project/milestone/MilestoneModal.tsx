@@ -22,7 +22,7 @@ import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { Input } from "@/components/ui/Input";
 import DatePicker from "@/components/ui/DatePicker";
-import { detectSubtasks } from "@/utils/detectSubtask";
+import { detectTasks } from "@/utils/detectTask";
 import { useTheme } from "@/contexts/ThemeContext";
 import { isMarkdown } from "@/utils/isMarkdown";
 import MarkdownEditor from "@/components/ui/MarkdownEditor";
@@ -61,17 +61,17 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     let totalTasks = 0;
     let completedTasks = 0;
 
-    milestoneData?.subtasks.forEach(task => {
+    milestoneData?.tasks.forEach(task => {
       // Count the main task
       totalTasks++;
-      if (task.status === 'done') {
+      if (task.status === 'completed') {
         completedTasks++;
       }
 
       // Count subtasks
       if (task.subtasks.length > 0) {
         totalTasks += task.subtasks.length;
-        completedTasks += task.subtasks.filter(st => st.completed).length;
+        completedTasks += task.subtasks.filter(st => st.is_completed).length;
       }
     });
 
@@ -81,7 +81,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const progressPercentage = calculateProgress();
 
   // Calculate if user is assignee inside the component body to ensure it's always up-to-date
-  const isUserAssignee = user && milestoneData?.assignee?.some(assi => assi.id === user.id);
+  const isUserAssignee = user && milestoneData?.assignees?.some(assi => assi.id === user.id);
 
   const handleAssigneeClick = (assiId: number) => {
     localStorage.setItem('selectedAssiId', assiId.toString());
@@ -116,8 +116,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     const { name, value } = e.target;
 
     // Validate end date is not earlier than start date
-    if (name === 'endDate') {
-      const startDate = milestoneData.startDate;
+    if (name === 'due_date') {
+      const startDate = milestoneData.start_date;
       if (startDate && value && new Date(value) < new Date(startDate)) {
         useAuthStore.getState().setAlert("종료일은 시작일보다 빠를 수 없습니다.", "warning");
         setMilestoneData({ ...milestoneData, [name]: milestoneData[name] });
@@ -126,8 +126,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     }
 
     // Validate start date is not later than end date
-    if (name === 'startDate') {
-      const endDate = milestoneData.endDate;
+    if (name === 'start_date') {
+      const endDate = milestoneData.due_date;
       if (endDate && value && new Date(endDate) < new Date(value)) {
         useAuthStore.getState().setAlert("시작일은 종료일보다 늦을 수 없습니다.", "warning");
         setMilestoneData({ ...milestoneData, [name]: milestoneData[name] });
@@ -166,7 +166,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   };
 
   const handleEdit = (name: string) => {
-    if (user && milestoneData.assignee?.some(a => a.id === user?.id)) {
+    if (user && milestoneData.assignees?.some(a => a.id === user?.id)) {
       setIsEditing(name);
       if (name !== "none") {
         useAuthStore.getState().setAlert("편집 모드로 전환되었습니다.", "info");
@@ -182,8 +182,15 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     setSubmitStatus('submitting');
     try {
       await updateMilestone(params?.projectId ? String(params.projectId) : 'default', milestone.id, {
-        ...milestoneData,
-        assignee_id: milestoneData.assignee.map(a => a.id)
+        title: milestoneData.title,
+        description: milestoneData.description,
+        status: milestoneData.status,
+        priority: milestoneData.priority,
+        start_date: milestoneData.start_date,
+        due_date: milestoneData.due_date,
+        assignee_ids: milestoneData.assignees.map(a => a.id),
+        tags: milestoneData.tags,
+        progress: progressPercentage,
       });
       useAuthStore.getState().setAlert("마일스톤이 성공적으로 수정되었습니다.", "success");
       setSubmitStatus('success');
@@ -205,29 +212,31 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
   };
 
-  const AutoGenerateSubtasks = async (description: string) => {
-    const subtasks = detectSubtasks(description);
+  const AutoGenerateTasks = async (description: string) => {
+    const tasks = detectTasks(description);
 
     useAuthStore.getState().setConfirm(`하위 작업을 생성하시겠습니까? \n\n 하위 작업은 마일스톤의 시작일과 종료일, 우선순위, 태그, 할당자, 상태를 따라갑니다.`, async () => {
-      if (subtasks.length !== 0) {
+      if (tasks.length !== 0) {
         if (project?.id) {
           try {
             useAuthStore.getState().setAlert("진행중입니다. 잠시만 기다려주세요.", "info");
-            await Promise.all(subtasks.map(async (subtask) => {
+            await Promise.all(tasks.map(async (task) => {
               await createTask(project?.id, {
                 project_id: project?.id,
-                title: subtask.text,
+                title: task.text,
                 description: "",
                 status: milestoneData.status,
-                startDate: milestoneData.startDate || "",
-                endDate: milestoneData.endDate || "",
-                assignee_id: milestoneData.assignee.map(a => a.id),
-                tags: milestoneData.tags,
+                start_date: milestoneData.start_date || "",
+                due_date: milestoneData.due_date || "",
+                assignee_ids: milestoneData.assignees.map(a => a.id),
+                subtasks: [{
+                  title: task.text,
+                  is_completed: false,
+                }],
                 priority: milestoneData.priority,
-                subtasks: [],
+                estimated_hours: 0,
                 milestone_id: milestoneData.id,
-                createdBy: useAuthStore.getState().user?.id || 0,
-                updatedBy: useAuthStore.getState().user?.id || 0,
+                created_by: useAuthStore.getState().user?.id || 0,
               });
             }));
           } catch (error) {
@@ -433,13 +442,13 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             <div className="space-y-2">
               <h4 className="font-medium">Created</h4>
               <p className="text-sm text-muted-foreground">
-                {new Date(milestone.createdAt).toLocaleDateString()} by {project?.members.find((member) => member.id === milestone.createdBy)?.name}
+                {new Date(milestone.created_at).toLocaleDateString()} by {project?.members.find((member) => member.user.id === milestone.creator.id)?.user.name}
               </p>
             </div>
             <div className="space-y-2">
               <h4 className="font-medium">Last Updated</h4>
               <p className="text-sm text-muted-foreground">
-                {new Date(milestone.updatedAt).toLocaleDateString()} by {project?.members.find((member) => member.id === milestone.updatedBy)?.name}
+                {new Date(milestone.updated_at).toLocaleDateString()} by {project?.members.find((member) => member.user.id === milestone.creator.id)?.user.name}
               </p>
             </div>
           </div>
@@ -469,18 +478,18 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             </div>
             {isEditing === "startDate" ? (
               <DatePicker
-                value={milestoneData.startDate ? new Date(milestoneData.startDate) : undefined}
+                value={milestoneData.start_date ? new Date(milestoneData.start_date) : undefined}
                 onChange={(date: Date | undefined) => {
                   if (date) {
-                    setMilestoneData({ ...milestoneData, startDate: date.toISOString().split("T")[0] });
+                    setMilestoneData({ ...milestoneData, start_date: date.toISOString().split("T")[0] });
                   }
                 }}
                 className="w-full p-2 rounded-lg bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
-                maxDate={milestoneData.endDate ? new Date(milestoneData.endDate) : undefined}
+                maxDate={milestoneData.due_date ? new Date(milestoneData.due_date) : undefined}
               />
             ) : (
               <p className="text-sm text-muted-foreground">
-                {milestoneData.startDate}
+                {milestoneData.start_date}
               </p>
             )}
           </div>
@@ -501,18 +510,18 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             </div>
             {isEditing === "endDate" ? (
               <DatePicker
-                value={milestoneData.endDate ? new Date(milestoneData.endDate) : undefined}
+                value={milestoneData.due_date ? new Date(milestoneData.due_date) : undefined}
                 onChange={(date: Date | undefined) => {
                   if (date) {
-                    setMilestoneData({ ...milestoneData, endDate: date ? date.toISOString().split("T")[0] : undefined });
+                    setMilestoneData({ ...milestoneData, due_date: date.toISOString().split("T")[0] });
                   }
                 }}
                 className="w-full p-2 rounded-md bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo"
-                minDate={milestoneData.startDate ? new Date(milestoneData.startDate) : undefined}
+                minDate={milestoneData.start_date ? new Date(milestoneData.start_date) : undefined}
               />
             ) : (
               <p className="text-sm text-muted-foreground">
-                {milestoneData.endDate}
+                {milestoneData.due_date}
               </p>
             )}
           </div>
@@ -521,7 +530,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Progress & tasks Accordian */}
       <Accordion
-        title={`Progress & Tasks (${milestoneData.subtasks && milestoneData.subtasks.filter(st => st.status === "done").length}/${milestoneData.subtasks && milestoneData.subtasks.length || 0})`}
+        title={`Progress & Tasks (${milestoneData.tasks && milestoneData.tasks.filter(task => task.status === "completed").length}/${milestoneData.tasks && milestoneData.tasks.length || 0})`}
         icon={FileCheck}
         defaultOpen
       >
@@ -537,12 +546,12 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
           </div>
 
           <div className="space-y-2">
-            {milestoneData.subtasks && milestoneData.subtasks.length === 0 ? (
+            {milestoneData.tasks && milestoneData.tasks.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-4 text-center">
                 <span className="text-text-secondary">하위 작업이 없습니다.</span>
                 {isMarkdown(milestoneData.description) && (
                   <button
-                    onClick={() => AutoGenerateSubtasks(milestoneData.description)}
+                    onClick={() => AutoGenerateTasks(milestoneData.description)}
                     className="w-full bg-point-color-indigo hover:bg-point-color-indigo-hover text-white font-semibold px-4 py-2 rounded-md transition-colors cursor-pointer"
                   >
                     ✨ 하위 작업 자동 생성
@@ -550,38 +559,38 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 )}
               </div>
             ) : (
-              milestoneData.subtasks && milestoneData.subtasks.map((subtask) => (
-                <div key={subtask.id} className="flex flex-col bg-component-secondary-background border border-component-border p-3 rounded-lg">
+              milestoneData.tasks && milestoneData.tasks.map((task) => (
+                <div key={task.id} className="flex flex-col bg-component-secondary-background border border-component-border p-3 rounded-lg">
                   <div className="flex gap-2">
                     <input
                       type="checkbox"
                       readOnly
                       checked={
-                        subtask.subtasks.length > 0 &&
-                        subtask.subtasks.every((st) => st.completed) ||
-                        subtask.status === 'done'
+                        task.subtasks.length > 0 &&
+                        task.subtasks.every((st) => st.is_completed) ||
+                        task.status === 'completed'
                       }
                       className='rounded bg-component-secondary-background border-component-border'
                     />
-                    <span className={`text-sm cursor-pointer hover:text-blue-400 ${subtask.subtasks.length > 0 && subtask.subtasks.every(st => st.completed) || subtask.status === 'done' ?
+                    <span className={`text-sm cursor-pointer hover:text-blue-400 ${task.subtasks.length > 0 && task.subtasks.every(st => st.is_completed) || task.status === 'completed' ?
                       'text-text-secondary line-through' : 'text-text-primary'
                       }`}
-                      onClick={() => handleTaskClick(subtask.id)}
+                      onClick={() => handleTaskClick(task.id)}
                     >
-                      {subtask.title}
+                      {task.title}
                     </span>
                   </div>
                   <div className="ml-8 mt-2">
                     {
-                      subtask.subtasks && subtask.subtasks.map((sub, idx) => (
+                      task.subtasks && task.subtasks.map((sub, idx) => (
                         <div key={idx} className='space-x-2'>
                           <input
                             type="checkbox"
                             readOnly
-                            checked={sub.completed}
+                            checked={sub.is_completed}
                             className='rounded bg-component-secondary-background border-component-border'
                           />
-                          <span className={`text-sm ${sub.completed ? 'text-text-secondary line-through' : 'text-text-primary'}`}>{sub.title}</span>
+                          <span className={`text-sm ${sub.is_completed ? 'text-text-secondary line-through' : 'text-text-primary'}`}>{sub.title}</span>
                         </div>
                       ))
                     }
@@ -595,7 +604,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
 
       {/* Assignees Accordian */}
       <Accordion
-        title={`Assignees (${milestoneData.assignee && milestoneData.assignee.length || 0})`}
+        title={`Assignees (${milestoneData.assignees && milestoneData.assignees.length || 0})`}
         icon={User}
       >
         <div className="space-y-2">
@@ -604,29 +613,29 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               <div className="mb-3">
                 <p className="text-sm text-text-secondary">
                   선택된 담당자:{" "}
-                  {milestoneData.assignee && milestoneData.assignee.length || 0 > 0
-                    ? `${milestoneData.assignee?.length}명`
+                  {milestoneData.assignees && milestoneData.assignees.length || 0 > 0
+                    ? `${milestoneData.assignees?.length}명`
                     : "없음"}
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {project?.members.map((member) => {
-                  const isSelected = milestoneData.assignee?.some(
-                    (a) => a.id === member.id
+                  const isSelected = milestoneData.assignees?.some(
+                    (a) => a.id === member.user.id
                   );
                   return (
                     <div
-                      key={member.id}
+                      key={member.user.id}
                       onClick={() => {
                         if (isSelected) {
                           if (
-                            milestoneData.assignee?.length &&
-                            milestoneData.assignee?.length > 1
+                            milestoneData.assignees?.length &&
+                            milestoneData.assignees?.length > 1
                           ) {
                             setMilestoneData({
                               ...milestoneData,
-                              assignee: milestoneData.assignee?.filter(
-                                (a) => a.id !== member.id
+                              assignees: milestoneData.assignees?.filter(
+                                (a) => a.id !== member.user.id
                               ),
                             });
                           } else {
@@ -640,7 +649,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                         } else {
                           setMilestoneData({
                             ...milestoneData,
-                            assignee: [...(milestoneData.assignee ?? []), member],
+                            assignees: [...(milestoneData.assignees ?? []), member.user],
                           });
                         }
                       }}
@@ -652,9 +661,9 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                       <div className="relative flex-shrink-0">
                         <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
                           <div className="relative w-full h-full flex items-center justify-center border border-component-border rounded-full">
-                            {member.profileImage ? (
+                            {member.user.profile_image ? (
                               <Image
-                                src={member.profileImage}
+                                src={member.user.profile_image}
                                 alt="Profile"
                                 className={`rounded-full absolute text-text-secondary transform transition-all duration-300 ${isSelected
                                   ? "opacity-0 rotate-90 scale-0"
@@ -689,10 +698,10 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                       </div>
                       <div className="flex flex-col">
                         <p className="text-sm font-medium text-text-primary">
-                          {member.name}
+                          {member.user.name}
                         </p>
                         <p className="text-xs text-text-secondary">
-                          {member.role}
+                          {member.user.role}
                         </p>
                       </div>
                     </div>
@@ -705,8 +714,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               <div className="flex items-center gap-2 group relative">
                 <p className="text-sm text-text-secondary">
                   담당자:{" "}
-                  {milestoneData.assignee?.length ?? 0 > 0
-                    ? `${milestoneData.assignee?.length}명`
+                  {milestoneData.assignees?.length ?? 0 > 0
+                    ? `${milestoneData.assignees?.length}명`
                     : "없음"}
                 </p>
                 <FontAwesomeIcon
@@ -719,7 +728,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {milestoneData?.assignee?.map((assi) => (
+                {milestoneData?.assignees?.map((assi) => (
                   <div
                     key={assi?.id}
                     className="flex items-center gap-3 p-2 rounded-lg bg-component-tertiary-background border border-component-border transform transition-all duration-300 hover:bg-component-tertiary-background/60 hover:border-point-color-indigo cursor-pointer"
@@ -728,9 +737,9 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                     <div className="relative flex-shrink-0">
                       <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
                         <div className="relative w-full h-full flex items-center justify-center border border-component-border rounded-full">
-                          {assi.profileImage ? (
+                          {assi.profile_image ? (
                             <Image
-                              src={assi.profileImage}
+                              src={assi.profile_image}
                               alt="Profile"
                               quality={100}
                               className="rounded-full"

@@ -1,4 +1,4 @@
-import { User, blankUser } from "@/types/User";
+import { UserBrief, blankUserBrief } from "@/types/User";
 import { Task } from "@/types/Task";
 
 export interface MileStone {
@@ -14,8 +14,8 @@ export interface MileStone {
   created_at: string;
   updated_at: string;
   progress: number;
-  assignee: User[];
-  creator: User;
+  assignees: UserBrief[];
+  creator: UserBrief;
   tasks: Task[];
   tasks_count: number;
   completed_task_count: number;
@@ -34,9 +34,34 @@ export const blankMileStone: MileStone = {
   created_at: "",
   updated_at: "",
   progress: 0,
-  assignee: [],
-  creator: blankUser,
+  assignees: [],
+  creator: blankUserBrief,
   tasks: [],
   tasks_count: 0,
   completed_task_count: 0,
+}
+
+export interface MilestoneCreateFormData {
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  start_date: string;
+  due_date: string;
+  project_id: string;
+  tags: string[];
+  assignee_ids: number[];
+  created_by: number;
+}
+
+export interface MilestoneUpdateFormData {
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  progress: number;    
+  start_date: string;
+  due_date: string;    
+  assignee_ids: number[];
+  tags: string[];
 }

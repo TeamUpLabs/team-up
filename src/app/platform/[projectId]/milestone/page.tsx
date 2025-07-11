@@ -21,17 +21,17 @@ export default function MilestonePage() {
       label: '전체',
       count: project?.milestones?.length || 0
     },
-    'not-started': {
+    'not_started': {
       label: '시작 전',
-      count: project?.milestones?.filter(milestone => milestone.status === 'not-started').length || 0
+      count: project?.milestones?.filter(milestone => milestone.status === 'not_started').length || 0
     },
-    'in-progress': {
+    'in_progress': {
       label: '진행 중',
-      count: project?.milestones?.filter(milestone => milestone.status === 'in-progress').length || 0
+      count: project?.milestones?.filter(milestone => milestone.status === 'in_progress').length || 0
     },
-    'done': {
+    'completed': {
       label: '완료됨',
-      count: project?.milestones?.filter(milestone => milestone.status === 'done').length || 0
+      count: project?.milestones?.filter(milestone => milestone.status === 'completed').length || 0
     }
   };
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

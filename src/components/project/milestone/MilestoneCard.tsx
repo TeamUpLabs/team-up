@@ -16,9 +16,9 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'not-started': return 'bg-gray-500'
-      case 'in-progress': return 'bg-blue-500'
-      case 'done': return 'bg-green-500'
+      case 'not_started': return 'bg-gray-500'
+      case 'in_progress': return 'bg-blue-500'
+      case 'completed': return 'bg-green-500'
       default: return 'bg-gray-500'
     }
   }
@@ -55,17 +55,17 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
         )}
 
         <div className="flex items-center gap-2">
-          <p className="text-text-secondary text-sm">{new Date(milestone?.startDate || "").toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}</p>
+          <p className="text-text-secondary text-sm">{new Date(milestone?.start_date || "").toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}</p>
           <ArrowRight className="w-4 h-4 text-text-secondary" />
-          <p className="text-text-secondary text-sm">{new Date(milestone?.endDate || "").toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}</p>
+          <p className="text-text-secondary text-sm">{new Date(milestone?.due_date || "").toLocaleString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}</p>
         </div>
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <Users className="w-4 h-4 text-text-secondary" />
-            <p className="text-text-secondary text-sm">{milestone.assignee.length || "0"}</p>
+            <p className="text-text-secondary text-sm">{milestone.assignees && milestone.assignees.length || "0"}</p>
           </div>
-          <p className="text-text-secondary text-sm">{milestone.subtasks.filter((task) => task.status === 'done').length}/{milestone.subtasks.length || "0"} tasks</p>
+          <p className="text-text-secondary text-sm">{milestone.tasks && milestone.tasks.filter((task) => task.status === 'completed').length}/{milestone.tasks && milestone.tasks.length || "0"} tasks</p>
         </div>
       </div>
       {isModalOpen && (
