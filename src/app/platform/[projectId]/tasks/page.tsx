@@ -32,7 +32,7 @@ export default function TasksPage() {
       setTasks(project.tasks.map((task: Task) => ({
         ...task,
         id: task.id,
-        status: task.status as "not-started" | "in-progress" | "done",
+        status: task.status as "not_started" | "in_progress" | "completed" | "on_hold",
         priority: task.priority as "high" | "medium" | "low"
       })));
     } catch (error) {
@@ -77,11 +77,11 @@ export default function TasksPage() {
 
   const getStatusText = (status: Task['status']) => {
     switch (status) {
-      case 'not-started':
+      case 'not_started':
         return '준비';
-      case 'in-progress':
+      case 'in_progress':
         return '진행 중';
-      case 'done':
+      case 'completed':
         return '완료';
     }
   };
@@ -94,21 +94,21 @@ export default function TasksPage() {
       task.title.toLowerCase().includes(query) ||
       task.description?.toLowerCase().includes(query) ||
       project?.members?.some(member => member.user.name.toLowerCase().includes(query)) ||
-      task.tags?.some(tag => tag.toLowerCase().includes(query))
+      task.subtasks?.some(subtask => subtask.title.toLowerCase().includes(query))
     );
   };
 
   const groupedTasks = {
-    'not-started': filterTasks(tasks.filter(task => task.status === 'not-started')),
-    'in-progress': filterTasks(tasks.filter(task => task.status === 'in-progress')),
-    'done': filterTasks(tasks.filter(task => task.status === 'done')),
+    'not_started': filterTasks(tasks.filter(task => task.status === 'not_started')),
+    'in_progress': filterTasks(tasks.filter(task => task.status === 'in_progress')),
+    'completed': filterTasks(tasks.filter(task => task.status === 'completed')),
   };
 
   const moveTask = async (taskId: number, newStatus: Task['status']) => {
-    if (newStatus === 'done') {
+    if (newStatus === 'completed') {
       const task = tasks.find(task => task.id === taskId);
       if (task?.subtasks && task.subtasks.length > 0) {
-        const allSubtasksCompleted = task.subtasks.every(subtask => subtask.completed);
+        const allSubtasksCompleted = task.subtasks.every(subtask => subtask.is_completed);
         if (!allSubtasksCompleted) {
           useAuthStore.getState().setAlert('모든 하위 작업이 완료되어야 작업을 완료 상태로 이동할 수 있습니다.', 'error');
           return;

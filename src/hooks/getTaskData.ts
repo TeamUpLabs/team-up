@@ -1,6 +1,7 @@
 import { server } from "@/auth/server";
 import { getCurrentKoreanTime } from "@/utils/dateUtils";
-import { Comment, SubTask, TaskCreateFormData, TaskUpdateFormData } from "@/types/Task";
+import { CommentCreateFormData, SubTask, TaskCreateFormData, TaskUpdateFormData } from "@/types/Task";
+import { useAuthStore } from "@/auth/authStore";
 
 export const createTask = async (project_id: string, task: TaskCreateFormData) => {
   try {
@@ -19,7 +20,7 @@ export const createTask = async (project_id: string, task: TaskCreateFormData) =
       created_at: getCurrentKoreanTime(),
       updated_at: getCurrentKoreanTime(),
     });
-    if (res.status === 200) {
+    if (res.status === 201) {
       return res.data;
     } else {
       throw new Error("Failed to create task");
@@ -60,9 +61,14 @@ export const updateTaskStatus = async (project_id: string, task_id: number, stat
   }
 }
 
-export const updateTask = async (project_id: string, task_id: number, task: TaskUpdateFormData) => {
+export const updateTask = async (task_id: number, task: TaskUpdateFormData) => {
   try {
-    const res = await server.put(`/project/${project_id}/task/${task_id}`, task);
+    const token = useAuthStore.getState().token;
+    const res = await server.put(`/tasks/${task_id}`, task, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
     if (res.status === 200) {
       return res.data;
     } else {
@@ -90,14 +96,15 @@ export const updateSubtask = async (project_id: string, task_id: number, subtask
   }
 }
 
-export const addComment = async (project_id: string, task_id: number, comment: Comment) => {
+export const addComment = async (project_id: string, task_id: number, comment: CommentCreateFormData) => {
   try {
-    const res = await server.post(`/project/${project_id}/task/${task_id}/comment`, comment, {
+    const token = useAuthStore.getState().token;
+    const res = await server.post(`/tasks/${task_id}/comments`, comment, {
       headers: {
-        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
     });
-    if (res.status === 200) {
+    if (res.status === 201) {
       return res.data;
     } else {
       throw new Error("Failed to add comment");
@@ -108,10 +115,15 @@ export const addComment = async (project_id: string, task_id: number, comment: C
   }
 }
 
-export const deleteComment = async (project_id: string, task_id: number, comment_id: number) => {
+export const deleteComment = async (task_id: number, comment_id: number) => {
   try {
-    const res = await server.delete(`/project/${project_id}/task/${task_id}/comment/${comment_id}`);
-    if (res.status === 200) {
+    const token = useAuthStore.getState().token;
+    const res = await server.delete(`/tasks/${task_id}/comments/${comment_id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (res.status === 204) {
       return res.data;
     } else {
       throw new Error("Failed to delete comment");
