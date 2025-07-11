@@ -90,6 +90,21 @@ export interface TaskCreateFormData {
   }[];
 }
 
+export const blankTaskCreateFormData: TaskCreateFormData = {
+  title: "",
+  description: "",
+  status: "not_started",
+  priority: "medium",
+  estimated_hours: 0,
+  start_date: "",
+  due_date: "",
+  project_id: "",
+  milestone_id: 0,
+  assignee_ids: [],
+  created_by: 0,
+  subtasks: [],
+}
+
 export interface TaskUpdateFormData {
   title: string;
   description: string;

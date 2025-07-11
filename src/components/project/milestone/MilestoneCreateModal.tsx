@@ -380,9 +380,9 @@ export default function MilestoneCreateModal({
                 <div className="space-y-2">
                   <Select
                     options={[
-                      { name: "status", value: "not-started", label: "준비" },
-                      { name: "status", value: "in-progress", label: "진행중" },
-                      { name: "status", value: "done", label: "완료" },
+                      { name: "status", value: "not_started", label: "준비" },
+                      { name: "status", value: "in_progress", label: "진행중" },
+                      { name: "status", value: "completed", label: "완료" },
                     ]}
                     value={formData.status}
                     onChange={(value) => handleSelectChange("status", value as string)}

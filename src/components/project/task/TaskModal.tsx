@@ -1,17 +1,46 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Task, CommentCreateFormData, SubTask, SubTaskCreateFormData, blankTask } from "@/types/Task";
+import {
+  Task,
+  CommentCreateFormData,
+  SubTask,
+  SubTaskCreateFormData,
+  blankTask,
+} from "@/types/Task";
 import { blankUserBrief } from "@/types/User";
 import ModalTemplete from "@/components/ModalTemplete";
 import { useProject } from "@/contexts/ProjectContext";
 import { useAuthStore } from "@/auth/authStore";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
-import { updateTask, addComment, updateSubtask, deleteTask, deleteComment } from "@/hooks/getTaskData";
+import {
+  updateTask,
+  addComment,
+  updateSubtask,
+  deleteTask,
+  deleteComment,
+} from "@/hooks/getTaskData";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencil, faBullseye, faCheck, faHourglassStart, faHourglassEnd, faTrash, faPlus, faUser, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { InfoCircle, CalendarWeek, FileCheck, User, Flag, MessageDots } from "flowbite-react-icons/outline";
+import {
+  faPencil,
+  faBullseye,
+  faCheck,
+  faHourglassStart,
+  faHourglassEnd,
+  faTrash,
+  faPlus,
+  faUser,
+  faCircleArrowUp,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  InfoCircle,
+  CalendarWeek,
+  FileCheck,
+  User,
+  Flag,
+  MessageDots,
+} from "flowbite-react-icons/outline";
 import Badge from "@/components/ui/Badge";
 import Accordion from "@/components/ui/Accordion";
 import Image from "next/image";
@@ -24,7 +53,6 @@ import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { Input } from "@/components/ui/Input";
 import { useTheme } from "@/contexts/ThemeContext";
-
 
 interface TaskModalProps {
   task: Task;
@@ -40,15 +68,20 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const params = useParams();
   const [isEditing, setIsEditing] = useState<string>("none");
   const [taskData, setTaskData] = useState<Task>(blankTask);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [commentSubmitStatus, setCommentSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const [commentSubmitStatus, setCommentSubmitStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
 
   useEffect(() => {
     setTaskData(task);
   }, [task]);
 
   const calculateProgress = (subtasksList: SubTask[]) => {
-    if (subtasksList.length === 0 && taskData.status === "completed") return 100;
+    if (subtasksList.length === 0 && taskData.status === "completed")
+      return 100;
     if (subtasksList.length === 0) return 0;
     const completedTasks = subtasksList.filter(
       (subtask) => subtask.is_completed
@@ -56,7 +89,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     return Math.round((completedTasks / subtasksList.length) * 100);
   };
 
-  const isUserAssignee = user && task?.assignees && task?.assignees?.some((assi) => assi.id === user?.id);
+  const isUserAssignee =
+    user &&
+    task?.assignees &&
+    task?.assignees?.some((assi) => assi.id === user?.id);
 
   const handleSubtaskToggle = async (index: number) => {
     if (taskData.status === "completed") {
@@ -69,7 +105,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       return;
     }
     const updated = taskData.subtasks.map((subtask, i) =>
-      i === index ? { ...subtask, is_completed: !subtask.is_completed } : subtask
+      i === index
+        ? { ...subtask, is_completed: !subtask.is_completed }
+        : subtask
     );
     setTaskData({ ...taskData, subtasks: updated });
 
@@ -135,7 +173,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   };
 
   const handleSave = async () => {
-    setSubmitStatus('submitting');
+    setSubmitStatus("submitting");
     try {
       await updateTask(task.id, {
         title: taskData.title,
@@ -151,19 +189,19 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       });
 
       useAuthStore.getState().setAlert("작업 수정에 성공했습니다.", "success");
-      setSubmitStatus('success');
+      setSubmitStatus("success");
     } catch (error) {
       console.error("Error updating task:", error);
-      setSubmitStatus('error');
+      setSubmitStatus("error");
       useAuthStore.getState().setAlert("작업 수정에 실패했습니다.", "error");
     } finally {
       setIsEditing("none");
-      setSubmitStatus('idle');
+      setSubmitStatus("idle");
     }
   };
 
   const handleSelectChange = (name: string, value: string | string[]) => {
-    setTaskData(prevData => ({ ...prevData, [name]: value }));
+    setTaskData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleChange = (
@@ -190,7 +228,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         useAuthStore.getState().setAlert("작업 삭제에 실패했습니다.", "error");
       } finally {
         setIsEditing("none");
-        setSubmitStatus('idle');
+        setSubmitStatus("idle");
       }
     });
   };
@@ -211,15 +249,19 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       title: "",
       is_completed: false,
     };
+    setIsEditing("subtasks");
     setTaskData({
       ...taskData,
-      subtasks: [...taskData.subtasks, {
-        id: Date.now(), // temporary ID for local state
-        title: newSubtask.title,
-        is_completed: newSubtask.is_completed,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }],
+      subtasks: [
+        ...taskData.subtasks,
+        {
+          id: Date.now(), // temporary ID for local state
+          title: newSubtask.title,
+          is_completed: newSubtask.is_completed,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ],
     });
   };
 
@@ -241,7 +283,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       created_by: user?.id ?? 0,
     };
 
-    setCommentSubmitStatus('submitting');
+    setCommentSubmitStatus("submitting");
 
     try {
       await addComment(
@@ -249,45 +291,58 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         task.id,
         newComment
       );
-      setCommentSubmitStatus('success');
-      useAuthStore.getState().setAlert("댓글이 성공적으로 추가되었습니다.", "success");
+      setCommentSubmitStatus("success");
+      useAuthStore
+        .getState()
+        .setAlert("댓글이 성공적으로 추가되었습니다.", "success");
 
       commentInput.value = "";
       setTaskData((prev) => ({
         ...prev,
-        comments: [...prev.comments, {
-          id: Date.now(),
-          content: newComment.content,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          created_by: newComment.created_by,
-          creator: user ? user : blankUserBrief,
-        }],
+        comments: [
+          ...prev.comments,
+          {
+            id: Date.now(),
+            content: newComment.content,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            created_by: newComment.created_by,
+            creator: user ? user : blankUserBrief,
+          },
+        ],
       }));
     } catch (error) {
       console.error("Error adding comment:", error);
-      setCommentSubmitStatus('error');
+      setCommentSubmitStatus("error");
       useAuthStore.getState().setAlert("댓글 추가에 실패했습니다.", "error");
     } finally {
-      setCommentSubmitStatus('idle');
+      setCommentSubmitStatus("idle");
     }
   };
 
   const handleDeleteComment = async (commentId: number) => {
     try {
-      useAuthStore.getState().setConfirm("댓글을 삭제하시겠습니까?", async () => {
-        try {
-          await deleteComment(task.id, commentId);
-          useAuthStore.getState().setAlert("댓글이 성공적으로 삭제되었습니다.", "success");
-          setTaskData((prev) => ({
-            ...prev,
-            comments: prev.comments.filter((comment) => comment.id !== commentId),
-          }));
-        } catch (error) {
-          console.error("Error deleting comment:", error);
-          useAuthStore.getState().setAlert("댓글 삭제에 실패했습니다.", "error");
-        }
-      });
+      useAuthStore
+        .getState()
+        .setConfirm("댓글을 삭제하시겠습니까?", async () => {
+          try {
+            await deleteComment(task.id, commentId);
+            useAuthStore
+              .getState()
+              .setAlert("댓글이 성공적으로 삭제되었습니다.", "success");
+            setTaskData((prev) => ({
+              ...prev,
+              comments: prev.comments.filter(
+                (comment) => comment.id !== commentId
+              ),
+            }));
+          } catch (error) {
+            console.error("Error deleting comment:", error);
+            useAuthStore
+              .getState()
+              .setAlert("댓글 삭제에 실패했습니다.", "error");
+          }
+        });
     } catch (error) {
       console.error("Error deleting comment:", error);
       useAuthStore.getState().setAlert("댓글 삭제에 실패했습니다.", "error");
@@ -307,9 +362,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     <div className="flex items-start">
       <div className="space-y-2 flex-1">
         <div className="flex items-center gap-2">
-          <FontAwesomeIcon
-            icon={faBullseye}
-          />
+          <FontAwesomeIcon icon={faBullseye} />
           {isEditing === "title" ? (
             <Input
               type="text"
@@ -329,7 +382,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 size="xs"
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 onClick={() =>
-                  isEditing === "title" ? handleEdit("none") : handleEdit("title")
+                  isEditing === "title"
+                    ? handleEdit("none")
+                    : handleEdit("title")
                 }
               />
             </div>
@@ -338,7 +393,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         <div className="flex flex-wrap gap-2">
           {taskData?.milestone_id ? (
             <Badge
-              content={project?.milestones?.find((milestone) => milestone.id === taskData?.milestone_id)?.title}
+              content={
+                project?.milestones?.find(
+                  (milestone) => milestone.id === taskData?.milestone_id
+                )?.title
+              }
               color="teal"
               isEditable={false}
               className="!rounded-full !px-2 !py-0.5 cursor-pointer"
@@ -362,7 +421,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 { name: "status", value: "completed", label: "COMPLETED" },
               ]}
               value={taskData.status}
-              onChange={(value) => handleSelectChange("status", value as string)}
+              onChange={(value) =>
+                handleSelectChange("status", value as string)
+              }
               color={getStatusColorName(taskData.status)}
               className="!px-2 !py-0.5 !rounded-full !text-sm"
               autoWidth
@@ -373,7 +434,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
-                content={taskData.status.replace('_', ' ').toUpperCase()}
+                content={taskData.status.replace("_", " ").toUpperCase()}
                 color={getStatusColorName(taskData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
@@ -384,7 +445,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 size="xs"
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 onClick={() =>
-                  isEditing === "status" ? handleEdit("none") : handleEdit("status")
+                  isEditing === "status"
+                    ? handleEdit("none")
+                    : handleEdit("status")
                 }
               />
             </div>
@@ -397,7 +460,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 { name: "priority", value: "low", label: "LOW" },
               ]}
               value={taskData.priority}
-              onChange={(value) => handleSelectChange("priority", value as string)}
+              onChange={(value) =>
+                handleSelectChange("priority", value as string)
+              }
               color={getPriorityColorName(taskData.priority)}
               className="!px-2 !py-0.5 !rounded-full !text-sm"
               autoWidth
@@ -424,14 +489,16 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 size="xs"
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 onClick={() =>
-                  isEditing === "priority" ? handleEdit("none") : handleEdit("priority")
+                  isEditing === "priority"
+                    ? handleEdit("none")
+                    : handleEdit("priority")
                 }
               />
             </div>
           )}
         </div>
       </div>
-      {(isUserAssignee && isEditing !== "none") && (
+      {isUserAssignee && isEditing !== "none" && (
         <div className="flex items-center gap-2">
           <CancelBtn
             handleCancel={handleCancelEdit}
@@ -450,7 +517,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         </div>
       )}
     </div>
-  )
+  );
 
   const modalFooter =
     isEditing !== "none" ? (
@@ -470,11 +537,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       footer={modalFooter}
     >
       {/* Overview Accordian */}
-      <Accordion
-        title="Overview"
-        icon={InfoCircle}
-        defaultOpen
-      >
+      <Accordion title="Overview" icon={InfoCircle} defaultOpen>
         <div className="space-y-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2 group relative">
@@ -484,7 +547,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 size="xs"
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 onClick={() =>
-                  isEditing === "description" ? handleEdit("none") : handleEdit("description")
+                  isEditing === "description"
+                    ? handleEdit("none")
+                    : handleEdit("description")
                 }
               />
             </div>
@@ -496,12 +561,12 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 className="w-full p-3 rounded-md m-auto bg-component-secondary-background border border-component-border text-text-primary focus:outline-none focus:ring-1 focus:ring-point-color-indigo resize-none"
                 placeholder="작업의 설명을 작성하세요"
               />
+            ) : taskData.description ? (
+              <p className="text-muted-foreground leading-relaxed">
+                {taskData.description}
+              </p>
             ) : (
-              taskData.description ? (
-                <p className="text-muted-foreground leading-relaxed">{taskData.description}</p>
-              ) : (
-                <p className="text-text-secondary">작업의 설명이 없습니다.</p>
-              )
+              <p className="text-text-secondary">작업의 설명이 없습니다.</p>
             )}
           </div>
 
@@ -509,13 +574,23 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
             <div className="space-y-2">
               <h4 className="font-medium">Created</h4>
               <p className="text-sm text-muted-foreground">
-                {new Date(task.created_at).toLocaleDateString()} by {project?.members.find((member) => member.user.id === task.creator.id)?.user.name}
+                {new Date(task.created_at).toLocaleDateString()} by{" "}
+                {
+                  project?.members.find(
+                    (member) => member.user.id === task.creator.id
+                  )?.user.name
+                }
               </p>
             </div>
             <div className="space-y-2">
               <h4 className="font-medium">Last Updated</h4>
               <p className="text-sm text-muted-foreground">
-                {new Date(task.updated_at).toLocaleDateString()} by {project?.members.find((member) => member.user.id === task.creator.id)?.user.name}
+                {new Date(task.updated_at).toLocaleDateString()} by{" "}
+                {
+                  project?.members.find(
+                    (member) => member.user.id === task.creator.id
+                  )?.user.name
+                }
               </p>
             </div>
           </div>
@@ -523,10 +598,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
       </Accordion>
 
       {/* Timeline Accordian */}
-      <Accordion
-        title="Timeline"
-        icon={CalendarWeek}
-      >
+      <Accordion title="Timeline" icon={CalendarWeek}>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2 bg-component-secondary-background border border-component-border p-3 rounded-md">
             <div className="flex items-center gap-2 group relative">
@@ -539,18 +611,27 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 size="xs"
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 onClick={() =>
-                  isEditing === "startDate" ? handleEdit("none") : handleEdit("startDate")
+                  isEditing === "startDate"
+                    ? handleEdit("none")
+                    : handleEdit("startDate")
                 }
               />
             </div>
             {isEditing === "startDate" ? (
               <DatePicker
-                value={taskData.start_date ? new Date(taskData.start_date) : undefined}
-                                  onChange={(date: Date | undefined) => {
-                    if (date) {
-                      setTaskData({ ...taskData, start_date: date.toISOString().split("T")[0] });
-                    }
-                  }}
+                value={
+                  taskData.start_date
+                    ? new Date(taskData.start_date)
+                    : undefined
+                }
+                onChange={(date: Date | undefined) => {
+                  if (date) {
+                    setTaskData({
+                      ...taskData,
+                      start_date: date.toISOString().split("T")[0],
+                    });
+                  }
+                }}
                 className="text-sm"
               />
             ) : (
@@ -570,19 +651,30 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 size="xs"
                 className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 onClick={() =>
-                  isEditing === "endDate" ? handleEdit("none") : handleEdit("endDate")
+                  isEditing === "endDate"
+                    ? handleEdit("none")
+                    : handleEdit("endDate")
                 }
               />
             </div>
             {isEditing === "endDate" ? (
               <DatePicker
-                value={taskData.due_date ? new Date(taskData.due_date) : undefined}
+                value={
+                  taskData.due_date ? new Date(taskData.due_date) : undefined
+                }
                 onChange={(date: Date | undefined) => {
                   if (date) {
-                    setTaskData({ ...taskData, due_date: date.toISOString().split("T")[0] });
+                    setTaskData({
+                      ...taskData,
+                      due_date: date.toISOString().split("T")[0],
+                    });
                   }
                 }}
-                minDate={taskData.start_date ? new Date(taskData.start_date) : undefined}
+                minDate={
+                  taskData.start_date
+                    ? new Date(taskData.start_date)
+                    : undefined
+                }
                 className="text-sm"
               />
             ) : (
@@ -596,7 +688,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Progress & Subtasks Accordian */}
       <Accordion
-        title={`Progress & Subtasks (${taskData.subtasks && taskData.subtasks.filter(subtask => subtask.is_completed).length}/${taskData.subtasks && taskData.subtasks.length || 0})`}
+        title={`Progress & Subtasks (${
+          taskData.subtasks &&
+          taskData.subtasks.filter((subtask) => subtask.is_completed).length
+        }/${(taskData.subtasks && taskData.subtasks.length) || 0})`}
         icon={FileCheck}
         defaultOpen
       >
@@ -607,27 +702,34 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               <span className="text-sm font-medium">{progress}%</span>
             </div>
             <div className="w-full h-2 bg-gray-200 rounded-full">
-              <div className="h-2 bg-point-color-indigo rounded-full" style={{ width: `${progress}%` }} />
+              <div
+                className="h-2 bg-point-color-indigo rounded-full"
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
 
           <div className="space-y-2">
             {taskData.subtasks.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-6">
-                <span className="text-text-secondary">하위 작업이 없습니다.</span>
+                <span className="text-text-secondary">
+                  하위 작업이 없습니다.
+                </span>
                 <button
                   type="button"
                   onClick={handleAddSubtask}
                   className="w-full flex items-center justify-center gap-2 bg-component-tertiary-background hover:bg-component-tertiary-background/60 border border-component-border p-3 rounded-md text-text-primary transition-colors"
                 >
-                  <FontAwesomeIcon icon={faPlus} />
-                  새 하위 작업 추가
+                  <FontAwesomeIcon icon={faPlus} />새 하위 작업 추가
                 </button>
               </div>
             ) : (
               taskData.subtasks.map((subtask, index) => (
-                <div key={index} className="flex items-center bg-component-secondary-background border border-component-border p-3 rounded-md justify-between group relative">
-                  <div className="flex items-center gap-2">
+                <div
+                  key={index}
+                  className="flex items-center gap-2 bg-component-secondary-background border border-component-border p-3 rounded-md justify-between group relative"
+                >
+                  <div className="flex items-center gap-2 flex-1">
                     <input
                       type="checkbox"
                       checked={subtask.is_completed}
@@ -635,34 +737,40 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       className="w-4 h-4 rounded border-gray-300 text-point-color-indigo focus:ring-point-color-indigo"
                     />
                     {isEditing === "subtasks" ? (
-                      <>
-                        <Input
-                          type="text"
-                          value={subtask.title}
-                          onChange={(e) => handleSubtaskChange(index, e.target.value)}
-                          className="!text-sm !p-1"
-                        />
-                      </>
+                      <Input
+                        type="text"
+                        value={subtask.title}
+                        onChange={(e) =>
+                          handleSubtaskChange(index, e.target.value)
+                        }
+                        className="!text-sm !p-1"
+                        fullWidth
+                      />
                     ) : (
                       <span
-                        className={`text-sm ${subtask?.is_completed
-                          ? "text-text-secondary line-through"
-                          : "text-text-primary"
-                          }`}
+                        className={`text-sm ${
+                          subtask?.is_completed
+                            ? "text-text-secondary line-through"
+                            : "text-text-primary"
+                        }`}
                       >
                         {subtask?.title}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-3">
-                    <FontAwesomeIcon
-                      icon={faPencil}
-                      size="xs"
-                      className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      onClick={() =>
-                        isEditing === "subtasks" ? handleEdit("none") : handleEdit("subtasks")
-                      }
-                    />
+                    {isEditing !== "subtasks" && (
+                      <FontAwesomeIcon
+                        icon={faPencil}
+                        size="xs"
+                        className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        onClick={() =>
+                          isEditing === "subtasks"
+                            ? handleEdit("none")
+                            : handleEdit("subtasks")
+                        }
+                      />
+                    )}
                     {isEditing === "subtasks" && (
                       <FontAwesomeIcon
                         icon={faTrash}
@@ -681,8 +789,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 onClick={handleAddSubtask}
                 className="w-full flex items-center justify-center gap-2 bg-component-tertiary-background hover:bg-component-tertiary-background/60 border border-component-border p-3 rounded-md text-text-primary transition-colors"
               >
-                <FontAwesomeIcon icon={faPlus} />
-                새 하위 작업 추가
+                <FontAwesomeIcon icon={faPlus} />새 하위 작업 추가
               </button>
             )}
           </div>
@@ -691,7 +798,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Assignee Accordian */}
       <Accordion
-        title={`Assignees (${taskData.assignees && taskData.assignees.length || 0})`}
+        title={`Assignees (${
+          (taskData.assignees && taskData.assignees.length) || 0
+        })`}
         icon={User}
       >
         <div className="space-y-2">
@@ -706,94 +815,99 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {project?.milestones?.find((milestone) => taskData.milestone_id === milestone.id)?.assignees?.map((member) => {
-                  const isSelected = taskData.assignees?.some(
-                    (a) => a.id === member.id
-                  );
-                  return (
-                    <div
-                      key={member.id}
-                      onClick={() => {
-                        if (isSelected) {
-                          if (
-                            taskData.assignees?.length &&
-                            taskData.assignees?.length > 1
-                          ) {
+                {project?.milestones
+                  ?.find((milestone) => taskData.milestone_id === milestone.id)
+                  ?.assignees?.map((member) => {
+                    const isSelected = taskData.assignees?.some(
+                      (a) => a.id === member.id
+                    );
+                    return (
+                      <div
+                        key={member.id}
+                        onClick={() => {
+                          if (isSelected) {
+                            if (
+                              taskData.assignees?.length &&
+                              taskData.assignees?.length > 1
+                            ) {
+                              setTaskData({
+                                ...taskData,
+                                assignees: taskData.assignees?.filter(
+                                  (a) => a.id !== member.id
+                                ),
+                              });
+                            } else {
+                              useAuthStore
+                                .getState()
+                                .setAlert(
+                                  "최소 한 명의 담당자는 필요합니다.",
+                                  "warning"
+                                );
+                            }
+                          } else {
                             setTaskData({
                               ...taskData,
-                              assignees: taskData.assignees?.filter(
-                                (a) => a.id !== member.id
-                              ),
+                              assignees: [...(taskData.assignees ?? [])],
                             });
-                          } else {
-                            useAuthStore
-                              .getState()
-                              .setAlert(
-                                "최소 한 명의 담당자는 필요합니다.",
-                                "warning"
-                              );
                           }
-                        } else {
-                          setTaskData({
-                            ...taskData,
-                            assignees: [...(taskData.assignees ?? [])],
-                          });
-                        }
-                      }}
-                      className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all duration-200 ${isSelected
-                        ? "bg-purple-500/20 border border-purple-500/50"
-                        : "bg-component-tertiary-background border border-component-border hover:bg-component-tertiary-background/60"
+                        }}
+                        className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all duration-200 ${
+                          isSelected
+                            ? "bg-purple-500/20 border border-purple-500/50"
+                            : "bg-component-tertiary-background border border-component-border hover:bg-component-tertiary-background/60"
                         }`}
-                    >
-                      <div className="relative flex-shrink-0">
-                        <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
-                          <div className="relative w-full h-full flex items-center justify-center border border-component-border rounded-full">
-                            {member.profile_image ? (
-                              <Image
-                                src={member.profile_image}
-                                alt="Profile"
-                                className={`rounded-full absolute text-text-secondary transform transition-all duration-300 ${isSelected
-                                  ? "opacity-0 rotate-90 scale-0"
-                                  : "opacity-100 rotate-0 scale-100"
+                      >
+                        <div className="relative flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
+                            <div className="relative w-full h-full flex items-center justify-center border border-component-border rounded-full">
+                              {member.profile_image ? (
+                                <Image
+                                  src={member.profile_image}
+                                  alt="Profile"
+                                  className={`rounded-full absolute text-text-secondary transform transition-all duration-300 ${
+                                    isSelected
+                                      ? "opacity-0 rotate-90 scale-0"
+                                      : "opacity-100 rotate-0 scale-100"
                                   }`}
-                                quality={100}
-                                width={60}
-                                height={60}
-                                onError={(e) => {
-                                  e.currentTarget.src =
-                                    "/DefaultProfile.jpg";
-                                }}
-                              />
-                            ) : (
+                                  quality={100}
+                                  width={60}
+                                  height={60}
+                                  onError={(e) => {
+                                    e.currentTarget.src = "/DefaultProfile.jpg";
+                                  }}
+                                />
+                              ) : (
+                                <FontAwesomeIcon
+                                  icon={faUser}
+                                  className={`absolute text-text-secondary transform transition-all duration-300 ${
+                                    isSelected
+                                      ? "opacity-0 rotate-90 scale-0"
+                                      : "opacity-100 rotate-0 scale-100"
+                                  }`}
+                                />
+                              )}
                               <FontAwesomeIcon
-                                icon={faUser}
-                                className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
-                                  ? "opacity-0 rotate-90 scale-0"
-                                  : "opacity-100 rotate-0 scale-100"
-                                  }`}
-                              />
-                            )}
-                            <FontAwesomeIcon
-                              icon={faCheck}
-                              className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
-                                ? "opacity-100 rotate-0 scale-100"
-                                : "opacity-0 -rotate-90 scale-0"
+                                icon={faCheck}
+                                className={`absolute text-text-secondary transform transition-all duration-300 ${
+                                  isSelected
+                                    ? "opacity-100 rotate-0 scale-100"
+                                    : "opacity-0 -rotate-90 scale-0"
                                 }`}
-                            />
+                              />
+                            </div>
                           </div>
                         </div>
+                        <div className="flex flex-col">
+                          <p className="text-sm font-medium text-text-primary">
+                            {member.name}
+                          </p>
+                          <p className="text-xs text-text-secondary">
+                            {member.role}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex flex-col">
-                        <p className="text-sm font-medium text-text-primary">
-                          {member.name}
-                        </p>
-                        <p className="text-xs text-text-secondary">
-                          {member.role}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             </div>
           ) : (
@@ -810,7 +924,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                   size="xs"
                   className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                   onClick={() =>
-                    isEditing === "assignee" ? handleEdit("none") : handleEdit("assignee")
+                    isEditing === "assignee"
+                      ? handleEdit("none")
+                      : handleEdit("assignee")
                   }
                 />
               </div>
@@ -833,8 +949,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                               width={60}
                               height={60}
                               onError={(e) => {
-                                e.currentTarget.src =
-                                  "/DefaultProfile.jpg";
+                                e.currentTarget.src = "/DefaultProfile.jpg";
                               }}
                             />
                           ) : (
@@ -850,9 +965,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       <p className="text-sm font-medium text-text-primary">
                         {assi.name}
                       </p>
-                      <p className="text-xs text-text-secondary">
-                        {assi.role}
-                      </p>
+                      <p className="text-xs text-text-secondary">{assi.role}</p>
                     </div>
                   </div>
                 ))}
@@ -864,7 +977,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Comment Accordian */}
       <Accordion
-        title={`Comments (${taskData?.comments && taskData?.comments.length || 0})`}
+        title={`Comments (${
+          (taskData?.comments && taskData?.comments.length) || 0
+        })`}
         icon={MessageDots}
       >
         <div className="flex flex-col gap-2">
@@ -894,7 +1009,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                     ) : (
                       <p>
                         {project?.members
-                          .find((member) => member.user.id === comment?.created_by)
+                          .find(
+                            (member) => member.user.id === comment?.created_by
+                          )
                           ?.user.name.charAt(0)}
                       </p>
                     )}
@@ -915,8 +1032,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                               (member) => member.user.id === comment?.created_by
                             )?.role
                           }{" "}
-                          •{" "}
-                          {new Date(comment?.created_at).toLocaleDateString()}
+                          • {new Date(comment?.created_at).toLocaleDateString()}
                         </span>
                       </div>
                       {comment?.created_by === user?.id && (

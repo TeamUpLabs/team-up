@@ -1,11 +1,12 @@
 import { server } from "@/auth/server";
-import { getCurrentKoreanTime } from "@/utils/dateUtils";
 import { CommentCreateFormData, SubTask, TaskCreateFormData, TaskUpdateFormData } from "@/types/Task";
 import { useAuthStore } from "@/auth/authStore";
 
-export const createTask = async (project_id: string, task: TaskCreateFormData) => {
+export const createTask = async (task: TaskCreateFormData) => {
   try {
-    const res = await server.post(`/project/${project_id}/task`, {
+    const token = useAuthStore.getState().token;
+    
+    const res = await server.post(`/tasks`, {
       project_id: task.project_id,
       milestone_id: task.milestone_id,
       title: task.title,
@@ -17,8 +18,10 @@ export const createTask = async (project_id: string, task: TaskCreateFormData) =
       priority: task.priority,
       subtasks: task.subtasks,
       created_by: task.created_by,
-      created_at: getCurrentKoreanTime(),
-      updated_at: getCurrentKoreanTime(),
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     });
     if (res.status === 201) {
       return res.data;

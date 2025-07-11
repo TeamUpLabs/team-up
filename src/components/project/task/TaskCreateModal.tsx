@@ -10,18 +10,19 @@ import {
   Tag,
   FileLines
 } from "flowbite-react-icons/outline";
+import { TaskCreateFormData, blankTaskCreateFormData } from "@/types/Task";
 import { CloseCircle } from "flowbite-react-icons/solid";
 import { useProject } from "@/contexts/ProjectContext";
 import { useAuthStore } from "@/auth/authStore";
 import { createTask } from "@/hooks/getTaskData";
 import DatePicker from "@/components/ui/DatePicker";
 import Select from "@/components/ui/Select";
-import Badge from "@/components/ui/Badge";
+
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
 import { TextArea } from "@/components/ui/TextArea";
-import { useTheme } from "@/contexts/ThemeContext";
+
 
 interface TaskCreateModalProps {
   isOpen: boolean;
@@ -34,7 +35,7 @@ export default function TaskCreateModal({
   onClose,
   milestone_id,
 }: TaskCreateModalProps) {
-  const { isDark } = useTheme();
+
   const [step, setStep] = useState(1);
 
   const totalSteps = 5
@@ -44,23 +45,7 @@ export default function TaskCreateModal({
   const stepTitles = ["Basic Info", "Timeline", "Subtasks", "Tags & Priority", "Assignee"]
 
   const { project } = useProject();
-  const initialFormData = () => ({
-    project_id: project?.id,
-    title: "",
-    description: "",
-    status: "not-started",
-    startDate: "",
-    endDate: "",
-    assignee_id: [] as number[],
-    tags: [] as string[],
-    priority: "medium",
-    subtasks: [] as string[],
-    milestone_id: milestone_id,
-    createdBy: useAuthStore.getState().user?.id || 0,
-    updatedBy: useAuthStore.getState().user?.id || 0,
-  });
-  const [formData, setFormData] = useState(initialFormData);
-  const [tagsInput, setTagsInput] = useState("");
+  const [formData, setFormData] = useState<TaskCreateFormData>(blankTaskCreateFormData);
   const [subtasksInput, setSubtasksInput] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [dateError, setDateError] = useState(false);
@@ -93,24 +78,24 @@ export default function TaskCreateModal({
   const handleStartDateChange = (date: Date | undefined) => {
     setFormData(prevData => ({
       ...prevData,
-      startDate: date ? formatDateToString(date) : "",
+      start_date: date ? formatDateToString(date) : "",
     }));
   };
 
   const handleEndDateChange = (date: Date | undefined) => {
     setFormData(prevData => ({
       ...prevData,
-      endDate: date ? formatDateToString(date) : "",
+      due_date: date ? formatDateToString(date) : "",
     }));
   };
 
   useEffect(() => {
-    if (formData.startDate && formData.endDate) {
-      setDateError(new Date(formData.endDate) < new Date(formData.startDate));
+    if (formData.start_date && formData.due_date) {
+      setDateError(new Date(formData.due_date) < new Date(formData.start_date));
     } else {
       setDateError(false);
     }
-  }, [formData.startDate, formData.endDate]);
+  }, [formData.start_date, formData.due_date]);
 
   const handleSelectChange = (name: string, value: string | string[]) => {
     setFormData(prevData => ({ ...prevData, [name]: value }));
@@ -136,7 +121,7 @@ export default function TaskCreateModal({
       return;
     }
 
-    if (formData.assignee_id.length === 0) {
+    if (formData.assignee_ids.length === 0) {
       useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "error");
       return;
     }
@@ -147,13 +132,33 @@ export default function TaskCreateModal({
       return;
     }
 
+    console.log("formData", {
+      ...formData,
+      project_id: project.id,
+      milestone_id: milestone_id ?? 0,
+      created_by: useAuthStore.getState().user?.id || 0,
+      estimated_hours: Math.floor((formData.due_date ? new Date(formData.due_date).getTime() - new Date(formData.start_date).getTime() : 0) / (24 * 60 * 60 * 1000)),
+      subtasks: formData.subtasks.map(subtask => ({
+        title: subtask.title,
+        is_completed: false,
+      })),
+      assignee_ids: formData.assignee_ids,
+    })
+
     if (project?.id) {
       setSubmitStatus('submitting');
       try {
-        await createTask(project.id, {
+        await createTask({
           ...formData,
           project_id: project.id,
           milestone_id: milestone_id ?? 0,
+          created_by: useAuthStore.getState().user?.id || 0,
+          estimated_hours: Math.floor((formData.due_date ? new Date(formData.due_date).getTime() - new Date(formData.start_date).getTime() : 0) / (24 * 60 * 60 * 1000)),
+          subtasks: formData.subtasks.map(subtask => ({
+            title: subtask.title,
+            is_completed: false,
+          })),
+          assignee_ids: formData.assignee_ids,
         });
         setSubmitStatus('success');
         useAuthStore.getState().setAlert("작업이 성공적으로 생성되었습니다.", "success");
@@ -167,7 +172,7 @@ export default function TaskCreateModal({
       } finally {
         setTimeout(() => {
           onClose();
-          setFormData(initialFormData);
+          setFormData(blankTaskCreateFormData);
           setStep(1);
           setSubmitStatus('idle');
         }, 1000);
@@ -175,24 +180,14 @@ export default function TaskCreateModal({
     }
   };
 
-  const handleKeyDown = (
-    type: "tags" | "subtasks",
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const handleKeyDown = (type: string, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !isComposing) {
       e.preventDefault();
 
-      if (type === "tags") {
-        const trimmedInput = tagsInput.trim();
-        if (trimmedInput && !formData.tags.includes(trimmedInput)) {
-          const updatedTags = [...formData.tags, trimmedInput];
-          setFormData({ ...formData, tags: updatedTags });
-          setTagsInput("");
-        }
-      } else if (type === "subtasks") {
+      if (type === "subtasks") {
         const trimmedInput = subtasksInput.trim();
-        if (trimmedInput && !formData.subtasks.includes(trimmedInput)) {
-          const updatedSubtasks = [...formData.subtasks, trimmedInput];
+        if (trimmedInput && !formData.subtasks.some(subtask => subtask.title === trimmedInput)) {
+          const updatedSubtasks = [...formData.subtasks, { title: trimmedInput, is_completed: false }];
           setFormData({ ...formData, subtasks: updatedSubtasks });
           setSubtasksInput("");
         }
@@ -200,34 +195,30 @@ export default function TaskCreateModal({
     }
   };
 
-  const handleRemoveTag = (tag: string) => {
-    const updatedTags = formData.tags.filter((t) => t !== tag);
-    setFormData({ ...formData, tags: updatedTags });
-  };
 
-  const handleRemoveSubtask = (subtask: string) => {
-    const updatedSubtasks = formData.subtasks.filter((s) => s !== subtask);
+  const handleRemoveSubtask = (subtaskTitle: string) => {
+    const updatedSubtasks = formData.subtasks.filter((s) => s.title !== subtaskTitle);
     setFormData({ ...formData, subtasks: updatedSubtasks });
   };
 
   const toggleAssignee = (memberId: number) => {
     setFormData((prev) => {
-      if (prev.assignee_id.includes(memberId)) {
+      if (prev.assignee_ids.includes(memberId)) {
         return {
           ...prev,
-          assignee_id: prev.assignee_id.filter((id) => id !== memberId),
+          assignee_ids: prev.assignee_ids.filter((id) => id !== memberId),
         };
       } else {
         return {
           ...prev,
-          assignee_id: [...prev.assignee_id, memberId],
+          assignee_ids: [...prev.assignee_ids, memberId],
         };
       }
     });
   };
 
   const isAssigned = (memberId: number) => {
-    return formData.assignee_id.includes(memberId);
+    return formData.assignee_ids.includes(memberId);
   };
 
   const moveNextStep = (step: number) => {
@@ -241,7 +232,7 @@ export default function TaskCreateModal({
         }
         break;
       case 2:
-        if (!formData.startDate || !formData.endDate) {
+        if (!formData.start_date || !formData.due_date) {
           useAuthStore
             .getState()
             .setAlert("시작일과 종료일을 입력해주세요.", "error");
@@ -383,23 +374,23 @@ export default function TaskCreateModal({
                   <div className="space-y-2">
                     <DatePicker
                       label="시작일"
-                      value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                      value={formData.start_date ? parseStringToDate(formData.start_date) : undefined}
                       onChange={handleStartDateChange}
                       placeholder="시작일 선택"
                       className="w-full bg-input-background"
-                      minDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.startDate || "") : undefined}
-                      maxDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.endDate || "") : undefined}
+                      minDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.start_date || "") : undefined}
+                      maxDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.due_date || "") : undefined}
                     />
                   </div>
                   <div className="space-y-2">
                     <DatePicker
                       label="종료일"
-                      value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
+                      value={formData.due_date ? parseStringToDate(formData.due_date) : undefined}
                       onChange={handleEndDateChange}
                       placeholder="종료일 선택"
                       className="w-full bg-input-background"
-                      minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
-                      maxDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.endDate || "") : undefined}
+                      minDate={formData.start_date ? parseStringToDate(formData.start_date) : undefined}
+                      maxDate={milestone_id ? parseStringToDate(project?.milestones.find((milestone) => milestone.id === milestone_id)?.due_date || "") : undefined}
                     />
                     {dateError && (
                       <p className="text-sm text-red-500 mt-1">
@@ -429,6 +420,8 @@ export default function TaskCreateModal({
                     onKeyDown={(e) => handleKeyDown("subtasks", e)}
                     className="!px-3 !py-2"
                     placeholder="하위 작업을 입력하고 Enter 키를 누르세요"
+                    onCompositionStart={() => setIsComposing(true)}
+                    onCompositionEnd={() => setIsComposing(false)}
                   />
 
                   <div className="mt-2 flex flex-col gap-2">
@@ -444,11 +437,11 @@ export default function TaskCreateModal({
                             readOnly
                             className="rounded"
                           />
-                          <span className="text-text-secondary">{subtask}</span>
+                          <span className="text-text-secondary">{subtask.title}</span>
                         </div>
                         <button
                           type="button"
-                          onClick={() => handleRemoveSubtask(subtask)}
+                          onClick={() => handleRemoveSubtask(subtask.title)}
                           className="text-point-color-indigo hover:text-point-color-indigo-hover ml-1 focus:outline-none"
                         >
                           <CloseCircle />
@@ -466,34 +459,6 @@ export default function TaskCreateModal({
                   <Tag className="h-12 w-12 mx-auto text-primary mb-2" />
                   <h3 className="text-lg font-semibold">Tags & Priority</h3>
                   <p className="text-text-secondary">Add tags and set priority</p>
-                </div>
-                <div className="space-y-2">
-                  <Input
-                    type="text"
-                    id="tags"
-                    name="tags"
-                    label="태그"
-                    value={tagsInput}
-                    onChange={(e) => setTagsInput(e.target.value)}
-                    onKeyDown={(e) => handleKeyDown("tags", e)}
-                    onCompositionStart={() => setIsComposing(true)}
-                    onCompositionEnd={() => setIsComposing(false)}
-                    className="!px-3 !py-2"
-                    placeholder="태그를 입력하고 Enter 키를 누르세요"
-                  />
-
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {formData.tags.map((tag, index) => (
-                      <Badge
-                        key={index}
-                        content={tag}
-                        color="pink"
-                        isEditable={true}
-                        onRemove={() => handleRemoveTag(tag)}
-                        isDark={isDark}
-                      />
-                    ))}
-                  </div>
                 </div>
                 <Select
                   options={[
@@ -519,8 +484,8 @@ export default function TaskCreateModal({
                 </div>
                 <div className="px-1">
                   <AssigneeSelect
-                    selectedAssignee={formData.assignee_id}
-                    assignee={project?.milestones?.find((milestone) => formData.milestone_id === milestone.id)?.assignee || project?.members || []}
+                    selectedAssignee={formData.assignee_ids}
+                    assignee={project?.milestones?.find((milestone) => formData.milestone_id === milestone.id)?.assignees || project?.members?.map(member => member.user) || []}
                     toggleAssignee={toggleAssignee}
                     isAssigned={isAssigned}
                     label="담당자"
