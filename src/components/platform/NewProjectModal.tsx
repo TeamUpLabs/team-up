@@ -1,6 +1,6 @@
 import ModalTemplete from "@/components/ModalTemplete";
 import { useState, KeyboardEvent, useEffect } from "react";
-import { InfoCircle, CalendarWeek, Layers, UsersGroup, MapPin, AngleLeft, AngleRight } from "flowbite-react-icons/outline";
+import { InfoCircle, CalendarWeek, Layers, Tag, MapPin, AngleLeft, AngleRight } from "flowbite-react-icons/outline";
 import { useAuthStore } from "@/auth/authStore";
 import DatePicker from "@/components/ui/DatePicker";
 import Select from "@/components/ui/Select";
@@ -10,6 +10,7 @@ import { updateProjectMember } from '@/hooks/getMemberData';
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
 import { TextArea } from "@/components/ui/TextArea";
+import { ProjectFormData, blankProjectFormData } from "@/types/Project";
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -22,37 +23,24 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   const totalSteps = 5
   const progress = (step / totalSteps) * 100
 
-  const stepIcons = [InfoCircle, CalendarWeek, Layers, UsersGroup, MapPin]
-  const stepTitles = ["Basic Info", "Timeline", "Category", "Team", "Presence"]
+  const stepIcons = [InfoCircle, CalendarWeek, Layers, Tag, MapPin]
+  const stepTitles = ["Basic Info", "Timeline", "Category", "Tags", "Presence"]
 
   const user = useAuthStore((state) => state.user);
-  const initialFormData = () => ({
-    title: '',
-    description: '',
-    leader_id: user?.id,
-    projectType: '',
-    roles: [] as string[],
-    techStack: [] as string[],
-    location: '',
-    teamSize: 1,
-    startDate: '',
-    endDate: '',
-  });
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState<ProjectFormData>(blankProjectFormData);
 
-  const [roleInput, setRoleInput] = useState('');
-  const [techStackInput, setTechStackInput] = useState('');
+  const [tagInput, setTagInput] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [dateError, setDateError] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   useEffect(() => {
-    if (formData.startDate && formData.endDate) {
-      setDateError(new Date(formData.endDate) < new Date(formData.startDate));
+    if (formData.start_date && formData.end_date) {
+      setDateError(new Date(formData.end_date) < new Date(formData.start_date));
     } else {
       setDateError(false);
     }
-  }, [formData.startDate, formData.endDate]);
+  }, [formData.start_date, formData.end_date]);
 
   // Helper to format Date to YYYY-MM-DD string
   const formatDateToString = (date: Date | undefined): string => {
@@ -81,14 +69,14 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
   const handleStartDateChange = (date: Date | undefined) => {
     setFormData(prevData => ({
       ...prevData,
-      startDate: date ? formatDateToString(date) : "",
+      start_date: date ? formatDateToString(date) : "",
     }));
   };
 
   const handleEndDateChange = (date: Date | undefined) => {
     setFormData(prevData => ({
       ...prevData,
-      endDate: date ? formatDateToString(date) : "",
+      end_date: date ? formatDateToString(date) : "",
     }));
   };
 
@@ -101,45 +89,29 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     setFormData({ ...formData, [name]: value });
   };
 
-  // New functions to handle role and tech stack inputs
-  const handleRoleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRoleInput(e.target.value);
+  // New functions to handle tag inputs
+  const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTagInput(e.target.value);
   };
 
-  const handleTechStackInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTechStackInput(e.target.value);
-  };
-
-  const handleKeyDown = (type: "role" | "techStack", e: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (type: "tags", e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !isComposing) {
       e.preventDefault();
 
-      if (type === "role") {
-        const trimmedInput = roleInput.trim();
-        if (trimmedInput && !formData.roles.includes(trimmedInput)) {
-          const updatedRoles = [...formData.roles, trimmedInput];
-          setFormData({ ...formData, roles: updatedRoles });
-          setRoleInput("");
-        }
-      } else if (type === "techStack") {
-        const trimmedInput = techStackInput.trim();
-        if (trimmedInput && !formData.techStack.includes(trimmedInput)) {
-          const updatedTechStack = [...formData.techStack, trimmedInput];
-          setFormData({ ...formData, techStack: updatedTechStack });
-          setTechStackInput("");
+      if (type === "tags") {
+        const trimmedInput = tagInput.trim();
+        if (trimmedInput && !formData.tags.includes(trimmedInput)) {
+          const updatedTags = [...formData.tags, trimmedInput];
+          setFormData({ ...formData, tags: updatedTags });
+          setTagInput("");
         }
       }
     }
   };
 
-  const handleRemoveRole = (roleToRemove: string) => {
-    const updatedRoles = formData.roles.filter(role => role !== roleToRemove);
-    setFormData({ ...formData, roles: updatedRoles });
-  };
-
-  const handleRemoveTechStack = (techToRemove: string) => {
-    const updatedTechStack = formData.techStack.filter(tech => tech !== techToRemove);
-    setFormData({ ...formData, techStack: updatedTechStack });
+  const handleRemoveTag = (tagToRemove: string) => {
+    const updatedTags = formData.tags.filter(tag => tag !== tagToRemove);
+    setFormData({ ...formData, tags: updatedTags });
   };
 
   const handleSubmit = async () => {
@@ -156,7 +128,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     if (user?.id) {
       setSubmitStatus('submitting');
       try {
-        const projectId = await createProject({ ...formData, leader_id: user.id });
+        const projectId = await createProject(formData);
         await updateProjectMember(projectId, user.id);
         setSubmitStatus('success');
         useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
@@ -167,7 +139,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
       } finally {
         setTimeout(() => {
           onClose();
-          setFormData(initialFormData);
+          setFormData(blankProjectFormData);
           setSubmitStatus('idle');
           window.location.reload();
         }, 1000);
@@ -184,28 +156,26 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
         }
         break;
       case 2:
-        if (!formData.startDate || !formData.endDate) {
+        if (!formData.start_date || !formData.end_date) {
           useAuthStore.getState().setAlert("시작일과 종료일을 입력해주세요.", "error");
           return;
         }
         break;
       case 3:
-        if (!formData.projectType) {
+        if (!formData.project_type) {
           useAuthStore.getState().setAlert("프로젝트 유형을 선택해주세요.", "error");
           return;
         }
         break;
       case 4:
-        if (!formData.roles.length || !formData.techStack.length) {
-          useAuthStore.getState().setAlert("역할과 기술 스택을 입력해주세요.", "error");
+        if (!formData.tags.length) {
+          useAuthStore.getState().setAlert("태그를 입력해주세요.", "error");
           return;
         }
         break;
       case 5:
-        if (!formData.location || !formData.teamSize) {
-          useAuthStore.getState().setAlert("위치와 팀 규모를 입력해주세요.", "error");
+        if (!formData.location)
           return;
-        }
         break;
     }
     setStep(step + 1);
@@ -248,6 +218,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
           successText="생성 완료"
           errorText="생성 실패"
           withIcon
+          fit
         />
       )}
     </div>
@@ -325,18 +296,20 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                   <DatePicker
                     label="시작일"
                     isRequired
-                    value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                    value={formData.start_date ? parseStringToDate(formData.start_date) : undefined}
                     onChange={handleStartDateChange}
                     placeholder="시작일 선택"
+                    calendarPosition="bottom"
                   />
                   <div className="space-y-2">
                     <DatePicker
                       label="종료일"
                       isRequired
-                      value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
+                      value={formData.end_date ? parseStringToDate(formData.end_date) : undefined}
                       onChange={handleEndDateChange}
                       placeholder="종료일 선택"
-                      minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                      minDate={formData.start_date ? parseStringToDate(formData.start_date) : undefined}
+                      calendarPosition="bottom"
                     />
                     {dateError && (
                       <p className="text-sm text-red-500 mt-1">
@@ -358,8 +331,8 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 <Select
                   label="프로젝트 유형"
                   isRequired
-                  value={formData.projectType}
-                  onChange={(value) => handleSelectChange("projectType", value as string)}
+                  value={formData.project_type}
+                  onChange={(value) => handleSelectChange("project_type", value as string)}
                   options={[
                     { name: "projectType", value: "웹 개발", label: "웹 개발" },
                     { name: "projectType", value: "프론트엔드 개발", label: "프론트엔드 개발" },
@@ -370,7 +343,29 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                     { name: "projectType", value: "토이", label: "토이 프로젝트" },
                     { name: "projectType", value: "기타", label: "기타" },
                   ]}
-                  dropDownClassName="!w-full"
+                />
+                <Select
+                  label="상태"
+                  isRequired
+                  value={formData.status}
+                  onChange={(value) => handleSelectChange("status", value as string)}
+                  options={[
+                    { name: "status", value: "planning", label: "계획" },
+                    { name: "status", value: "in_progress", label: "진행 중" },
+                    { name: "status", value: "completed", label: "완료" },
+                    { name: "status", value: "on_hold", label: "보류" },
+                  ]}
+                />
+
+                <Select
+                  label="공개 여부"
+                  isRequired
+                  value={formData.visibility}
+                  onChange={(value) => handleSelectChange("visibility", value as string)}
+                  options={[
+                    { name: "visibility", value: "public", label: "공개" },
+                    { name: "visibility", value: "private", label: "비공개" },
+                  ]}
                 />
               </div>
             )}
@@ -378,47 +373,27 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
             {step === 4 && (
               <div className="space-y-4">
                 <div className="text-center mb-6">
-                  <UsersGroup className="h-12 w-12 mx-auto text-primary mb-2" />
-                  <h3 className="text-lg font-semibold">Team</h3>
-                  <p className="text-text-secondary">Who is on this project?</p>
+                  <Tag className="h-12 w-12 mx-auto text-primary mb-2" />
+                  <h3 className="text-lg font-semibold">Tags</h3>
+                  <p className="text-text-secondary">What is this project about?</p>
                 </div>
                 <div className="space-y-2">
                   <Input
                     type="text"
-                    id="roles"
-                    name="roles"
-                    value={roleInput}
-                    onChange={handleRoleInput}
-                    onKeyDown={(e) => handleKeyDown("role", e)}
+                    id="tags"
+                    name="tags"
+                    value={tagInput}
+                    onChange={handleTagInput}
+                    onKeyDown={(e) => handleKeyDown("tags", e)}
                     onCompositionStart={() => setIsComposing(true)}
                     onCompositionEnd={() => setIsComposing(false)}
-                    placeholder="역할을 입력하고 Enter 키를 누르세요"
-                    label="역할"
+                    placeholder="태그를 입력하고 Enter 키를 누르세요"
+                    label="태그"
                     isRequired
                   />
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {formData.roles.map((role, index) => (
-                      <Badge key={index} content={role} color="purple" isEditable={true} onRemove={() => handleRemoveRole(role)} />
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Input
-                    type="text"
-                    id="techStack"
-                    name="techStack"
-                    value={techStackInput}
-                    onChange={handleTechStackInput}
-                    onKeyDown={(e) => handleKeyDown("techStack", e)}
-                    onCompositionStart={() => setIsComposing(true)}
-                    onCompositionEnd={() => setIsComposing(false)}
-                    placeholder="기술을 입력하고 Enter 키를 누르세요"
-                    label="기술"
-                    isRequired
-                  />
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {formData.techStack.map((tech, index) => (
-                      <Badge key={index} content={tech} color="orange" isEditable={true} onRemove={() => handleRemoveTechStack(tech)} />
+                    {formData.tags.map((tag, index) => (
+                      <Badge key={index} content={tag} color="purple" isEditable={true} onRemove={() => handleRemoveTag(tag)} />
                     ))}
                   </div>
                 </div>
@@ -444,9 +419,9 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
                 />
                 <Input
                   type="number"
-                  id="teamSize"
-                  name="teamSize"
-                  value={formData.teamSize}
+                  id="team_size"
+                  name="team_size"
+                  value={formData.team_size}
                   onChange={handleChange}
                   onWheel={(e) => e.currentTarget.blur()}
                   placeholder="인원 수"

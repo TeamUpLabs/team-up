@@ -53,7 +53,7 @@ export default function SideBar({
 
   return (
     <div
-      className={`fixed h-full border-r border-component-border z-[8500] 
+      className={`fixed h-full border-r border-component-border
         bg-sidebar-background transition-all duration-300 
         ${isMobile
           ? (isSidebarOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-64')

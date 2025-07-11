@@ -118,7 +118,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
         {/* 모바일 사이드바 오버레이 */}
           {isSidebarOpen && (
             <div 
-              className="fixed inset-0 bg-background/70 z-[8400] lg:hidden"
+              className="fixed inset-0 bg-background/70 lg:hidden"
               onClick={() => setIsSidebarOpen(false)}
             />
           )}
@@ -126,7 +126,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
           {/* 모바일 알림 사이드바 오버레이 */}
           {isNotificationSidebarOpen && (
             <div 
-              className="fixed inset-0 bg-background/70 z-[8400] lg:hidden"
+              className="fixed inset-0 bg-background/70 lg:hidden"
               onClick={() => setIsNotificationSidebarOpen(false)}
             />
           )}
@@ -145,7 +145,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
           <header
           className={`h-auto bg-component-background min-h-16 border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isSidebarCollapsed ? "lg:left-0" : "lg:left-64"
             } ${isNotificationSidebarOpen ? "lg:right-72" : ""
-            } z-40 content-center transition-all duration-300`}
+            } content-center transition-all duration-300`}
         >
           <div className="h-full px-3 py-2 sm:px-4 flex items-center gap-3 justify-between">
             <div className="flex items-center gap-4 w-full">

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useState, useRef, useEffect, useCallback } from "react";
-import { createPortal } from 'react-dom';
+
 import { faChevronDown, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -60,8 +60,7 @@ export default function Select({
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [focusedIndex, setFocusedIndex] = useState(-1)
-  const [isMounted, setIsMounted] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+
 
   const generatedId = React.useId();
   const inputId = generatedId;
@@ -116,33 +115,8 @@ export default function Select({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [generatedId]);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
-  const updateDropdownPosition = useCallback(() => {
-    if (isOpen && selectRef.current) {
-      const rect = selectRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-      });
-    }
-  }, [isOpen]);
 
-  useEffect(() => {
-    if (isOpen) {
-      updateDropdownPosition();
-      window.addEventListener('resize', updateDropdownPosition);
-      window.addEventListener('scroll', updateDropdownPosition, true);
-    }
-
-    return () => {
-      window.removeEventListener('resize', updateDropdownPosition);
-      window.removeEventListener('scroll', updateDropdownPosition, true);
-    };
-  }, [isOpen, updateDropdownPosition]);
 
   // 드롭다운이 열릴 때 검색 입력에 포커스
   useEffect(() => {
@@ -294,14 +268,7 @@ export default function Select({
     return selectedOption ? selectedOption.label : placeholder
   }
 
-  const DropdownPortal = ({ children }: { children: React.ReactNode }) => {
-    if (!isMounted) return null;
 
-    return createPortal(
-      children,
-      document.body
-    );
-  };
 
   return (
     <div className="w-full">
@@ -358,22 +325,20 @@ export default function Select({
           </div>
         </button>
 
-        <DropdownPortal>
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div
-                id={`select-dropdown-${generatedId}`}
-                initial={{ opacity: 0, scaleY: 0.95 }}
-                animate={{ opacity: 1, scaleY: 1 }}
-                exit={{ opacity: 0, scaleY: 0.95 }}
-                transition={{ duration: 0.1, ease: "easeOut" }}
-                className={`absolute z-50 bg-component-background border border-component-border rounded-md shadow-lg ${dropDownClassName}`}
-                style={{
-                  top: `${dropdownPosition.top + 4}px`,
-                  left: `${dropdownPosition.left}px`,
-                  width: `${dropdownPosition.width}px`,
-                }}
-              >
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              id={`select-dropdown-${generatedId}`}
+              initial={{ opacity: 0, scaleY: 0.95 }}
+              animate={{ opacity: 1, scaleY: 1 }}
+              exit={{ opacity: 0, scaleY: 0.95 }}
+              transition={{ duration: 0.1, ease: "easeOut" }}
+              className={`absolute z-[50] mt-1 w-full bg-component-background border border-component-border rounded-md shadow-lg ${dropDownClassName}`}
+              style={{
+                top: '100%',
+                left: 0,
+              }}
+            >
                 {searchable && (
                   <div className="p-2 border-b border-component-border">
                     <input
@@ -426,10 +391,9 @@ export default function Select({
                     })
                   )}
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </DropdownPortal>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

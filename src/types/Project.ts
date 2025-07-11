@@ -1,5 +1,5 @@
 import { AuthUser } from "@/types/AuthUser";
-import { User } from "@/types/User";
+import { User, blankUser } from "@/types/User";
 import { Task } from "@/types/Task";
 import { MileStone } from "@/types/MileStone";
 import { ParticipationRequest } from "@/types/ParticipationRequest";
@@ -40,4 +40,67 @@ export interface Project {
   schedule_count: number;
   channel_count: number;
   chat_count: number;
+}
+
+export const blankProject: Project = {
+  id: "",
+  title: "",
+  description: "",
+  status: "",
+  visibility: "",
+  start_date: "",
+  end_date: "",
+  team_size: 0,
+  project_type: "",
+  tags: [],
+  location: "", 
+  github_url: "",
+  completed_at: "",
+  owner: blankUser,
+  members: [],
+  tasks: [],
+  milestones: [],
+  participation_requests: [],
+  schedules: [],
+  channels: [],
+  task_count: 0,
+  task_completed_count: 0,
+  milestone_count: 0,
+  completed_milestone_count: 0,
+  participation_request_count: 0,
+  schedule_count: 0,
+  channel_count: 0,
+  chat_count: 0,
+}
+
+export interface ProjectFormData {
+  title: string;
+  description: string;
+  status: string;
+  visibility: string;
+  team_size: number;
+  start_date: string;
+  end_date: string;
+  owner_id: number;
+  tags: string[];
+  project_type: string;
+  location: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export const blankProjectFormData: ProjectFormData = {
+  title: "",
+  description: "",
+  status: "",
+  visibility: "",
+  team_size: 0,
+  start_date: "",
+  end_date: "",
+  owner_id: 0,
+  tags: [],
+  project_type: "",
+  location: "",
+  created_at: "",
+  updated_at: "",
 }

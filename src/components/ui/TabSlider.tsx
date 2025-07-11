@@ -74,7 +74,7 @@ export default function TabSlider({
             }}
             onClick={() => onTabChange(key)}
             className={`
-              relative z-10 flex ${fullWidth ? "w-full" : "w-fit"} items-center justify-center px-6 py-2 gap-1 font-semibold
+              relative flex ${fullWidth ? "w-full" : "w-fit"} items-center justify-center px-6 py-2 gap-1 font-semibold
               ${
                 selectedTab === key
                   ? "text-text-primary"

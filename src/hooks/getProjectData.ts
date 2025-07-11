@@ -1,6 +1,7 @@
 import { server } from "@/auth/server";
-import { getCurrentKoreanTime, getCurrentKoreanTimeDate } from "@/utils/dateUtils";
+import { getCurrentKoreanTime } from "@/utils/dateUtils";
 import { useAuthStore } from "@/auth/authStore";
+import { ProjectFormData } from "@/types/Project";
 
 export const getAllProjects = async () => {
   try {
@@ -120,19 +121,6 @@ export const getMemberByProject = async (project_id: string) => {
   }
 }
 
-interface ProjectFormData {
-  title: string;
-  description: string;
-  leader_id: number;
-  projectType: string;
-  roles: string[];
-  techStack: string[];
-  location: string;
-  teamSize: number;
-  startDate: string;
-  endDate: string;
-}
-
 export const generateProjectId = async (): Promise<string> => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let result = '';
@@ -153,29 +141,33 @@ export const generateProjectId = async (): Promise<string> => {
 
 export const createProject = async (formData: ProjectFormData) => {
   try {
+    const user = useAuthStore.getState().user;
+    const token = useAuthStore.getState().token;
     const projectId = await generateProjectId();
 
     const res = await server.post('/projects', {
       id: projectId,
       title: formData.title,
       description: formData.description,
-      status: "모집중",
-      leader_id: formData.leader_id,
-      projectType: formData.projectType,
-      roles: formData.roles,
-      techStack: formData.techStack,
+      status: formData.status,
+      visibility: formData.visibility,
+      owner_id: user?.id,
+      project_type: formData.project_type,
+      tags: formData.tags,
       location: formData.location,
-      teamSize: Number(formData.teamSize),
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      createdAt: getCurrentKoreanTimeDate(),
+      team_size: Number(formData.team_size),
+      start_date: formData.start_date,
+      end_date: formData.end_date,
+      created_at: getCurrentKoreanTime(),
+      updated_at: getCurrentKoreanTime(),
     }, {
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
     });
 
-    if (res.status === 200) {
+    if (res.status === 201) {
       return projectId;
     } else {
       throw new Error("Failed to create project");
@@ -186,11 +178,12 @@ export const createProject = async (formData: ProjectFormData) => {
   }
 };
 
-export const deleteProject = async (project_id: string) => {
+export const deleteProject = async (project_id: string, token: string) => {
   try {
     const res = await server.delete(`/projects/${project_id}`, {
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
       },
     });
 
