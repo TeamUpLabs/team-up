@@ -26,8 +26,8 @@ export default function MemberCard({
   const { project } = useProject();
 
   const getContributionLevel = () => {
-    const milestoneCount = project?.milestones?.filter((milestone) => milestone.assignee_id.includes(member.id)).length || 0;
-    const taskCount = project?.tasks?.filter((task) => task.assignee_id?.includes(member.id)).length || 0;
+    const milestoneCount = project?.milestones?.filter((milestone) => milestone.assignees.some((assi) => assi.id === member.id)).length || 0;
+    const taskCount = project?.tasks?.filter((task) => task.assignees.some((assi) => assi.id === member.id)).length || 0;
     const contributionScore = (milestoneCount * 10) + (taskCount * 15);
 
     if (contributionScore > 80) return { level: "상위 기여자", class: "purple" };
@@ -170,11 +170,11 @@ export default function MemberCard({
         <div className="flex items-center space-x-4 text-xs text-text-secondary">
           <div title="참여 프로젝트 수" className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-blue-400"></span>
-            <span>{project?.milestones?.filter((milestone) => milestone.assignee_id?.includes(member.id)).length || 0} 마일스톤</span>
+            <span>{project?.milestones?.filter((milestone) => milestone.assignees.some((assi) => assi.id === member.id)).length || 0} 마일스톤</span>
           </div>
           <div title="진행중인 태스크" className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-green-400"></span>
-            <span>{project?.tasks?.filter((task) => task.assignee_id?.includes(member.id)).length || 0} 작업</span>
+            <span>{project?.tasks?.filter((task) => task.assignees.some((assi) => assi.id === member.id)).length || 0} 작업</span>
           </div>
         </div>
         <div className="text-xs text-text-secondary font-medium hover:text-text-primary">상세보기</div>
