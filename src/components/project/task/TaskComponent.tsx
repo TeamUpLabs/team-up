@@ -12,7 +12,7 @@ export default function TaskComponent({ task }: { task: Task }) {
   return (
     <div
       onDragStart={(e) => {
-        e.dataTransfer.setData('taskId', task?.id.toString() ?? '');
+        e.dataTransfer.setData('taskId', task?.id.toString() ?? '0');
       }}
       className="p-3 mb-2 bg-component-secondary-background rounded-lg hover:bg-component-tertiary-background cursor-move transition-colors border border-component-border"
       draggable
@@ -42,29 +42,29 @@ export default function TaskComponent({ task }: { task: Task }) {
         )}
       </div>
       <div className="flex items-center justify-between gap-2 text-sm text-text-secondary">
-        {task?.assignee && task.assignee.length > 0 && (
+        {task?.assignees && task.assignees.length > 0 && (
           <div className="flex -space-x-2.5">
-            {task.assignee.slice(0, 2).map((assi) => (
+            {task.assignees.slice(0, 2).map((assi) => (
               <Tooltip content={assi.name} key={assi.id} placement="bottom">
                 <div className="w-8 h-8 relative rounded-full bg-component-background border-2 border-component-border text-xs flex items-center justify-center">
-                  {assi?.profileImage ? (
-                    <Image src={assi.profileImage} alt="Profile" className="object-fit rounded-full" quality={100} width={32} height={32} />
+                  {assi?.profile_image ? (
+                    <Image src={assi.profile_image} alt="Profile" className="object-fit rounded-full" quality={100} width={32} height={32} />
                   ) : (
                     <p>{assi?.name.charAt(0)}</p>
                   )}
                 </div>
               </Tooltip>
             ))}
-            {task.assignee.length > 2 && (
+            {task.assignees.length > 2 && (
               <div className="w-8 h-8 rounded-full bg-component-background border-2 border-component-border text-sm flex items-center justify-center">
-                +{task.assignee.length - 2}
+                +{task.assignees.length - 2}
               </div>
             )}
           </div>
         )}
-        {task?.endDate && (
+        {task?.due_date && (
           <span>
-            마감일: {task?.endDate}
+            마감일: {task?.due_date}
           </span>
         )}
       </div>

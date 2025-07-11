@@ -29,12 +29,7 @@ export default function TasksPage() {
     if (!project?.tasks) return;
 
     try {
-      setTasks(project.tasks.map((task: Task) => ({
-        ...task,
-        id: task.id,
-        status: task.status as "not_started" | "in_progress" | "completed" | "on_hold",
-        priority: task.priority as "high" | "medium" | "low"
-      })));
+      setTasks(project.tasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
@@ -115,11 +110,10 @@ export default function TasksPage() {
         }
       }
     }
-
+    await updateTaskStatus(taskId, newStatus);
     setTasks(tasks.map(task =>
       task.id === taskId ? { ...task, status: newStatus } : task
     ));
-    await updateTaskStatus(project?.id ?? '', taskId, newStatus);
   };
 
   const handleTaskClick = (task: Task) => {
@@ -177,7 +171,7 @@ export default function TasksPage() {
                 </div>
               </div>
               <div className="p-2">
-                {tasksList.map((task) => (
+                {tasksList.map((task: Task) => (
                   <div key={task.id} onClick={() => handleTaskClick(task)}>
                     <TaskComponent task={task} />
                   </div>

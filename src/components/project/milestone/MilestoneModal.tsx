@@ -181,7 +181,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const handleSaveEdit = async () => {
     setSubmitStatus('submitting');
     try {
-      await updateMilestone(params?.projectId ? String(params.projectId) : 'default', milestone.id, {
+      await updateMilestone(milestone.id, {
         title: milestoneData.title,
         description: milestoneData.description,
         status: milestoneData.status,
@@ -254,8 +254,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   };
 
   const modalHeader = (
-    <div className="flex items-start justify-between">
-      <div className="space-y-2">
+    <div className="flex items-start">
+      <div className="space-y-2 flex-1">
         <div className="flex items-center gap-2">
           <FontAwesomeIcon icon={faBullseye} />
           {isEditing === "title" ? (
@@ -283,23 +283,27 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
             </div>
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 flex-wrap">
           {isEditing === "status" ? (
             <Select
               options={[
-                { name: "status", value: "not-started", label: "NOT STARTED" },
-                { name: "status", value: "in-progress", label: "IN PROGRESS" },
-                { name: "status", value: "done", label: "DONE" },
+                { name: "status", value: "not_started", label: "NOT STARTED" },
+                { name: "status", value: "in_progress", label: "IN PROGRESS" },
+                { name: "status", value: "completed", label: "COMPLETED" },
               ]}
               value={milestoneData.status}
               onChange={(value) => handleSelectChange("status", value as string)}
               color={getStatusColorName(milestoneData.status)}
-              className="px-3 py-1 rounded-full text-sm"
+              className="!px-2 !py-0.5 !rounded-full !text-sm"
+              autoWidth
+              isDark={isDark}
+              isHoverEffect={false}
+              isInputBg={false}
             />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
-                content={milestoneData.status.replace('-', ' ').toUpperCase()}
+                content={milestoneData.status.replace('_', ' ').toUpperCase()}
                 color={getStatusColorName(milestoneData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
@@ -324,8 +328,12 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               ]}
               value={milestoneData.priority}
               onChange={(value) => handleSelectChange("priority", value as string)}
-              color={getPriorityColorName(milestoneData.priority)}
-              className="px-3 py-1 rounded-full text-sm"
+              color={getPriorityColorName(milestoneData.priority.toLowerCase())}
+              className="!px-2 !py-0.5 !rounded-full !text-sm"
+              autoWidth
+              isDark={isDark}
+              isHoverEffect={false}
+              isInputBg={false}
             />
           ) : (
             <div className="flex items-center gap-2 group relative">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Task, CommentCreateFormData, SubTask, SubTaskCreateFormData } from "@/types/Task";
+import { Task, CommentCreateFormData, SubTask, SubTaskCreateFormData, blankTask } from "@/types/Task";
 import { blankUserBrief } from "@/types/User";
 import ModalTemplete from "@/components/ModalTemplete";
 import { useProject } from "@/contexts/ProjectContext";
@@ -39,9 +39,13 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const router = useRouter();
   const params = useParams();
   const [isEditing, setIsEditing] = useState<string>("none");
-  const [taskData, setTaskData] = useState<Task>(task);
+  const [taskData, setTaskData] = useState<Task>(blankTask);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [commentSubmitStatus, setCommentSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+
+  useEffect(() => {
+    setTaskData(task);
+  }, [task]);
 
   const calculateProgress = (subtasksList: SubTask[]) => {
     if (subtasksList.length === 0 && taskData.status === "completed") return 100;
@@ -173,11 +177,14 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const handleDelete = () => {
     useAuthStore.getState().setConfirm("작업을 삭제하시겠습니까?", async () => {
       try {
-        await deleteTask(project?.id ?? "", task.id);
+        await deleteTask(task.id);
         useAuthStore
           .getState()
           .setAlert("작업 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
+        setTimeout(() => {
+          onClose();
+        }, 1000);
       } catch (error) {
         console.error("Error deleting task:", error);
         useAuthStore.getState().setAlert("작업 삭제에 실패했습니다.", "error");
@@ -297,8 +304,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const progress = calculateProgress(taskData.subtasks);
 
   const modalHeader = (
-    <div className="flex items-start justify-between">
-      <div className="space-y-2">
+    <div className="flex items-start">
+      <div className="space-y-2 flex-1">
         <div className="flex items-center gap-2">
           <FontAwesomeIcon
             icon={faBullseye}
@@ -350,19 +357,23 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           {isEditing === "status" ? (
             <Select
               options={[
-                { name: "status", value: "not-started", label: "NOT STARTED" },
-                { name: "status", value: "in-progress", label: "IN PROGRESS" },
-                { name: "status", value: "done", label: "Done" },
+                { name: "status", value: "not_started", label: "NOT STARTED" },
+                { name: "status", value: "in_progress", label: "IN PROGRESS" },
+                { name: "status", value: "completed", label: "COMPLETED" },
               ]}
               value={taskData.status}
               onChange={(value) => handleSelectChange("status", value as string)}
               color={getStatusColorName(taskData.status)}
-              className="px-3 py-1 rounded-full text-sm"
+              className="!px-2 !py-0.5 !rounded-full !text-sm"
+              autoWidth
+              isDark={isDark}
+              isHoverEffect={false}
+              isInputBg={false}
             />
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
-                content={taskData.status.replace('-', ' ').toUpperCase()}
+                content={taskData.status.replace('_', ' ').toUpperCase()}
                 color={getStatusColorName(taskData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
@@ -388,7 +399,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               value={taskData.priority}
               onChange={(value) => handleSelectChange("priority", value as string)}
               color={getPriorityColorName(taskData.priority)}
-              className="px-3 py-1 rounded-full text-sm"
+              className="!px-2 !py-0.5 !rounded-full !text-sm"
+              autoWidth
+              isDark={isDark}
+              isHoverEffect={false}
+              isInputBg={false}
             />
           ) : (
             <div className="flex items-center gap-2 group relative">

@@ -31,10 +31,15 @@ export const createTask = async (project_id: string, task: TaskCreateFormData) =
   }
 }
 
-export const deleteTask = async (project_id: string, taskId: number) => {
+export const deleteTask = async (taskId: number) => {
   try {
-    const res = await server.delete(`/project/${project_id}/task/${taskId}`);
-    if (res.status === 200) {
+    const token = useAuthStore.getState().token;
+    const res = await server.delete(`/tasks/${taskId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (res.status === 204) {
       return res.data;
     } else {
       throw new Error("Failed to delete task");
@@ -45,10 +50,13 @@ export const deleteTask = async (project_id: string, taskId: number) => {
   }
 }
 
-export const updateTaskStatus = async (project_id: string, task_id: number, status: string) => {
+export const updateTaskStatus = async (task_id: number, status: string) => {
   try {
-    const res = await server.put(`/project/${project_id}/task/${task_id}/status`, {
-      status: status,
+    const token = useAuthStore.getState().token;
+    const res = await server.put(`/tasks/${task_id}`, { status: status }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     });
     if (res.status === 200) {
       return res.data;

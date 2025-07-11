@@ -6,7 +6,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { faChevronDown, faXmark, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { BadgeColor } from "@/components/ui/Badge";
+import { BadgeColor, badgeColors, darkBadgeColors } from "@/components/ui/Badge";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 
 export interface SelectOption {
@@ -35,6 +35,10 @@ interface SelectProps {
   maxHeight?: number;
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
   renderValue?: (value: string | string[]) => React.ReactNode;
+  autoWidth?: boolean; // 드롭다운 너비를 옵션 길이에 맞춰 자동 조정
+  isDark?: boolean;
+  isHoverEffect?: boolean;
+  isInputBg?: boolean;
 }
 
 export default function Select({
@@ -56,11 +60,15 @@ export default function Select({
   maxHeight = 200,
   renderOption,
   renderValue,
+  autoWidth = false,
+  isDark = false,
+  isHoverEffect = true,
+  isInputBg = true,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [focusedIndex, setFocusedIndex] = useState(-1)
-
+  const [dropdownWidth, setDropdownWidth] = useState<number | undefined>(undefined)
 
   const generatedId = React.useId();
   const inputId = generatedId;
@@ -68,6 +76,7 @@ export default function Select({
   const selectRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const optionsRef = useRef<HTMLDivElement>(null)
+  const hiddenMeasureRef = useRef<HTMLDivElement>(null)
 
   // 필터된 옵션들
   const filteredOptions = options.filter((option) => option.label.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -81,6 +90,34 @@ export default function Select({
   useEffect(() => {
     setSelectedValues(Array.isArray(value) ? value : value ? [value as string] : []);
   }, [value]);
+
+  // 드롭다운 너비 계산
+  useEffect(() => {
+    if (autoWidth && hiddenMeasureRef.current) {
+      const measureElement = hiddenMeasureRef.current;
+      let maxWidth = 0;
+      
+      // 모든 옵션의 너비를 측정
+      filteredOptions.forEach((option) => {
+        measureElement.textContent = option.label;
+        const optionWidth = measureElement.offsetWidth;
+        maxWidth = Math.max(maxWidth, optionWidth);
+      });
+      
+      // 검색 입력이 있는 경우 검색 입력의 너비도 고려
+      if (searchable) {
+        measureElement.textContent = "검색...";
+        const searchWidth = measureElement.offsetWidth;
+        maxWidth = Math.max(maxWidth, searchWidth);
+      }
+      
+      // 패딩과 여백을 고려하여 최종 너비 설정
+      const finalWidth = maxWidth + 48; // 좌우 패딩 24px씩
+      setDropdownWidth(finalWidth);
+    } else {
+      setDropdownWidth(undefined);
+    }
+  }, [autoWidth, filteredOptions, searchable]);
 
   // 옵션 선택 처리
   const handleOptionSelect = useCallback((option: SelectOption) => {
@@ -201,34 +238,6 @@ export default function Select({
     }
   }
 
-  const badgeColors = {
-    red: "bg-red-100 text-red-800 border border-red-300",
-    orange: "bg-orange-100 text-orange-800 border border-orange-300",
-    amber: "bg-amber-100 text-amber-800 border border-amber-300",
-    yellow: "bg-yellow-100 text-yellow-800 border border-yellow-300",
-    lime: "bg-lime-100 text-lime-800 border border-lime-300",
-    green: "bg-green-100 text-green-800 border border-green-300",
-    emerald: "bg-emerald-100 text-emerald-800 border border-emerald-300",
-    teal: "bg-teal-100 text-teal-800 border border-teal-300",
-    cyan: "bg-cyan-100 text-cyan-800 border border-cyan-300",
-    sky: "bg-sky-100 text-sky-800 border border-sky-300",
-    blue: "bg-blue-100 text-blue-800 border border-blue-300",
-    indigo: "bg-indigo-100 text-indigo-800 border border-indigo-300",
-    violet: "bg-violet-100 text-violet-800 border border-violet-300",
-    purple: "bg-purple-100 text-purple-800 border border-purple-300",
-    fuchsia: "bg-fuchsia-100 text-fuchsia-800 border border-fuchsia-300",
-    pink: "bg-pink-100 text-pink-800 border border-pink-300",
-    rose: "bg-rose-100 text-rose-800 border border-rose-300",
-    slate: "bg-slate-100 text-slate-800 border border-slate-300",
-    gray: "bg-gray-100 text-gray-800 border border-gray-300",
-    zinc: "bg-zinc-100 text-zinc-800 border border-zinc-300",
-    neutral: "bg-neutral-100 text-neutral-800 border border-neutral-300",
-    stone: "bg-stone-100 text-stone-800 border border-stone-300",
-    black: "bg-black text-white border border-white",
-    white: "bg-white text-black border border-black",
-    none: "bg-transparent text-text-primary border border-component-border"
-  };
-
   // 표시할 값 렌더링
   const renderDisplayValue = () => {
     if (renderValue) {
@@ -271,7 +280,21 @@ export default function Select({
 
 
   return (
-    <div className="w-full">
+    <div className="">
+      {/* 숨겨진 측정 요소 */}
+      {autoWidth && (
+        <div
+          ref={hiddenMeasureRef}
+          className="absolute invisible whitespace-nowrap text-sm"
+          style={{
+            position: 'absolute',
+            visibility: 'hidden',
+            height: 0,
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+          }}
+        />
+      )}
       {label && (
         <div className="flex items-center gap-2 relative group mb-1">
           <label
@@ -292,11 +315,16 @@ export default function Select({
       )}
       <div
         ref={selectRef}
-        className={`relative ${badgeColors[color as BadgeColor]} 
-      bg-input-background px-3 py-2 border border-input-border rounded-md
-      text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo 
-      focus:border-transparent transition-all duration-200 hover:border-input-border-hover
-      ${className}`}
+        className={`relative
+          ${isInputBg ? "bg-input-background" : ""} px-3 py-2 border border-input-border rounded-md transition-all duration-200
+          ${isDark ? darkBadgeColors[color as BadgeColor] : badgeColors[color as BadgeColor]} 
+          ${isHoverEffect ? "focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent hover:border-input-border-hover" : ""}
+          ${className}`
+        }
+        style={{
+          width: autoWidth ? dropdownWidth : '100%',
+          minWidth: autoWidth ? dropdownWidth : '100%',
+        }}
         onKeyDown={handleKeyDown}
         tabIndex={disabled ? -1 : 0}
       >
@@ -306,7 +334,7 @@ export default function Select({
           onClick={() => !disabled && setIsOpen(!isOpen)}
           disabled={disabled}
           className={`
-          w-full focus:outline-none focus:ring-0 text-left text-text-secondary
+          w-full focus:outline-none focus:ring-0 text-left
           ${disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"}
         `}
           aria-haspopup="listbox"
@@ -333,10 +361,12 @@ export default function Select({
               animate={{ opacity: 1, scaleY: 1 }}
               exit={{ opacity: 0, scaleY: 0.95 }}
               transition={{ duration: 0.1, ease: "easeOut" }}
-              className={`absolute z-[50] mt-1 w-full bg-component-background border border-component-border rounded-md shadow-lg ${dropDownClassName}`}
+              className={`absolute z-[50] mt-1 bg-component-background border border-component-border rounded-md shadow-lg ${dropDownClassName}`}
               style={{
                 top: '100%',
                 left: 0,
+                width: autoWidth ? dropdownWidth : '100%',
+                minWidth: autoWidth ? dropdownWidth : '100%',
               }}
             >
                 {searchable && (

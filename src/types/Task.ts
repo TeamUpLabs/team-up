@@ -33,7 +33,7 @@ export interface Task {
   project_id: string;
   title: string;
   description: string;
-  status: "not_started" | "in_progress" | "completed" | "on_hold";
+  status: "not_started" | "in_progress" | "completed";
   priority: "low" | "medium" | "high";
   estimated_hours: number;
   actual_hours: number;
