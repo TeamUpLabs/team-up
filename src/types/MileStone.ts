@@ -54,6 +54,19 @@ export interface MilestoneCreateFormData {
   created_by: number;
 }
 
+export const blankMilestoneCreateFormData: MilestoneCreateFormData = {
+  title: "",
+  description: "",
+  status: "",
+  priority: "",
+  start_date: "",
+  due_date: "",
+  project_id: "",
+  tags: [],
+  assignee_ids: [],
+  created_by: 0,
+}
+
 export interface MilestoneUpdateFormData {
   title: string;
   description: string;

@@ -141,7 +141,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const handleDelete = () => {
     useAuthStore.getState().setConfirm("마일스톤을 삭제하시겠습니까?", async () => {
       try {
-        await deleteMilestone(project?.id ?? "", milestone.id);
+        await deleteMilestone(milestone.id);
         useAuthStore.getState().setAlert("마일스톤 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
         onClose();
@@ -298,7 +298,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               autoWidth
               isDark={isDark}
               isHoverEffect={false}
-              isInputBg={false}
+              likeBadge={true}
             />
           ) : (
             <div className="flex items-center gap-2 group relative">
@@ -333,7 +333,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               autoWidth
               isDark={isDark}
               isHoverEffect={false}
-              isInputBg={false}
+              likeBadge={true}
             />
           ) : (
             <div className="flex items-center gap-2 group relative">

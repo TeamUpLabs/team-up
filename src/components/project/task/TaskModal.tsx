@@ -368,7 +368,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               autoWidth
               isDark={isDark}
               isHoverEffect={false}
-              isInputBg={false}
+              likeBadge={true}
             />
           ) : (
             <div className="flex items-center gap-2 group relative">
@@ -403,7 +403,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               autoWidth
               isDark={isDark}
               isHoverEffect={false}
-              isInputBg={false}
+              likeBadge={true}
             />
           ) : (
             <div className="flex items-center gap-2 group relative">

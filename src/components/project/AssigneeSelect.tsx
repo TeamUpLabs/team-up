@@ -1,4 +1,4 @@
-import { Member } from "@/types/Member";
+import { UserBrief } from "@/types/User";
 import Image from "next/image";
 import { useProject } from "@/contexts/ProjectContext";
 import { Check } from "flowbite-react-icons/outline";
@@ -6,7 +6,7 @@ import { getStatusInfo } from "@/utils/getStatusColor";
 
 interface AssigneeSelectProps {
   selectedAssignee: number[];
-  assignee: Member[];
+  assignee: UserBrief[];
   toggleAssignee: (memberId: number) => void;
   isAssigned: (memberId: number) => boolean;
   className?: string;
@@ -24,13 +24,13 @@ export default function AssigneeSelect({
   const { project } = useProject();
 
   const getRoleInfo = (assignee_id: number) => {
-    if (project?.leader?.id === assignee_id) {
+    if (project?.members.find((member) => member.user.id === assignee_id)?.is_leader) {
       return {
         text: "리더",
         className: "bg-yellow-100 text-yellow-700 border-yellow-200"
       };
     }
-    if (project?.manager?.some((manager) => manager.id === assignee_id)) {
+    if (project?.members.find((member) => member.user.id === assignee_id)?.is_manager) {
       return {
         text: "관리자",
         className: "bg-blue-100 text-blue-700 border-blue-200"
@@ -87,8 +87,8 @@ export default function AssigneeSelect({
                 <div className="flex justify-center items-center">
                   <div className="relative">
                     <Image
-                      src={member.profileImage}
-                      alt={member.name}
+                      src={member.profile_image || ""}
+                      alt={member.name || ""}
                       width={60}
                       height={60}
                       className={`rounded-full ring-2 ${statusInfo.ringColor} ring-offset-2`}
@@ -102,8 +102,8 @@ export default function AssigneeSelect({
               </div>
               <span className="text-text-primary">{member.name}</span>
               <span className="text-text-secondary text-sm">{member.role}</span>
-              <div className={`px-2 py-1 rounded-full text-xs font-medium ${getWorkloadColor(project?.tasks.filter((task) => task.assignee_id?.includes(member.id)).length || 0)}`}>
-                {getWorkloadText(project?.tasks.filter((task) => task.assignee_id?.includes(member.id)).length || 0)} ({project?.tasks.filter((task) => task.assignee_id?.includes(member.id)).length || 0}개 작업)
+              <div className={`px-2 py-1 rounded-full text-xs font-medium ${getWorkloadColor(project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)}`}>
+                {getWorkloadText(project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)} ({project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0}개 작업)
               </div>
             </div>
           )

@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/Input";
 import { TextArea } from "@/components/ui/TextArea";
 import { useTheme } from "@/contexts/ThemeContext";
 import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";
+import { MilestoneCreateFormData, blankMilestoneCreateFormData } from "@/types/MileStone";
 
 interface MilestoneCreateModalProps {
   isOpen: boolean;
@@ -43,20 +44,7 @@ export default function MilestoneCreateModal({
 
   const { project } = useProject();
   const user = useAuthStore((state) => state.user);
-  const initialFormData = () => ({
-    project_id: project?.id || "",
-    title: "",
-    description: "",
-    startDate: "",
-    endDate: "",
-    status: "",
-    priority: "",
-    tags: [] as string[],
-    assignee_id: [] as number[],
-    createdBy: user?.id || 0,
-    updatedBy: user?.id || 0,
-  });
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState<MilestoneCreateFormData>(blankMilestoneCreateFormData);
   const [tagsInput, setTagsInput] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [dateError, setDateError] = useState(false);
@@ -65,12 +53,12 @@ export default function MilestoneCreateModal({
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   useEffect(() => {
-    if (formData.startDate && formData.endDate) {
-      setDateError(new Date(formData.endDate) < new Date(formData.startDate));
+    if (formData.start_date && formData.due_date) {
+      setDateError(new Date(formData.due_date) < new Date(formData.start_date));
     } else {
       setDateError(false);
     }
-  }, [formData.startDate, formData.endDate]);
+  }, [formData.start_date, formData.due_date]);
 
   const handleSubmit = async () => {
     let hasError = false;
@@ -99,7 +87,7 @@ export default function MilestoneCreateModal({
       setPriorityError(false);
     }
 
-    if (formData.assignee_id.length === 0) {
+    if (formData.assignee_ids.length === 0) {
       useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "error");
       return;
     }
@@ -111,7 +99,11 @@ export default function MilestoneCreateModal({
     if (project?.id) {
       setSubmitStatus('submitting');
       try {
-        await createMilestone(project.id, formData);
+        await createMilestone({
+          ...formData,
+          project_id: project.id,
+          created_by: user?.id || 0,
+        });
         setSubmitStatus('success');
         useAuthStore.getState().setAlert("마일스톤이 성공적으로 생성되었습니다.", "success");
       } catch (error) {
@@ -122,7 +114,7 @@ export default function MilestoneCreateModal({
         setTimeout(() => {
           setTimeout(() => {
             onClose();
-            setFormData(initialFormData);
+            setFormData(blankMilestoneCreateFormData);
             setStep(1);
             setSubmitStatus('idle');
           }, 1000);
@@ -155,14 +147,14 @@ export default function MilestoneCreateModal({
   const handleStartDateChange = (date: Date | undefined) => {
     setFormData(prevData => ({
       ...prevData,
-      startDate: date ? formatDateToString(date) : "",
+      start_date: date ? formatDateToString(date) : "",
     }));
   };
 
   const handleEndDateChange = (date: Date | undefined) => {
     setFormData(prevData => ({
       ...prevData,
-      endDate: date ? formatDateToString(date) : "",
+      due_date: date ? formatDateToString(date) : "",
     }));
   };
 
@@ -185,22 +177,22 @@ export default function MilestoneCreateModal({
 
   const toggleAssignee = (memberId: number) => {
     setFormData((prev) => {
-      if (prev.assignee_id.includes(memberId)) {
+      if (prev.assignee_ids.includes(memberId)) {
         return {
           ...prev,
-          assignee_id: prev.assignee_id.filter((id) => id !== memberId),
+          assignee_ids: prev.assignee_ids.filter((id) => id !== memberId),
         };
       } else {
         return {
           ...prev,
-          assignee_id: [...prev.assignee_id, memberId],
+          assignee_ids: [...prev.assignee_ids, memberId],
         };
       }
     });
   };
 
   const isAssigned = (memberId: number) => {
-    return formData.assignee_id.includes(memberId);
+    return formData.assignee_ids.includes(memberId);
   };
 
   const moveNextStep = (step: number) => {
@@ -212,7 +204,7 @@ export default function MilestoneCreateModal({
         }
         break;
       case 2:
-        if (!formData.startDate || !formData.endDate) {
+        if (!formData.start_date || !formData.due_date) {
           useAuthStore.getState().setAlert("시작일과 종료일을 입력해주세요.", "error");
           return;
         }
@@ -275,6 +267,7 @@ export default function MilestoneCreateModal({
           buttonText="마일스톤 생성"
           successText="생성 완료"
           errorText="생성 실패"
+          fit
         />
       )}
     </div>
@@ -349,7 +342,7 @@ export default function MilestoneCreateModal({
                     시작일 <span className="text-point-color-purple ml-1">*</span>
                   </label>
                   <DatePicker
-                    value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+                    value={formData.start_date ? parseStringToDate(formData.start_date) : undefined}
                     onChange={handleStartDateChange}
                     placeholder="시작일 선택"
                     className="w-full bg-input-background"
@@ -359,12 +352,12 @@ export default function MilestoneCreateModal({
                   <DatePicker
                     label="종료일"
                     isRequired
-                    value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
+                    value={formData.due_date ? parseStringToDate(formData.due_date) : undefined}
                     onChange={handleEndDateChange}
                     placeholder="종료일 선택"
                     className="w-full bg-input-background"
-                    minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
-                    maxDate={project?.endDate ? parseStringToDate(project.endDate) : undefined}
+                    minDate={formData.start_date ? parseStringToDate(formData.start_date) : undefined}
+                    maxDate={project?.end_date ? parseStringToDate(project.end_date) : undefined}
                   />
                   {dateError && (
                     <p className="text-sm text-red-500 mt-1">
@@ -473,8 +466,8 @@ export default function MilestoneCreateModal({
               </div>
               <div className="px-1">
                 <AssigneeSelect
-                  selectedAssignee={formData.assignee_id}
-                  assignee={project?.members || []}
+                  selectedAssignee={formData.assignee_ids}
+                  assignee={project?.members.map((member) => member.user) || []}
                   toggleAssignee={toggleAssignee}
                   isAssigned={isAssigned}
                   label="선택된 담당자"

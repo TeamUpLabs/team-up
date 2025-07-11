@@ -1,21 +1,18 @@
 import { server } from "@/auth/server";
-import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
 import { MilestoneCreateFormData, MilestoneUpdateFormData } from "@/types/MileStone";
 import { useAuthStore } from "@/auth/authStore";
 
 
-export const createMilestone = async (project_id: string, milestone: MilestoneCreateFormData) => {
+export const createMilestone = async (milestone: MilestoneCreateFormData) => {
   try {
-    const res = await server.post(`/project/${project_id}/milestone`, {
-      ...milestone,
-      createdAt: getCurrentKoreanTimeDate(),
-      updatedAt: getCurrentKoreanTimeDate(),
-    }, {
+    const token = useAuthStore.getState().token;
+    const res = await server.post(`/milestones`, milestone, {
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
       },
     });
-    if (res.status === 200) {
+    if (res.status === 201) {
       return res.data;
     } else {
       throw new Error("Failed to create milestone");
@@ -26,10 +23,15 @@ export const createMilestone = async (project_id: string, milestone: MilestoneCr
   }
 };
 
-export const deleteMilestone = async (project_id: string, milestoneId: number) => {
+export const deleteMilestone = async (milestoneId: number) => {
   try {
-    const res = await server.delete(`/project/${project_id}/milestone/${milestoneId}`);
-    if (res.status === 200) {
+    const token = useAuthStore.getState().token;
+    const res = await server.delete(`/milestones/${milestoneId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (res.status === 204) {
       return res.data;
     } else {
       throw new Error("Failed to delete milestone");
