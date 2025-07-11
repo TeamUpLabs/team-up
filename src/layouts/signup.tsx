@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import SignupStep1 from "@/components/signup/SignupStep1";
 import SignupStep2 from "@/components/signup/SignupStep2";
 import SignupStep3 from "@/components/signup/SignupStep3";
@@ -16,6 +14,16 @@ import { useAuthStore } from "@/auth/authStore";
 import { checkMember } from "@/hooks/getMemberData";
 import SignupStep6 from "@/components/signup/SignupStep6";
 import SignupStep7 from "@/components/signup/SignupStep7";
+import {
+  ArrowLeft,
+  Cpu,
+  Handshake,
+  Info,
+  Lightbulb,
+  Lock,
+  Mail,
+  Users,
+} from "lucide-react";
 
 export default function SignUpLayout() {
   const [formData, setFormData] = useState<SignUpFormData>({
@@ -43,7 +51,55 @@ export default function SignUpLayout() {
     interests: [],
   });
 
-  const [step, setStep] = useState(1); // 1단계: 이메일, 2단계: 추가 정보
+  const [step, setStep] = useState(1);
+  const totalSteps = 7;
+  const progress = (step / totalSteps) * 100;
+
+  const stepInfo = [
+    {
+      title: "이메일",
+      description: "이메일을 입력해주세요",
+      icon: <Mail className="h-12 w-12 mx-auto text-primary mb-2" />,
+      MiniIcon: <Mail className="h-4 w-4" />,
+    },
+    {
+      title: "비밀번호",
+      description: "비밀번호를 입력해주세요",
+      icon: <Lock className="h-12 w-12 mx-auto text-primary mb-2" />,
+      MiniIcon: <Lock className="h-4 w-4" />,
+    },
+    {
+      title: "역할",
+      description: "프로젝트에서 어떤 역할을 하고 싶은가요?",
+      icon: <Users className="h-12 w-12 mx-auto text-primary mb-2" />,
+      MiniIcon: <Users className="h-4 w-4" />,
+    },
+    {
+      title: "기본 정보",
+      description: "당신의 기본 정보를 입력해주세요",
+      icon: <Info className="h-12 w-12 mx-auto text-primary mb-2" />,
+      MiniIcon: <Info className="h-4 w-4" />,
+    },
+    {
+      title: "협업 선호도",
+      description: "어떤 협업 방식을 선호하시나요?",
+      icon: <Handshake className="h-12 w-12 mx-auto text-primary mb-2" />,
+      MiniIcon: <Handshake className="h-4 w-4" />,
+    },
+    {
+      title: "관심분야",
+      description: "당신이 관심 있는 분야가 궁금해요",
+      icon: <Lightbulb className="h-12 w-12 mx-auto text-primary mb-2" />,
+      MiniIcon: <Lightbulb className="h-4 w-4" />,
+    },
+    {
+      title: "기술 스택",
+      description: "당신이 사용할 수 있는 기술 스택을 입력해주세요",
+      icon: <Cpu className="h-12 w-12 mx-auto text-primary mb-2" />,
+      MiniIcon: <Cpu className="h-4 w-4" />,
+    },
+  ];
+
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -214,7 +270,9 @@ export default function SignUpLayout() {
   };
 
   const handleRemoveSkill = (skillToRemove: string) => {
-    const updatedSkills = formData.tech_stacks.filter((skill) => skill.tech !== skillToRemove);
+    const updatedSkills = formData.tech_stacks.filter(
+      (skill) => skill.tech !== skillToRemove
+    );
     setFormData((prev) => ({
       ...prev,
       tech_stacks: updatedSkills,
@@ -310,24 +368,46 @@ export default function SignUpLayout() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-xl bg-component-background rounded-lg shadow-md p-8 border border-component-border">
-        <div className="text-center mb-8 relative">
+      <div className="w-full max-w-xl bg-component-background rounded-lg shadow-md p-8 border border-component-border space-y-6">
+        <div className="space-y-2">
           {step > 1 && (
             <div
-              className="absolute left-0 top-0 cursor-pointer transition-all duration-300 hover:translate-x-[-3px]"
+              className="cursor-pointer transition-all duration-300 hover:translate-x-[-3px]"
               onClick={() => setStep((prev) => Math.max(1, prev - 1))}
             >
-              <FontAwesomeIcon
-                icon={faArrowLeft}
-                className="text-text-secondary text-xl"
-              />
+              <ArrowLeft className="text-text-secondary text-xl" />
             </div>
           )}
-          <div>
-            <h1 className="text-3xl font-bold text-text-primary">회원가입</h1>
-            <p className="text-text-secondary mt-2">
-              Team-Up에서 당신의 역량을 발휘할 준비를 해보세요
-            </p>
+          <div className="w-full h-4 bg-component-secondary-background rounded-full">
+            <div
+              className="h-full bg-point-color-indigo rounded-full transition-all duration-200"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <div className="flex justify-between text-sm text-text-secondary">
+            {stepInfo.map((info, index) => {
+              return (
+                <div
+                  key={info.title}
+                  className={`flex items-center gap-1 ${
+                    step === index + 1
+                      ? "text-text-primary font-medium"
+                      : ""
+                  }`}
+                >
+                  {info.MiniIcon}
+                  {info.title}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="text-center mb-6">
+            {stepInfo[step - 1].icon}
+            <h3 className="text-lg font-semibold text-text-primary">{stepInfo[step - 1].title}</h3>
+            <p className="text-text-secondary">{stepInfo[step - 1].description}</p>
           </div>
         </div>
 
@@ -389,20 +469,61 @@ export default function SignUpLayout() {
 
           {step === 5 && (
             <SignupStep5
-              collaborationStyle={formData.collaboration_preference.collaboration_style}
-              setCollaborationStyle={(style) => handleCollaborationPreferenceChange("collaboration_style", style)}
-              projectType={formData.collaboration_preference.preferred_project_type}
-              setProjectType={(type) => handleCollaborationPreferenceChange("preferred_project_type", type)}
+              collaborationStyle={
+                formData.collaboration_preference.collaboration_style
+              }
+              setCollaborationStyle={(style) =>
+                handleCollaborationPreferenceChange(
+                  "collaboration_style",
+                  style
+                )
+              }
+              projectType={
+                formData.collaboration_preference.preferred_project_type
+              }
+              setProjectType={(type) =>
+                handleCollaborationPreferenceChange(
+                  "preferred_project_type",
+                  type
+                )
+              }
               role={formData.role}
               preferred_role={formData.collaboration_preference.preferred_role}
-              setPreferredRole={(role) => handleCollaborationPreferenceChange("preferred_role", role)}
+              setPreferredRole={(role) =>
+                handleCollaborationPreferenceChange("preferred_role", role)
+              }
               workingHours={{
                 timezone: formData.collaboration_preference.available_time_zone,
-                start: formData.collaboration_preference.work_hours_start ? 
-                  `${Math.floor(Number(formData.collaboration_preference.work_hours_start) / 100).toString().padStart(2, '0')}:${(Number(formData.collaboration_preference.work_hours_start) % 100).toString().padStart(2, '0')}` : "",
-                end: formData.collaboration_preference.work_hours_end ? 
-                  `${Math.floor(Number(formData.collaboration_preference.work_hours_end) / 100).toString().padStart(2, '0')}:${(Number(formData.collaboration_preference.work_hours_end) % 100).toString().padStart(2, '0')}` : "",
-                preferred_project_length: formData.collaboration_preference.preferred_project_length,
+                start: formData.collaboration_preference.work_hours_start
+                  ? `${Math.floor(
+                      Number(
+                        formData.collaboration_preference.work_hours_start
+                      ) / 100
+                    )
+                      .toString()
+                      .padStart(2, "0")}:${(
+                      Number(
+                        formData.collaboration_preference.work_hours_start
+                      ) % 100
+                    )
+                      .toString()
+                      .padStart(2, "0")}`
+                  : "",
+                end: formData.collaboration_preference.work_hours_end
+                  ? `${Math.floor(
+                      Number(formData.collaboration_preference.work_hours_end) /
+                        100
+                    )
+                      .toString()
+                      .padStart(2, "0")}:${(
+                      Number(formData.collaboration_preference.work_hours_end) %
+                      100
+                    )
+                      .toString()
+                      .padStart(2, "0")}`
+                  : "",
+                preferred_project_length:
+                  formData.collaboration_preference.preferred_project_length,
               }}
               onWorkingHoursChange={handleWorkingHoursChange}
             />
@@ -411,12 +532,14 @@ export default function SignUpLayout() {
           {step === 6 && (
             <SignupStep6
               interests={formData.interests}
-              setInterests={(interests) => setFormData(prev => ({ 
-                ...prev, 
-                interests: interests.map(interest => ({
-                  ...interest,
+              setInterests={(interests) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  interests: interests.map((interest) => ({
+                    ...interest,
+                  })),
                 }))
-              }))}
+              }
               addInterest={addInterest}
               removeInterest={removeInterest}
             />
