@@ -5,7 +5,10 @@ import { Camera, User } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { updateUserProfileImage, updateUserProfile } from "@/hooks/getMemberData";
+import {
+  updateUserProfileImage,
+  updateUserProfile,
+} from "@/hooks/getMemberData";
 import { User as UserType } from "@/types/User";
 import { useAuthStore } from "@/auth/authStore";
 import ImageCropModal from "@/components/platform/profile/ImageCropModal";
@@ -13,14 +16,16 @@ import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";
 import { Input } from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
-import TimePicker from "@/components/ui/TimePicker";
 import { TextArea } from "@/components/ui/TextArea";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGithub, faLinkedin, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import {
+  faGithub,
+  faLinkedin,
+  faInstagram,
+} from "@fortawesome/free-brands-svg-icons";
 import { Globe } from "lucide-react";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
-
 
 interface PersonalInfoProps {
   user: UserType;
@@ -34,11 +39,14 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   const [cropImage, setCropImage] = useState<string | null>(null);
   const [showCropModal, setShowCropModal] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [originalProfileData, setOriginalProfileData] = useState<UserType | null>(user);
+  const [originalProfileData, setOriginalProfileData] =
+    useState<UserType | null>(user);
   const [newSkill, setNewSkill] = useState<string>("");
   const [newLanguage, setNewLanguage] = useState<string>("");
   const [isComposing, setIsComposing] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
   const [formData, setFormData] = useState<UserType>({
     id: user.id || 0,
     name: "",
@@ -140,28 +148,44 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
         last_login: originalProfileData.last_login,
         auth_provider: originalProfileData.auth_provider,
         auth_provider_id: originalProfileData.auth_provider_id,
-        auth_provider_access_token: originalProfileData.auth_provider_access_token,
+        auth_provider_access_token:
+          originalProfileData.auth_provider_access_token,
         notification_settings: {
           emailEnable: originalProfileData.notification_settings.emailEnable,
-          taskNotification: originalProfileData.notification_settings.taskNotification,
-          milestoneNotification: originalProfileData.notification_settings.milestoneNotification,
-          scheduleNotification: originalProfileData.notification_settings.scheduleNotification,
-          deadlineNotification: originalProfileData.notification_settings.deadlineNotification,
-          weeklyNotification: originalProfileData.notification_settings.weeklyNotification,
+          taskNotification:
+            originalProfileData.notification_settings.taskNotification,
+          milestoneNotification:
+            originalProfileData.notification_settings.milestoneNotification,
+          scheduleNotification:
+            originalProfileData.notification_settings.scheduleNotification,
+          deadlineNotification:
+            originalProfileData.notification_settings.deadlineNotification,
+          weeklyNotification:
+            originalProfileData.notification_settings.weeklyNotification,
           weeklyReport: originalProfileData.notification_settings.weeklyReport,
-          pushNotification: originalProfileData.notification_settings.pushNotification,
-          securityNotification: originalProfileData.notification_settings.securityNotification,
+          pushNotification:
+            originalProfileData.notification_settings.pushNotification,
+          securityNotification:
+            originalProfileData.notification_settings.securityNotification,
         },
         projects: originalProfileData.projects,
         participation_requests: originalProfileData.participation_requests,
         collaboration_preference: {
-          collaboration_style: originalProfileData.collaboration_preference.collaboration_style,
-          preferred_project_type: originalProfileData.collaboration_preference.preferred_project_type,
-          preferred_role: originalProfileData.collaboration_preference.preferred_role,
-          available_time_zone: originalProfileData.collaboration_preference.available_time_zone,
-          work_hours_start: originalProfileData.collaboration_preference.work_hours_start,
-          work_hours_end: originalProfileData.collaboration_preference.work_hours_end,
-          preferred_project_length: originalProfileData.collaboration_preference.preferred_project_length,
+          collaboration_style:
+            originalProfileData.collaboration_preference.collaboration_style,
+          preferred_project_type:
+            originalProfileData.collaboration_preference.preferred_project_type,
+          preferred_role:
+            originalProfileData.collaboration_preference.preferred_role,
+          available_time_zone:
+            originalProfileData.collaboration_preference.available_time_zone,
+          work_hours_start:
+            originalProfileData.collaboration_preference.work_hours_start,
+          work_hours_end:
+            originalProfileData.collaboration_preference.work_hours_end,
+          preferred_project_length:
+            originalProfileData.collaboration_preference
+              .preferred_project_length,
         },
         tech_stacks: originalProfileData.tech_stacks,
         interests: originalProfileData.interests,
@@ -182,7 +206,9 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
     }
   };
 
-  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfilePictureChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       const imageUrl = URL.createObjectURL(file);
@@ -195,17 +221,22 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
     setIsLoading(true);
     setPreviewImage(croppedImageUrl);
 
-    const response = await updateUserProfileImage(user?.id || 0, croppedImageUrl);
+    const response = await updateUserProfileImage(
+      user?.id || 0,
+      croppedImageUrl
+    );
 
     if (user) {
       useAuthStore.getState().setUser({
         ...user,
-        profile_image: response
+        profile_image: response,
       });
     }
 
     setShowCropModal(false);
-    useAuthStore.getState().setAlert("프로필 이미지가 업데이트되었습니다.", "success");
+    useAuthStore
+      .getState()
+      .setAlert("프로필 이미지가 업데이트되었습니다.", "success");
     setIsLoading(false);
   };
 
@@ -229,7 +260,9 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
     };
   }, [previewImage, cropImage]);
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleOnChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -237,19 +270,28 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   };
 
   const handleBirthDateChange = (date: Date | undefined) => {
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
       birth_date: date ? formatDateToString(date) : "",
     }));
   };
 
-  const handleKeyDown = (type: "tech_stacks" | "languages", e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !isComposing) {
+  const handleKeyDown = (
+    type: "tech_stacks" | "languages",
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "Enter" && !isComposing) {
       e.preventDefault();
       if (type === "tech_stacks") {
         const trimmedInput = newSkill.trim();
-        if (trimmedInput && !formData.tech_stacks.some(stack => stack.tech === trimmedInput)) {
-          const updatedTechStacks = [...formData.tech_stacks, { tech: trimmedInput, level: 1 }];
+        if (
+          trimmedInput &&
+          !formData.tech_stacks.some((stack) => stack.tech === trimmedInput)
+        ) {
+          const updatedTechStacks = [
+            ...formData.tech_stacks,
+            { tech: trimmedInput, level: 1 },
+          ];
           setFormData((prev) => ({
             ...prev,
             tech_stacks: updatedTechStacks,
@@ -268,7 +310,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
         }
       }
     }
-  }
+  };
 
   const removeSkill = (tech: string) => {
     setFormData((prev) => ({
@@ -284,7 +326,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   };
 
   const handleTimeZoneChange = (value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       collaboration_preference: {
         ...prev.collaboration_preference,
@@ -292,61 +334,135 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
       },
     }));
   };
-  const handleStartTimeChange = (value: string) => {
-    // "HH:MM" 형식을 숫자 형식으로 변환
-    const [hours, minutes] = value.split(":").map(Number);
-    const timeValue = hours * 100 + (minutes || 0);
-    setFormData(prev => ({
-      ...prev,
-      collaboration_preference: {
-        ...prev.collaboration_preference,
-        work_hours_start: timeValue.toString(),
-      },
-    }));
-  };
-  const handleEndTimeChange = (value: string) => {
-    // "HH:MM" 형식을 숫자 형식으로 변환
-    const [hours, minutes] = value.split(":").map(Number);
-    const timeValue = hours * 100 + (minutes || 0);
-    setFormData(prev => ({
-      ...prev,
-      collaboration_preference: {
-        ...prev.collaboration_preference,
-        work_hours_end: timeValue.toString(),
-      },
-    }));
-  };
+
   const handleSocialLinkChange = (platform: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      social_links: prev.social_links.map(link => link.platform === platform ? { ...link, url: value } : link),
+      social_links: prev.social_links.map((link) =>
+        link.platform === platform ? { ...link, url: value } : link
+      ),
     }));
   };
 
-  // 숫자 형식의 시간을 HH:MM 형식으로 변환
-  const formatTimeFromNumber = (timeNumber: string | number): string => {
-    if (!timeNumber) return "";
-    const num = Number(timeNumber);
-    const hours = Math.floor(num / 100);
-    const minutes = num % 100;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  const handleCollaborationPreferenceChange = (
+    field: string,
+    value: string | number
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      collaboration_preference: {
+        ...prev.collaboration_preference,
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleWorkingHoursChange = (name: string, value: string) => {
+    if (name === "timezone") {
+      handleCollaborationPreferenceChange("available_time_zone", value);
+    } else if (name === "start") {
+      const [hours, minutes] = value.split(":").map(Number);
+      const timeValue = hours * 100 + (minutes || 0);
+      handleCollaborationPreferenceChange("work_hours_start", timeValue);
+    } else if (name === "end") {
+      const [hours, minutes] = value.split(":").map(Number);
+      const timeValue = hours * 100 + (minutes || 0);
+      handleCollaborationPreferenceChange("work_hours_end", timeValue);
+    } else if (name === "preferred_project_length") {
+      handleCollaborationPreferenceChange("preferred_project_length", value);
+    }
+  };
+
+  // Format minutes to HH:MM string
+  const formatMinutes = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours.toString().padStart(2, "0")}:${mins
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  // Convert numeric time value (hours * 100 + minutes) to HH:MM string
+  const formatNumericTime = (timeValue: number | string | undefined): string => {
+    if (!timeValue) return "";
+    
+    if (typeof timeValue === 'number') {
+      const hours = Math.floor(timeValue / 100);
+      const minutes = timeValue % 100;
+      return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+    }
+    
+    return timeValue.toString();
+  };
+
+  // Convert time string or number to minutes since midnight for easier comparison
+  const toMinutes = (time: string | number | undefined): number => {
+    if (!time) return 0;
+    
+    // If time is a number (stored format: hours * 100 + minutes)
+    if (typeof time === 'number') {
+      const hours = Math.floor(time / 100);
+      const minutes = time % 100;
+      return hours * 60 + minutes;
+    }
+    
+    // If time is a string (HH:MM format)
+    if (typeof time === 'string') {
+      const [hours, minutes] = time.split(":").map(Number);
+      return hours * 60 + (minutes || 0);
+    }
+    
+    return 0;
+  };
+
+  // Generate time options from 00:00 to 23:00 with 30-minute intervals
+  const generateTimeOptions = () => {
+    const options = [];
+    const totalHoursInDay = 24;
+
+    for (let hour = 0; hour < totalHoursInDay; hour++) {
+      const timeString = formatMinutes(hour * 60);
+      options.push({
+        name: "time",
+        value: timeString,
+        label: timeString,
+      });
+    }
+    return options;
+  };
+
+  const TIME_OPTIONS = generateTimeOptions();
+
+  // Filter end time options to be after the selected start time
+  const getEndTimeOptions = () => {
+    if (!formData.collaboration_preference.work_hours_start) return [];
+    const startMinutes = toMinutes(
+      formData.collaboration_preference.work_hours_start
+    );
+    return TIME_OPTIONS.filter(
+      (option) => toMinutes(option.value) > startMinutes
+    );
   };
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    setSubmitStatus('submitting');
+    setSubmitStatus("submitting");
     try {
       const response = await updateUserProfile(formData);
       if (response) {
         useAuthStore.getState().setUser(response);
-        useAuthStore.getState().setAlert("프로필이 업데이트되었습니다.", "success");
+        useAuthStore
+          .getState()
+          .setAlert("프로필이 업데이트되었습니다.", "success");
         setIsEditing("none");
-        setSubmitStatus('success');
+        setSubmitStatus("success");
       }
     } catch (error) {
       console.error("프로필 업데이트 중 오류:", error);
-      useAuthStore.getState().setAlert("프로필 업데이트 중 오류가 발생했습니다.", "error");
-      setSubmitStatus('error');
+      useAuthStore
+        .getState()
+        .setAlert("프로필 업데이트 중 오류가 발생했습니다.", "error");
+      setSubmitStatus("error");
     } finally {
       setIsLoading(false);
     }
@@ -356,7 +472,10 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
     <div className="flex flex-col gap-4 border border-component-border rounded-lg p-6">
       <div className="flex items-center gap-4">
         {user?.profile_image ? (
-          <div className="h-24 w-24 relative rounded-full border-4 border-component-border bg-component-secondary-background flex items-center justify-center overflow-hidden group cursor-pointer" onClick={handleProfilePictureClick}>
+          <div
+            className="h-24 w-24 relative rounded-full border-4 border-component-border bg-component-secondary-background flex items-center justify-center overflow-hidden group cursor-pointer"
+            onClick={handleProfilePictureClick}
+          >
             <Image
               src={user.profile_image}
               alt="Profile"
@@ -371,7 +490,10 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
             </div>
           </div>
         ) : (
-          <div className="h-24 w-24 relative rounded-full border-4 border-component-border bg-component-secondary-background flex items-center justify-center overflow-hidden group cursor-pointer" onClick={handleProfilePictureClick}>
+          <div
+            className="h-24 w-24 relative rounded-full border-4 border-component-border bg-component-secondary-background flex items-center justify-center overflow-hidden group cursor-pointer"
+            onClick={handleProfilePictureClick}
+          >
             <User className="text-text-secondary w-15 h-15" />
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <Camera className="text-white" />
@@ -410,7 +532,9 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           value={formData.name}
           onChange={handleOnChange}
           isEditable
-          EditOnClick={() => isEditing === "name" ? handleCancelEdit() : handleEdit("name")}
+          EditOnClick={() =>
+            isEditing === "name" ? handleCancelEdit() : handleEdit("name")
+          }
           disabled={isEditing !== "name"}
           className="disabled:cursor-not-allowed disabled:opacity-70"
         />
@@ -423,7 +547,9 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           value={formData.email}
           onChange={handleOnChange}
           isEditable
-          EditOnClick={() => isEditing === "email" ? handleCancelEdit() : handleEdit("email")}
+          EditOnClick={() =>
+            isEditing === "email" ? handleCancelEdit() : handleEdit("email")
+          }
           disabled={isEditing !== "email"}
           className="disabled:cursor-not-allowed disabled:opacity-70"
         />
@@ -436,18 +562,28 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           value={formData.phone}
           onChange={handleOnChange}
           isEditable
-          EditOnClick={() => isEditing === "phone" ? handleCancelEdit() : handleEdit("phone")}
+          EditOnClick={() =>
+            isEditing === "phone" ? handleCancelEdit() : handleEdit("phone")
+          }
           disabled={isEditing !== "phone"}
           className="disabled:cursor-not-allowed disabled:opacity-70"
         />
 
         <DatePicker
-          value={formData.birth_date ? parseStringToDate(formData.birth_date) : undefined}
+          value={
+            formData.birth_date
+              ? parseStringToDate(formData.birth_date)
+              : undefined
+          }
           onChange={handleBirthDateChange}
           label="생년월일"
           isRequired
           isEditable
-          EditOnClick={() => isEditing === "birth_date" ? handleCancelEdit() : handleEdit("birth_date")}
+          EditOnClick={() =>
+            isEditing === "birth_date"
+              ? handleCancelEdit()
+              : handleEdit("birth_date")
+          }
           disabled={isEditing !== "birth_date"}
           className="disabled:cursor-not-allowed disabled:opacity-70 disabled:text-text-secondary"
         />
@@ -457,40 +593,86 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           value={formData.collaboration_preference.available_time_zone}
           onChange={(value) => handleTimeZoneChange(value as string)}
           options={[
-            { name: "collaboration_preference.available_time_zone", value: "Asia/Seoul", label: "한국 표준시 (KST)" },
-            { name: "collaboration_preference.available_time_zone", value: "UTC", label: "세계 표준시 (UTC)" },
-            { name: "collaboration_preference.available_time_zone", value: "America/New_York", label: "동부 표준시 (EST)" },
-            { name: "collaboration_preference.available_time_zone", value: "America/Los_Angeles", label: "태평양 표준시 (PST)" },
+            {
+              name: "collaboration_preference.available_time_zone",
+              value: "Asia/Seoul",
+              label: "한국 표준시 (KST)",
+            },
+            {
+              name: "collaboration_preference.available_time_zone",
+              value: "UTC",
+              label: "세계 표준시 (UTC)",
+            },
+            {
+              name: "collaboration_preference.available_time_zone",
+              value: "America/New_York",
+              label: "동부 표준시 (EST)",
+            },
+            {
+              name: "collaboration_preference.available_time_zone",
+              value: "America/Los_Angeles",
+              label: "태평양 표준시 (PST)",
+            },
           ]}
           isRequired
-          disabled={isEditing !== "collaboration_preference.available_time_zone"}
+          disabled={
+            isEditing !== "collaboration_preference.available_time_zone"
+          }
           isEditable
-          EditOnClick={() => isEditing === "collaboration_preference.available_time_zone" ? handleCancelEdit() : handleEdit("collaboration_preference.available_time_zone")}
+          EditOnClick={() =>
+            isEditing === "collaboration_preference.available_time_zone"
+              ? handleCancelEdit()
+              : handleEdit("collaboration_preference.available_time_zone")
+          }
           dropDownClassName="!w-full"
         />
 
         <div className="grid grid-cols-2 gap-2">
-          <TimePicker
-            value={formatTimeFromNumber(formData.collaboration_preference.work_hours_start)}
-            onChange={handleStartTimeChange}
+          <Select
+            options={TIME_OPTIONS}
+            value={formatNumericTime(formData.collaboration_preference.work_hours_start)}
+            onChange={(value) => {
+              handleWorkingHoursChange("start", value as string);
+              // If end time is before new start time, reset it
+              if (
+                formData.collaboration_preference.work_hours_end &&
+                toMinutes(formData.collaboration_preference.work_hours_end) <=
+                  toMinutes(value as string)
+              ) {
+                handleWorkingHoursChange("end", "");
+              }
+            }}
+            placeholder="시작 시간"
+            isRequired
             disabled={isEditing !== "collaboration_preference.work_hours_start"}
-            className="w-full !bg-input-background !disabled:cursor-not-allowed !disabled:opacity-70"
-            step={30}
+            isEditable
+            EditOnClick={() =>
+              isEditing === "collaboration_preference.work_hours_start"
+                ? handleCancelEdit()
+                : handleEdit("collaboration_preference.work_hours_start")
+            }
             label="시작 시간"
-            isEditable
-            EditOnClick={() => isEditing === "collaboration_preference.work_hours_start" ? handleCancelEdit() : handleEdit("collaboration_preference.work_hours_start")}
-            isRequired
           />
-          <TimePicker
-            value={formatTimeFromNumber(formData.collaboration_preference.work_hours_end)}
-            onChange={handleEndTimeChange}
-            disabled={isEditing !== "collaboration_preference.work_hours_end"}
-            className="w-full !bg-input-background !disabled:cursor-not-allowed !disabled:opacity-70"
-            step={30}
-            label="종료 시간"
-            isEditable
-            EditOnClick={() => isEditing === "collaboration_preference.work_hours_end" ? handleCancelEdit() : handleEdit("collaboration_preference.work_hours_end")}
+          <Select
+            options={getEndTimeOptions()}
+            value={formatNumericTime(formData.collaboration_preference.work_hours_end)}
+            onChange={(value) =>
+              handleWorkingHoursChange("end", value as string)
+            }
+            placeholder={
+              formData.collaboration_preference.work_hours_start
+                ? "종료 시간"
+                : "시작 시간을 먼저 선택"
+            }
             isRequired
+            disabled={isEditing !== "collaboration_preference.work_hours_end"}
+            isEditable
+            EditOnClick={() =>
+              isEditing === "collaboration_preference.work_hours_end"
+                ? handleCancelEdit()
+                : handleEdit("collaboration_preference.work_hours_end")
+            }
+            label="종료 시간"
           />
         </div>
 
@@ -502,7 +684,11 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
             value={newSkill}
             onChange={(e) => setNewSkill(e.target.value)}
             isEditable
-            EditOnClick={() => isEditing === "tech_stacks" ? handleCancelEdit() : handleEdit("tech_stacks")}
+            EditOnClick={() =>
+              isEditing === "tech_stacks"
+                ? handleCancelEdit()
+                : handleEdit("tech_stacks")
+            }
             disabled={isEditing !== "tech_stacks"}
             onKeyDown={(e) => handleKeyDown("tech_stacks", e)}
             onCompositionStart={() => setIsComposing(true)}
@@ -510,7 +696,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
             className="disabled:cursor-not-allowed disabled:opacity-70"
           />
           <div className="flex flex-wrap gap-2">
-            {formData.tech_stacks.map((stack, index) => (
+            {formData.tech_stacks.map((stack, index) =>
               isEditing === "tech_stacks" ? (
                 <Badge
                   key={index}
@@ -521,9 +707,14 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
                   isDark={isDark}
                 />
               ) : (
-                <Badge key={index} content={stack.tech} color="blue" isDark={isDark} />
+                <Badge
+                  key={index}
+                  content={stack.tech}
+                  color="blue"
+                  isDark={isDark}
+                />
               )
-            ))}
+            )}
           </div>
         </div>
 
@@ -535,7 +726,11 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
             value={newLanguage}
             onChange={(e) => setNewLanguage(e.target.value)}
             isEditable
-            EditOnClick={() => isEditing === "languages" ? handleCancelEdit() : handleEdit("languages")}
+            EditOnClick={() =>
+              isEditing === "languages"
+                ? handleCancelEdit()
+                : handleEdit("languages")
+            }
             disabled={isEditing !== "languages"}
             onKeyDown={(e) => handleKeyDown("languages", e)}
             onCompositionStart={() => setIsComposing(true)}
@@ -543,7 +738,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
             className="disabled:cursor-not-allowed disabled:opacity-70"
           />
           <div className="flex flex-wrap gap-2">
-            {formData.languages.map((language, index) => (
+            {formData.languages.map((language, index) =>
               isEditing === "languages" ? (
                 <Badge
                   key={index}
@@ -554,9 +749,14 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
                   isDark={isDark}
                 />
               ) : (
-                <Badge key={index} content={language} color="green" isDark={isDark} />
+                <Badge
+                  key={index}
+                  content={language}
+                  color="green"
+                  isDark={isDark}
+                />
               )
-            ))}
+            )}
           </div>
         </div>
 
@@ -568,33 +768,46 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
             value={formData.bio}
             onChange={handleOnChange}
             isEditable
-            EditOnClick={() => isEditing === "bio" ? handleCancelEdit() : handleEdit("bio")}
+            EditOnClick={() =>
+              isEditing === "bio" ? handleCancelEdit() : handleEdit("bio")
+            }
             disabled={isEditing !== "bio"}
             className="disabled:cursor-not-allowed disabled:opacity-70"
           />
         </div>
-          
+
         <Input
           label="Website"
           name="website"
           placeholder="Website URL을 입력해주세요."
-          value={formData.social_links.find((link) => link.platform === "website")?.url || ""}
+          value={
+            formData.social_links.find((link) => link.platform === "website")
+              ?.url || ""
+          }
           onChange={(e) => handleSocialLinkChange("website", e.target.value)}
           isEditable
-          EditOnClick={() => isEditing === "website" ? handleCancelEdit() : handleEdit("website")}
+          EditOnClick={() =>
+            isEditing === "website" ? handleCancelEdit() : handleEdit("website")
+          }
           disabled={isEditing !== "website"}
           startAdornment={<Globe className="w-4 h-4" />}
           className="disabled:cursor-not-allowed disabled:opacity-70"
         />
-        
+
         <Input
           label="Github"
           name="github"
           placeholder="Github URL을 입력해주세요."
-          value={formData.social_links.find((link) => link.platform === "github")?.url.split("/")[3] || ""}
+          value={
+            formData.social_links
+              .find((link) => link.platform === "github")
+              ?.url.split("/")[3] || ""
+          }
           onChange={(e) => handleSocialLinkChange("github", e.target.value)}
           isEditable
-          EditOnClick={() => isEditing === "github" ? handleCancelEdit() : handleEdit("github")}
+          EditOnClick={() =>
+            isEditing === "github" ? handleCancelEdit() : handleEdit("github")
+          }
           disabled={isEditing !== "github"}
           startAdornment={<FontAwesomeIcon icon={faGithub} />}
           className="disabled:cursor-not-allowed disabled:opacity-70"
@@ -604,10 +817,18 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           label="Linkedin"
           name="linkedin"
           placeholder="Linkedin URL을 입력해주세요."
-          value={formData.social_links.find((link) => link.platform === "linkedin")?.url.split("/")[4] || ""}
+          value={
+            formData.social_links
+              .find((link) => link.platform === "linkedin")
+              ?.url.split("/")[4] || ""
+          }
           onChange={(e) => handleSocialLinkChange("linkedin", e.target.value)}
           isEditable
-          EditOnClick={() => isEditing === "linkedin" ? handleCancelEdit() : handleEdit("linkedin")}
+          EditOnClick={() =>
+            isEditing === "linkedin"
+              ? handleCancelEdit()
+              : handleEdit("linkedin")
+          }
           disabled={isEditing !== "linkedin"}
           startAdornment={<FontAwesomeIcon icon={faLinkedin} />}
           className="disabled:cursor-not-allowed disabled:opacity-70"
@@ -617,22 +838,27 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           label="Instagram"
           name="instagram"
           placeholder="Instagram URL을 입력해주세요."
-          value={formData.social_links.find((link) => link.platform === "instagram")?.url.split("/")[3] || ""}
+          value={
+            formData.social_links
+              .find((link) => link.platform === "instagram")
+              ?.url.split("/")[3] || ""
+          }
           onChange={(e) => handleSocialLinkChange("instagram", e.target.value)}
           isEditable
-          EditOnClick={() => isEditing === "instagram" ? handleCancelEdit() : handleEdit("instagram")}
+          EditOnClick={() =>
+            isEditing === "instagram"
+              ? handleCancelEdit()
+              : handleEdit("instagram")
+          }
           disabled={isEditing !== "instagram"}
           startAdornment={<FontAwesomeIcon icon={faInstagram} />}
           className="disabled:cursor-not-allowed disabled:opacity-70"
         />
       </div>
-      
+
       {isEditing !== "none" && (
         <div className="flex gap-2 justify-end">
-          <CancelBtn
-            handleCancel={() => setIsEditing("none")}
-            withIcon
-          />
+          <CancelBtn handleCancel={() => setIsEditing("none")} withIcon />
           <SubmitBtn
             onClick={handleSubmit}
             buttonText="저장"
@@ -640,8 +866,8 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
             withIcon
             fit
           />
-      </div>
-    )}
+        </div>
+      )}
     </div>
   );
 }
