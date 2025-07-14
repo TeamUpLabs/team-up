@@ -1,7 +1,7 @@
 export const getStatusColor = (status: string) => {
   switch (status) {
     case 'not_started':
-      return 'bg-neutral-500/20 text-neutral-500';
+      return 'bg-yellow-500/20 text-yellow-500';
     case 'in_progress':
       return 'bg-blue-500/20 text-blue-500';
     case 'completed':
@@ -15,6 +15,15 @@ export const getStatusColorName = (status: string) => {
     case 'in_progress': return 'blue';
     case 'completed': return 'emerald';
     default: return 'gray';
+  }
+};
+
+export const getStatusColorBg = (status: string) => {
+  switch (status) {
+    case 'not_started': return 'bg-yellow-500';
+    case 'in_progress': return 'bg-blue-500';
+    case 'completed': return 'bg-emerald-500';
+    default: return 'bg-gray-500';
   }
 };
 

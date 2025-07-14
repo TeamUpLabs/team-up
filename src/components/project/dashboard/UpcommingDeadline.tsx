@@ -2,7 +2,7 @@
 import { Project } from "@/types/Project";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
-import { getStatusColorName } from "@/utils/getStatusColor";
+import { getStatusColorBg } from "@/utils/getStatusColor";
 import { useState } from "react";
 import TaskModal from "@/components/project/task/TaskModal";
 import MilestoneModal from "@/components/project/milestone/MilestoneModal";
@@ -212,7 +212,7 @@ export default function UpcommingDeadline({ project, isLoading = false }: Upcomm
                 className={`flex items-center justify-between gap-6 p-3 ${isFirst ? "rounded-t-md" : ""} ${isLast ? "rounded-b-md" : ""} hover:bg-component-tertiary-background transition-all duration-200 cursor-pointer`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full bg-${getStatusColorName(activity.status)}-500`}></div>
+                  <span className={`w-2 h-2 rounded-full ${getStatusColorBg(activity.status)}`}></span>
                   <div className="flex flex-col">
                     <p className="text-text-primary text-base font-semibold">{activity.title}</p>
                     <span className="text-text-secondary text-sm line-clamp-1">

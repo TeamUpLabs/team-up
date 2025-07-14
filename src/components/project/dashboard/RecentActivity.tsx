@@ -10,6 +10,7 @@ import { Task } from "@/types/Task";
 import { MileStone } from "@/types/MileStone";
 import { Schedule } from "@/types/Schedule";
 import { useState } from "react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface Activity {
   id: string;
@@ -60,6 +61,7 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
   const [isMilestoneModalOpen, setIsMilestoneModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Task | MileStone | Schedule | null>(null);
+  const { isDark } = useTheme();
 
   // Generate sample activities from project data
   const activities: Activity[] = [
@@ -240,6 +242,7 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
                         content={getActivityTypeLabel(activity.type)}
                         color="blue"
                         className="!text-xs !font-medium !px-2 !py-0.5 !rounded"
+                        isDark={isDark}
                       />
                     </div>
                   </div>
