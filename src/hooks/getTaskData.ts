@@ -1,5 +1,5 @@
 import { server } from "@/auth/server";
-import { CommentCreateFormData, SubTask, TaskCreateFormData, TaskUpdateFormData } from "@/types/Task";
+import { CommentCreateFormData, SubTask, SubTaskCreateFormData, TaskCreateFormData, TaskUpdateFormData } from "@/types/Task";
 import { useAuthStore } from "@/auth/authStore";
 
 export const createTask = async (task: TaskCreateFormData) => {
@@ -91,6 +91,25 @@ export const updateTask = async (task_id: number, task: TaskUpdateFormData) => {
   }
 }
 
+export const createSubtask = async (task_id: number, subtask: SubTaskCreateFormData) => {
+  try {
+    const token = useAuthStore.getState().token;
+    const res = await server.post(`/tasks/${task_id}/subtasks`, subtask, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (res.status === 201) {
+      return res.data;
+    } else {
+      throw new Error("Failed to create subtask");
+    }
+  } catch (error) { 
+    console.error(error);
+    throw error;
+  }
+}
+
 export const updateSubtask = async (project_id: string, task_id: number, subtask: SubTask) => {
   try {
     const res = await server.put(`/project/${project_id}/task/${task_id}/subtask/${subtask.id}/state`, {
@@ -100,6 +119,25 @@ export const updateSubtask = async (project_id: string, task_id: number, subtask
       return res.data;
     } else {
       throw new Error("Failed to update subtask");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+export const deleteSubtask = async (task_id: number, subtask_id: number) => { 
+  try {
+    const token = useAuthStore.getState().token;
+    const res = await server.delete(`/tasks/${task_id}/subtasks/${subtask_id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },  
+    });
+    if (res.status === 204) {
+      return res.data;
+    } else {
+      throw new Error("Failed to delete subtask");
     }
   } catch (error) {
     console.error(error);

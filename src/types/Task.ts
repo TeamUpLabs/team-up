@@ -3,7 +3,7 @@ import { MileStone, blankMileStone } from "@/types/MileStone";
 
 export interface SubTaskCreateFormData {
   title: string;
-  is_completed: boolean;
+  task_id: number;
 }
 
 export interface SubTask {

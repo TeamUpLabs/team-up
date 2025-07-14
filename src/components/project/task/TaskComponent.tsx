@@ -64,7 +64,7 @@ export default function TaskComponent({ task }: { task: Task }) {
         )}
         {task?.due_date && (
           <span>
-            마감일: {task?.due_date}
+            마감일: {task?.due_date.split('T')[0].replace(/-/g, '.')}
           </span>
         )}
       </div>

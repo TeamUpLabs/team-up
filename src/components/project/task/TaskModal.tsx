@@ -5,8 +5,8 @@ import {
   Task,
   CommentCreateFormData,
   SubTask,
-  SubTaskCreateFormData,
   blankTask,
+  SubTaskCreateFormData,
 } from "@/types/Task";
 import { blankUserBrief } from "@/types/User";
 import ModalTemplete from "@/components/ModalTemplete";
@@ -20,6 +20,8 @@ import {
   updateSubtask,
   deleteTask,
   deleteComment,
+  createSubtask,
+  deleteSubtask,
 } from "@/hooks/getTaskData";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -53,6 +55,7 @@ import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { Input } from "@/components/ui/Input";
 import { useTheme } from "@/contexts/ThemeContext";
+import { Check, Info, X } from "lucide-react";
 
 interface TaskModalProps {
   task: Task;
@@ -67,6 +70,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const router = useRouter();
   const params = useParams();
   const [isEditing, setIsEditing] = useState<string>("none");
+  const [isSubtaskEditing, setIsSubtaskEditing] = useState<boolean>(false);
+  const [newSubtask, setNewSubtask] = useState<string>("");
   const [taskData, setTaskData] = useState<Task>(blankTask);
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
@@ -239,30 +244,57 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
   };
 
-  const handleDeleteSubtask = (index: number) => {
+  const handleDeleteSubtask = async (index: number) => {
+    const subtaskId = taskData.subtasks[index].id;
     const updatedSubtasks = taskData.subtasks.filter((_, i) => i !== index);
-    setTaskData({ ...taskData, subtasks: updatedSubtasks });
+
+    try {
+      await deleteSubtask(task.id, subtaskId);
+      setTaskData({ ...taskData, subtasks: updatedSubtasks });
+      useAuthStore.getState().setAlert("하위 작업이 성공적으로 삭제되었습니다.", "success");
+    } catch (error) {
+      console.error("Error deleting subtask:", error);
+      useAuthStore.getState().setAlert("하위 작업 삭제에 실패했습니다.", "error");
+    }
   };
 
-  const handleAddSubtask = () => {
-    const newSubtask: SubTaskCreateFormData = {
-      title: "",
-      is_completed: false,
+  const handleAddSubtask = async () => {
+    if (newSubtask.length === 0) {
+      useAuthStore
+        .getState()
+        .setAlert("하위 작업 제목을 입력해주세요.", "warning");
+      return;
+    }
+    const newSubtaskData: SubTaskCreateFormData = {
+      title: newSubtask,
+      task_id: task.id,
     };
-    setIsEditing("subtasks");
-    setTaskData({
-      ...taskData,
-      subtasks: [
-        ...taskData.subtasks,
-        {
-          id: Date.now(), // temporary ID for local state
-          title: newSubtask.title,
-          is_completed: newSubtask.is_completed,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ],
-    });
+    try {
+      const res = await createSubtask(task.id, newSubtaskData);
+      setTaskData((prev) => ({
+        ...prev,
+        subtasks: [...prev.subtasks, {
+          id: res.id,
+          title: res.title,
+          is_completed: res.is_completed,
+          created_at: res.created_at,
+          updated_at: res.updated_at,
+          created_by: res.created_by,
+          creator: res.creator,
+        }],
+      }));
+      useAuthStore.getState().setAlert("하위 작업이 성공적으로 추가되었습니다.", "success");
+    } catch (error) {
+      console.error("Error creating subtask:", error);
+      useAuthStore.getState().setAlert("하위 작업 추가에 실패했습니다.", "error");
+    }
+    setIsSubtaskEditing(false);
+    setNewSubtask("");
+  };
+
+  const handleCancelAddSubtask = () => {
+    setIsSubtaskEditing(false);
+    setNewSubtask("");
   };
 
   const handleCommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -708,8 +740,147 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               />
             </div>
           </div>
-
           <div className="space-y-2">
+            {isSubtaskEditing && taskData.subtasks.length === 0 ? (
+              <div className="flex items-center gap-2 bg-component-secondary-background border border-component-border p-3 rounded-md justify-between">
+                <div className="flex-1">
+                  <Input
+                    type="text"
+                    value={newSubtask}
+                    onChange={(e) => setNewSubtask(e.target.value)}
+                    placeholder="새 하위 작업 제목을 입력하세요..."
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleAddSubtask}
+                    className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={newSubtask.length === 0}
+                  >
+                    <Check className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleCancelAddSubtask}
+                    className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-md"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ) : taskData.subtasks.length === 0 ? (
+              <div className="flex flex-col items-center justify-center gap-4">
+                <Info className="text-text-secondary" />
+                <span className="text-text-secondary">
+                  하위 작업이 없습니다.
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsSubtaskEditing(true)}
+                  className="bg-component-tertiary-background hover:bg-component-tertiary-background/60 border border-component-border px-6 py-2 rounded-md text-sm text-text-primary transition-colors"
+                >
+                  <FontAwesomeIcon icon={faPlus} className="mr-2" />새 하위 작업
+                  추가
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {taskData.subtasks.map((subtask, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 bg-component-secondary-background border border-component-border p-3 rounded-md justify-between group relative"
+                  >
+                    <div className="flex items-center gap-2 flex-1">
+                      <input
+                        type="checkbox"
+                        checked={subtask.is_completed}
+                        onChange={() => handleSubtaskToggle(index)}
+                        className="w-4 h-4 rounded border-gray-300 text-point-color-indigo focus:ring-point-color-indigo"
+                      />
+                      {isEditing === "subtasks" ? (
+                        <Input
+                          type="text"
+                          value={subtask.title}
+                          onChange={(e) =>
+                            handleSubtaskChange(index, e.target.value)
+                          }
+                          className="!text-sm !p-1"
+                          fullWidth
+                        />
+                      ) : (
+                        <span
+                          className={`text-sm ${
+                            subtask?.is_completed
+                              ? "text-text-secondary line-through"
+                              : "text-text-primary"
+                          }`}
+                        >
+                          {subtask?.title}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <FontAwesomeIcon
+                        icon={faPencil}
+                        size="xs"
+                        className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        onClick={() =>
+                          isEditing === "subtasks"
+                            ? handleEdit("none")
+                            : handleEdit("subtasks")
+                        }
+                      />
+                      <FontAwesomeIcon
+                        icon={faTrash}
+                        size="xs"
+                        className="text-text-secondary cursor-pointer hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        onClick={() => handleDeleteSubtask(index)}
+                      />
+                    </div>
+                  </div>
+                ))}
+                {isSubtaskEditing ? (
+                  <div className="flex items-center gap-2 bg-component-secondary-background border border-component-border p-3 rounded-md justify-between">
+                    <div className="flex-1">
+                      <Input
+                        type="text"
+                        value={newSubtask}
+                        onChange={(e) => setNewSubtask(e.target.value)}
+                        placeholder="새 하위 작업 제목을 입력하세요..."
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleAddSubtask}
+                        className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={newSubtask.length === 0}
+                      >
+                        <Check className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setIsSubtaskEditing(false)}
+                        className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-md"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsSubtaskEditing(true)}
+                    className="w-full py-2 mb-2 text-text-secondary hover:text-text-primary border-2 border-dashed border-component-border transition-all duration-200 rounded-md hover:bg-component-secondary-background/60 cursor-pointer flex items-center justify-center"
+                  >
+                    <FontAwesomeIcon
+                      icon={faPlus}
+                      className="mr-2"
+                    />
+                    하위 작업 추가
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* <div className="space-y-2">
             {taskData.subtasks.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-6">
                 <span className="text-text-secondary">
@@ -792,7 +963,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 <FontAwesomeIcon icon={faPlus} />새 하위 작업 추가
               </button>
             )}
-          </div>
+          </div> */}
         </div>
       </Accordion>
 
