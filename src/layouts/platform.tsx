@@ -1,14 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, lazy } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import useAuthHydration from "@/hooks/useAuthHydration";
 import { Project } from "@/types/Project";
-import ProjectCard from "@/components/platform/ProjectCard";
-import NewProjectModal from "@/components/platform/NewProjectModal";
 import { useSearchParams } from "next/navigation";
 import { fetcher } from "@/auth/server";
 import useSWR from "swr";
+
+// 지연 로딩을 위한 컴포넌트들
+const ProjectCard = lazy(() => import("@/components/platform/ProjectCard"));
+const NewProjectModal = lazy(() => import("@/components/platform/NewProjectModal"));
+
+// 로딩 컴포넌트
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center p-8">
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+  </div>
+);
 
 export default function Platform() {
   const searchParams = useSearchParams();
@@ -71,9 +80,11 @@ export default function Platform() {
   return (
     <div className="mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
-        {filteredProjects.map((project: Project) => (
-          <ProjectCard key={project.id} project={project} isExplore={false} />
-        ))}
+        <Suspense fallback={<LoadingSpinner />}>
+          {filteredProjects.map((project: Project) => (
+            <ProjectCard key={project.id} project={project} isExplore={false} />
+          ))}
+        </Suspense>
 
         <div className="bg-component-background rounded-lg p-6 border border-dashed border-gray-700/50 flex flex-col">
           <div className="flex-1 flex items-center justify-center min-h-[12rem]">
@@ -89,7 +100,9 @@ export default function Platform() {
           </div>
         </div>
       </div>
-      <NewProjectModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <Suspense fallback={<LoadingSpinner />}>
+        <NewProjectModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      </Suspense>
     </div>
   );
 }

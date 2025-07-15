@@ -1,21 +1,92 @@
-import { Member } from "@/types/Member";
+import { Project, blankProject } from "@/types/Project";
+import { UserBrief, blankUserBrief } from "@/types/User";
 
-export interface Schedule {
-    id: number;
-    project_id: string;
+export interface ScheduleCreateFormData {
     type: "meeting" | "event";
     title: string;
     description: string;
     where: string;
-    link?: string;
+    link: string;
     start_time: string;
     end_time: string;
     status: "not-started" | "in-progress" | "completed";
-    created_at: string;
-    updated_at: string;
+    memo: string;
+    project_id: string;
+    assignee_ids: number[];
     created_by: number;
     updated_by: number;
-    memo?: string;
-    assignee_id: number[];
-    assignee?: Member[];
+}
+
+export const blankScheduleCreateFormData: ScheduleCreateFormData = {
+    type: "meeting",
+    title: "",
+    description: "",
+    where: "",
+    link: "",
+    start_time: "",
+    end_time: "",
+    status: "not-started",
+    memo: "",
+    project_id: "",
+    assignee_ids: [],
+    created_by: 0,
+    updated_by: 0,
+}
+
+export interface ScheduleUpdateFormData {
+    type: "meeting" | "event";
+    title: string;
+    description: string;
+    where: string;
+    link: string;
+    start_time: string;
+    end_time: string;
+    status: "not-started" | "in-progress" | "completed";
+    memo: string;
+    assignee_ids: number[];
+}
+
+export interface Schedule {
+    id: number;
+    type: "meeting" | "event";
+    title: string;
+    description: string;
+    where: string;
+    link: string;
+    start_time: string;
+    end_time: string;
+    status: "not-started" | "in-progress" | "completed";
+    memo: string;
+    created_at: string;
+    updated_at: string;
+    project_id: string;
+    created_by: number;
+    updated_by: number;
+
+    project: Project;
+    creator: UserBrief;
+    updater: UserBrief;
+    assignees: UserBrief[];
+}
+
+export const blankSchedule: Schedule = {
+    id: 0,
+    type: "meeting",
+    title: "",
+    description: "",
+    where: "",
+    link: "",
+    start_time: "",
+    end_time: "",
+    status: "not-started",
+    memo: "",
+    created_at: "",
+    updated_at: "",
+    project_id: "",
+    created_by: 0,
+    updated_by: 0,
+    project: blankProject,
+    creator: blankUserBrief,
+    updater: blankUserBrief,
+    assignees: [],
 }

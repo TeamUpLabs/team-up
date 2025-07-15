@@ -1,20 +1,33 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy, useMemo, useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Task } from '@/types/Task';
-import TaskComponent from '@/components/project/task/TaskComponent';
-import TaskModal from '@/components/project/task/TaskModal';
 import { getStatusColorName } from "@/utils/getStatusColor";
 import { useProject } from '@/contexts/ProjectContext';
-import SelectMilestoneModal from '@/components/project/task/SelectMilestoneModal';
 import { updateTaskStatus } from '@/hooks/getTaskData';
 import { useAuthStore } from '@/auth/authStore';
 import { useTheme } from '@/contexts/ThemeContext';
 import Badge from '@/components/ui/Badge';
+// 지연 로딩을 위한 컴포넌트들
+const TaskComponent = lazy(() => import('@/components/project/task/TaskComponent'));
+const TaskModal = lazy(() => import('@/components/project/task/TaskModal'));
+const SelectMilestoneModal = lazy(() => import('@/components/project/task/SelectMilestoneModal'));
+
+// 로딩 컴포넌트
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center p-4">
+    <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+  </div>
+);
+
+// 스켈레톤 카드 컴포넌트
+const SkeletonTaskCard = () => (
+  <div className="bg-component-tertiary-background animate-pulse rounded-lg h-20 mb-2"></div>
+);
 
 export default function TasksPage() {
   const { isDark } = useTheme();
@@ -24,6 +37,12 @@ export default function TasksPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSelectMilestoneModalOpen, setIsSelectMilestoneModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // 디바운스된 검색 함수
+  const debouncedSetSearchQuery = useCallback((value: string) => {
+    const timeoutId = setTimeout(() => setSearchQuery(value), 300);
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
     if (!project?.tasks) return;
@@ -35,25 +54,22 @@ export default function TasksPage() {
     }
   }, [project])
 
-    // Listen for header search events
-    useEffect(() => {
-      const handleHeaderSearch = (event: Event) => {
-        const customEvent = event as CustomEvent;
-        const searchValue = customEvent.detail || '';
-        
-        // Only update if value is different
-        if (searchValue !== searchQuery) {
-          setSearchQuery(searchValue);
-        }
-      };
-  
-      // Add event listener
-      window.addEventListener('headerSearch', handleHeaderSearch);
+  // Listen for header search events
+  useEffect(() => {
+    const handleHeaderSearch = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const searchValue = customEvent.detail || '';
       
-      return () => {
-        window.removeEventListener('headerSearch', handleHeaderSearch);
-      };
-    }, [searchQuery]);
+      // 디바운스된 검색 적용
+      debouncedSetSearchQuery(searchValue);
+    };
+
+    window.addEventListener('headerSearch', handleHeaderSearch);
+    
+    return () => {
+      window.removeEventListener('headerSearch', handleHeaderSearch);
+    };
+  }, [debouncedSetSearchQuery]);
 
   useEffect(() => {
     const selectedTaskId = localStorage.getItem('selectedTaskId');
@@ -70,6 +86,26 @@ export default function TasksPage() {
     }
   }, [tasks]);
 
+  // 메모이제이션을 통한 필터링 최적화
+  const filteredTasks = useMemo(() => {
+    if (!searchQuery.trim()) return tasks;
+    
+    const query = searchQuery.toLowerCase();
+    return tasks.filter(task => 
+      task.title.toLowerCase().includes(query) ||
+      task.description?.toLowerCase().includes(query) ||
+      project?.members?.some(member => member.user.name.toLowerCase().includes(query)) ||
+      task.subtasks?.some(subtask => subtask.title.toLowerCase().includes(query))
+    );
+  }, [tasks, searchQuery, project?.members]);
+
+  // 메모이제이션을 통한 그룹화 최적화
+  const groupedTasks = useMemo(() => ({
+    'not_started': filteredTasks.filter(task => task.status === 'not_started'),
+    'in_progress': filteredTasks.filter(task => task.status === 'in_progress'),
+    'completed': filteredTasks.filter(task => task.status === 'completed'),
+  }), [filteredTasks]);
+
   const getStatusText = (status: Task['status']) => {
     switch (status) {
       case 'not_started':
@@ -79,24 +115,6 @@ export default function TasksPage() {
       case 'completed':
         return '완료';
     }
-  };
-
-  const filterTasks = (taskList: Task[]) => {
-    if (!searchQuery.trim()) return taskList;
-    
-    const query = searchQuery.toLowerCase();
-    return taskList.filter(task => 
-      task.title.toLowerCase().includes(query) ||
-      task.description?.toLowerCase().includes(query) ||
-      project?.members?.some(member => member.user.name.toLowerCase().includes(query)) ||
-      task.subtasks?.some(subtask => subtask.title.toLowerCase().includes(query))
-    );
-  };
-
-  const groupedTasks = {
-    'not_started': filterTasks(tasks.filter(task => task.status === 'not_started')),
-    'in_progress': filterTasks(tasks.filter(task => task.status === 'in_progress')),
-    'completed': filterTasks(tasks.filter(task => task.status === 'completed')),
   };
 
   const moveTask = async (taskId: number, newStatus: Task['status']) => {
@@ -171,28 +189,40 @@ export default function TasksPage() {
                 </div>
               </div>
               <div className="p-2">
-                {tasksList.map((task: Task) => (
-                  <div key={task.id} onClick={() => handleTaskClick(task)}>
-                    <TaskComponent task={task} />
+                {tasksList.length === 0 ? (
+                  <div className="text-center text-text-secondary py-8">
+                    작업이 없습니다.
                   </div>
-                ))}
+                ) : (
+                  tasksList.map((task: Task) => (
+                    <div key={task.id} onClick={() => handleTaskClick(task)}>
+                      <Suspense fallback={<SkeletonTaskCard />}>
+                        <TaskComponent task={task} />
+                      </Suspense>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           ))}
         </div>
 
-        {selectedTask && (
-          <TaskModal
-            task={selectedTask}
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          />
-        )}
+        <Suspense fallback={<LoadingSpinner />}>
+          {selectedTask && (
+            <TaskModal
+              task={selectedTask}
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+            />
+          )}
+        </Suspense>
 
-        <SelectMilestoneModal
-          isOpen={isSelectMilestoneModalOpen}
-          onClose={() => setIsSelectMilestoneModalOpen(false)}
-        />
+        <Suspense fallback={<LoadingSpinner />}>
+          <SelectMilestoneModal
+            isOpen={isSelectMilestoneModalOpen}
+            onClose={() => setIsSelectMilestoneModalOpen(false)}
+          />
+        </Suspense>
       </div>
     </DndProvider>
   );

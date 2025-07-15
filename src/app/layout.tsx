@@ -8,6 +8,7 @@ import ConfirmProvider from "@/providers/ConfirmProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { NotificationProvider } from "@/providers/NotificationProvider";
 import NotificationAlertProvider from "@/providers/NotificationAlertProvider";
+import { SWRConfig } from "swr";
 
 config.autoAddCss = false;
 
@@ -99,12 +100,24 @@ export default function RootLayout({
         className={`${geistSans.className} antialiased`}
         suppressHydrationWarning
       >
-        <NotificationProvider>
-          <NotificationAlertProvider />
-          <AlertProvider />
-          <ConfirmProvider />
-          <ThemeProvider>{children}</ThemeProvider>
-        </NotificationProvider>
+        <SWRConfig
+          value={{
+            revalidateOnFocus: false,
+            revalidateOnReconnect: true,
+            dedupingInterval: 1000 * 60 * 5, // 5분
+            errorRetryCount: 2,
+            errorRetryInterval: 1000 * 5, // 5초
+            focusThrottleInterval: 1000 * 60 * 5, // 5분
+            loadingTimeout: 10000, // 10초
+          }}
+        >
+          <NotificationProvider>
+            <NotificationAlertProvider />
+            <AlertProvider />
+            <ConfirmProvider />
+            <ThemeProvider>{children}</ThemeProvider>
+          </NotificationProvider>
+        </SWRConfig>
       </body>
     </html>
   );

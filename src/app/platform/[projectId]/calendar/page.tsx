@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -11,15 +11,29 @@ import {
   eachDayOfInterval
 } from 'date-fns';
 import { Task } from '@/types/Task';
-import TaskModal from '@/components/project/task/TaskModal';
-import Calendar from '@/components/project/calendar/CalendarComponent';
-import ScheduleStatus from '@/components/project/calendar/ScheduleStatus';
 import { useProject } from "@/contexts/ProjectContext";
-import ScheduleCreateModal from '@/components/project/calendar/ScheduleCreateModal';
 import { Schedule } from '@/types/Schedule';
-import ScheduleModal from '@/components/project/calendar/ScheduleModal';
 import Badge from '@/components/ui/Badge';
 import { useTheme } from '@/contexts/ThemeContext';
+
+// 지연 로딩을 위한 컴포넌트들
+const TaskModal = lazy(() => import('@/components/project/task/TaskModal'));
+const Calendar = lazy(() => import('@/components/project/calendar/CalendarComponent'));
+const ScheduleStatus = lazy(() => import('@/components/project/calendar/ScheduleStatus'));
+const ScheduleCreateModal = lazy(() => import('@/components/project/calendar/ScheduleCreateModal'));
+const ScheduleModal = lazy(() => import('@/components/project/calendar/ScheduleModal'));
+
+// 로딩 컴포넌트
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center p-4">
+    <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+  </div>
+);
+
+// 스켈레톤 컴포넌트
+const SkeletonCalendar = () => (
+  <div className="bg-component-tertiary-background animate-pulse rounded-lg h-96"></div>
+);
 
 export default function CalendarPage() {
   const { project } = useProject();
@@ -28,15 +42,35 @@ export default function CalendarPage() {
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
   const { isDark } = useTheme();
 
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(currentDate);
-  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }); // 일요일 시작
-  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+  // 메모이제이션을 통한 날짜 계산 최적화
+  const calendarData = useMemo(() => {
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(currentDate);
+    const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 }); // 일요일 시작
+    const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+    const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
-  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
+    return {
+      monthStart,
+      monthEnd,
+      calendarStart,
+      calendarEnd,
+      days
+    };
+  }, [currentDate]);
+
+  // 메모이제이션을 통한 일정 필터링 최적화
+  const scheduleData = useMemo(() => {
+    const meetings = project?.schedules?.filter(schedule => schedule.type === 'meeting') || [];
+    const events = project?.schedules?.filter(schedule => schedule.type === 'event') || [];
+    
+    return {
+      meetings,
+      events
+    };
+  }, [project?.schedules]);
 
   const previousMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)));
   const nextMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)));
@@ -87,50 +121,60 @@ export default function CalendarPage() {
         </button>
       </div>
 
-      <Calendar
-        currentDate={currentDate}
-        tasks={project?.tasks}
-        meetings={project?.schedules.filter(schedule => schedule.type === 'meeting')}
-        events={project?.schedules.filter(schedule => schedule.type === 'event')}
-        days={days}
-        onPreviousMonth={previousMonth}
-        onNextMonth={nextMonth}
-        onSelectTask={handleSelectTask}
-        onSelectSchedule={handleSelectSchedule}
-      />
-
-      <ScheduleStatus
-        tasks={project?.tasks}
-        meetings={project?.schedules.filter(schedule => schedule.type === 'meeting')}
-        events={project?.schedules.filter(schedule => schedule.type === 'event')}
-      />
-
-      <ScheduleCreateModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-      />
-
-      {selectedTask && (
-        <TaskModal
-          task={selectedTask}
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedTask(null);
-          }}
+      <Suspense fallback={<SkeletonCalendar />}>
+        <Calendar
+          currentDate={currentDate}
+          tasks={project?.tasks}
+          meetings={scheduleData.meetings}
+          events={scheduleData.events}
+          days={calendarData.days}
+          onPreviousMonth={previousMonth}
+          onNextMonth={nextMonth}
+          onSelectTask={handleSelectTask}
+          onSelectSchedule={handleSelectSchedule}
         />
-      )}
+      </Suspense>
 
-      {selectedSchedule && (
-        <ScheduleModal
-          schedule={selectedSchedule}
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedSchedule(null);
-          }}
+      <Suspense fallback={<LoadingSpinner />}>
+        <ScheduleStatus
+          tasks={project?.tasks}
+          meetings={scheduleData.meetings}
+          events={scheduleData.events}
         />
-      )}
+      </Suspense>
+
+      <Suspense fallback={<LoadingSpinner />}>
+        <ScheduleCreateModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
+      </Suspense>
+
+      <Suspense fallback={<LoadingSpinner />}>
+        {selectedTask && (
+          <TaskModal
+            task={selectedTask}
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedTask(null);
+            }}
+          />
+        )}
+      </Suspense>
+
+      <Suspense fallback={<LoadingSpinner />}>
+        {selectedSchedule && (
+          <ScheduleModal
+            schedule={selectedSchedule}
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedSchedule(null);
+            }}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

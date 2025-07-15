@@ -4,15 +4,15 @@ import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import { Book, Users, Building, MapPinAlt, Refresh } from "flowbite-react-icons/outline";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Member } from "@/types/Member";
+import { User } from "@/types/User";
 import { GithubUser } from "@/types/github/GithubUser";
 import RateLimitWarning from "@/components/project/github/RateLimitWarning";
 import { useAuthStore } from "@/auth/authStore";
 
 interface Props {
-  user?: Member;
+  user?: User;
   githubUser?: GithubUser;
-  onRefresh: () => Promise<void>;
+  onRefresh: () => void;
 }
 
 export default function ProfileCard({ user, githubUser, onRefresh }: Props) {
@@ -83,7 +83,7 @@ export default function ProfileCard({ user, githubUser, onRefresh }: Props) {
       </div>
       <div className="flex self-start items-center gap-2">
         <RateLimitWarning 
-          token={user?.github_access_token || ""} 
+          token={user?.auth_provider_access_token || ""} 
           threshold={500}
         />
         <button

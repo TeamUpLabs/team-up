@@ -1,15 +1,29 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import MemberDetailModal from "@/components/project/members/MemberDetailModal";
-import MemberCard from "@/components/project/members/MemberCard";
+import { useState, useEffect, useRef, Suspense, lazy, useMemo, useCallback } from "react";
 import { User } from "@/types/User";
 import { useProject } from "@/contexts/ProjectContext";
-import TotalMemberCard from "@/components/project/members/TotalMemberCard";
-import ActiveMemberCard from "@/components/project/members/ActiveMemberCard";
-import DepartmentCard from "@/components/project/members/DepartmentCard";
-import AvgTaskCard from "@/components/project/members/AvgTaskCard";
 import TabSlider from "@/components/ui/TabSlider";
+
+// 지연 로딩을 위한 컴포넌트들
+const MemberDetailModal = lazy(() => import("@/components/project/members/MemberDetailModal"));
+const MemberCard = lazy(() => import("@/components/project/members/MemberCard"));
+const TotalMemberCard = lazy(() => import("@/components/project/members/TotalMemberCard"));
+const ActiveMemberCard = lazy(() => import("@/components/project/members/ActiveMemberCard"));
+const DepartmentCard = lazy(() => import("@/components/project/members/DepartmentCard"));
+const AvgTaskCard = lazy(() => import("@/components/project/members/AvgTaskCard"));
+
+// 로딩 컴포넌트
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center p-4">
+    <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+  </div>
+);
+
+// 스켈레톤 카드 컴포넌트
+const SkeletonCard = () => (
+  <div className="bg-component-tertiary-background animate-pulse rounded-lg h-32"></div>
+);
 
 export default function MembersPage() {
   const { project } = useProject();
@@ -19,25 +33,32 @@ export default function MembersPage() {
   const isMounted = useRef(false);
   const [tab, setTab] = useState("전체");
   
-  // Get unique roles from project members
-  const uniqueRoles = Array.from(new Set(project?.members?.map(member => member.user.role) || []));
-  
-  // Create tabs object with '전체' tab and dynamic role tabs
-  const memberTabs = {
-    '전체': { 
-      label: '전체', 
-      count: project?.members?.length || 0 
-    },
-    ...Object.fromEntries(
-      uniqueRoles.map(role => [
-        role,
-        { 
-          label: role, 
-          count: project?.members?.filter(member => member.user.role === role).length || 0 
-        }
-      ])
-    )
-  };
+  // 메모이제이션을 통한 탭 데이터 최적화
+  const memberTabs = useMemo(() => {
+    const uniqueRoles = Array.from(new Set(project?.members?.map(member => member.user.role) || []));
+    
+    return {
+      '전체': { 
+        label: '전체', 
+        count: project?.members?.length || 0 
+      },
+      ...Object.fromEntries(
+        uniqueRoles.map(role => [
+          role,
+          { 
+            label: role, 
+            count: project?.members?.filter(member => member.user.role === role).length || 0 
+          }
+        ])
+      )
+    };
+  }, [project?.members]);
+
+  // 디바운스된 검색 함수
+  const debouncedSetSearchQuery = useCallback((value: string) => {
+    const timeoutId = setTimeout(() => setSearchQuery(value), 300);
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
     const selectedAssiId = localStorage.getItem("selectedAssiId");
@@ -63,19 +84,16 @@ export default function MembersPage() {
       const customEvent = event as CustomEvent;
       const searchValue = customEvent.detail || '';
       
-      // Only update if value is different
-      if (searchValue !== searchQuery) {
-        setSearchQuery(searchValue);
-      }
+      // 디바운스된 검색 적용
+      debouncedSetSearchQuery(searchValue);
     };
 
-    // Add event listener
     window.addEventListener('headerSearch', handleHeaderSearch);
     
     return () => {
       window.removeEventListener('headerSearch', handleHeaderSearch);
     };
-  }, [searchQuery]);
+  }, [debouncedSetSearchQuery]);
 
   // Set mounted flag
   useEffect(() => {
@@ -85,36 +103,56 @@ export default function MembersPage() {
     };
   }, []);
 
-  const filteredMembers = (project?.members ?? [])
-    .filter((member) => {
-      // Filter by tab
-      const matchesTab = 
-        tab === '전체' || 
-        (member.user.role === tab);
-      
-      // If there's no search query, just return tab matches
-      if (!searchQuery.trim()) return matchesTab;
+  // 메모이제이션을 통한 필터링 최적화
+  const filteredMembers = useMemo(() => {
+    return (project?.members ?? [])
+      .filter((member) => {
+        // Filter by tab
+        const matchesTab = 
+          tab === '전체' || 
+          (member.user.role === tab);
+        
+        // If there's no search query, just return tab matches
+        if (!searchQuery.trim()) return matchesTab;
 
-      // Filter by search query
-      const searchLower = searchQuery.toLowerCase();
-      const matchesSearch = 
-        member.user.name.toLowerCase().includes(searchLower) ||
-        member.user.role.toLowerCase().includes(searchLower) ||
-        member.user.email?.toLowerCase().includes(searchLower) ||
-        project?.tasks?.some(task => 
-          task.title.toLowerCase().includes(searchLower)
-        );
+        // Filter by search query
+        const searchLower = searchQuery.toLowerCase();
+        const matchesSearch = 
+          member.user.name.toLowerCase().includes(searchLower) ||
+          member.user.role.toLowerCase().includes(searchLower) ||
+          member.user.email?.toLowerCase().includes(searchLower) ||
+          project?.tasks?.some(task => 
+            task.title.toLowerCase().includes(searchLower)
+          );
 
-      return matchesTab && matchesSearch;
-    })
-    .sort((a, b) => {
-      // Leader always comes first
-      if (a.user.id === project?.owner.id) return -1;
-      if (b.user.id === project?.owner.id) return 1;
-      
-      // Finally sort by name
-      return a.user.name.localeCompare(b.user.name);
-    });
+        return matchesTab && matchesSearch;
+      })
+      .sort((a, b) => {
+        // Leader always comes first
+        if (a.user.id === project?.owner.id) return -1;
+        if (b.user.id === project?.owner.id) return 1;
+        
+        // Finally sort by name
+        return a.user.name.localeCompare(b.user.name);
+      });
+  }, [project?.members, tab, searchQuery, project?.owner?.id, project?.tasks]);
+
+  // 메모이제이션을 통한 통계 계산 최적화
+  const memberStats = useMemo(() => {
+    const totalMemberCount = project?.members?.length ?? 0;
+    const activeMemberCount = project?.members?.filter(member => member.user.status === 'active')?.length ?? 0;
+    const departments = project?.members?.map(member => member.user.role) ?? [];
+    const avgTaskCount = project?.members?.length 
+      ? project.tasks?.length / project.members.length 
+      : 0;
+    
+    return {
+      totalMemberCount,
+      activeMemberCount,
+      departments,
+      avgTaskCount
+    };
+  }, [project?.members, project?.tasks]);
 
   const handleMemberClick = (member: User) => {
     setSelectedMember(member);
@@ -128,10 +166,21 @@ export default function MembersPage() {
   return (
     <div className="p-4 flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <TotalMemberCard totalMemberCount={project?.members?.length ?? 0} />
-        <ActiveMemberCard totalMemberCount={project?.members?.length ?? 0} activeMemberCount={project?.members?.filter(member => member.user.status === 'active')?.length ?? 0} />
-        <DepartmentCard departments={project?.members?.map(member => member.user.role) ?? []} />
-        <AvgTaskCard avgTaskCount={project?.members?.length ? project.members.map(member => project.tasks?.filter(task => task.assignee_id?.includes(member.user.id)).length ?? 0).reduce((a, b) => a + b, 0) / project.members.length : 0} />
+        <Suspense fallback={<SkeletonCard />}>
+          <TotalMemberCard totalMemberCount={memberStats.totalMemberCount} />
+        </Suspense>
+        <Suspense fallback={<SkeletonCard />}>
+          <ActiveMemberCard 
+            totalMemberCount={memberStats.totalMemberCount} 
+            activeMemberCount={memberStats.activeMemberCount} 
+          />
+        </Suspense>
+        <Suspense fallback={<SkeletonCard />}>
+          <DepartmentCard departments={memberStats.departments} />
+        </Suspense>
+        <Suspense fallback={<SkeletonCard />}>
+          <AvgTaskCard avgTaskCount={memberStats.avgTaskCount} />
+        </Suspense>
       </div>
 
       <div className="w-full md:w-1/2 lg:w-1/3">
@@ -149,29 +198,32 @@ export default function MembersPage() {
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredMembers.map((member) => (
-          <MemberCard
-            key={member.user.id}
-            member={member.user}
-            isLeader={member.is_leader || project?.owner.id === member.user.id}
-            isManager={
-              project?.members.some((manager) => manager.is_manager) || project?.owner.id === member.user.id
-            }
-            onClick={() => handleMemberClick(member.user)}
-          />
+          <Suspense key={member.user.id} fallback={<SkeletonCard />}>
+            <MemberCard
+              member={member.user}
+              isLeader={member.is_leader || project?.owner.id === member.user.id}
+              isManager={
+                project?.members.some((manager) => manager.is_manager) || project?.owner.id === member.user.id
+              }
+              onClick={() => handleMemberClick(member.user)}
+            />
+          </Suspense>
         ))}
       </div>
 
-      {selectedMember && (
-        <MemberDetailModal
-          member={selectedMember}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          isLeader={project?.members.some((member) => member.is_leader) || project?.owner.id === selectedMember.id}
-          isManager={
-            project?.members.some((manager) => manager.is_manager) || project?.owner.id === selectedMember.id
-          }
-        />
-      )}
+      <Suspense fallback={<LoadingSpinner />}>
+        {selectedMember && (
+          <MemberDetailModal
+            member={selectedMember}
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            isLeader={project?.members.some((member) => member.is_leader) || project?.owner.id === selectedMember.id}
+            isManager={
+              project?.members.some((manager) => manager.is_manager) || project?.owner.id === selectedMember.id
+            }
+          />
+        )}
+      </Suspense>
     </div>
   );
 }
