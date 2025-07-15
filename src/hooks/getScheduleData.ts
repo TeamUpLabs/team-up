@@ -1,31 +1,15 @@
 import { server } from "@/auth/server";
 import { getCurrentKoreanTime } from "@/utils/dateUtils";
+import { ScheduleCreateFormData } from "@/types/Schedule";
+import { useAuthStore } from "@/auth/authStore";
 
-interface ScheduleFormData {
-  project_id: string;
-  type: string;
-  title: string;
-  description: string;
-  where: string;
-  link: string;
-  start_time: string;
-  end_time: string;
-  status: string;
-  created_by: number | undefined;
-  updated_by: number | undefined;
-  memo: string;
-  assignee_id: number[];
-}
-
-export const createSchedule = async (project_id: string, formData: ScheduleFormData) => {
+export const createSchedule = async (project_id: string, formData: ScheduleCreateFormData) => {
   try {
-    const res = await server.post(`/project/${project_id}/schedule`, {
-      ...formData,
-      created_at: getCurrentKoreanTime(),
-      updated_at: getCurrentKoreanTime(),
-    }, {
+    const token = useAuthStore.getState().token;
+    const res = await server.post(`/projects/${project_id}/schedules`, formData, {
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token || ""}`,
       },
     });
 

@@ -249,7 +249,7 @@ export default function MemberDetailModal({
 
       {/* Current Tasks Accordian */}
       <Accordion
-        title={`Current Tasks (${project?.tasks?.filter(task => task.assignee_id?.includes(member.id)).length || 0})`}
+        title={`Current Tasks (${project?.tasks?.filter(task => task.assignees?.some(assi => assi.id === member.id)).length || 0})`}
         icon={ClipboardClean}
         defaultOpen
       >

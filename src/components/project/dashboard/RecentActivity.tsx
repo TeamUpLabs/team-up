@@ -17,7 +17,7 @@ interface Activity {
   user: {
     name: string;
     email?: string;
-    image?: string;
+    profile_image?: string;
     isActive?: string;
   };
   type: 'task' | 'milestone' | 'meeting' | 'event';
@@ -70,7 +70,7 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
       user: {
         name: project?.members?.find(member => member.user.id === task.creator.id)?.user.name || '담당자 없음',
         email: project?.members?.find(member => member.user.id === task.creator.id)?.user.email || '이메일 없음',
-        image: project?.members?.find(member => member.user.id === task.creator.id)?.user.profile_image || '프로필 이미지 없음',
+        profile_image: project?.members?.find(member => member.user.id === task.creator.id)?.user.profile_image || '/DefaultProfile.jpg',
         isActive: project?.members?.find(member => member.user.id === task.creator.id)?.user.status || '활동 없음',
       },
       type: 'task' as const,
@@ -84,7 +84,7 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
         user: {
           name: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.name || '담당자 없음',
           email: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.email || '이메일 없음',
-          image: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.profile_image || '프로필 이미지 없음',
+          profile_image: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.profile_image || '/DefaultProfile.jpg',
           isActive: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.status || '활동 없음',
         },
         type: 'milestone' as const,
@@ -97,10 +97,10 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
-          name: project?.members?.find(member => member.user.id === schedule.created_by)?.user.name || '담당자 없음',
-          email: project?.members?.find(member => member.user.id === schedule.created_by)?.user.email || '이메일 없음',
-          image: project?.members?.find(member => member.user.id === schedule.created_by)?.user.profile_image || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.user.id === schedule.created_by)?.user.status || '활동 없음',
+          name: schedule.creator.name || '담당자 없음',
+          email: schedule.creator.email || '이메일 없음',
+          profile_image: schedule.creator.profile_image || '/DefaultProfile.jpg',
+          isActive: schedule.creator.status || '활동 없음',
         },
         type: 'meeting' as const,
         action: `"${schedule.title}" 회의를 ${schedule.status === 'completed' ? '참여했습니다.' : '시작했습니다.'}`,
@@ -112,10 +112,10 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
-          name: project?.members?.find(member => member.user.id === schedule.created_by)?.user.name || '담당자 없음',
-          email: project?.members?.find(member => member.user.id === schedule.created_by)?.user.email || '이메일 없음',
-          image: project?.members?.find(member => member.user.id === schedule.created_by)?.user.profile_image || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.user.id === schedule.created_by)?.user.status || '활동 없음',
+          name: schedule.creator.name || '담당자 없음',
+          email: schedule.creator.email || '이메일 없음',
+          profile_image: schedule.creator.profile_image || '/DefaultProfile.jpg',
+          isActive: schedule.creator.status || '활동 없음',
         },
         type: 'event' as const,
         action: `"${schedule.title}" 이벤트를 ${schedule.status === 'completed' ? '참여했습니다.' : '시작했습니다.'}`,
@@ -208,9 +208,9 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
                 >
                   <div className="relative">
                     <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                      {activity.user.image ? (
+                      {activity.user.profile_image ? (
                         <Image
-                          src={activity.user.image}
+                          src={activity.user.profile_image}
                           alt={activity.user.name}
                           className="w-full h-full object-cover border border-component-border rounded-full"
                           width={32}

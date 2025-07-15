@@ -60,8 +60,6 @@ export interface Schedule {
     created_at: string;
     updated_at: string;
     project_id: string;
-    created_by: number;
-    updated_by: number;
 
     project: Project;
     creator: UserBrief;
@@ -83,8 +81,6 @@ export const blankSchedule: Schedule = {
     created_at: "",
     updated_at: "",
     project_id: "",
-    created_by: 0,
-    updated_by: 0,
     project: blankProject,
     creator: blankUserBrief,
     updater: blankUserBrief,

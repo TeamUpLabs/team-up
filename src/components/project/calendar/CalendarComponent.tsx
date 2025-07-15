@@ -70,7 +70,7 @@ export default function Calendar({
 
       <div className="flex-1 grid grid-cols-7 overflow-y-auto">
         {days.map((day, index) => {
-          const dayTasks = tasks?.filter(task => task?.endDate === format(day, 'yyyy-MM-dd'));
+          const dayTasks = tasks?.filter(task => task?.due_date === format(day, 'yyyy-MM-dd'));
           const dayMeetings = meetings?.filter(meeting => meeting?.start_time.split('T')[0] === format(day, 'yyyy-MM-dd'));
           const dayEvents = events?.filter(event => event?.start_time.split('T')[0] === format(day, 'yyyy-MM-dd'));
           const isWeekend = index % 7 === 0 || index % 7 === 6;
@@ -106,13 +106,13 @@ export default function Calendar({
                       className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("task")} hover:opacity-60 transition-all cursor-pointer`}
                     >
                       <p className="font-medium truncate">{task?.title}</p>
-                      {task?.assignee && task?.assignee.length > 0 && (
+                      {task?.assignees && task?.assignees.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-0.5">
-                          {task?.assignee.slice(0, 2).map(assi => (
+                          {task?.assignees.slice(0, 2).map(assi => (
                             <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
                           ))}
-                          {task?.assignee.length > 2 && (
-                            <span className="text-[10px] sm:text-xs opacity-75 truncate">+{task?.assignee.length - 2}명</span>
+                          {task?.assignees.length > 2 && (
+                            <span className="text-[10px] sm:text-xs opacity-75 truncate">+{task?.assignees.length - 2}명</span>
                           )}
                         </div>
                       )}
@@ -127,13 +127,13 @@ export default function Calendar({
                       className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("meeting")} hover:opacity-60 transition-all cursor-pointer`}
                     >
                       <p className="font-medium truncate">{meeting?.title}</p>
-                      {meeting?.assignee && meeting?.assignee.length > 0 && (
+                      {meeting?.assignees && meeting?.assignees.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-0.5">
-                        {meeting?.assignee.slice(0, 2).map(assi => (
+                        {meeting?.assignees.slice(0, 2).map(assi => (
                           <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
                         ))}
-                        {meeting?.assignee.length > 2 && (
-                          <span className="text-[10px] sm:text-xs opacity-75 truncate">+{meeting?.assignee.length - 2}명</span>
+                        {meeting?.assignees.length > 2 && (
+                          <span className="text-[10px] sm:text-xs opacity-75 truncate">+{meeting?.assignees.length - 2}명</span>
                         )}
                       </div>
                     )}
@@ -148,13 +148,13 @@ export default function Calendar({
                       className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("event")} hover:opacity-60 transition-all cursor-pointer`}
                   >
                     <p className="font-medium truncate">{event?.title}</p>
-                    {event?.assignee && event?.assignee.length > 0 && (
+                    {event?.assignees && event?.assignees.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-0.5">
-                        {event?.assignee.slice(0, 2).map(assi => (
+                        {event?.assignees.slice(0, 2).map(assi => (
                           <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
                         ))}
-                        {event?.assignee.length > 2 && (
-                          <span className="text-[10px] sm:text-xs opacity-75 truncate">+{event?.assignee.length - 2}명</span>
+                        {event?.assignees.length > 2 && (
+                          <span className="text-[10px] sm:text-xs opacity-75 truncate">+{event?.assignees.length - 2}명</span>
                         )}
                       </div>
                     )}

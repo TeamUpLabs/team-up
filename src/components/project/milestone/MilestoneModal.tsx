@@ -221,7 +221,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
           try {
             useAuthStore.getState().setAlert("진행중입니다. 잠시만 기다려주세요.", "info");
             await Promise.all(tasks.map(async (task) => {
-              await createTask(project?.id, {
+              await createTask({
                 project_id: project?.id,
                 title: task.text,
                 description: "",
@@ -236,7 +236,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 priority: milestoneData.priority,
                 estimated_hours: 0,
                 milestone_id: milestoneData.id,
-                created_by: useAuthStore.getState().user?.id || 0,
+                created_by: user?.id || 0,
               });
             }));
           } catch (error) {

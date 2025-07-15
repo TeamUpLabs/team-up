@@ -30,6 +30,7 @@ import { createSchedule } from "@/hooks/getScheduleData";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
 import { TextArea } from "@/components/ui/TextArea";
+import { ScheduleCreateFormData, blankScheduleCreateFormData } from "@/types/Schedule";
 
 type ScheduleType = "meeting" | "event";
 type MeetingPlatform = "Zoom" | "Google Meet" | "TeamUp";
@@ -45,21 +46,6 @@ export default function ScheduleCreateModal({
 }: ScheduleCreateModalProps) {
   const user = useAuthStore((state) => state.user);
   const { project } = useProject();
-  const initialFormData = () => ({
-    project_id: project?.id || "",
-    type: activeTab,
-    title: "",
-    description: "",
-    where: selectedPlatform || "",
-    link: "",
-    start_time: "",
-    end_time: "",
-    status: "not-started",
-    created_by: user?.id || 0,
-    updated_by: user?.id || 0,
-    memo: "",
-    assignee_id: [] as number[],
-  });
   const [step, setStep] = useState(1);
 
   const totalSteps = 6
@@ -71,7 +57,7 @@ export default function ScheduleCreateModal({
   const [selectedPlatform, setSelectedPlatform] = useState<MeetingPlatform>();
   const [activeTab, setActiveTab] = useState<ScheduleType>("meeting");
   const [dateError, setDateError] = useState(false);
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState<ScheduleCreateFormData>(blankScheduleCreateFormData);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   useEffect(() => {
@@ -107,7 +93,7 @@ export default function ScheduleCreateModal({
       return;
     }
 
-    if (formData.assignee_id.length === 0) {
+    if (formData.assignee_ids.length === 0) {
       useAuthStore.getState().setAlert("참석자를 최소 한 명 이상 선택해주세요.", "error");
       return;
     }
@@ -130,7 +116,14 @@ export default function ScheduleCreateModal({
     if (project?.id) {
       setSubmitStatus('submitting');
       try {
-        await createSchedule(project.id, formData);
+        await createSchedule(project.id, {
+          ...formData,
+          status: "not-started",
+          created_by: user?.id || 0,
+          updated_by: user?.id || 0,
+          project_id: project.id,
+          assignee_ids: formData.assignee_ids.map((id) => id as number),
+        });
         setSubmitStatus('success');
         useAuthStore.getState().setAlert("일정이 성공적으로 생성되었습니다.", "success");
       } catch (error) {
@@ -146,7 +139,7 @@ export default function ScheduleCreateModal({
       } finally {
         setTimeout(() => {
           onClose();
-          setFormData(initialFormData);
+          setFormData(blankScheduleCreateFormData);
           setStep(1);
           setSubmitStatus('idle');
         }, 1000);
@@ -171,22 +164,22 @@ export default function ScheduleCreateModal({
 
   const toggleAssignee = (memberId: number) => {
     setFormData((prev) => {
-      if (prev.assignee_id.includes(memberId)) {
+      if (prev.assignee_ids.includes(memberId)) {
         return {
           ...prev,
-          assignee_id: prev.assignee_id.filter((id) => id !== memberId),
+          assignee_ids: prev.assignee_ids.filter((id) => id !== memberId),
         };
       } else {
         return {
           ...prev,
-          assignee_id: [...prev.assignee_id, memberId],
+          assignee_ids: [...prev.assignee_ids, memberId],
         };
       }
     });
   };
 
   const isAssigned = (memberId: number) => {
-    return formData.assignee_id.includes(memberId);
+    return formData.assignee_ids.includes(memberId);
   };
 
   const moveNextStep = (step: number) => {
@@ -217,7 +210,7 @@ export default function ScheduleCreateModal({
         }
         break;
       case 5:
-        if (formData.assignee_id.length === 0) {
+        if (formData.assignee_ids.length === 0) {
           useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "error");
           return;
         }
@@ -273,6 +266,8 @@ export default function ScheduleCreateModal({
           buttonText="일정 생성"
           successText="생성 완료"
           errorText="생성 실패"
+          fit
+          withIcon
         />
       )}
     </div>
@@ -534,8 +529,8 @@ export default function ScheduleCreateModal({
                 </div>
                 <div className="px-1">
                   <AssigneeSelect
-                    selectedAssignee={formData.assignee_id}
-                    assignee={project?.members || []}
+                    selectedAssignee={formData.assignee_ids}
+                    assignee={project?.members?.map(member => member.user) || []}
                     toggleAssignee={toggleAssignee}
                     isAssigned={isAssigned}
                     label="선택된 담당자"

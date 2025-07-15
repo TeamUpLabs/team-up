@@ -45,7 +45,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
   const [scheduleData, setScheduleData] = useState<Schedule>(schedule);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
-  const isUserAssignee = user && schedule?.assignee?.some((assi) => assi.id === user?.id);
+  const isUserAssignee = user && schedule?.assignees?.some((assi) => assi.id === user?.id);
 
   const handleChange = (
     e:
@@ -59,7 +59,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
   };
 
   const handleEdit = (name: string) => {
-    if (user && schedule?.assignee?.some((assi) => assi.id === user?.id)) {
+    if (user && schedule?.assignees?.some((assi) => assi.id === user?.id)) {
       setIsEditing(name);
       if (name !== "none") {
         useAuthStore.getState().setAlert("편집 모드로 전환되었습니다.", "info");
@@ -100,7 +100,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
         link: scheduleData.link ?? "",
         start_time: scheduleData.start_time ?? "",
         end_time: scheduleData.end_time ?? "",
-        assignee_id: scheduleData.assignee?.map((a) => a.id) ?? [],
+        assignee_id: scheduleData.assignees?.map((a) => a.id) ?? [],
         where: scheduleData.where ?? "",
         status: scheduleData.status ?? "",
         memo: scheduleData.memo ?? "",
@@ -284,13 +284,13 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
             <div className="space-y-2">
               <h4 className="font-medium">Created</h4>
               <p className="text-sm text-muted-foreground">
-                {new Date(scheduleData?.created_at).toLocaleDateString()} by {project?.members.find((member) => member.id === scheduleData?.created_by)?.name}
+                {new Date(scheduleData?.created_at).toLocaleDateString()} by {scheduleData?.creator.name}
               </p>
             </div>
             <div className="space-y-2">
               <h4 className="font-medium">Last Updated</h4>
               <p className="text-sm text-muted-foreground">
-                {new Date(scheduleData?.updated_at).toLocaleDateString()} by {project?.members.find((member) => member.id === scheduleData?.updated_by)?.name}
+                {new Date(scheduleData?.updated_at).toLocaleDateString()} by {scheduleData?.updater.name}
               </p>
             </div>
           </div>
@@ -384,7 +384,6 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
               color={getPlatformColorName(scheduleData.where)}
               onChange={(value) => handleSelectChange("where", value as string)}
               className="w-fit px-3 py-1 rounded-md"
-              dropdownAlign="start"
             />
           ) : scheduleData.type === "event" && isEditing === "location" ? (
             <Input
@@ -482,7 +481,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
 
       {/* Assignee Accordian */}
       <Accordion
-        title={`Assignees (${scheduleData.assignee && scheduleData.assignee.length || 0})`}
+        title={`Assignees (${scheduleData.assignees && scheduleData.assignees.length || 0})`}
         icon={User}
       >
         <div className="space-y-2">
@@ -491,29 +490,29 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
               <div className="mb-3">
                 <p className="text-sm text-text-secondary">
                   선택된 담당자:{" "}
-                  {scheduleData.assignee?.length ?? 0 > 0
-                    ? `${scheduleData.assignee?.length}명`
+                  {scheduleData.assignees?.length ?? 0 > 0
+                    ? `${scheduleData.assignees?.length}명`
                     : "없음"}
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {project?.members?.map((member) => {
-                  const isSelected = scheduleData.assignee?.some(
-                    (a) => a.id === member.id
+                  const isSelected = scheduleData.assignees?.some(
+                    (a) => a.id === member.user.id
                   );
                   return (
                     <div
-                      key={member.id}
+                      key={member.user.id}
                       onClick={() => {
                         if (isSelected) {
                           if (
-                            scheduleData.assignee?.length &&
-                            scheduleData.assignee?.length > 1
+                            scheduleData.assignees?.length &&
+                            scheduleData.assignees?.length > 1
                           ) {
                             setScheduleData({
                               ...scheduleData,
-                              assignee: scheduleData.assignee?.filter(
-                                (a) => a.id !== member.id
+                              assignees: scheduleData.assignees?.filter(
+                                (a) => a.id !== member.user.id
                               ),
                             });
                           } else {
@@ -527,7 +526,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                         } else {
                           setScheduleData({
                             ...scheduleData,
-                            assignee: [...(scheduleData.assignee ?? []), member],
+                            assignees: [...(scheduleData.assignees ?? []), member.user],
                           });
                         }
                       }}
@@ -539,9 +538,9 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                       <div className="relative flex-shrink-0">
                         <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
                           <div className="relative w-full h-full flex items-center justify-center border border-component-border rounded-full">
-                            {member.profileImage ? (
+                            {member.user.profile_image ? (
                               <Image
-                                src={member.profileImage}
+                                src={member.user.profile_image}
                                 alt="Profile"
                                 className={`rounded-full absolute text-text-secondary transform transition-all duration-300 ${isSelected
                                   ? "opacity-0 rotate-90 scale-0"
@@ -576,10 +575,10 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                       </div>
                       <div className="flex flex-col">
                         <p className="text-sm font-medium text-text-primary">
-                          {member.name}
+                          {member.user.name}
                         </p>
                         <p className="text-xs text-text-secondary">
-                          {member.role}
+                          {member.user.role}
                         </p>
                       </div>
                     </div>
@@ -592,8 +591,8 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
               <div className="flex items-center gap-2 group relative">
                 <p className="text-sm text-text-secondary">
                   담당자:{" "}
-                  {scheduleData.assignee?.length ?? 0 > 0
-                    ? `${scheduleData.assignee?.length}명`
+                  {scheduleData.assignees?.length ?? 0 > 0
+                    ? `${scheduleData.assignees?.length}명`
                     : "없음"}
                 </p>
                 <FontAwesomeIcon
@@ -606,7 +605,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {scheduleData?.assignee?.map((assi) => (
+                {scheduleData?.assignees?.map((assi) => (
                   <div
                     key={assi?.id}
                     className="flex items-center gap-3 p-2 rounded-lg bg-component-tertiary-background border border-component-border transform transition-all duration-300 hover:bg-component-tertiary-background/60 hover:border-point-color-indigo cursor-pointer"
@@ -615,9 +614,9 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                     <div className="relative flex-shrink-0">
                       <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
                         <div className="relative w-full h-full flex items-center justify-center border border-component-border rounded-full">
-                          {assi.profileImage ? (
+                          {assi.profile_image ? (
                             <Image
-                              src={assi.profileImage}
+                              src={assi.profile_image}
                               alt="Profile"
                               quality={100}
                               className="rounded-full"
