@@ -6,6 +6,11 @@ export interface SubTaskCreateFormData {
   task_id: number;
 }
 
+export interface SubTaskUpdateFormData {
+  id: number;
+  is_completed: boolean;
+}
+
 export interface SubTask {
   id: number;
   title: string;

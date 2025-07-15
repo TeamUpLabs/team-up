@@ -1,5 +1,5 @@
 import { server } from "@/auth/server";
-import { CommentCreateFormData, SubTask, SubTaskCreateFormData, TaskCreateFormData, TaskUpdateFormData } from "@/types/Task";
+import { CommentCreateFormData, SubTaskCreateFormData, SubTaskUpdateFormData, TaskCreateFormData, TaskUpdateFormData } from "@/types/Task";
 import { useAuthStore } from "@/auth/authStore";
 
 export const createTask = async (task: TaskCreateFormData) => {
@@ -110,10 +110,13 @@ export const createSubtask = async (task_id: number, subtask: SubTaskCreateFormD
   }
 }
 
-export const updateSubtask = async (project_id: string, task_id: number, subtask: SubTask) => {
+export const updateSubtask = async (task_id: number, subtask: SubTaskUpdateFormData) => {
   try {
-    const res = await server.put(`/project/${project_id}/task/${task_id}/subtask/${subtask.id}/state`, {
-      is_completed: subtask.is_completed,
+    const token = useAuthStore.getState().token;
+    const res = await server.put(`/tasks/${task_id}/subtasks/${subtask.id}`, subtask, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
     });
     if (res.status === 200) {
       return res.data;

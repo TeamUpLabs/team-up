@@ -109,19 +109,22 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         );
       return;
     }
-    const updated = taskData.subtasks.map((subtask, i) =>
-      i === index
-        ? { ...subtask, is_completed: !subtask.is_completed }
-        : subtask
-    );
-    setTaskData({ ...taskData, subtasks: updated });
-
     try {
+      const updated = taskData.subtasks.map((subtask, i) => {
+        if (i === index) {
+          return { ...subtask, is_completed: !subtask.is_completed };
+        }
+        return subtask;
+      });
+
       await updateSubtask(
-        project?.id ? String(project.id) : "0",
         task.id,
-        updated[index]
+        {
+          id: updated[index].id,
+          is_completed: updated[index].is_completed,
+        }
       );
+      setTaskData({ ...taskData, subtasks: updated });
     } catch (error) {
       console.error("Error updating subtask:", error);
     }
