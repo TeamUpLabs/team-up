@@ -1,4 +1,4 @@
-import { Member } from "@/types/Member";
+import { UserBrief } from "@/types/User";
 
 export interface Channel {
     id: string;
@@ -8,7 +8,7 @@ export interface Channel {
     channelDescription: string;
     isPublic: boolean;
     member_id: number[];
-    members: Member[];
+    members: UserBrief[];
     created_at: string;
     created_by: number;
 }

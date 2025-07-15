@@ -16,6 +16,7 @@ import Badge from "@/components/ui/Badge";
 import { useTheme } from "@/contexts/ThemeContext";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import { createMilestone } from "@/hooks/getMilestoneData";
+import { MilestoneCreateFormData, blankMilestoneCreateFormData } from "@/types/MileStone";
 
 interface IssueToMilestoneModalProps {
   isOpen: boolean;
@@ -27,19 +28,7 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
   const { isDark } = useTheme();
   const { project } = useProject();
   const user = useAuthStore((state) => state.user);
-  const [formData, setFormData] = useState({
-    project_id: project?.id || "",
-    title: issueData.title,
-    description: issueData.body || "",
-    startDate: issueData.created_at.split("T")[0],
-    endDate: "",
-    status: "",
-    priority: "",
-    tags: issueData.labels.map((label) => label.name),
-    assignee_id: [] as number[],
-    createdBy: user?.id || 0,
-    updatedBy: user?.id || 0,
-  });
+  const [formData, setFormData] = useState<MilestoneCreateFormData>(blankMilestoneCreateFormData);
   const [tagsInput, setTagsInput] = useState("");
   const [isComposing, setIsComposing] = useState(false);
   const [dateError, setDateError] = useState(false);
@@ -51,7 +40,7 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleDescriptionChange = useCallback((value: string) => {
@@ -70,14 +59,14 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
   const handleStartDateChange = (date: Date | undefined) => {
     setFormData(prevData => ({
       ...prevData,
-      startDate: date ? formatDateToString(date) : "",
+      start_date: date ? formatDateToString(date) : "",
     }));
   };
 
   const handleEndDateChange = (date: Date | undefined) => {
     setFormData(prevData => ({
       ...prevData,
-      endDate: date ? formatDateToString(date) : "",
+      due_date: date ? formatDateToString(date) : "",
     }));
   };
 
@@ -88,34 +77,34 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
       const trimmedInput = tagsInput.trim();
       if (trimmedInput && !formData.tags.includes(trimmedInput)) {
         const updatedTags = [...formData.tags, trimmedInput];
-        setFormData({ ...formData, tags: updatedTags });
+        setFormData((prev) => ({ ...prev, tags: updatedTags }));
         setTagsInput("");
       }
     }
   };
 
   const handleRemoveTag = (tag: string) => {
-    setFormData({ ...formData, tags: formData.tags.filter((t) => t !== tag) });
+    setFormData((prev) => ({ ...prev, tags: prev.tags.filter((t) => t !== tag) }));
   };
 
   const toggleAssignee = (memberId: number) => {
     setFormData((prev) => {
-      if (prev.assignee_id.includes(memberId)) {
+      if (prev.assignee_ids.includes(memberId)) {
         return {
           ...prev,
-          assignee_id: prev.assignee_id.filter((id) => id !== memberId),
+          assignee_ids: prev.assignee_ids.filter((id) => id !== memberId),
         };
       } else {
         return {
           ...prev,
-          assignee_id: [...prev.assignee_id, memberId],
+          assignee_ids: [...prev.assignee_ids, memberId],
         };
       }
     });
   };
 
   const isAssigned = (memberId: number) => {
-    return formData.assignee_id.includes(memberId);
+    return formData.assignee_ids.includes(memberId);
   };
 
   const handleSubmit = async () => {
@@ -127,7 +116,7 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
       return;
     }
 
-    if (formData.endDate === "") {
+    if (formData.due_date === "") {
       setDateError(true);
       hasError = true;
     } else {
@@ -148,7 +137,7 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
       setPriorityError(false);
     }
 
-    if (formData.assignee_id.length === 0) {
+    if (formData.assignee_ids.length === 0) {
       useAuthStore.getState().setAlert("최소 한 명의 담당자는 필요합니다.", "error");
       return;
     }
@@ -160,7 +149,16 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
     if (project?.id) {
       try {
         setSubmitStatus('submitting');
-        await createMilestone(project.id, formData);
+        await createMilestone({
+          ...formData,
+          title: issueData.title,
+          description: issueData.body,
+          start_date: issueData.created_at.split("T")[0],
+          tags: issueData.labels.map((label) => label.name),
+          created_by: user?.id || 0,
+          project_id: project.id,
+          assignee_ids: formData.assignee_ids.map((id) => id as number),
+        });
         useAuthStore.getState().setAlert("마일스톤이 성공적으로 생성되었습니다.", "success");
         setSubmitStatus('success');
 
@@ -264,16 +262,16 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
 
         <div className="grid grid-cols-2 gap-4">
           <DatePicker
-            value={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+            value={formData.start_date ? parseStringToDate(formData.start_date) : undefined}
             onChange={handleStartDateChange}
             label="시작일"
             isRequired
           />
           <div className="space-y-2">
             <DatePicker
-              value={formData.endDate ? parseStringToDate(formData.endDate) : undefined}
+              value={formData.due_date ? parseStringToDate(formData.due_date) : undefined}
               onChange={handleEndDateChange}
-              minDate={formData.startDate ? parseStringToDate(formData.startDate) : undefined}
+              minDate={formData.start_date ? parseStringToDate(formData.start_date) : undefined}
               label="종료일"
               isRequired
             />
@@ -309,8 +307,8 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
         </div>
 
         <AssigneeSelect
-          selectedAssignee={formData.assignee_id}
-          assignee={project?.members || []}
+          selectedAssignee={formData.assignee_ids}
+          assignee={project?.members?.map((member) => member.user) || []}
           toggleAssignee={toggleAssignee}
           isAssigned={isAssigned}
           label="선택된 담당자"

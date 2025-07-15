@@ -15,20 +15,20 @@ const calculateLastWeekCompletionRate = (project: Project | null): number => {
 
   // Get tasks created before last week
   const tasksLastWeek = project.tasks.filter(task => {
-    const taskDate = new Date(task.createdAt);
+    const taskDate = new Date(task.created_at);
     return taskDate < oneWeekAgo;
   });
 
   if (!tasksLastWeek.length) return 0;
 
-  const completedLastWeek = tasksLastWeek.filter(task => task.status === 'done').length;
+  const completedLastWeek = tasksLastWeek.filter(task => task.status === 'completed').length;
   return Math.round((completedLastWeek / tasksLastWeek.length) * 100);
 };
 
 export default function CompletionRateCard({ project }: CompletionRateCardProps) {
   // Calculate completion rate based on completed tasks vs total tasks
   const totalTasks = project.tasks?.length || 0;
-  const completedTasks = project.tasks?.filter(task => task.status === 'done').length || 0;
+  const completedTasks = project.tasks?.filter(task => task.status === 'completed').length || 0;
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   // Calculate week-over-week progress

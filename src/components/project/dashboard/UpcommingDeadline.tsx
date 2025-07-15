@@ -60,10 +60,10 @@ export default function UpcommingDeadline({ project, isLoading = false }: Upcomm
     ...(project.tasks?.map(task => ({
       id: `task-${task.id}`,
       user: {
-        name: project?.members?.find(member => member.user.id === task.creator.id)?.user.name || '담당자 없음',
-        email: project?.members?.find(member => member.user.id === task.creator.id)?.user.email || '이메일 없음',
-        image: project?.members?.find(member => member.user.id === task.creator.id)?.user.profile_image || '프로필 이미지 없음',
-        isActive: project?.members?.find(member => member.user.id === task.creator.id)?.user.status || '활동 없음',
+        name: task.creator.name || '담당자 없음',
+        email: task.creator.email || '이메일 없음',
+        image: task.creator.profile_image || '프로필 이미지 없음',
+        isActive: task.creator.status || '활동 없음',
       },
       type: 'task' as const,
       title: task.title,
@@ -76,10 +76,10 @@ export default function UpcommingDeadline({ project, isLoading = false }: Upcomm
       return {
         id: `milestone-${milestone.id}`,
         user: {
-          name: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.name || '담당자 없음',
-          email: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.email || '이메일 없음',
-          image: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.profile_image || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.status || '활동 없음',
+          name: milestone.creator.name || '담당자 없음',
+          email: milestone.creator.email || '이메일 없음',
+          image: milestone.creator.profile_image || '프로필 이미지 없음',
+          isActive: milestone.creator.status || '활동 없음',
         },
         type: 'milestone' as const,
         title: milestone.title,
@@ -93,10 +93,10 @@ export default function UpcommingDeadline({ project, isLoading = false }: Upcomm
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
-          name: project?.members?.find(member => member.user.id === schedule.created_by)?.user.name || '담당자 없음',
-          email: project?.members?.find(member => member.user.id === schedule.created_by)?.user.email || '이메일 없음',
-          image: project?.members?.find(member => member.user.id === schedule.created_by)?.user.profile_image || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.user.id === schedule.created_by)?.user.status || '활동 없음',
+          name: schedule.creator.name || '담당자 없음',
+          email: schedule.creator.email || '이메일 없음',
+          image: schedule.creator.profile_image || '프로필 이미지 없음',
+          isActive: schedule.creator.status || '활동 없음',
         },
         type: 'meeting' as const,
         title: schedule.title,
@@ -110,10 +110,10 @@ export default function UpcommingDeadline({ project, isLoading = false }: Upcomm
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
-          name: project?.members?.find(member => member.user.id === schedule.created_by)?.user.name || '담당자 없음',
-          email: project?.members?.find(member => member.user.id === schedule.created_by)?.user.email || '이메일 없음',
-          image: project?.members?.find(member => member.user.id === schedule.created_by)?.user.profile_image || '프로필 이미지 없음',
-          isActive: project?.members?.find(member => member.user.id === schedule.created_by)?.user.status || '활동 없음',
+          name: schedule.creator.name || '담당자 없음',
+          email: schedule.creator.email || '이메일 없음',
+          image: schedule.creator.profile_image || '프로필 이미지 없음',
+          isActive: schedule.creator.status || '활동 없음',
         },
         type: 'event' as const,
         title: schedule.title,

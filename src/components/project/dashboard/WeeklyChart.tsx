@@ -49,13 +49,13 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
   // Helper function to extract date from different item types
   const getDateFromItem = (item: Task | MileStone | Schedule, dateField: string): Date | null => {
     // Handle Task type
-    if ('createdAt' in item && dateField === 'createdAt') {
-      return safeDateParse(item.createdAt);
+    if ('created_at' in item && dateField === 'created_at') {
+      return safeDateParse(item.created_at);
     }
     
     // Handle MileStone type
-    if ('startDate' in item && dateField === 'startDate') {
-      return safeDateParse(item.startDate);
+    if ('start_date' in item && dateField === 'start_date') {
+      return safeDateParse(item.start_date);
     }
     
     // Handle Schedule type (meeting/event)
@@ -97,10 +97,10 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
   // Prepare chart data
   const prepareChartData = (): ChartData[] => {
     // Count tasks by creation date
-    const taskCounts = countItemsByDateField<Task>(tasks, 'createdAt');
+    const taskCounts = countItemsByDateField<Task>(tasks, 'created_at');
     
     // Count milestones by start date
-    const milestoneCounts = countItemsByDateField<MileStone>(milestones, 'startDate');
+    const milestoneCounts = countItemsByDateField<MileStone>(milestones, 'start_date');
     
     // Count meetings and events by start_time
     const meetings = schedules.filter((s): s is Schedule => s.type === 'meeting');

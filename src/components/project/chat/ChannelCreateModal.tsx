@@ -72,7 +72,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
     }
 
     if (formData.isPublic) {
-      formData.member_id = project?.members?.map((member) => member.id) || [];
+      formData.member_id = project?.members?.map((member) => member.user.id) || [];
     }
 
     if (project?.id) {
@@ -185,7 +185,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
           {!formData.isPublic && (
             <AssigneeSelect
               selectedAssignee={formData.member_id}
-              assignee={project?.members || []}
+              assignee={project?.members?.map((member) => member.user) || []}
               toggleAssignee={toggleAssignee}
               isAssigned={(memberId) => formData.member_id.includes(memberId)}
               label="선택된 구성원"

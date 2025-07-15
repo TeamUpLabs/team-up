@@ -120,7 +120,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
         case 'user-joined':
           if (message.userId) {
             console.log(`User joined (voice call): ${message.userId}, creating offer`);
-            setConnectionStatus(`${project?.members.find(member => member.id === Number(message.userId))?.name || message.userId}님이 참여했습니다.`);
+            setConnectionStatus(`${project?.members.find(member => member.user.id === Number(message.userId))?.user.name}님이 참여했습니다.`);
             const existingPeer = peersRef.current.find(p => p.userId === message.userId);
             if (!existingPeer) {
               if (localStream) {
@@ -141,7 +141,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
         case 'user-left':
           if (message.userId) {
             console.log(`User left (voice call): ${message.userId}`);
-            setConnectionStatus(`${project?.members.find(member => member.id === Number(message.userId))?.name || message.userId}님이 나갔습니다.`);
+            setConnectionStatus(`${project?.members.find(member => member.user.id === Number(message.userId))?.user.name}님이 나갔습니다.`);
             removePeer(message.userId);
           }
           break;

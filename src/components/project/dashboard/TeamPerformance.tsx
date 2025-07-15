@@ -3,6 +3,7 @@ import Image from "next/image";
 import MemberDetailModal from "@/components/project/members/MemberDetailModal";
 import { useState } from "react";
 import { AuthUser } from "@/types/AuthUser";
+import { User } from "@/types/User";
 
 interface TeamPerformanceProps {
   project: Project;
@@ -89,10 +90,8 @@ export default function TeamPerformance({ project, isLoading = false, className 
                     <p className="text-text-primary font-semibold text-sm">{member.user.name}</p>
                     <span className="text-text-secondary text-xs">
                       {project.tasks?.filter(task =>
-                        Array.isArray(task.assignee_id)
-                          ? task.assignee_id.includes(member.user.id)
-                          : task.assignee_id === member.user.id
-                      ).filter(task => task.status === "done").length || 0} {" "}
+                        task.assignees.some(assignee => assignee.id === member.user.id)
+                      ).filter(task => task.status === "completed").length || 0} {" "}
                       tasks completed
                     </span>
                   </div>
@@ -104,26 +103,18 @@ export default function TeamPerformance({ project, isLoading = false, className 
                       className="h-full bg-blue-500 rounded-full"
                       style={{
                         width: `${(project.tasks?.filter(task =>
-                          (Array.isArray(task.assignee_id)
-                            ? task.assignee_id.includes(member.user.id)
-                            : task.assignee_id === member.user.id) && task.status === 'done'
+                          task.assignees.some(assignee => assignee.id === member.user.id) && task.status === 'completed'
                         ).length / (project.tasks?.filter(task =>
-                          Array.isArray(task.assignee_id)
-                            ? task.assignee_id.includes(member.user.id)
-                            : task.assignee_id === member.user.id
+                          task.assignees.some(assignee => assignee.id === member.user.id)
                         ).length || 1) * 100) || 0}%`
                       }}
                     />
                   </div>
                   <span className="text-xs font-medium text-text-secondary">
                     {Math.round((project.tasks?.filter(task =>
-                      (Array.isArray(task.assignee_id)
-                        ? task.assignee_id.includes(member.user.id)
-                        : task.assignee_id === member.user.id) && task.status === 'done'
+                      task.assignees.some(assignee => assignee.id === member.user.id) && task.status === 'completed'
                     ).length / (project.tasks?.filter(task =>
-                      Array.isArray(task.assignee_id)
-                        ? task.assignee_id.includes(member.user.id)
-                        : task.assignee_id === member.user.id
+                      task.assignees.some(assignee => assignee.id === member.user.id)
                     ).length || 1) * 100) || 0)}%
                   </span>
                 </div>
@@ -136,7 +127,7 @@ export default function TeamPerformance({ project, isLoading = false, className 
       {/* Member Modal */}
       {isMemberModalOpen && selectedMember && (
         <MemberDetailModal
-          member={selectedMember}
+          member={selectedMember as User}
           isOpen={isMemberModalOpen}
           onClose={handleCloseModal}
           isLeader={

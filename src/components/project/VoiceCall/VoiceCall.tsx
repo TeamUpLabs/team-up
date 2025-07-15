@@ -86,15 +86,15 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
     const localParticipant: DisplayParticipant = {
       userId: userId,
       name: connectedUser?.name || 'You',
-      profileImage: connectedUser?.profileImage,
+      profileImage: connectedUser?.profile_image,
       isLocal: true,
       currentAudioMuted: isAudioMuted,
     };
 
     const remoteParticipants: DisplayParticipant[] = peers.map(peer => ({
       userId: peer.userId,
-      name: project?.members.find(m => m.id.toString() === peer.userId)?.name || `User ${peer.userId.substring(0, 6)}`,
-      profileImage: project?.members.find(m => m.id.toString() === peer.userId)?.profileImage,
+      name: project?.members.find(m => m.user.id.toString() === peer.userId)?.user.name || `User ${peer.userId.substring(0, 6)}`,
+      profileImage: project?.members.find(m => m.user.id.toString() === peer.userId)?.user.profile_image,
       isLocal: false,
       currentAudioMuted: !!peer.isRemoteAudioMuted,
       connection: peer.connection,

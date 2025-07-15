@@ -54,7 +54,7 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
     }
 
     if (formData.isPublic) {
-      formData.member_id = project?.members?.map((member) => member.id) || [];
+      formData.member_id = project?.members?.map((member) => member.user.id) || [];
     }
 
     try {
@@ -137,7 +137,7 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
         {!formData.isPublic && (
           <AssigneeSelect
             selectedAssignee={formData.member_id}
-            assignee={project?.members || []}
+            assignee={project?.members?.map((member) => member.user) || []}
             toggleAssignee={toggleAssignee}
             isAssigned={(memberId) => formData.member_id.includes(memberId)}
             label="선택된 구성원"

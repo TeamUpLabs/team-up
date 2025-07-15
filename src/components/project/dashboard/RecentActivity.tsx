@@ -68,10 +68,10 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
     ...(project.tasks?.map(task => ({
       id: `task-${task.id}`,
       user: {
-        name: project?.members?.find(member => member.user.id === task.creator.id)?.user.name || '담당자 없음',
-        email: project?.members?.find(member => member.user.id === task.creator.id)?.user.email || '이메일 없음',
-        profile_image: project?.members?.find(member => member.user.id === task.creator.id)?.user.profile_image || '/DefaultProfile.jpg',
-        isActive: project?.members?.find(member => member.user.id === task.creator.id)?.user.status || '활동 없음',
+        name: task.creator.name || '담당자 없음',
+        email: task.creator.email || '이메일 없음',
+        profile_image: task.creator.profile_image || '/DefaultProfile.jpg',
+        isActive: task.creator.status || '활동 없음',
       },
       type: 'task' as const,
       action: `"${task.title}" 작업을 ${task.status === 'completed' ? '완료했습니다.' : '시작했습니다.'}`,
@@ -82,10 +82,10 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
       return {
         id: `milestone-${milestone.id}`,
         user: {
-          name: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.name || '담당자 없음',
-          email: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.email || '이메일 없음',
-          profile_image: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.profile_image || '/DefaultProfile.jpg',
-          isActive: project?.members?.find(member => member.user.id === milestone.creator.id)?.user.status || '활동 없음',
+          name: milestone.creator.name || '담당자 없음',
+          email: milestone.creator.email || '이메일 없음',
+          profile_image: milestone.creator.profile_image || '/DefaultProfile.jpg',
+          isActive: milestone.creator.status || '활동 없음',
         },
         type: 'milestone' as const,
         action: `"${milestone.title}" 마일스톤을 ${milestone.status === 'completed' ? '달성했습니다.' : '시작했습니다.'}`,

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useAuthStore } from "@/auth/authStore";
-import { Notification } from "@/types/Member";
+import { Notification } from "@/types/Notification";
 import { acceptScout, rejectScout } from "@/hooks/getMemberData";
 import { useNotifications } from "@/providers/NotificationProvider";
 
@@ -182,7 +182,7 @@ export default function NotificationSidebar({
     async (notification: Notification) => {
       if (!user?.id) return;
       try {
-        if (!notification.isRead) {
+        if (!notification.is_read) {
           await markAsRead(notification.id);
         }
         await acceptScout(user.id, notification.id);
@@ -203,7 +203,7 @@ export default function NotificationSidebar({
     async (notification: Notification) => {
       if (!user?.id) return;
       try {
-        if (!notification.isRead) {
+        if (!notification.is_read) {
           await markAsRead(notification.id);
         }
         await rejectScout(user.id, notification.id);
@@ -273,7 +273,7 @@ export default function NotificationSidebar({
   const filteredNotifications = useMemo(() => {
     return activeTab === "all"
       ? notifications
-      : notifications.filter((n) => !n.isRead);
+      : notifications.filter((n) => !n.is_read);
   }, [notifications, activeTab]);
 
   const groupedNotifications = useMemo(() => {
@@ -305,7 +305,7 @@ export default function NotificationSidebar({
 
   const handleMarkNotificationAsRead = useCallback(
     async (notification: Notification) => {
-      if (!notification.isRead) {
+      if (!notification.is_read) {
         try {
           await markAsRead(notification.id);
         } catch (error) {
@@ -519,7 +519,7 @@ export default function NotificationSidebar({
                       <li
                         key={notification.id}
                         className={`p-3.5 rounded-lg hover:bg-component-secondary-background focus-within:bg-component-secondary-background group cursor-pointer transition-all duration-200 border ${
-                          notification.isRead
+                          notification.is_read
                             ? "border-component-border"
                             : "border-point-color-indigo shadow-sm"
                         }`}
@@ -549,14 +549,14 @@ export default function NotificationSidebar({
                               <p
                                 id={`notification-title-${notification.id}`}
                                 className={`font-semibold text-sm ${
-                                  notification.isRead
+                                  notification.is_read
                                     ? "text-text-secondary group-hover:text-text-primary"
                                     : "text-text-primary"
                                 }`}
                               >
                                 {notification.title}
                               </p>
-                              {!notification.isRead && (
+                              {!notification.is_read && (
                                 <div
                                   className="w-2 h-2 rounded-full bg-point-color-indigo flex-shrink-0 ml-2 mt-1.5"
                                   title="읽지 않음"

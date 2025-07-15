@@ -288,12 +288,12 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
 
   // Get user name by ID
   const getUserName = (id: string) => {
-    return project?.members.find(member => member.id === Number(id))?.name || 'Unknown';
+    return project?.members.find(member => member.user.id === Number(id))?.user.name || 'Unknown';
   };
 
   // Get user role by ID
   const getUserRole = (id: string) => {
-    return project?.members.find(member => member.id === Number(id))?.role || '';
+    return project?.members.find(member => member.user.id === Number(id))?.role || '';
   };
 
   // Prepare participant list for the VideoParticipantList component
@@ -303,7 +303,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         userId: 'local',
         name: getUserName(userId),
         role: getUserRole(userId),
-        profileImage: project?.members.find(member => member.id === Number(userId))?.profileImage,
+        profileImage: project?.members.find(member => member.user.id === Number(userId))?.user.profile_image,
         isLocal: true,
         isAudioMuted,
         isVideoOff,
@@ -313,7 +313,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         userId: peer.userId,
         name: getUserName(peer.userId),
         role: getUserRole(peer.userId),
-        profileImage: project?.members.find(member => member.id === Number(peer.userId))?.profileImage,
+        profileImage: project?.members.find(member => member.user.id === Number(peer.userId))?.user.profile_image,
         isLocal: false
       }))
     ];
@@ -488,7 +488,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
                   key={`remote-video-${user.userId}`}
                   stream={user.stream}
                   userName={getUserName(user.userId)}
-                  userProfileImage={project?.members.find(member => member.id === Number(user.userId))?.profileImage || undefined}
+                  userProfileImage={project?.members.find(member => member.user.id === Number(user.userId))?.user.profile_image || undefined}
                   userId={user.userId}
                   isPinned={pinnedUser === user.userId}
                   isRemoteVideoOff={peers.find(p => p.userId === user.userId)?.isRemoteVideoOff || false}
