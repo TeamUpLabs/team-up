@@ -3,16 +3,16 @@ import { useVoiceCall } from '@/contexts/VoiceCallContext';
 import VoiceCall from '@/components/project/VoiceCall/VoiceCall';
 
 const VoiceCallContainer: React.FC = () => {
-  const { isVoiceCallActive, channelId, userId, endVoiceCall } = useVoiceCall();
+  const { isVoiceCallActive, channel_id, user_id, endVoiceCall } = useVoiceCall();
 
-  if (!isVoiceCallActive || !channelId || !userId) {
+  if (!isVoiceCallActive || !channel_id || !user_id) {
     return null;
   }
 
   return (
     <VoiceCall
-      channelId={channelId}
-      userId={userId}
+      channel_id={channel_id}
+      user_id={user_id}
       onClose={endVoiceCall}
     />
   );

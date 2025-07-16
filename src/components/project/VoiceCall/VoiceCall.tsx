@@ -17,39 +17,37 @@ import PipControls from '@/components/project/VoiceCall/PipView';
 import { useVoiceCall } from '@/contexts/VoiceCallContext';
 
 interface VoiceCallProps {
-  channelId: string;
-  userId: string;
+  channel_id: string;
+  user_id: string;
   onClose: () => void;
 }
 
 const MAX_DISPLAY_AVATARS = 5;
 
 interface DisplayParticipant extends Partial<VoicePeerConnection> {
-  userId: string;
+  user_id: string;
   name: string;
-  profileImage?: string | null;
+  profile_image?: string | null;
   isLocal: boolean;
   currentAudioMuted: boolean;
 }
 
-const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => {
+const VoiceCall: React.FC<VoiceCallProps> = ({ channel_id, user_id, onClose }) => {
   const { project } = useProject();
   const [isParticipantListVisible, setIsParticipantListVisible] = useState(false);
   const { isPipMode, setIsPipMode } = useVoiceCall();
   const connectedUser = useAuthStore((state) => state.user);
 
   const {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    localStream,
     peers,
     isAudioMuted,
     connectionStatus,
     toggleAudio,
     endCall,
   } = useVoiceCallWebRTC({
-    channelId,
-    userId,
-    projectId: project?.id,
+    channel_id,
+    user_id,
+    project_id: project?.id,
   });
 
   const handleEndCall = () => {
@@ -84,17 +82,17 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
 
   const allDisplayParticipants = React.useMemo((): DisplayParticipant[] => {
     const localParticipant: DisplayParticipant = {
-      userId: userId,
+      user_id: user_id,
       name: connectedUser?.name || 'You',
-      profileImage: connectedUser?.profile_image,
+      profile_image: connectedUser?.profile_image,
       isLocal: true,
       currentAudioMuted: isAudioMuted,
     };
 
     const remoteParticipants: DisplayParticipant[] = peers.map(peer => ({
-      userId: peer.userId,
-      name: project?.members.find(m => m.user.id.toString() === peer.userId)?.user.name || `User ${peer.userId.substring(0, 6)}`,
-      profileImage: project?.members.find(m => m.user.id.toString() === peer.userId)?.user.profile_image,
+      user_id: peer.user_id,
+      name: project?.members.find(m => m.user.id.toString() === peer.user_id)?.user.name || `User ${peer.user_id.substring(0, 6)}`,
+      profile_image: project?.members.find(m => m.user.id.toString() === peer.user_id)?.user.profile_image,
       isLocal: false,
       currentAudioMuted: !!peer.isRemoteAudioMuted,
       connection: peer.connection,
@@ -106,16 +104,16 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
     }));
 
     return [localParticipant, ...remoteParticipants];
-  }, [userId, connectedUser, isAudioMuted, peers, project?.members]);
+  }, [user_id, connectedUser, isAudioMuted, peers, project?.members]);
 
 
   useEffect(() => {
     peers.forEach(peer => {
-      if (peer.stream && peer.userId) {
-        let audioEl = document.getElementById(`audio-${peer.userId}`) as HTMLAudioElement;
+      if (peer.stream && peer.user_id) {
+        let audioEl = document.getElementById(`audio-${peer.user_id}`) as HTMLAudioElement;
         if (!audioEl) {
           audioEl = document.createElement('audio');
-          audioEl.id = `audio-${peer.userId}`;
+          audioEl.id = `audio-${peer.user_id}`;
           audioEl.autoplay = true;
           document.body.appendChild(audioEl);
         }
@@ -124,7 +122,7 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
         }
       }
     });
-    const currentPeerIds = peers.map(p => p.userId);
+    const currentPeerIds = peers.map(p => p.user_id);
     const audioElements = document.querySelectorAll('audio[id^="audio-"]');
     audioElements.forEach(audioEl => {
       const peerId = audioEl.id.substring('audio-'.length);
@@ -175,12 +173,12 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
                 const zIndex = MAX_DISPLAY_AVATARS - index;
                 return (
                   <div
-                    key={p.userId}
+                    key={p.user_id}
                     className="w-20 h-20 relative rounded-full bg-gray-700 border-4 border-gray-900 flex items-center justify-center text-2xl font-semibold text-white shadow-lg"
                     style={{ zIndex }}
                   >
-                    {p.profileImage ? (
-                      <Image src={p.profileImage} alt={p.name} className="w-full h-full rounded-full object-cover" width={32} height={32} />
+                    {p.profile_image ? (
+                      <Image src={p.profile_image} alt={p.name} className="w-full h-full rounded-full object-cover" width={32} height={32} />
                     ) : (
                       getInitials(p.name)
                     )}
@@ -224,11 +222,11 @@ const VoiceCall: React.FC<VoiceCallProps> = ({ channelId, userId, onClose }) => 
             </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-2">
               {allDisplayParticipants.map((p) => (
-                <div key={p.userId} className="flex items-center justify-between p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
+                <div key={p.user_id} className="flex items-center justify-between p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 relative rounded-full bg-gray-600 flex items-center justify-center text-sm font-semibold text-white overflow-hidden">
-                      {p.profileImage ? (
-                        <Image src={p.profileImage} alt={p.name} className="w-full h-full object-cover" width={32} height={32} />
+                      {p.profile_image ? (
+                        <Image src={p.profile_image} alt={p.name} className="w-full h-full object-cover" width={32} height={32} />
                       ) : (
                         getInitials(p.name)
                       )}

@@ -2,13 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { useProject } from '@/contexts/ProjectContext';
 
 interface UseVoiceCallWebRTCProps {
-  channelId: string;
-  userId: string;
-  projectId?: string;
+  channel_id: string;
+  user_id: string;
+  project_id?: string;
 }
 
 interface PeerConnection {
-  userId: string;
+  user_id: string;
   connection: RTCPeerConnection;
   stream?: MediaStream; // For remote audio stream
   dataChannel?: RTCDataChannel;
@@ -20,7 +20,7 @@ interface PeerConnection {
 
 interface SignalingMessage {
   type: string;
-  userId?: string;
+  user_id?: string;
   target?: string;
   sdp?: RTCSessionDescription | null;
   candidate?: RTCIceCandidate;
@@ -33,7 +33,7 @@ interface StatusMessage {
 
 type DataChannelMessage = StatusMessage; // Simplified, only status messages for now
 
-const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTCProps) => {
+const useVoiceCallWebRTC = ({ channel_id, user_id, project_id }: UseVoiceCallWebRTCProps) => {
   const { project } = useProject(); // Keep for participant names in status messages if needed
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [peers, setPeers] = useState<PeerConnection[]>([]);
@@ -42,7 +42,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
   
   const socketRef = useRef<WebSocket | null>(null);
   const peersRef = useRef<PeerConnection[]>([]);
-  const pendingConnectionsRef = useRef<{userId: string, isInitiator: boolean}[]>([]);
+  const pendingConnectionsRef = useRef<{user_id: string, isInitiator: boolean}[]>([]);
 
   const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -89,12 +89,12 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
       if (pendingConnectionsRef.current.length > 0) {
         console.log(`Processing ${pendingConnectionsRef.current.length} pending connections`);
         pendingConnectionsRef.current.forEach(async pending => {
-          await createPeerConnection(pending.userId, pending.isInitiator);
+          await createPeerConnection(pending.user_id, pending.isInitiator);
         });
         pendingConnectionsRef.current = [];
       }
     }
-  }, [localStream, projectId, channelId, userId]);
+  }, [localStream, project_id, channel_id, user_id]);
 
   useEffect(() => {
     peersRef.current = peers;
@@ -102,7 +102,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
 
   const connectSignalingServer = () => {
     const socketProtocol = SERVER_URL?.startsWith('https://') ? 'wss' : 'ws';
-    const serverUrl = `${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/project/${projectId}/ws/voice-call/${channelId}/${userId}`;
+    const serverUrl = `${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/api/voice-call/ws?project_id=${project_id}&channel_id=${channel_id}&user_id=${user_id}`;
     
     console.log(`Connecting to signaling server for voice call at ${serverUrl}`);
     socketRef.current = new WebSocket(serverUrl);
@@ -118,57 +118,57 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
       
       switch(message.type) {
         case 'user-joined':
-          if (message.userId) {
-            console.log(`User joined (voice call): ${message.userId}, creating offer`);
-            setConnectionStatus(`${project?.members.find(member => member.user.id === Number(message.userId))?.user.name}님이 참여했습니다.`);
-            const existingPeer = peersRef.current.find(p => p.userId === message.userId);
+          if (message.user_id) {
+            console.log(`User joined (voice call): ${message.user_id}, creating offer`);
+            setConnectionStatus(`${project?.members.find(member => member.user.id === Number(message.user_id))?.user.name}님이 참여했습니다.`);
+            const existingPeer = peersRef.current.find(p => p.user_id === message.user_id);
             if (!existingPeer) {
               if (localStream) {
-                await createPeerConnection(message.userId, true);
+                await createPeerConnection(message.user_id, true);
               } else {
-                console.log(`Local audio stream not ready, queueing connection with ${message.userId}`);
+                console.log(`Local audio stream not ready, queueing connection with ${message.user_id}`);
                 pendingConnectionsRef.current.push({
-                  userId: message.userId,
+                  user_id: message.user_id,
                   isInitiator: true
                 });
               }
             } else {
-              console.log(`Already have a voice connection with user ${message.userId}, skipping`);
+              console.log(`Already have a voice connection with user ${message.user_id}, skipping`);
             }
           }
           break;
           
         case 'user-left':
-          if (message.userId) {
-            console.log(`User left (voice call): ${message.userId}`);
-            setConnectionStatus(`${project?.members.find(member => member.user.id === Number(message.userId))?.user.name}님이 나갔습니다.`);
-            removePeer(message.userId);
+          if (message.user_id) {
+            console.log(`User left (voice call): ${message.user_id}`);
+            setConnectionStatus(`${project?.members.find(member => member.user.id === Number(message.user_id))?.user.name}님이 나갔습니다.`);
+            removePeer(message.user_id);
           }
           break;
           
         case 'offer':
-          console.log('Received offer (voice call) from:', message.userId);
+          console.log('Received offer (voice call) from:', message.user_id);
           if (localStream) {
             await handleOffer(message);
           } else {
-            console.log(`Local audio stream not ready, queueing offer from ${message.userId}`);
+            console.log(`Local audio stream not ready, queueing offer from ${message.user_id}`);
             pendingConnectionsRef.current.push({
-              userId: message.userId!,
+              user_id: message.user_id!,
               isInitiator: false
             });
-            if (message.userId) {
-              localStorage.setItem(`pending_voice_offer_${message.userId}`, JSON.stringify(message));
+            if (message.user_id) {
+              localStorage.setItem(`pending_voice_offer_${message.user_id}`, JSON.stringify(message));
             }
           }
           break;
           
         case 'answer':
-          console.log('Received answer (voice call) from:', message.userId);
+          console.log('Received answer (voice call) from:', message.user_id);
           await handleAnswer(message);
           break;
           
         case 'ice-candidate':
-          console.log('Received ICE candidate (voice call) from:', message.userId);
+          console.log('Received ICE candidate (voice call) from:', message.user_id);
           await handleIceCandidate(message);
           break;
       }
@@ -193,7 +193,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
         return null;
       }
       
-      const existingPeer = peersRef.current.find(p => p.userId === targetUserId);
+      const existingPeer = peersRef.current.find(p => p.user_id === targetUserId);
       if (existingPeer) {
         console.log(`Voice peer connection with ${targetUserId} already exists`);
         return existingPeer.connection;
@@ -214,10 +214,10 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
           setupDataChannel(remoteDataChannel, targetUserId, false);
           setPeers(prev => {
             const newPeers = [...prev];
-            const peerIndex = newPeers.findIndex(p => p.userId === targetUserId);
+            const peerIndex = newPeers.findIndex(p => p.user_id === targetUserId);
             if (peerIndex !== -1) {
               newPeers[peerIndex].remoteDataChannel = remoteDataChannel;
-              const refIndex = peersRef.current.findIndex(p => p.userId === targetUserId);
+              const refIndex = peersRef.current.findIndex(p => p.user_id === targetUserId);
               if (refIndex !== -1) peersRef.current[refIndex].remoteDataChannel = remoteDataChannel;
             }
             return newPeers;
@@ -225,7 +225,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
         };
       }
       
-      const newPeer = { userId: targetUserId, connection: peerConnection, dataChannel };
+      const newPeer = { user_id: targetUserId, connection: peerConnection, dataChannel };
       setPeers(prev => [...prev, newPeer]);
       peersRef.current = [...peersRef.current, newPeer];
       
@@ -249,7 +249,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
       peerConnection.onicecandidate = (event) => {
         if (event.candidate) {
           console.log(`Generated voice ICE candidate for ${targetUserId}:`, event.candidate);
-          sendSignalingMessage({ type: 'ice-candidate', candidate: event.candidate, userId, target: targetUserId });
+          sendSignalingMessage({ type: 'ice-candidate', candidate: event.candidate, user_id, target: targetUserId });
         } else {
           console.log(`All voice ICE candidates generated for ${targetUserId}`);
         }
@@ -264,10 +264,10 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
           
           setPeers(prev => {
             const newPeers = [...prev];
-            const peerIndex = newPeers.findIndex(p => p.userId === targetUserId);
+            const peerIndex = newPeers.findIndex(p => p.user_id === targetUserId);
             if (peerIndex !== -1) {
               newPeers[peerIndex].stream = remoteStream; // Store remote audio stream
-              const refIndex = peersRef.current.findIndex(p => p.userId === targetUserId);
+              const refIndex = peersRef.current.findIndex(p => p.user_id === targetUserId);
               if (refIndex !== -1) peersRef.current[refIndex].stream = remoteStream;
             }
             return newPeers;
@@ -285,7 +285,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
             offerToReceiveVideo: false // No video needed for voice call
           });
           await peerConnection.setLocalDescription(offer);
-          sendSignalingMessage({ type: 'offer', sdp: peerConnection.localDescription, userId, target: targetUserId });
+          sendSignalingMessage({ type: 'offer', sdp: peerConnection.localDescription, user_id, target: targetUserId });
         } catch (error) {
           console.error(`Error creating voice offer for ${targetUserId}:`, error);
         }
@@ -306,16 +306,16 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
   };
 
   const handleOffer = async (message: SignalingMessage) => {
-    if (!message.userId || !message.sdp) return;
+    if (!message.user_id || !message.sdp) return;
     if (!localStream) {
-      console.log(`Cannot handle voice offer from ${message.userId} - local audio stream not ready`);
-      pendingConnectionsRef.current.push({ userId: message.userId, isInitiator: false });
-      localStorage.setItem(`pending_voice_offer_${message.userId}`, JSON.stringify(message));
+      console.log(`Cannot handle voice offer from ${message.user_id} - local audio stream not ready`);
+      pendingConnectionsRef.current.push({ user_id: message.user_id, isInitiator: false });
+      localStorage.setItem(`pending_voice_offer_${message.user_id}`, JSON.stringify(message));
       return;
     }
-    const peerId = message.userId;
+    const peerId = message.user_id;
     console.log(`Handling voice offer from ${peerId}`);
-    const existingPeer = peersRef.current.find(p => p.userId === peerId);
+    const existingPeer = peersRef.current.find(p => p.user_id === peerId);
     const peerConnection = existingPeer ? existingPeer.connection : await createPeerConnection(peerId, false);
     
     if (peerConnection && message.sdp) {
@@ -323,7 +323,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
         await peerConnection.setRemoteDescription(new RTCSessionDescription(message.sdp));
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
-        sendSignalingMessage({ type: 'answer', sdp: peerConnection.localDescription, userId, target: peerId });
+        sendSignalingMessage({ type: 'answer', sdp: peerConnection.localDescription, user_id, target: peerId });
         setConnectionStatus("음성 통화 연결 설정 중...");
       } catch (error) {
         console.error(`Error handling voice offer from ${peerId}:`, error);
@@ -333,10 +333,10 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
   };
 
   const handleAnswer = async (message: SignalingMessage) => {
-    if (!message.userId || !message.sdp) return;
-    const peerId = message.userId;
+    if (!message.user_id || !message.sdp) return;
+    const peerId = message.user_id;
     console.log(`Handling voice answer from ${peerId}`);
-    const peer = peersRef.current.find(p => p.userId === peerId);
+    const peer = peersRef.current.find(p => p.user_id === peerId);
     if (peer) {
       try {
         await peer.connection.setRemoteDescription(new RTCSessionDescription(message.sdp));
@@ -349,10 +349,10 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
   };
 
   const handleIceCandidate = async (message: SignalingMessage) => {
-    if (!message.userId || !message.candidate) return;
-    const peerId = message.userId;
+    if (!message.user_id || !message.candidate) return;
+    const peerId = message.user_id;
     console.log(`Handling voice ICE candidate from ${peerId}`);
-    const peer = peersRef.current.find(p => p.userId === peerId);
+    const peer = peersRef.current.find(p => p.user_id === peerId);
     if (peer) {
       try {
         await peer.connection.addIceCandidate(new RTCIceCandidate(message.candidate));
@@ -364,7 +364,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
 
   const removePeer = (peerId: string) => {
     console.log(`Removing voice peer ${peerId}`);
-    const peerIndex = peersRef.current.findIndex(p => p.userId === peerId);
+    const peerIndex = peersRef.current.findIndex(p => p.user_id === peerId);
     if (peerIndex !== -1) {
       const peer = peersRef.current[peerIndex];
       peer.dataChannelReady = false;
@@ -382,8 +382,8 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
         peer.connection.close();
       } catch (e) { console.warn(`Error closing connection for voice peer ${peerId}:`, e); }
       
-      peersRef.current = peersRef.current.filter(p => p.userId !== peerId);
-      setPeers(prev => prev.filter(p => p.userId !== peerId));
+      peersRef.current = peersRef.current.filter(p => p.user_id !== peerId);
+      setPeers(prev => prev.filter(p => p.user_id !== peerId));
     }
   };
 
@@ -409,7 +409,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
       console.log(`Audio track muted (voice call): ${newMutedState}`);
       peersRef.current.forEach(peer => {
         const statusMessage: StatusMessage = { type: 'status', audioMuted: newMutedState };
-        safeSendThroughDataChannel(peer.userId, statusMessage);
+        safeSendThroughDataChannel(peer.user_id, statusMessage);
       });
       setIsAudioMuted(newMutedState);
     }
@@ -455,14 +455,14 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
       console.log(`Voice data channel with ${peerId} is open. Primary: ${isPrimaryChannel}`);
       setPeers(prev => {
         const newPeers = [...prev];
-        const peerIndex = newPeers.findIndex(p => p.userId === peerId);
+        const peerIndex = newPeers.findIndex(p => p.user_id === peerId);
         if (peerIndex !== -1) {
           if (isPrimaryChannel) newPeers[peerIndex].dataChannelReady = true;
           else newPeers[peerIndex].remoteDataChannelReady = true;
         }
         return newPeers;
       });
-      const refIndex = peersRef.current.findIndex(p => p.userId === peerId);
+      const refIndex = peersRef.current.findIndex(p => p.user_id === peerId);
       if (refIndex !== -1) {
         if (isPrimaryChannel) peersRef.current[refIndex].dataChannelReady = true;
         else peersRef.current[refIndex].remoteDataChannelReady = true;
@@ -479,10 +479,10 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
         if (message.type === 'status') {
           setPeers(prev => {
             const newPeers = [...prev];
-            const peerIndex = newPeers.findIndex(p => p.userId === peerId);
+            const peerIndex = newPeers.findIndex(p => p.user_id === peerId);
             if (peerIndex !== -1) {
               newPeers[peerIndex].isRemoteAudioMuted = message.audioMuted;
-              const refIndex = peersRef.current.findIndex(p => p.userId === peerId);
+              const refIndex = peersRef.current.findIndex(p => p.user_id === peerId);
               if (refIndex !== -1) peersRef.current[refIndex].isRemoteAudioMuted = message.audioMuted;
             }
             return newPeers;
@@ -496,14 +496,14 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
       const isInitiator = !dataChannel.label.includes('remote'); // Basic check
       setPeers(prev => {
         const newPeers = [...prev];
-        const peerIndex = newPeers.findIndex(p => p.userId === peerId);
+        const peerIndex = newPeers.findIndex(p => p.user_id === peerId);
         if (peerIndex !== -1) {
           if (isInitiator) newPeers[peerIndex].dataChannelReady = false;
           else newPeers[peerIndex].remoteDataChannelReady = false;
         }
         return newPeers;
       });
-      const refIndex = peersRef.current.findIndex(p => p.userId === peerId);
+      const refIndex = peersRef.current.findIndex(p => p.user_id === peerId);
       if (refIndex !== -1) {
         if (isInitiator) peersRef.current[refIndex].dataChannelReady = false;
         else peersRef.current[refIndex].remoteDataChannelReady = false;
@@ -515,14 +515,14 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
       const isInitiator = !dataChannel.label.includes('remote');
       setPeers(prev => {
         const newPeers = [...prev];
-        const peerIndex = newPeers.findIndex(p => p.userId === peerId);
+        const peerIndex = newPeers.findIndex(p => p.user_id === peerId);
         if (peerIndex !== -1) {
           if (isInitiator) newPeers[peerIndex].dataChannelReady = false;
           else newPeers[peerIndex].remoteDataChannelReady = false;
         }
         return newPeers;
       });
-      const refIndex = peersRef.current.findIndex(p => p.userId === peerId);
+      const refIndex = peersRef.current.findIndex(p => p.user_id === peerId);
       if (refIndex !== -1) {
         if (isInitiator) peersRef.current[refIndex].dataChannelReady = false;
         else peersRef.current[refIndex].remoteDataChannelReady = false;
@@ -531,7 +531,7 @@ const useVoiceCallWebRTC = ({ channelId, userId, projectId }: UseVoiceCallWebRTC
   };
 
   const safeSendThroughDataChannel = (peerId: string, data: DataChannelMessage | string) => {
-    const peer = peersRef.current.find(p => p.userId === peerId);
+    const peer = peersRef.current.find(p => p.user_id === peerId);
     if (!peer) return false;
     const message = typeof data === 'string' ? data : JSON.stringify(data);
     

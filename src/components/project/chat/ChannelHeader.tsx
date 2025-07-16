@@ -9,7 +9,7 @@ import ChannelSettingsDropdown from "@/components/project/chat/ChannelSettingDro
 
 export default function ChannelHeader({ channel }: { channel: Channel }) {
   const [showVideoCall, setShowVideoCall] = useState(false);
-  const userId = useAuthStore.getState().user?.id.toString() || "anonymous";
+  const user_id = useAuthStore.getState().user?.id.toString() || "anonymous";
   const { startVoiceCall } = useVoiceCall();
 
   const startVideoCall = () => {
@@ -21,7 +21,7 @@ export default function ChannelHeader({ channel }: { channel: Channel }) {
   };
 
   const handleStartVoiceCall = () => {
-    startVoiceCall(channel.channel_id, userId);
+    startVoiceCall(channel.channel_id, user_id);
   };
 
   return (
@@ -41,7 +41,7 @@ export default function ChannelHeader({ channel }: { channel: Channel }) {
           />
           <ChannelSettingsDropdown
             channel={channel}
-            isOwner={!!channel.created_by && channel.created_by === Number(userId)}
+            isOwner={!!channel.created_by && channel.created_by === Number(user_id)}
           />
         </div>
       </div>
@@ -49,7 +49,7 @@ export default function ChannelHeader({ channel }: { channel: Channel }) {
       {showVideoCall && (
         <VideoCall
           channel_id={channel.channel_id}
-          user_id={userId}
+          user_id={user_id}
           onClose={endVideoCall}
         />
       )}
