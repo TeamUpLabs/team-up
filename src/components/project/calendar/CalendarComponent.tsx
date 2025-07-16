@@ -1,14 +1,16 @@
-import { format, isSameMonth, isToday } from 'date-fns';
+import { format, isSameMonth, isToday, parseISO } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { Task } from '@/types/Task';
 import { Schedule } from '@/types/Schedule';
+import { MileStone } from '@/types/MileStone';
 import { getScheduleColor } from '@/utils/getScheduleColor';
 import Tooltip from '@/components/ui/Tooltip';
 
 interface CalendarProps {
   currentDate: Date;
   tasks?: Task[];
+  milestones?: MileStone[]
   meetings?: Schedule[];
   events?: Schedule[];
   days: Date[];
@@ -16,11 +18,13 @@ interface CalendarProps {
   onNextMonth: () => void;
   onSelectTask: (task: Task) => void;
   onSelectSchedule: (schedule: Schedule) => void;
+  onSelectMilestone: (milestone: MileStone) => void;
 }
 
 export default function Calendar({
   currentDate,
   tasks,
+  milestones,
   meetings,
   events,
   days,
@@ -28,6 +32,7 @@ export default function Calendar({
   onNextMonth,
   onSelectTask,
   onSelectSchedule,
+  onSelectMilestone,
 }: CalendarProps) {
 
   return (
@@ -70,7 +75,16 @@ export default function Calendar({
 
       <div className="flex-1 grid grid-cols-7 overflow-y-auto">
         {days.map((day, index) => {
-          const dayTasks = tasks?.filter(task => task?.due_date === format(day, 'yyyy-MM-dd'));
+          const dayTasks = tasks?.filter(task => {
+            if (!task?.due_date) return false;
+            const taskDate = format(parseISO(task.due_date), 'yyyy-MM-dd');
+            return taskDate === format(day, 'yyyy-MM-dd');
+          });
+          const dayMilestones = milestones?.filter(milestone => {
+            if (!milestone?.due_date) return false;
+            const milestoneDate = format(parseISO(milestone.due_date), 'yyyy-MM-dd');
+            return milestoneDate === format(day, 'yyyy-MM-dd');
+          });
           const dayMeetings = meetings?.filter(meeting => meeting?.start_time.split('T')[0] === format(day, 'yyyy-MM-dd'));
           const dayEvents = events?.filter(event => event?.start_time.split('T')[0] === format(day, 'yyyy-MM-dd'));
           const isWeekend = index % 7 === 0 || index % 7 === 6;
@@ -120,6 +134,27 @@ export default function Calendar({
                   </Tooltip>
                 ))}
 
+                {dayMilestones?.map((milestone) => (
+                  <Tooltip content="마일스톤" key={milestone?.id}>
+                    <div
+                      onClick={() => onSelectMilestone(milestone)}
+                      className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("milestone")} hover:opacity-60 transition-all cursor-pointer`}
+                    >
+                      <p className="font-medium truncate">{milestone?.title}</p>
+                      {milestone?.assignees && milestone?.assignees.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-0.5">
+                          {milestone?.assignees.slice(0, 2).map(assi => (
+                            <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
+                          ))}
+                          {milestone?.assignees.length > 2 && (
+                            <span className="text-[10px] sm:text-xs opacity-75 truncate">+{milestone?.assignees.length - 2}명</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </Tooltip>
+                ))}
+
                 {dayMeetings?.map(meeting => (
                   <Tooltip content="회의" key={meeting?.id}>
                     <div
@@ -128,17 +163,17 @@ export default function Calendar({
                     >
                       <p className="font-medium truncate">{meeting?.title}</p>
                       {meeting?.assignees && meeting?.assignees.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-0.5">
-                        {meeting?.assignees.slice(0, 2).map(assi => (
-                          <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
-                        ))}
-                        {meeting?.assignees.length > 2 && (
-                          <span className="text-[10px] sm:text-xs opacity-75 truncate">+{meeting?.assignees.length - 2}명</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </Tooltip>
+                        <div className="flex flex-wrap gap-1 mt-0.5">
+                          {meeting?.assignees.slice(0, 2).map(assi => (
+                            <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
+                          ))}
+                          {meeting?.assignees.length > 2 && (
+                            <span className="text-[10px] sm:text-xs opacity-75 truncate">+{meeting?.assignees.length - 2}명</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </Tooltip>
                 ))}
 
                 {dayEvents?.map(event => (
@@ -146,20 +181,20 @@ export default function Calendar({
                     <div
                       onClick={() => onSelectSchedule(event)}
                       className={`px-1 sm:px-2 py-0.5 sm:py-1 rounded-md text-xs ${getScheduleColor("event")} hover:opacity-60 transition-all cursor-pointer`}
-                  >
-                    <p className="font-medium truncate">{event?.title}</p>
-                    {event?.assignees && event?.assignees.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-0.5">
-                        {event?.assignees.slice(0, 2).map(assi => (
-                          <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
-                        ))}
-                        {event?.assignees.length > 2 && (
-                          <span className="text-[10px] sm:text-xs opacity-75 truncate">+{event?.assignees.length - 2}명</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </Tooltip>
+                    >
+                      <p className="font-medium truncate">{event?.title}</p>
+                      {event?.assignees && event?.assignees.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-0.5">
+                          {event?.assignees.slice(0, 2).map(assi => (
+                            <span key={assi?.id} className="text-[10px] sm:text-xs opacity-75 truncate max-w-full inline-block">{assi?.name}</span>
+                          ))}
+                          {event?.assignees.length > 2 && (
+                            <span className="text-[10px] sm:text-xs opacity-75 truncate">+{event?.assignees.length - 2}명</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </Tooltip>
                 ))}
               </div>
               {dayTasks && dayTasks.length > 3 && (

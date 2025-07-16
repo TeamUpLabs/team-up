@@ -338,6 +338,8 @@ export default function TaskCreateModal({
           buttonText="작업 생성"
           successText="생성 완료"
           errorText="생성 실패"
+          withIcon
+          fit
         />
       )}
     </div>

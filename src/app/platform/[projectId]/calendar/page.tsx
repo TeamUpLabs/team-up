@@ -13,11 +13,13 @@ import {
 import { Task } from '@/types/Task';
 import { useProject } from "@/contexts/ProjectContext";
 import { Schedule } from '@/types/Schedule';
+import { MileStone } from '@/types/MileStone';
 import Badge from '@/components/ui/Badge';
 import { useTheme } from '@/contexts/ThemeContext';
 
 // 지연 로딩을 위한 컴포넌트들
 const TaskModal = lazy(() => import('@/components/project/task/TaskModal'));
+const MilestoneModal = lazy(() => import('@/components/project/milestone/MilestoneModal'));
 const Calendar = lazy(() => import('@/components/project/calendar/CalendarComponent'));
 const ScheduleStatus = lazy(() => import('@/components/project/calendar/ScheduleStatus'));
 const ScheduleCreateModal = lazy(() => import('@/components/project/calendar/ScheduleCreateModal'));
@@ -40,6 +42,7 @@ export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
+  const [selectedMilestone, setSelectedMilestone] = useState<MileStone | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { isDark } = useTheme();
@@ -95,6 +98,11 @@ export default function CalendarPage() {
     setIsModalOpen(true);
   };
 
+  const handleSelectMilestone = (milestone: MileStone) => {
+    setSelectedMilestone(milestone);
+    setIsModalOpen(true);
+  };
+
   const handleSelectSchedule = (schedule: Schedule) => {
     setSelectedSchedule(schedule);
     setIsModalOpen(true);
@@ -125,6 +133,7 @@ export default function CalendarPage() {
         <Calendar
           currentDate={currentDate}
           tasks={project?.tasks}
+          milestones={project?.milestones}
           meetings={scheduleData.meetings}
           events={scheduleData.events}
           days={calendarData.days}
@@ -132,6 +141,7 @@ export default function CalendarPage() {
           onNextMonth={nextMonth}
           onSelectTask={handleSelectTask}
           onSelectSchedule={handleSelectSchedule}
+          onSelectMilestone={handleSelectMilestone}
         />
       </Suspense>
 
@@ -140,6 +150,7 @@ export default function CalendarPage() {
           tasks={project?.tasks}
           meetings={scheduleData.meetings}
           events={scheduleData.events}
+          milestones={project?.milestones}
         />
       </Suspense>
 
@@ -171,6 +182,19 @@ export default function CalendarPage() {
             onClose={() => {
               setIsModalOpen(false);
               setSelectedSchedule(null);
+            }}
+          />
+        )}
+      </Suspense>
+
+      <Suspense fallback={<LoadingSpinner />}>
+        {selectedMilestone && (
+          <MilestoneModal
+            milestone={selectedMilestone}
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedMilestone(null);
             }}
           />
         )}

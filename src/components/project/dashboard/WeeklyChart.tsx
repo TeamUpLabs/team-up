@@ -58,11 +58,6 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
       return safeDateParse(item.start_date);
     }
     
-    // Handle Schedule type (meeting/event)
-    if ('start_time' in item && dateField === 'start_time') {
-      return safeDateParse(item.start_time);
-    }
-    
     return null;
   };
 
@@ -100,14 +95,14 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
     const taskCounts = countItemsByDateField<Task>(tasks, 'created_at');
     
     // Count milestones by start date
-    const milestoneCounts = countItemsByDateField<MileStone>(milestones, 'start_date');
+    const milestoneCounts = countItemsByDateField<MileStone>(milestones, 'created_at');
     
     // Count meetings and events by start_time
     const meetings = schedules.filter((s): s is Schedule => s.type === 'meeting');
-    const meetingCounts = countItemsByDateField<Schedule>(meetings, 'start_time');
+    const meetingCounts = countItemsByDateField<Schedule>(meetings, 'created_at');
     
     const events = schedules.filter((s): s is Schedule => s.type === 'event');
-    const eventCounts = countItemsByDateField<Schedule>(events, 'start_time');
+    const eventCounts = countItemsByDateField<Schedule>(events, 'created_at');
 
     return getPastWeekDates().map(date => {
       const dateStr = formatDate(date);

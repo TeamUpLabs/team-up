@@ -69,9 +69,10 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
       }
 
       // Count subtasks
-      if (task.subtasks.length > 0) {
-        totalTasks += task.subtasks.length;
-        completedTasks += task.subtasks.filter(st => st.is_completed).length;
+      const subtasks = task.subtasks ?? [];
+      if (subtasks.length > 0) {
+        totalTasks += subtasks.length;
+        completedTasks += subtasks.filter(st => st.is_completed).length;
       }
     });
 
@@ -574,13 +575,12 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                       type="checkbox"
                       readOnly
                       checked={
-                        task.subtasks.length > 0 &&
-                        task.subtasks.every((st) => st.is_completed) ||
+                        (task.subtasks && (task.subtasks.length > 0 && (task.subtasks.every((st) => st.is_completed)))) ||
                         task.status === 'completed'
                       }
                       className='rounded bg-component-secondary-background border-component-border'
                     />
-                    <span className={`text-sm cursor-pointer hover:text-blue-400 ${task.subtasks.length > 0 && task.subtasks.every(st => st.is_completed) || task.status === 'completed' ?
+                    <span className={`text-sm cursor-pointer hover:text-blue-400 ${(task.subtasks && (task.subtasks.length > 0 && (task.subtasks.every(st => st.is_completed)))) || task.status === 'completed' ?
                       'text-text-secondary line-through' : 'text-text-primary'
                       }`}
                       onClick={() => handleTaskClick(task.id)}
@@ -590,7 +590,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                   </div>
                   <div className="ml-8 mt-2">
                     {
-                      task.subtasks && task.subtasks.map((sub, idx) => (
+                      (project?.tasks.filter(proj_task => proj_task.id === task.id).map(proj_task => proj_task.subtasks).flat() ?? []).map((sub, idx) => (
                         <div key={idx} className='space-x-2'>
                           <input
                             type="checkbox"
