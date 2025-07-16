@@ -54,7 +54,7 @@ export default function SideBar({
   return (
     <div
       className={`fixed h-full border-r border-component-border
-        bg-sidebar-background transition-all duration-300 
+        bg-sidebar-background transition-all duration-300 z-[10]
         ${isMobile
           ? (isSidebarOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-64')
           : (isMinimized ? 'w-0 -translate-x-64' : 'w-64 translate-x-0')}`}
@@ -123,23 +123,21 @@ export default function SideBar({
                                   </span>
                                   <span>{item.label}</span>
                                 </div>
-                                {(!isMobile) && (
-                                  <ChevronDown className={`transition-all duration-200 ${isChatOpen ? 'rotate-180' : ''}`} />
-                                )}
+                                <ChevronDown className={`transition-all duration-200 ${isChatOpen ? 'rotate-180' : ''}`} />
                               </button>
                               {isChatOpen && (
                                 <div className="mt-2">
                                   <CreateChannelButton />
                                   <div className="mt-2 ml-8 space-y-1">
                                     {project?.channels
-                                      ?.filter((channel) => channel.member_id.includes(user?.id || 0))
+                                      ?.filter((channel) => channel.members.map((member) => member.id).includes(user?.id || 0))
                                       .map((channel) => (
                                         <Link
-                                          key={channel.channelId}
-                                          href={`/platform/${titleHref.split('/').pop()}/chat?channel=${channel.channelId}`}
+                                          key={channel.channel_id}
+                                          href={`/platform/${titleHref.split('/').pop()}/chat?project_id=${project.id}&channel=${channel.channel_id}`}
                                           className="block text-sm text-text-secondary hover:text-text-primary px-2 py-1 rounded hover:bg-component-hover-background"
                                         >
-                                          # {channel.channelName}
+                                          # {channel.name}
                                         </Link>
                                       ))}
                                   </div>

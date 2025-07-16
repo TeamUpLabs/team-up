@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Message } from '@/types/Message';
+import { Chat, ChatCreateForm } from '@/types/Chat';
 import { useAuthStore } from '@/auth/authStore';
 
 const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -8,8 +8,8 @@ export const useWebSocket = (projectId: string, channelId: string) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  
+  const [messages, setMessages] = useState<Chat[]>([]);
+    
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -54,7 +54,7 @@ export const useWebSocket = (projectId: string, channelId: string) => {
       const socketProtocol = SERVER_URL?.startsWith('https://') ? 'wss' : 'ws';
 
       console.log(`채널 ${channelId}에 웹소켓 연결 시도...`);
-      const ws = new WebSocket(`${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/ws/chat/${projectId}/${channelId}?user_id=${user.id.toString()}`);
+      const ws = new WebSocket(`${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/api/chats/ws?project_id=${projectId}&channel_id=${channelId}&user_id=${user.id}`);
       
       // 이벤트 리스너 등록 전에 소켓 참조 저장
       socketRef.current = ws;
@@ -99,7 +99,7 @@ export const useWebSocket = (projectId: string, channelId: string) => {
           }
           
           // 시스템 또는 일반 메시지 처리
-          const newMessage = data as Message;
+          const newMessage = data as Chat;
           
           // 메시지 ID로 중복 체크
           const messageId = typeof newMessage.id === 'string' || typeof newMessage.id === 'number' 
@@ -110,12 +110,12 @@ export const useWebSocket = (projectId: string, channelId: string) => {
             messageIdsRef.current.add(messageId);
             
             // 시스템 메시지 타입 변환 처리
-            if (newMessage.type === 'system' && newMessage.senderName) {
+            if (newMessage.user_id === 0) {
               // 기존 타입과 호환성 맞춤
-              const adaptedMessage: Message = {
+              const adaptedMessage: Chat = {
                 ...newMessage,
-                userId: 0,
-                user: newMessage.senderName || 'System'
+                user_id: 0,
+                user: newMessage.user || 'System'
               };
               
               if (!isUnmountedRef.current) {
@@ -197,10 +197,10 @@ export const useWebSocket = (projectId: string, channelId: string) => {
     const fetchChatHistory = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${SERVER_URL}/chat/${projectId}/${channelId}`);
+        const response = await fetch(`${SERVER_URL}/api/chats/channel/${channelId}`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
-        const history = await response.json() as Message[];
+        const history = await response.json() as Chat[];
         
         // 중복 제거 및 메시지 ID 캐싱
         messageIdsRef.current.clear();
@@ -260,7 +260,7 @@ export const useWebSocket = (projectId: string, channelId: string) => {
   }, [channelId, createWebSocketConnection]);
 
   // 메시지 전송 함수
-  const sendMessage = useCallback(async (message: Message) => {
+  const sendMessage = useCallback(async (message: ChatCreateForm) => {
     if (!isConnected || !socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
       setError('연결이 끊어졌습니다. 메시지를 전송할 수 없습니다.');
       return false;
@@ -270,17 +270,8 @@ export const useWebSocket = (projectId: string, channelId: string) => {
       // 웹소켓으로 메시지 전송
       socketRef.current.send(JSON.stringify(message));
       
-      // 서버에 메시지 저장 (HTTP)
-      await fetch(`${SERVER_URL}/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(message),
-      });
-      
       // 메시지 ID 캐싱 (클라이언트 측에서 즉시 메시지를 표시하지 않고 서버에서 전달받는 방식)
-      messageIdsRef.current.add(message.id.toString());
+      messageIdsRef.current.add(new Date().getTime().toString());
       
       return true;
     } catch (error) {

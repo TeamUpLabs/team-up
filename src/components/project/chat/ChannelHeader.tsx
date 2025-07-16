@@ -21,13 +21,13 @@ export default function ChannelHeader({ channel }: { channel: Channel }) {
   };
 
   const handleStartVoiceCall = () => {
-    startVoiceCall(channel.channelId, userId);
+    startVoiceCall(channel.channel_id, userId);
   };
 
   return (
     <div>
       <div className="flex justify-between px-6 py-4 border-b border-component-border">
-        <h2 className="text-xl font-semibold"># {channel.channelName}</h2>
+        <h2 className="text-xl font-semibold"># {channel.name}</h2>
         <div className="flex items-center space-x-5">
           <FontAwesomeIcon
             icon={faPhone}
@@ -41,14 +41,14 @@ export default function ChannelHeader({ channel }: { channel: Channel }) {
           />
           <ChannelSettingsDropdown
             channel={channel}
-            isOwner={channel.created_by === Number(userId)}
+            isOwner={!!channel.created_by && channel.created_by === Number(userId)}
           />
         </div>
       </div>
 
       {showVideoCall && (
         <VideoCall
-          channelId={channel.channelId}
+          channelId={channel.channel_id}
           userId={userId}
           onClose={endVideoCall}
         />

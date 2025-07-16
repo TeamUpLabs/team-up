@@ -1,33 +1,24 @@
 'use client';
 
-import { useState, useEffect, useRef, use } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
-import { Message } from '@/types/Message';
+import { ChatCreateForm } from '@/types/Chat';
 import ChannelHeader from '@/components/project/chat/ChannelHeader';
 import MessageList from '@/components/project/chat/MessageList';
 import { useWebSocket } from '@/hooks/useWebSocket';
-import { getCurrentKoreanTime } from '@/utils/dateUtils';
-import { useAuthStore } from '@/auth/authStore';
 import { useProject } from '@/contexts/ProjectContext';
 
-interface PageProps {
-  params: Promise<{
-    projectId: string;
-  }>;
-}
 
-
-export default function ChatPage({ params }: PageProps) {
+export default function ChatPage() {
   const { project } = useProject();
-  const user = useAuthStore((state) => state.user);
   const [message, setMessage] = useState('');
   const searchParams = useSearchParams();
-  const { projectId } = use(params);
-  const channelId = searchParams?.get('channel') || 'general';
-  const channel = project?.channels?.find((c) => c.channelId === channelId);
-  const { messages, sendMessage, isConnected } = useWebSocket(projectId, channelId);
+  const project_id = searchParams?.get('project_id');
+  const channel_id = searchParams?.get('channel') || 'general';
+  const channel = project?.channels?.find((c) => c.channel_id === channel_id);
+  const { messages, sendMessage, isConnected } = useWebSocket(project_id!, channel_id);
   const [searchQuery, setSearchQuery] = useState("");
   const isMounted = useRef(false);
 
@@ -61,17 +52,13 @@ export default function ChatPage({ params }: PageProps) {
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && sendMessage && isConnected) {
-      const messageData: Message = {
-        id: Date.now(),
-        projectId: projectId,
-        channelId: channelId,
-        userId: user?.id ?? 0,
-        user: user?.name ?? '',
+      const chat: ChatCreateForm = {
+        project_id: project_id!,
+        channel_id: channel_id,
         message: message,
-        timestamp: getCurrentKoreanTime(),
       };
 
-      sendMessage(messageData);
+      sendMessage(chat);
       setMessage('');
     }
   };

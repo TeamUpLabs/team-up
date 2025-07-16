@@ -9,6 +9,7 @@ import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
 import { TextArea } from "@/components/ui/TextArea";
+import { blankChannelCreateForm } from "@/types/Channel";
 
 interface ChannelCreateModalProps {
   isOpen: boolean;
@@ -17,15 +18,8 @@ interface ChannelCreateModalProps {
 
 export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateModalProps) {
   const { project } = useProject();
-  const { user } = useAuthStore();
-  const initialFormData = () => ({
-    channelName: '',
-    channelDescription: '',
-    isPublic: true as boolean,
-    member_id: [] as number[],
-    created_by: user?.id || 0,
-  });
-  const [formData, setFormData] = useState(initialFormData);
+  const user = useAuthStore((state) => state.user);
+  const [formData, setFormData] = useState(blankChannelCreateForm);
   const [error, setError] = useState<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
@@ -39,15 +33,15 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
 
   const toggleAssignee = (memberId: number) => {
     setFormData((prev) => {
-      if (prev.member_id.includes(memberId)) {
+      if (prev.member_ids.includes(memberId)) {
         return {
           ...prev,
-          member_id: prev.member_id.filter((id) => id !== memberId),
+          member_ids: prev.member_ids.filter((id) => id !== memberId),
         };
       } else {
         return {
           ...prev,
-          member_id: [...prev.member_id, memberId],
+          member_ids: [...prev.member_ids, memberId],
         };
       }
     });
@@ -55,12 +49,12 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
 
 
   const handleSubmit = async () => {
-    if (!formData.channelName.trim()) {
+    if (!formData.name.trim()) {
       setError("채널 이름을 입력해주세요.")
       return;
     }
 
-    if (!formData.isPublic && formData.member_id.length === 0) {
+    if (!formData.is_public && formData.member_ids.length === 0) {
       useAuthStore.getState().setAlert("공개 채널이 아닐 경우 최소 한 명의 구성원을 선택해주세요.", "error")
       return;
     }
@@ -71,14 +65,20 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
       return;
     }
 
-    if (formData.isPublic) {
-      formData.member_id = project?.members?.map((member) => member.user.id) || [];
+    if (formData.is_public) {
+      formData.member_ids = project?.members?.map((member) => member.user.id) || [];
     }
 
     if (project?.id) {
       setSubmitStatus('submitting');
       try {
-        await createChannel(project.id, formData);
+        await createChannel({
+          ...formData,
+          project_id: project.id,
+          member_ids: formData.member_ids,
+          created_by: user?.id || 0,
+          updated_by: user?.id || 0,
+        });
         setSubmitStatus('success');
         useAuthStore.getState().setAlert("채널이 성공적으로 생성되었습니다.", "success");
       } catch (error) {
@@ -94,7 +94,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
       } finally {
         setTimeout(() => {
           onClose();
-          setFormData(initialFormData);
+          setFormData(blankChannelCreateForm);
           setSubmitStatus('idle');
         }, 1000);
       }
@@ -137,6 +137,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
         errorText="생성 실패"
         className="!text-sm"
         withIcon
+        fit
       />
     </div>
   )
@@ -147,9 +148,9 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
         <div className="flex flex-col space-y-2">
           <Input
             type="text"
-            id="channelName"
-            name="channelName"
-            value={formData.channelName}
+            id="name"
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             fullWidth
             placeholder="채널 이름을 입력하세요"
@@ -162,9 +163,9 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
         <TextArea
-          id="channelDescription"
-          name="channelDescription"
-          value={formData.channelDescription}
+          id="description"
+          name="description"
+          value={formData.description}
           onChange={handleChange}
           placeholder="채널 설명을 입력하세요"
           label="채널 설명"
@@ -177,17 +178,17 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" defaultChecked onChange={(e) => {
-                setFormData({ ...formData, isPublic: e.target.checked });
+                setFormData({ ...formData, is_public: e.target.checked });
               }} />
               <div className="w-11 h-6 bg-component-tertiary-background rounded-full peer peer-checked:bg-point-color-indigo peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
             </label>
           </div>
-          {!formData.isPublic && (
+          {!formData.is_public && (
             <AssigneeSelect
-              selectedAssignee={formData.member_id}
+              selectedAssignee={formData.member_ids}
               assignee={project?.members?.map((member) => member.user) || []}
               toggleAssignee={toggleAssignee}
-              isAssigned={(memberId) => formData.member_id.includes(memberId)}
+              isAssigned={(memberId) => formData.member_ids.includes(memberId)}
               label="선택된 구성원"
               className="px-1"
             />

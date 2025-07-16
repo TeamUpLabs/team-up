@@ -1,5 +1,5 @@
 import { server } from "@/auth/server";
-import { getCurrentKoreanTimeDate } from "@/utils/dateUtils";
+import { ChannelCreateForm, ChannelUpdateForm } from "@/types/Channel";
 
 const generateId = (length = 8): string => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -10,25 +10,11 @@ const generateId = (length = 8): string => {
   return result
 }
 
-interface ChannelData {
-  channelName: string;
-  channelDescription: string;
-  isPublic: boolean;
-  member_id: number[];
-  created_by: number;
-}
-
-export const createChannel = async (project_id: string, channelData: ChannelData) => {
+export const createChannel = async (formData: ChannelCreateForm) => {
   try {
-    const res = await server.post(`/project/${project_id}/channel`, {
-      projectId: project_id,
-      channelId: generateId(),
-      channelName: channelData.channelName,
-      channelDescription: channelData.channelDescription,
-      isPublic: channelData.isPublic,
-      member_id: channelData.member_id,
-      created_at: getCurrentKoreanTimeDate(),
-      created_by: channelData.created_by,
+    const res = await server.post(`/channels`, {
+      ...formData,
+      channel_id: generateId(),
     });
     if (res.status === 200) {
       return res.data;
@@ -55,21 +41,9 @@ export const getChannel = async (project_id: string, channel_id: string) => {
   }
 };
 
-interface ChannelUpdateData {
-  channelName: string;
-  channelDescription: string;
-  isPublic: boolean;
-  member_id: number[];
-}
-
-export const updateChannel = async (projectId: string, channelId: string, channelData: ChannelUpdateData) => {
+export const updateChannel = async (channel_id: string, channelData: ChannelUpdateForm) => {
   try {
-    const res = await server.put(`/project/${projectId}/channel/${channelId}`, {
-      channelName: channelData.channelName,
-      channelDescription: channelData.channelDescription,
-      isPublic: channelData.isPublic,
-      member_id: channelData.member_id,
-    });
+    const res = await server.put(`/channels/${channel_id}`, channelData);
     if (res.status === 200) {
       return res.data;
     } else {
@@ -81,9 +55,9 @@ export const updateChannel = async (projectId: string, channelId: string, channe
   }
 };
 
-export const deleteChannel = async (projectId: string, channelId: string) => {
+export const deleteChannel = async (channel_id: string) => {
   try {
-    const res = await server.delete(`/project/${projectId}/channel/${channelId}`);
+    const res = await server.delete(`/channels/${channel_id}`);
     if (res.status === 200) {
       return res.data;
     } else {

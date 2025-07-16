@@ -6,7 +6,6 @@ import DatePicker from "@/components/ui/DatePicker";
 import Select from "@/components/ui/Select";
 import Badge from "@/components/ui/Badge";
 import { createProject } from '@/hooks/getProjectData';
-import { updateProjectMember } from '@/hooks/getMemberData';
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
 import { TextArea } from "@/components/ui/TextArea";
@@ -128,8 +127,7 @@ export default function NewProjectModal({ isOpen, onClose }: NewProjectModalProp
     if (user?.id) {
       setSubmitStatus('submitting');
       try {
-        const projectId = await createProject(formData);
-        await updateProjectMember(projectId, user.id);
+        await createProject(formData);
         setSubmitStatus('success');
         useAuthStore.getState().setAlert("프로젝트가 생성되었습니다.", "success");
       } catch (error) {

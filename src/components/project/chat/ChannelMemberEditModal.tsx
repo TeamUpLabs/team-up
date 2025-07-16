@@ -18,31 +18,31 @@ interface ChannelMemberEditModalProps {
 export default function ChannelMemberEditModal({ isOpen, onClose, channel }: ChannelMemberEditModalProps) {
   const { project } = useProject();
   const [formData, setFormData] = useState({
-    channelName: channel.channelName,
-    channelDescription: channel.channelDescription,
-    isPublic: channel.isPublic as boolean,
-    member_id: channel.member_id as number[],
+    name: channel.name,
+    description: channel.description,
+    is_public: channel.is_public,
+    member_ids: channel.members.map((member) => member.id),
   });
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   const toggleAssignee = (memberId: number) => {
     setFormData((prev) => {
-      if (prev.member_id.includes(memberId)) {
+      if (prev.member_ids.includes(memberId)) {
         return {
           ...prev,
-          member_id: prev.member_id.filter((id) => id !== memberId),
+          member_ids: prev.member_ids.filter((id) => id !== memberId),
         };
       } else {
         return {
           ...prev,
-          member_id: [...prev.member_id, memberId],
+          member_ids: [...prev.member_ids, memberId],
         };
       }
     });
   };
 
   const handleSubmit = async () => {
-    if (!formData.isPublic && formData.member_id.length === 0) {
+    if (!formData.is_public && formData.member_ids.length === 0) {
       useAuthStore.getState().setAlert("공개 채널이 아닐 경우 최소 한 명의 구성원을 선택해주세요.", "error")
       return;
     }
@@ -53,14 +53,15 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
       return;
     }
 
-    if (formData.isPublic) {
-      formData.member_id = project?.members?.map((member) => member.user.id) || [];
+    if (formData.is_public) {
+      formData.member_ids = project?.members?.map((member) => member.user.id) || [];
     }
 
     try {
       setSubmitStatus('submitting');
-      await updateChannel(channel.projectId, channel.channelId, {
+      await updateChannel(channel.channel_id, {
         ...formData,
+        member_ids: formData.member_ids,
       });
       useAuthStore.getState().setAlert("채널이 성공적으로 수정되었습니다.", "success");
       setSubmitStatus('success');
@@ -115,6 +116,7 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
         errorText="수정 실패"
         className="!text-sm"
         withIcon
+        fit
       />
     </div>
   )
@@ -124,22 +126,22 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
       <div className="flex flex-col space-y-2">
         <div className="flex items-center justify-between p-4 bg-component-secondary-background rounded-lg border border-component-border transition-all hover:border-component-border-hover">
           <div>
-            <h3 className="text-text-primary font-medium">공개</h3>
-            <p className="text-text-secondary text-sm mt-1">공개 채널은 모든 프로젝트 구성원이 볼 수 있습니다.</p>
+            <h3 className="text-text-primary font-medium">{formData.is_public ? "공개" : "비공개"}</h3>
+            <p className="text-text-secondary text-sm mt-1">{formData.is_public ? "공개 채널은 모든 프로젝트 구성원이 볼 수 있습니다." : "비공개 채널은 선정된 구성원만 볼 수 있습니다."}</p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" className="sr-only peer" defaultChecked onChange={(e) => {
-              setFormData({ ...formData, isPublic: e.target.checked });
+            <input type="checkbox" className="sr-only peer" defaultChecked={formData.is_public} onChange={(e) => {
+              setFormData({ ...formData, is_public: e.target.checked });
             }} />
             <div className="w-11 h-6 bg-component-tertiary-background rounded-full peer peer-checked:bg-point-color-indigo peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
           </label>
         </div>
-        {!formData.isPublic && (
+        {!formData.is_public && (
           <AssigneeSelect
-            selectedAssignee={formData.member_id}
+            selectedAssignee={formData.member_ids}
             assignee={project?.members?.map((member) => member.user) || []}
             toggleAssignee={toggleAssignee}
-            isAssigned={(memberId) => formData.member_id.includes(memberId)}
+            isAssigned={(memberId) => formData.member_ids.includes(memberId)}
             label="선택된 구성원"
             className="px-1"
           />

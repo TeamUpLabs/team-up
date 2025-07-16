@@ -21,10 +21,10 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
   const { project } = useProject();
   const router = useRouter();
   const [formData, setFormData] = useState({
-    channelName: channel.channelName,
-    channelDescription: channel.channelDescription,
-    isPublic: channel.isPublic,
-    member_id: channel.member_id,
+    name: channel.name,
+    description: channel.description,
+    is_public: channel.is_public,
+    member_ids: channel.members.map((member) => member.id),
   });
   const [error, setError] = useState<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -38,7 +38,7 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
   };
 
   const handleSubmit = async () => {
-    if (!formData.channelName.trim()) {
+    if (!formData.name.trim()) {
       setError("채널 이름을 입력해주세요.")
       return;
     }
@@ -51,7 +51,7 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
 
     try {
       setSubmitStatus('submitting');
-      await updateChannel(channel.projectId, channel.channelId, formData);
+      await updateChannel(channel.channel_id, formData);
       useAuthStore.getState().setAlert("채널이 성공적으로 수정되었습니다.", "success");
       setSubmitStatus('success');
 
@@ -74,9 +74,9 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
   const handleDelete = () => {
     useAuthStore.getState().setConfirm("채널을 삭제하시겠습니까?", async () => {
       try {
-        await deleteChannel(channel.projectId, channel.channelId);
+        await deleteChannel(channel.channel_id);
         useAuthStore.getState().setAlert("채널이 성공적으로 삭제되었습니다.", "success");
-        router.push(`/platform/${channel.projectId}`)
+        router.push(`/platform/${channel.project_id}`)
         setTimeout(() => {
           onClose();
         }, 1000);
@@ -150,7 +150,7 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
         <div className="flex flex-col space-y-2">
           <label
             className="text-sm font-medium text-text-secondary"
-            htmlFor="channelName"
+            htmlFor="name"
           >
             채널 이름 <span className="text-point-color-purple ml-1">*</span>
           </label>
@@ -158,9 +158,9 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
             <span className="text-text-secondary font-bold">#</span>
             <input
               type="text"
-              id="channelName"
-              name="channelName"
-              value={formData.channelName}
+              id="name"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               className="w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
               placeholder="채널 이름을 입력하세요"
@@ -172,14 +172,14 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
         <div className="flex flex-col space-y-2">
           <label
             className="text-sm font-medium text-text-secondary"
-            htmlFor="channelDescription"
+            htmlFor="description"
           >
             채널 설명
           </label>
           <textarea
-            id="channelDescription"
-            name="channelDescription"
-            value={formData.channelDescription}
+            id="description"
+            name="description"
+            value={formData.description}
             onChange={handleChange}
             className="resize-none w-full px-3 py-2 rounded-lg bg-input-background border border-input-border text-text-secondary focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent transition-all duration-200 hover:border-input-border-hover"
             placeholder="채널 설명을 입력하세요"

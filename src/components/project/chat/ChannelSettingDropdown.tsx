@@ -63,6 +63,7 @@ export default function ChannelSettingsDropdown({
   const handleEditModalOpen = () => {
     if (isOwner) {
       setIsEditModalOpen(true);
+      setIsOpen(false);
     } else {
       useAuthStore
         .getState()
@@ -73,6 +74,7 @@ export default function ChannelSettingsDropdown({
   const handleMemberEditModalOpen = () => {
     if (isOwner) {
       setIsMemnerEditModalOpen(true);
+      setIsOpen(false);
     } else {
       useAuthStore
         .getState()
@@ -81,7 +83,7 @@ export default function ChannelSettingsDropdown({
   };
 
   return (
-    <div className="relative flex" ref={dropdownRef}>
+    <div className="flex" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="font-semibold text-sm cursor-pointer"

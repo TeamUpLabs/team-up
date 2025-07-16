@@ -159,13 +159,13 @@ export default function ProjectLayout({
     <div className="flex min-h-screen bg-background">
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-background/70 z-[8400] lg:hidden"
+          className="fixed inset-0 bg-background/70 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
       {isNotificationSidebarOpen && (
         <div
-          className="fixed inset-0 bg-background/70 z-[8400] lg:hidden"
+          className="fixed inset-0 bg-background/70 lg:hidden"
           onClick={() => setIsNotificationSidebarOpen(false)}
         />
       )}
