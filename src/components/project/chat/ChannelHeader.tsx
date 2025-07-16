@@ -48,8 +48,8 @@ export default function ChannelHeader({ channel }: { channel: Channel }) {
 
       {showVideoCall && (
         <VideoCall
-          channelId={channel.channel_id}
-          userId={userId}
+          channel_id={channel.channel_id}
+          user_id={userId}
           onClose={endVideoCall}
         />
       )}

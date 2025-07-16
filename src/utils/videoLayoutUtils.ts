@@ -105,7 +105,7 @@ export const getVideoItemClass = (
  * Video participant type used for arranging videos
  */
 export interface VideoParticipant {
-  userId: string;
+  user_id: string;
   stream: MediaStream | null;
   isLocal: boolean;
   isScreenShare?: boolean;
@@ -118,14 +118,14 @@ export interface VideoParticipant {
 export const arrangeVideoParticipants = (
   localUserId: string,
   localStream: MediaStream | null,
-  remoteParticipants: { userId: string; stream: MediaStream | null }[],
+  remoteParticipants: { user_id: string; stream: MediaStream | null }[],
   pinnedUserId: string | null,
   layout: 'grid' | 'focus'
 ): VideoParticipant[] => {
   const allParticipants: VideoParticipant[] = [
-    { userId: 'local', stream: localStream, isLocal: true },
+    { user_id: 'local', stream: localStream, isLocal: true },
     ...remoteParticipants.map(p => ({ 
-      userId: p.userId, 
+      user_id: p.user_id, 
       stream: p.stream, 
       isLocal: false 
     }))
@@ -134,8 +134,8 @@ export const arrangeVideoParticipants = (
   if (layout === 'focus' && pinnedUserId) {
     // Find index of pinned user
     const pinnedIndex = allParticipants.findIndex(p => 
-      (p.userId === 'local' && pinnedUserId === 'local') || 
-      (p.userId === pinnedUserId)
+      (p.user_id === 'local' && pinnedUserId === 'local') || 
+      (p.user_id === pinnedUserId)
     );
     
     if (pinnedIndex > 0) {

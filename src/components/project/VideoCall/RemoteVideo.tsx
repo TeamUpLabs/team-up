@@ -137,7 +137,7 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
           <div className="flex flex-col items-center">
             <div className="w-14 h-14 sm:w-16 sm:h-16 relative rounded-full bg-gray-700 flex items-center justify-center shadow-lg">
               {userProfileImage ? (
-                <Image src={userProfileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                <Image src={userProfileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={100} height={100} />
               ) : (
                 <span className="text-white text-lg sm:text-xl font-medium">
                   {getInitials(userName)}
@@ -176,7 +176,7 @@ const RemoteVideo: React.FC<RemoteVideoProps> = ({
           <div className="flex items-center gap-1 bg-black/50 backdrop-blur-md rounded-full pl-1 pr-2 py-0.5">
             <div className="w-5 h-5 relative text-xs rounded-full bg-indigo-600 flex items-center justify-center text-white">
               {userProfileImage ? (
-                <Image src={userProfileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} fill />
+                <Image src={userProfileImage} alt="Profile" className="w-full h-full object-fit rounded-full" quality={100} width={100} height={100} />
               ) : (
                 getInitials(userName)
               )}

@@ -47,12 +47,12 @@ export interface SharedFile {
 }
 
 interface VideoCallProps {
-  channelId: string;
-  userId: string;
+  channel_id: string;
+  user_id: string;
   onClose: () => void;
 }
 
-const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => {
+const VideoCall: React.FC<VideoCallProps> = ({ channel_id, user_id, onClose }) => {
   const { project } = useProject();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isParticipantListVisible, setIsParticipantListVisible] = useState(false);
@@ -94,9 +94,9 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
     sharedFiles,
     shareFile
   } = useWebRTC({
-    channelId,
-    userId,
-    projectId: project?.id
+    channel_id,
+    user_id,
+    project_id: project?.id
   });
 
   // Hide sidebar when video call is active
@@ -300,20 +300,20 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
   const getParticipantList = () => {
     const participants = [
       {
-        userId: 'local',
-        name: getUserName(userId),
-        role: getUserRole(userId),
-        profileImage: project?.members.find(member => member.user.id === Number(userId))?.user.profile_image,
+        user_id: 'local',
+        name: getUserName(user_id),
+        role: getUserRole(user_id),
+        profileImage: project?.members.find(member => member.user.id === Number(user_id))?.user.profile_image,
         isLocal: true,
         isAudioMuted,
         isVideoOff,
         isScreenSharing
       },
       ...peers.map(peer => ({
-        userId: peer.userId,
-        name: getUserName(peer.userId),
-        role: getUserRole(peer.userId),
-        profileImage: project?.members.find(member => member.user.id === Number(peer.userId))?.user.profile_image,
+        user_id: peer.user_id,
+        name: getUserName(peer.user_id),
+        role: getUserRole(peer.user_id),
+        profileImage: project?.members.find(member => member.user.id === Number(peer.user_id))?.user.profile_image,
         isLocal: false
       }))
     ];
@@ -339,7 +339,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
       if (pinnedUser === 'screen') {
         return [
           {
-            userId: 'screen',
+            user_id: 'screen',
             stream: screenShareStream,
             isLocal: true,
             isScreenShare: true,
@@ -348,17 +348,17 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
           ...arrangeVideoParticipants(
             'local',
             localStream,
-            peers.map(peer => ({ userId: peer.userId, stream: peer.stream || null })),
+            peers.map(peer => ({ user_id: peer.user_id, stream: peer.stream || null })),
             pinnedUser === 'screen' ? null : pinnedUser,
             layout
-          ).filter(p => p.userId !== 'screen')
+          ).filter(p => p.user_id !== 'screen')
         ];
       }
 
       // 화면 공유가 핀되어 있지 않으면 일반 배치
       return [
         {
-          userId: 'screen',
+          user_id: 'screen',
           stream: screenShareStream,
           isLocal: true,
           isScreenShare: true,
@@ -367,17 +367,17 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         ...arrangeVideoParticipants(
           'local',
           localStream,
-          peers.map(peer => ({ userId: peer.userId, stream: peer.stream || null })),
+          peers.map(peer => ({ user_id: peer.user_id, stream: peer.stream || null })),
           pinnedUser,
           layout
-        ).filter(p => p.userId !== 'screen')
+        ).filter(p => p.user_id !== 'screen')
       ];
     }
 
     return arrangeVideoParticipants(
       'local',
       localStream,
-      peers.map(peer => ({ userId: peer.userId, stream: peer.stream || null })),
+      peers.map(peer => ({ user_id: peer.user_id, stream: peer.stream || null })),
       pinnedUser,
       layout
     );
@@ -401,9 +401,9 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
         {arrangedUsers.map(user => (
           <motion.div
             layout
-            key={user.userId === 'local' ? 'local-video' : (user.userId === 'screen' ? 'screen-share' : user.userId)}
+            key={user.user_id === 'local' ? 'local-video' : (user.user_id === 'screen' ? 'screen-share' : user.user_id)}
             className={`
-              ${user.isScreenShare ? (pinnedUser === 'screen' ? 'col-span-full lg:col-span-3 lg:row-span-full' : 'col-span-full row-span-full') : getVideoItemClass(user.userId, pinnedUser, layout, totalParticipants)}
+              ${user.isScreenShare ? (pinnedUser === 'screen' ? 'col-span-full lg:col-span-3 lg:row-span-full' : 'col-span-full row-span-full') : getVideoItemClass(user.user_id, pinnedUser, layout, totalParticipants)}
               overflow-hidden rounded-md shadow-lg relative
             `}
             style={{
@@ -485,14 +485,14 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
                   </div>
                 </div> :
                 <RemoteVideo
-                  key={`remote-video-${user.userId}`}
+                  key={`remote-video-${user.user_id}`}
                   stream={user.stream}
-                  userName={getUserName(user.userId)}
-                  userProfileImage={project?.members.find(member => member.user.id === Number(user.userId))?.user.profile_image || undefined}
-                  userId={user.userId}
-                  isPinned={pinnedUser === user.userId}
-                  isRemoteVideoOff={peers.find(p => p.userId === user.userId)?.isRemoteVideoOff || false}
-                  isRemoteAudioMuted={peers.find(p => p.userId === user.userId)?.isRemoteAudioMuted || false}
+                  userName={getUserName(user.user_id)}
+                  userProfileImage={project?.members.find(member => member.user.id === Number(user.user_id))?.user.profile_image || undefined}
+                  userId={user.user_id}
+                  isPinned={pinnedUser === user.user_id}
+                  isRemoteVideoOff={peers.find(p => p.user_id === user.user_id)?.isRemoteVideoOff || false}
+                  isRemoteAudioMuted={peers.find(p => p.user_id === user.user_id)?.isRemoteAudioMuted || false}
                   onPinToggle={pinUser}
                 />
             }
@@ -534,7 +534,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
           size: file.size,
           type: file.type,
           url: fileUrl,
-          sharedBy: userId,
+          sharedBy: user_id,
           timestamp: Date.now()
         };
 
@@ -716,7 +716,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ channelId, userId, onClose }) => 
             isFullscreen={isFullscreen}
             showSettings={showSettings}
             showOptions={showOptions}
-            channelId={channelId}
+            channel_id={channel_id}
             participantCount={peers.length + 1}
             isParticipantListVisible={isParticipantListVisible}
             isScreenSharing={isScreenSharing}

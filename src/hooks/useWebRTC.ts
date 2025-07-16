@@ -3,13 +3,13 @@ import { useProject } from '@/contexts/ProjectContext';
 import type { SharedFile } from '@/components/project/VideoCall/VideoCall';
 
 interface UseWebRTCProps {
-  channelId: string;
-  userId: string;
-  projectId?: string;
+  channel_id: string;
+  user_id: string;
+  project_id?: string;
 }
 
 interface PeerConnection {
-  userId: string;
+  user_id: string;
   connection: RTCPeerConnection;
   stream?: MediaStream;
   dataChannel?: RTCDataChannel;
@@ -22,7 +22,7 @@ interface PeerConnection {
 
 interface SignalingMessage {
   type: string;
-  userId?: string;
+  user_id?: string;
   target?: string;
   sdp?: RTCSessionDescription | null;
   candidate?: RTCIceCandidate;
@@ -41,7 +41,7 @@ interface FileShareMessage {
 
 type DataChannelMessage = StatusMessage | FileShareMessage;
 
-const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
+const useWebRTC = ({ channel_id, user_id, project_id }: UseWebRTCProps) => {
   const { project } = useProject();
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [screenShareStream, setScreenShareStream] = useState<MediaStream | null>(null);
@@ -57,7 +57,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
   
   const socketRef = useRef<WebSocket | null>(null);
   const peersRef = useRef<PeerConnection[]>([]);
-  const pendingConnectionsRef = useRef<{userId: string, isInitiator: boolean}[]>([]);
+  const pendingConnectionsRef = useRef<{user_id: string, isInitiator: boolean}[]>([]);
   const localVideoRef = useRef<HTMLVideoElement | null>(null);
 
   const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -117,21 +117,21 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       if (pendingConnectionsRef.current.length > 0) {
         console.log(`Processing ${pendingConnectionsRef.current.length} pending connections`);
         pendingConnectionsRef.current.forEach(async pending => {
-          await createPeerConnection(pending.userId, pending.isInitiator);
+          await createPeerConnection(pending.user_id, pending.isInitiator);
         });
         pendingConnectionsRef.current = [];
       }
     }
-  }, [localStream, projectId, channelId, userId]);
+  }, [localStream, project_id, channel_id, user_id]);
 
   useEffect(() => {
     // Sync peersRef with peers state
     peersRef.current = peers;
-  }, [peers]);
+  }, [peers, project_id, channel_id, user_id]);
 
   const connectSignalingServer = () => {
     const socketProtocol = SERVER_URL?.startsWith('https://') ? 'wss' : 'ws';
-    const serverUrl = `${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/project/${projectId}/ws/video-call/${channelId}/${userId}`;
+    const serverUrl = `${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/api/video-call/ws?project_id=${project_id}&channel_id=${channel_id}&user_id=${user_id}`;
     
     console.log(`Connecting to signaling server at ${serverUrl}`);
     socketRef.current = new WebSocket(serverUrl);
@@ -148,64 +148,64 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       switch(message.type) {
         case 'user-joined':
           // Create offer when a new user joins
-          if (message.userId) {
-            console.log(`User joined: ${message.userId}, creating offer`);
-            setConnectionStatus(`${project?.members.find(member => member.user.id === Number(message.userId))?.user.name}님이 참여했습니다.`);
+          if (message.user_id) {
+            console.log(`User joined: ${message.user_id}, creating offer`);
+            setConnectionStatus(`${project?.members.find(member => member.user.id === Number(message.user_id))?.user.name}님이 참여했습니다.`);
             
             // Check if we already have a connection with this user
-            const existingPeer = peersRef.current.find(p => p.userId === message.userId);
+            const existingPeer = peersRef.current.find(p => p.user_id === message.user_id);
             if (!existingPeer) {
               if (localStream) {
-                await createPeerConnection(message.userId, true);
+                await createPeerConnection(message.user_id, true);
               } else {
-                console.log(`Local stream not ready, queueing connection with ${message.userId}`);
+                console.log(`Local stream not ready, queueing connection with ${message.user_id}`);
                 pendingConnectionsRef.current.push({
-                  userId: message.userId,
+                  user_id: message.user_id,
                   isInitiator: true
                 });
               }
             } else {
-              console.log(`Already have a connection with user ${message.userId}, skipping`);
+              console.log(`Already have a connection with user ${message.user_id}, skipping`);
             }
           }
           break;
           
         case 'user-left':
           // Remove peer when a user leaves
-          if (message.userId) {
-            console.log(`User left: ${message.userId}`);
-            setConnectionStatus(`${project?.members.find(member => member.user.id === Number(message.userId))?.user.name}님이 나갔습니다.`);
-            removePeer(message.userId);
+          if (message.user_id) {
+            console.log(`User left: ${message.user_id}`);
+            setConnectionStatus(`${project?.members.find(member => member.user.id === Number(message.user_id))?.user.name}님이 나갔습니다.`);
+            removePeer(message.user_id);
           }
           break;
           
         case 'offer':
           // Handle received offer
-          console.log('Received offer from:', message.userId);
+          console.log('Received offer from:', message.user_id);
           if (localStream) {
             await handleOffer(message);
           } else {
-            console.log(`Local stream not ready, queueing offer from ${message.userId}`);
+            console.log(`Local stream not ready, queueing offer from ${message.user_id}`);
             pendingConnectionsRef.current.push({
-              userId: message.userId!,
+              user_id: message.user_id!,
               isInitiator: false
             });
             // Store the offer to handle it later
-            if (message.userId) {
-              localStorage.setItem(`pending_offer_${message.userId}`, JSON.stringify(message));
+            if (message.user_id) {
+              localStorage.setItem(`pending_offer_${message.user_id}`, JSON.stringify(message));
             }
           }
           break;
           
         case 'answer':
           // Handle received answer
-          console.log('Received answer from:', message.userId);
+          console.log('Received answer from:', message.user_id);
           await handleAnswer(message);
           break;
           
         case 'ice-candidate':
           // Handle received ICE candidate
-          console.log('Received ICE candidate from:', message.userId);
+          console.log('Received ICE candidate from:', message.user_id);
           await handleIceCandidate(message);
           break;
       }
@@ -231,7 +231,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       }
       
       // Check if peer connection already exists
-      const existingPeer = peersRef.current.find(p => p.userId === targetUserId);
+      const existingPeer = peersRef.current.find(p => p.user_id === targetUserId);
       if (existingPeer) {
         console.log(`Peer connection with ${targetUserId} already exists`);
         return existingPeer.connection;
@@ -260,13 +260,13 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
           // Update the peer with the remote data channel
           setPeers(prev => {
             const newPeers = [...prev];
-            const peerIndex = newPeers.findIndex(p => p.userId === targetUserId);
+            const peerIndex = newPeers.findIndex(p => p.user_id === targetUserId);
             
             if (peerIndex !== -1) {
               newPeers[peerIndex].remoteDataChannel = remoteDataChannel;
               
               // Also update the ref
-              const refIndex = peersRef.current.findIndex(p => p.userId === targetUserId);
+              const refIndex = peersRef.current.findIndex(p => p.user_id === targetUserId);
               if (refIndex !== -1) {
                 peersRef.current[refIndex].remoteDataChannel = remoteDataChannel;
               }
@@ -279,7 +279,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       
       // Create new peer object
       const newPeer = { 
-        userId: targetUserId, 
+        user_id: targetUserId, 
         connection: peerConnection,
         dataChannel
       };
@@ -323,7 +323,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
           sendSignalingMessage({
             type: 'ice-candidate',
             candidate: event.candidate,
-            userId,
+            user_id,
             target: targetUserId
           });
         } else {
@@ -346,13 +346,13 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
           
           setPeers(prev => {
             const newPeers = [...prev];
-            const peerIndex = newPeers.findIndex(p => p.userId === targetUserId);
+            const peerIndex = newPeers.findIndex(p => p.user_id === targetUserId);
             
             if (peerIndex !== -1) {
               newPeers[peerIndex].stream = remoteStream;
               
               // Also update the ref
-              const refIndex = peersRef.current.findIndex(p => p.userId === targetUserId);
+              const refIndex = peersRef.current.findIndex(p => p.user_id === targetUserId);
               if (refIndex !== -1) {
                 peersRef.current[refIndex].stream = remoteStream;
               }
@@ -381,7 +381,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
           sendSignalingMessage({
             type: 'offer',
             sdp: peerConnection.localDescription,
-            userId,
+            user_id,
             target: targetUserId
           });
         } catch (error) {
@@ -406,26 +406,26 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
   };
 
   const handleOffer = async (message: SignalingMessage) => {
-    if (!message.userId || !message.sdp) {
-      console.warn('Received offer without userId or sdp');
+    if (!message.user_id || !message.sdp) {
+      console.warn('Received offer without user_id or sdp');
       return;
     }
     
     if (!localStream) {
-      console.log(`Cannot handle offer from ${message.userId} - local stream not ready`);
+      console.log(`Cannot handle offer from ${message.user_id} - local stream not ready`);
       pendingConnectionsRef.current.push({
-        userId: message.userId,
+        user_id: message.user_id,
         isInitiator: false
       });
-      localStorage.setItem(`pending_offer_${message.userId}`, JSON.stringify(message));
+      localStorage.setItem(`pending_offer_${message.user_id}`, JSON.stringify(message));
       return;
     }
     
-    const peerId = message.userId;
+    const peerId = message.user_id;
     console.log(`Handling offer from ${peerId}`);
     
     // Check if we already have a connection with this peer
-    const existingPeer = peersRef.current.find(p => p.userId === peerId);
+    const existingPeer = peersRef.current.find(p => p.user_id === peerId);
     let peerConnection;
     
     if (existingPeer) {
@@ -450,7 +450,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
         sendSignalingMessage({
           type: 'answer',
           sdp: peerConnection.localDescription,
-          userId,
+          user_id,
           target: peerId
         });
         
@@ -463,16 +463,16 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
   };
 
   const handleAnswer = async (message: SignalingMessage) => {
-    if (!message.userId || !message.sdp) {
-      console.warn('Received answer without userId or sdp');
+    if (!message.user_id || !message.sdp) {
+      console.warn('Received answer without user_id or sdp');
       return;
     }
     
-    const peerId = message.userId;
+    const peerId = message.user_id;
     console.log(`Handling answer from ${peerId}`);
     
     // Use ref to get the most up-to-date peers list
-    const peer = peersRef.current.find(p => p.userId === peerId);
+    const peer = peersRef.current.find(p => p.user_id === peerId);
     
     if (peer) {
       try {
@@ -489,16 +489,16 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
   };
 
   const handleIceCandidate = async (message: SignalingMessage) => {
-    if (!message.userId || !message.candidate) {
-      console.warn('Received ICE candidate without userId or candidate');
+    if (!message.user_id || !message.candidate) {
+      console.warn('Received ICE candidate without user_id or candidate');
       return;
     }
     
-    const peerId = message.userId;
+    const peerId = message.user_id;
     console.log(`Handling ICE candidate from ${peerId}`);
     
     // Use ref to get the most up-to-date peers list
-    const peer = peersRef.current.find(p => p.userId === peerId);
+    const peer = peersRef.current.find(p => p.user_id === peerId);
     
     if (peer) {
       try {
@@ -516,7 +516,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
     console.log(`Removing peer ${peerId}`);
     
     // Find peer in ref first
-    const peerIndex = peersRef.current.findIndex(p => p.userId === peerId);
+    const peerIndex = peersRef.current.findIndex(p => p.user_id === peerId);
     if (peerIndex !== -1) {
       const peer = peersRef.current[peerIndex];
       
@@ -571,10 +571,10 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       }
       
       // Remove from ref
-      peersRef.current = peersRef.current.filter(p => p.userId !== peerId);
+      peersRef.current = peersRef.current.filter(p => p.user_id !== peerId);
       
       // Update state
-      setPeers(prev => prev.filter(p => p.userId !== peerId));
+      setPeers(prev => prev.filter(p => p.user_id !== peerId));
     }
   };
 
@@ -621,7 +621,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
           videoOff: isVideoOff,
           audioMuted: newMutedState
         };
-        safeSendThroughDataChannel(peer.userId, statusMessage);
+        safeSendThroughDataChannel(peer.user_id, statusMessage);
       });
       
       setIsAudioMuted(newMutedState);
@@ -650,17 +650,17 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
             );
             
             if (videoSender) {
-              console.log(`Replacing video track for peer ${peer.userId} after turning video ON`);
+              console.log(`Replacing video track for peer ${peer.user_id} after turning video ON`);
               // First make sure track is enabled
               if (videoTrack) videoTrack.enabled = true;
               
               // Then replace track in sender
               videoSender.replaceTrack(videoTrack)
                 .then(() => {
-                  console.log(`Successfully replaced video track for peer ${peer.userId}`);
+                  console.log(`Successfully replaced video track for peer ${peer.user_id}`);
                 })
                 .catch(err => {
-                  console.error(`Error replacing video track for peer ${peer.userId}:`, err);
+                  console.error(`Error replacing video track for peer ${peer.user_id}:`, err);
                   
                   // Fallback: if replaceTrack fails, try to add the track directly
                   try {
@@ -668,18 +668,18 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
                     peer.connection.removeTrack(videoSender);
                     // Add the track back
                     peer.connection.addTrack(videoTrack, localStream);
-                    console.log(`Fallback: Re-added video track for peer ${peer.userId}`);
+                    console.log(`Fallback: Re-added video track for peer ${peer.user_id}`);
                   } catch (fallbackErr) {
-                    console.error(`Fallback also failed for peer ${peer.userId}:`, fallbackErr);
+                    console.error(`Fallback also failed for peer ${peer.user_id}:`, fallbackErr);
                   }
                 });
             } else {
               // If no video sender exists, add the track
-              console.log(`No video sender found for peer ${peer.userId}, adding track`);
+              console.log(`No video sender found for peer ${peer.user_id}, adding track`);
               peer.connection.addTrack(videoTrack, localStream);
             }
           } catch (e) {
-            console.warn(`Error updating video track for peer ${peer.userId}:`, e);
+            console.warn(`Error updating video track for peer ${peer.user_id}:`, e);
           }
         });
       } else {
@@ -706,7 +706,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
           videoOff: newVideoOffState,
           audioMuted: isAudioMuted
         };
-        safeSendThroughDataChannel(peer.userId, statusMessage);
+        safeSendThroughDataChannel(peer.user_id, statusMessage);
       });
       
       setIsVideoOff(newVideoOffState);
@@ -954,7 +954,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       // Update channel ready state
       setPeers(prev => {
         const newPeers = [...prev];
-        const peerIndex = newPeers.findIndex(p => p.userId === peerId);
+        const peerIndex = newPeers.findIndex(p => p.user_id === peerId);
         
         if (peerIndex !== -1) {
           if (isPrimaryChannel) {
@@ -968,7 +968,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       });
       
       // Also update the ref
-      const refIndex = peersRef.current.findIndex(p => p.userId === peerId);
+      const refIndex = peersRef.current.findIndex(p => p.user_id === peerId);
       if (refIndex !== -1) {
         if (isPrimaryChannel) {
           peersRef.current[refIndex].dataChannelReady = true;
@@ -1001,14 +1001,14 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
           // Update the peer's status in state
           setPeers(prev => {
             const newPeers = [...prev];
-            const peerIndex = newPeers.findIndex(p => p.userId === peerId);
+            const peerIndex = newPeers.findIndex(p => p.user_id === peerId);
             
             if (peerIndex !== -1) {
               newPeers[peerIndex].isRemoteVideoOff = message.videoOff;
               newPeers[peerIndex].isRemoteAudioMuted = message.audioMuted;
               
               // Also update the ref
-              const refIndex = peersRef.current.findIndex(p => p.userId === peerId);
+              const refIndex = peersRef.current.findIndex(p => p.user_id === peerId);
               if (refIndex !== -1) {
                 peersRef.current[refIndex].isRemoteVideoOff = message.videoOff;
                 peersRef.current[refIndex].isRemoteAudioMuted = message.audioMuted;
@@ -1043,7 +1043,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       
       setPeers(prev => {
         const newPeers = [...prev];
-        const peerIndex = newPeers.findIndex(p => p.userId === peerId);
+        const peerIndex = newPeers.findIndex(p => p.user_id === peerId);
         
         if (peerIndex !== -1) {
           if (isInitiator) {
@@ -1057,7 +1057,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       });
       
       // Also update the ref
-      const refIndex = peersRef.current.findIndex(p => p.userId === peerId);
+      const refIndex = peersRef.current.findIndex(p => p.user_id === peerId);
       if (refIndex !== -1) {
         if (isInitiator) {
           peersRef.current[refIndex].dataChannelReady = false;
@@ -1075,7 +1075,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       
       setPeers(prev => {
         const newPeers = [...prev];
-        const peerIndex = newPeers.findIndex(p => p.userId === peerId);
+        const peerIndex = newPeers.findIndex(p => p.user_id === peerId);
         
         if (peerIndex !== -1) {
           if (isInitiator) {
@@ -1089,7 +1089,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
       });
       
       // Also update the ref
-      const refIndex = peersRef.current.findIndex(p => p.userId === peerId);
+      const refIndex = peersRef.current.findIndex(p => p.user_id === peerId);
       if (refIndex !== -1) {
         if (isInitiator) {
           peersRef.current[refIndex].dataChannelReady = false;
@@ -1102,7 +1102,7 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
 
   // Safe method to send data through a data channel
   const safeSendThroughDataChannel = (peerId: string, data: DataChannelMessage | string) => {
-    const peer = peersRef.current.find(p => p.userId === peerId);
+    const peer = peersRef.current.find(p => p.user_id === peerId);
     if (!peer) return false;
     
     const message = typeof data === 'string' ? data : JSON.stringify(data);
@@ -1156,8 +1156,8 @@ const useWebRTC = ({ channelId, userId, projectId }: UseWebRTCProps) => {
     // Broadcast to peers
     const message: FileShareMessage = { type: 'file-shared', file };
     peersRef.current.forEach(peer => {
-      // No need to check peer.userId !== userId, as peersRef should not contain self
-      safeSendThroughDataChannel(peer.userId, message);
+      // No need to check peer.user_id !== userId, as peersRef should not contain self
+      safeSendThroughDataChannel(peer.user_id, message);
     });
   }, []);
 

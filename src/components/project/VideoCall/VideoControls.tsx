@@ -19,7 +19,7 @@ interface VideoControlsProps {
   isFullscreen: boolean;
   showSettings: boolean;
   showOptions: boolean;
-  channelId: string;
+  channel_id: string;
   participantCount: number;
   isParticipantListVisible: boolean;
   isScreenSharing?: boolean;
@@ -42,7 +42,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
   isFullscreen,
   showSettings,
   showOptions,
-  channelId,
+  channel_id,
   participantCount,
   isParticipantListVisible,
   isScreenSharing = false,
@@ -70,7 +70,7 @@ const VideoControls: React.FC<VideoControlsProps> = ({
       {/* Channel info */}
       <div className="flex items-center gap-2 text-white pr-2 mr-1 border-r border-white/20">
         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-        <span className="text-sm whitespace-nowrap">채널: #{channelId}</span>
+        <span className="text-sm whitespace-nowrap">채널: #{channel_id}</span>
       </div>
 
       <Tooltip content={isParticipantListVisible ? "참가자 목록 닫기" : "참가자 목록 보기"}>

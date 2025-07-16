@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 interface Participant {
-  userId: string;
+  user_id: string;
   name: string;
   role: string;
   profileImage: string | undefined;
@@ -57,9 +57,9 @@ const VideoParticipantList: React.FC<VideoParticipantListProps> = ({
         <ul>
           {participants.map(participant => (
             <li
-              key={`list-${participant.userId}`}
+              key={`list-${participant.user_id}`}
               className={`px-6 py-4 border-b border-white/10 hover:bg-white/5 transition-colors 
-                  ${pinnedUser === participant.userId ? 'bg-indigo-900/30' : ''}`}
+                  ${pinnedUser === participant.user_id ? 'bg-indigo-900/30' : ''}`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -99,14 +99,14 @@ const VideoParticipantList: React.FC<VideoParticipantListProps> = ({
                     <>
                       <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
                       <button
-                        onClick={() => onPinUser(participant.userId)}
+                        onClick={() => onPinUser(participant.user_id)}
                         className={`w-7 h-7 rounded-full flex items-center justify-center
-                            ${pinnedUser === participant.userId
+                            ${pinnedUser === participant.user_id
                             ? 'bg-indigo-600 text-white'
                             : 'bg-black/50 text-white/80 hover:bg-black/70 hover:text-white'}`}
                       >
                         <FontAwesomeIcon
-                          icon={pinnedUser === participant.userId ? faMinimize : faMaximize}
+                          icon={pinnedUser === participant.user_id ? faMinimize : faMaximize}
                           className="text-xs"
                         />
                       </button>
