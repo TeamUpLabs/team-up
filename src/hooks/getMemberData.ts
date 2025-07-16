@@ -36,11 +36,13 @@ export const checkMember = async (email: string) => {
   }
 }
 
-export const sendScout = async (project_id: string, sender_id: number, receiver_id: number) => {
+export const sendScout = async (project_id: string, project_name: string, receiver_id: number) => {
   try {
-    const res = await server.post(`/project/${project_id}/member/${receiver_id}/scout`, {
-      sender_id: sender_id,
-      receiver_id: receiver_id,
+    const res = await server.post(`/participation-requests`, {
+      project_id: project_id,
+      user_id: receiver_id,
+      request_type: "scout",
+      message: `'${project_name}' 프로젝트에 스카우트 요청을 받았습니다!`,
     });
     if (res.status === 200) {
       return res.data;
