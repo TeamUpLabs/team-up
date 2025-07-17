@@ -3,69 +3,83 @@
 import { useState } from "react";
 import { Switch } from "@/components/ui/Switch";
 import { Info } from "lucide-react";
+import { updateUserProfile } from "@/hooks/getMemberData";
+import { User } from "@/types/User";
 
-export default function Notification() {
-  const [emailEnabled, setEmailEnabled] = useState(true);
-  const [taskNotification, setTaskNotification] = useState(true);
-  const [milestoneNotification, setMilestoneNotification] = useState(true);
-  const [scheduleNotification, setScheduleNotification] = useState(true);
-  const [deadlineNotification, setDeadlineNotification] = useState(true);
-  const [weeklyReport, setWeeklyReport] = useState(true);
-  const [pushNotification, setPushNotification] = useState(true);
-  const [securityNotification, setSecurityNotification] = useState(true);
+interface NotificationProps {
+  notificationSettings: User['notification_settings'];
+}
 
-  const handleEmailToggle = (name: string, checked: boolean) => {
+export default function Notification({ notificationSettings }: NotificationProps) {
+  const [emailEnabled, setEmailEnabled] = useState<boolean>(Boolean(notificationSettings.emailEnable));
+  const [taskNotification, setTaskNotification] = useState<boolean>(Boolean(notificationSettings.taskNotification));
+  const [milestoneNotification, setMilestoneNotification] = useState<boolean>(Boolean(notificationSettings.milestoneNotification));
+  const [scheduleNotification, setScheduleNotification] = useState<boolean>(Boolean(notificationSettings.scheduleNotification));
+  const [deadlineNotification, setDeadlineNotification] = useState<boolean>(Boolean(notificationSettings.deadlineNotification));
+  const [weeklyReport, setWeeklyReport] = useState<boolean>(Boolean(notificationSettings.weeklyReport));
+  const [pushNotification, setPushNotification] = useState<boolean>(Boolean(notificationSettings.pushNotification));
+  const [securityNotification, setSecurityNotification] = useState<boolean>(Boolean(notificationSettings.securityNotification));
+  
+
+  const handleEmailToggle = async (name: string, newValue: boolean) => {
+    let newEmailEnabled = emailEnabled;
+    let newTaskNotification = taskNotification;
+    let newMilestoneNotification = milestoneNotification;
+    let newScheduleNotification = scheduleNotification;
+    let newDeadlineNotification = deadlineNotification;
+    let newWeeklyReport = weeklyReport;
+
     if (name === 'emailEnabled') {
-      setEmailEnabled(checked);
-    }
-    if (name === 'emailEnabled' && !checked) {
-      setTaskNotification(false);
-      setMilestoneNotification(false);
-      setDeadlineNotification(false);
-      setWeeklyReport(false);
-    }
-
-    if (name === 'emailEnabled' && checked) {
-      setTaskNotification(true);
-      setMilestoneNotification(true);
-      setDeadlineNotification(true);
-      setWeeklyReport(true);
-    }
-
-    if (name === 'taskNotification') {
-      if (emailEnabled === false) {
-        setEmailEnabled(true);
+      newEmailEnabled = newValue;
+      if (!newValue) {
+        newTaskNotification = false;
+        newMilestoneNotification = false;
+        newScheduleNotification = false;
+        newDeadlineNotification = false;
+        newWeeklyReport = false;
+      } else {
+        newTaskNotification = true;
+        newMilestoneNotification = true;
+        newScheduleNotification = true;
+        newDeadlineNotification = true;
+        newWeeklyReport = true;
       }
-      setTaskNotification(checked);
+    } else if (name === 'taskNotification') {
+      newTaskNotification = newValue;
+      newEmailEnabled = newValue || emailEnabled;
+    } else if (name === 'milestoneNotification') {
+      newMilestoneNotification = newValue;
+      newEmailEnabled = newValue || emailEnabled;
+    } else if (name === 'scheduleNotification') {
+      newScheduleNotification = newValue;
+      newEmailEnabled = newValue || emailEnabled;
+    } else if (name === 'deadlineNotification') {
+      newDeadlineNotification = newValue;
+      newEmailEnabled = newValue || emailEnabled;
+    } else if (name === 'weeklyReport') {
+      newWeeklyReport = newValue;
+      newEmailEnabled = newValue || emailEnabled;
     }
 
-    if (name === 'milestoneNotification') {
-      if (emailEnabled === false) {
-        setEmailEnabled(true);
-      }
-      setMilestoneNotification(checked);
-    }
+    setEmailEnabled(newEmailEnabled);
+    setTaskNotification(newTaskNotification);
+    setMilestoneNotification(newMilestoneNotification);
+    setScheduleNotification(newScheduleNotification);
+    setDeadlineNotification(newDeadlineNotification);
+    setWeeklyReport(newWeeklyReport);
 
-    if (name === 'scheduleNotification') {
-      if (emailEnabled === false) {
-        setEmailEnabled(true);
+    await updateUserProfile({
+      notification_settings: {
+        emailEnable: newEmailEnabled ? 1 : 0,
+        taskNotification: newTaskNotification ? 1 : 0,
+        milestoneNotification: newMilestoneNotification ? 1 : 0,
+        scheduleNotification: newScheduleNotification ? 1 : 0,
+        deadlineNotification: newDeadlineNotification ? 1 : 0,
+        weeklyReport: newWeeklyReport ? 1 : 0,
+        pushNotification: pushNotification ? 1 : 0,
+        securityNotification: securityNotification ? 1 : 0,
       }
-      setScheduleNotification(checked);
-    }
-
-    if (name === 'deadlineNotification') {
-      if (emailEnabled === false) {
-        setEmailEnabled(true);
-      }
-      setDeadlineNotification(checked);
-    }
-
-    if (name === 'weeklyReport') {
-      if (emailEnabled === false) {
-        setEmailEnabled(true);
-      }
-      setWeeklyReport(checked);
-    }
+    });
   };
 
   return (

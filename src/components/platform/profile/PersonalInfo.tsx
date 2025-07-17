@@ -9,7 +9,7 @@ import {
   updateUserProfileImage,
   updateUserProfile,
 } from "@/hooks/getMemberData";
-import { User as UserType } from "@/types/User";
+import { User as UserType, blankUser } from "@/types/User";
 import { useAuthStore } from "@/auth/authStore";
 import ImageCropModal from "@/components/platform/profile/ImageCropModal";
 import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";
@@ -39,57 +39,14 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   const [cropImage, setCropImage] = useState<string | null>(null);
   const [showCropModal, setShowCropModal] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [originalProfileData, setOriginalProfileData] =
-    useState<UserType | null>(user);
+  const [originalProfileData, setOriginalProfileData] = useState<UserType | null>(user);
   const [newSkill, setNewSkill] = useState<string>("");
   const [newLanguage, setNewLanguage] = useState<string>("");
   const [isComposing, setIsComposing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
-  const [formData, setFormData] = useState<UserType>({
-    id: user.id || 0,
-    name: "",
-    email: "",
-    profile_image: "",
-    role: "",
-    status: "",
-    bio: "",
-    languages: [],
-    phone: "",
-    birth_date: "",
-    last_login: "",
-    auth_provider: "",
-    auth_provider_id: "",
-    auth_provider_access_token: "",
-    notification_settings: {
-      emailEnable: 0,
-      taskNotification: 0,
-      milestoneNotification: 0,
-      scheduleNotification: 0,
-      deadlineNotification: 0,
-      weeklyNotification: 0,
-      weeklyReport: 0,
-      pushNotification: 0,
-      securityNotification: 0,
-    },
-    projects: [],
-    participation_requests: [],
-    collaboration_preference: {
-      collaboration_style: "",
-      preferred_project_type: "",
-      preferred_role: "",
-      available_time_zone: "",
-      work_hours_start: "",
-      work_hours_end: "",
-      preferred_project_length: "",
-    },
-    tech_stacks: [],
-    interests: [],
-    social_links: [],
-    received_notifications: [],
-    sent_notifications: [],
-  });
+  const [formData, setFormData] = useState<UserType>(blankUser);
 
   useEffect(() => {
     setFormData({
@@ -160,8 +117,6 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
             originalProfileData.notification_settings.scheduleNotification,
           deadlineNotification:
             originalProfileData.notification_settings.deadlineNotification,
-          weeklyNotification:
-            originalProfileData.notification_settings.weeklyNotification,
           weeklyReport: originalProfileData.notification_settings.weeklyReport,
           pushNotification:
             originalProfileData.notification_settings.pushNotification,

@@ -17,7 +17,6 @@ export interface NotificationSetting {
     milestoneNotification: number;
     scheduleNotification: number;
     deadlineNotification: number;
-    weeklyNotification: number;
     weeklyReport: number;
     pushNotification: number;
     securityNotification: number;
@@ -94,7 +93,6 @@ export const blankUser: User = {
         milestoneNotification: 1,
         scheduleNotification: 1,
         deadlineNotification: 1,
-        weeklyNotification: 1,
         weeklyReport: 1,
         pushNotification: 1,
         securityNotification: 1,

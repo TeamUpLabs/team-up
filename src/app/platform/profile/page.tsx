@@ -8,12 +8,11 @@ import { useRouter } from "next/navigation";
 import PersonalInfo from "@/components/platform/profile/PersonalInfo";
 import Security from "@/components/platform/profile/Security";
 import Notification from "@/components/platform/profile/Notification";
-import { blankUser } from "@/types/User";
 import useSWR from "swr";
 import useAuthHydration from "@/hooks/useAuthHydration";
 import { fetcher } from "@/auth/server";
 import { useAuthStore } from "@/auth/authStore";
-import { User } from "@/types/User";
+import { User, blankUser } from "@/types/User";
 
 type ProfileTab = 'personal-info' | 'security' | 'notifications';
 
@@ -70,7 +69,7 @@ export default function ProfilePage() {
       />
       {selectedTab === 'personal-info' && <PersonalInfo user={user || blankUser} />}
       {selectedTab === 'security' && <Security />}
-      {selectedTab === 'notifications' && <Notification />}
+      {selectedTab === 'notifications' && <Notification notificationSettings={user?.notification_settings || blankUser.notification_settings} />}
     </div>
   );
 }
