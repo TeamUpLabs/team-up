@@ -1,7 +1,7 @@
 import { server } from "@/auth/server";
 import { getCurrentKoreanTime } from "@/utils/dateUtils";
 import { useAuthStore } from "@/auth/authStore";
-import { ProjectFormData } from "@/types/Project";
+import { ProjectFormData, ProjectUpdateData } from "@/types/Project";
 
 export const getAllProjects = async () => {
   try {
@@ -198,37 +198,17 @@ export const deleteProject = async (project_id: string, token: string) => {
   }
 };
 
-interface UpdateProjectFormData {
-  title: string;
-  description: string;
-  status: string;
-  visibility: string;
-  tags: string[];
-  start_date: string;
-  end_date: string;
-  team_size: number;
-  location: string;
-  project_type: string;
-}
-
-
-
-export const updateProject = async (project_id: string, formData: UpdateProjectFormData) => {
+export const updateProject = async (project_id: string, formData: ProjectUpdateData) => {
   try {
+    const token = useAuthStore.getState().token;
+
     const res = await server.put(`/projects/${project_id}`, {
-      title: formData.title,
-      description: formData.description,
-      start_date: formData.start_date,
-      end_date: formData.end_date,
+      ...formData,
       team_size: Number(formData.team_size),
-      location: formData.location,
-      project_type: formData.project_type,
-      status: formData.status,
-      visibility: formData.visibility,
-      tags: formData.tags,
     }, {
       headers: {
         'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${token}`,
       },
     });
 
