@@ -310,7 +310,7 @@ export default function MemberDetailModal({
         <div className="space-x-2">
           {member.languages && member.languages.length > 0 ? (
             member.languages.map((language: string, index: number) => (
-              <Badge key={index} content={language} color="purple" isDark={isDark} />
+              <Badge key={index} content={language} color="purple" isDark={isDark} fit />
             ))
           ) : (
             <p className="text-text-secondary">

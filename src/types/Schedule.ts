@@ -9,7 +9,7 @@ export interface ScheduleCreateFormData {
     link: string;
     start_time: string;
     end_time: string;
-    status: "not-started" | "in-progress" | "completed";
+    status: "not_started" | "in_progress" | "completed";
     memo: string;
     project_id: string;
     assignee_ids: number[];
@@ -25,7 +25,7 @@ export const blankScheduleCreateFormData: ScheduleCreateFormData = {
     link: "",
     start_time: "",
     end_time: "",
-    status: "not-started",
+    status: "not_started",
     memo: "",
     project_id: "",
     assignee_ids: [],
@@ -41,7 +41,7 @@ export interface ScheduleUpdateFormData {
     link: string;
     start_time: string;
     end_time: string;
-    status: "not-started" | "in-progress" | "completed";
+    status: "not_started" | "in_progress" | "completed";
     memo: string;
     assignee_ids: number[];
 }
@@ -55,7 +55,7 @@ export interface Schedule {
     link: string;
     start_time: string;
     end_time: string;
-    status: "not-started" | "in-progress" | "completed";
+    status: "not_started" | "in_progress" | "completed";
     memo: string;
     created_at: string;
     updated_at: string;
@@ -76,7 +76,7 @@ export const blankSchedule: Schedule = {
     link: "",
     start_time: "",
     end_time: "",
-    status: "not-started",
+    status: "not_started",
     memo: "",
     created_at: "",
     updated_at: "",

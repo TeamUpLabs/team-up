@@ -100,7 +100,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
         link: scheduleData.link ?? "",
         start_time: scheduleData.start_time ?? "",
         end_time: scheduleData.end_time ?? "",
-        assignee_id: scheduleData.assignees?.map((a) => a.id) ?? [],
+        assignee_ids: scheduleData.assignees?.map((a) => a.id) ?? [],
         where: scheduleData.where ?? "",
         status: scheduleData.status ?? "",
         memo: scheduleData.memo ?? "",
@@ -192,7 +192,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
           ) : (
             <div className="flex items-center gap-2 group relative">
               <Badge
-                content={scheduleData.status.replace('-', ' ').toUpperCase()}
+                content={scheduleData.status.replace('_', ' ').toUpperCase()}
                 color={getStatusColorName(scheduleData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"

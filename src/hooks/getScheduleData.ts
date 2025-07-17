@@ -1,6 +1,5 @@
 import { server } from "@/auth/server";
-import { getCurrentKoreanTime } from "@/utils/dateUtils";
-import { ScheduleCreateFormData } from "@/types/Schedule";
+import { ScheduleCreateFormData, ScheduleUpdateFormData } from "@/types/Schedule";
 import { useAuthStore } from "@/auth/authStore";
 
 export const createSchedule = async (project_id: string, formData: ScheduleCreateFormData) => {
@@ -26,7 +25,7 @@ export const createSchedule = async (project_id: string, formData: ScheduleCreat
 
 export const getScheduleByProject = async (project_id: string) => {
   try {
-    const res = await server.get(`/project/${project_id}/schedules`, {
+    const res = await server.get(`/projects/${project_id}/schedules`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -43,24 +42,9 @@ export const getScheduleByProject = async (project_id: string) => {
   }
 };
 
-interface ScheduleUpdateFormData {
-  title: string;
-  description: string;
-  link: string;
-  start_time: string;
-  end_time: string;
-  assignee_id: number[];
-  where: string;
-  status: string;
-  memo: string;
-}
-
 export const updateSchedule = async (project_id: string, schedule_id: number, formData: ScheduleUpdateFormData) => {
   try {
-    const res = await server.put(`/project/${project_id}/schedule/${schedule_id}`, {
-      ...formData,
-      updated_at: getCurrentKoreanTime(),
-    }, {
+    const res = await server.put(`/projects/${project_id}/schedules/${schedule_id}`, formData, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -79,7 +63,7 @@ export const updateSchedule = async (project_id: string, schedule_id: number, fo
 
 export const deleteSchedule = async (project_id: string, schedule_id: number) => {
   try {
-    const res = await server.delete(`/project/${project_id}/schedule/${schedule_id}`, {
+    const res = await server.delete(`/projects/${project_id}/schedules/${schedule_id}`, {
       headers: {
         "Content-Type": "application/json",
       },
