@@ -29,9 +29,10 @@ import SubmitBtn from "@/components/ui/button/SubmitBtn";
 
 interface PersonalInfoProps {
   user: UserType;
+  setUser: React.Dispatch<React.SetStateAction<UserType>>;
 }
 
-export default function PersonalInfo({ user }: PersonalInfoProps) {
+export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
   const { isDark } = useTheme();
   const [isEditing, setIsEditing] = useState<string>("none");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -431,18 +432,17 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
       setSubmitStatus("submitting");
       const response = await updateUserProfile(formData);
       if (response) {
-        useAuthStore.getState().setUser(response);
-        useAuthStore
-          .getState()
-          .setAlert("프로필이 업데이트되었습니다.", "success");
+        setUser({
+          ...user,
+          ...formData,
+        })
+        useAuthStore.getState().setAlert("프로필이 업데이트되었습니다.", "success");
         setIsEditing("none");
         setSubmitStatus("success");
       }
     } catch (error) {
       console.error("프로필 업데이트 중 오류:", error);
-      useAuthStore
-        .getState()
-        .setAlert("프로필 업데이트 중 오류가 발생했습니다.", "error");
+      useAuthStore.getState().setAlert("프로필 업데이트 중 오류가 발생했습니다.", "error");
       setSubmitStatus("error");
     } finally {
       setIsLoading(false);
@@ -791,8 +791,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           name="website"
           placeholder="Website URL을 입력해주세요."
           value={
-            formData.social_links.find((link) => link.platform === "website")
-              ?.url || ""
+            formData.social_links.find((link) => link.platform === "website")?.url || ""
           }
           onChange={(e) => handleSocialLinkChange("website", e.target.value)}
           isEditable

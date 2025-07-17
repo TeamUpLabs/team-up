@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TabSlider from "@/components/ui/TabSlider";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import PersonalInfo from "@/components/platform/profile/PersonalInfo";
+import Preference from "@/components/platform/profile/Preference";
 import Security from "@/components/platform/profile/Security";
 import Notification from "@/components/platform/profile/Notification";
 import useSWR from "swr";
@@ -37,10 +38,19 @@ export default function ProfilePage() {
   const hydrated = useAuthHydration();
   const token = useAuthStore((state) => state.token);
 
-  const { data: user, error, isLoading } = useSWR<User>(
+  const { data: userData, error, isLoading } = useSWR<User>(
     hydrated && token ? `/users/me` : null,
     (url: string) => fetcher(url, token || undefined)
   );
+  
+  const [user, setUser] = useState<User>(blankUser);
+  
+  // Update local state when userData changes
+  useEffect(() => {
+    if (userData) {
+      setUser(userData);
+    }
+  }, [userData]);
 
   if (error) {
     return <div className="text-center text-text-secondary p-8">프로필 정보를 가져오는 데 실패했습니다.</div>;
@@ -70,9 +80,10 @@ export default function ProfilePage() {
         onTabChange={setSelectedTab as (tab: string) => void}
         fullWidth
       />
-      {selectedTab === 'personal-info' && <PersonalInfo user={user || blankUser} />}
+      {selectedTab === 'personal-info' && <PersonalInfo user={user || blankUser} setUser={setUser} />}
+      {selectedTab === 'preference' && <Preference user={user || blankUser} setUser={setUser} />}
       {selectedTab === 'security' && <Security user={user || blankUser} />}
-      {selectedTab === 'notifications' && <Notification notificationSettings={user?.notification_settings || blankUser.notification_settings} />}
+      {selectedTab === 'notifications' && <Notification notificationSettings={user?.notification_settings || blankUser.notification_settings} setUser={setUser} />}
     </div>
   );
 }

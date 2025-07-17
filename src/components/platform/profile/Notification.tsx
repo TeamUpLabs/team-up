@@ -10,9 +10,10 @@ import { useTheme } from "@/contexts/ThemeContext";
 
 interface NotificationProps {
   notificationSettings: User['notification_settings'];
+  setUser: React.Dispatch<React.SetStateAction<User>>;
 }
 
-export default function Notification({ notificationSettings }: NotificationProps) {
+export default function Notification({ notificationSettings, setUser }: NotificationProps) {
   const { isDark } = useTheme();
   const [emailEnabled, setEmailEnabled] = useState<boolean>(Boolean(notificationSettings.emailEnable));
   const [taskNotification, setTaskNotification] = useState<boolean>(Boolean(notificationSettings.taskNotification));
@@ -71,7 +72,7 @@ export default function Notification({ notificationSettings }: NotificationProps
     setDeadlineNotification(newDeadlineNotification);
     setWeeklyReport(newWeeklyReport);
 
-    await updateUserProfile({
+    const response = await updateUserProfile({
       notification_settings: {
         emailEnable: newEmailEnabled ? 1 : 0,
         taskNotification: newTaskNotification ? 1 : 0,
@@ -83,6 +84,8 @@ export default function Notification({ notificationSettings }: NotificationProps
         securityNotification: securityNotification ? 1 : 0,
       }
     });
+
+    setUser(response);
   };
 
   return (

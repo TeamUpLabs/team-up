@@ -39,7 +39,6 @@ export default function Security({ user }: SecurityProps) {
         password: newPassword,
       });
       if (response) {
-        useAuthStore.getState().setUser(response);
         useAuthStore.getState().setAlert("비밀번호가 변경되었습니다.", "success");
         setSubmitStatus("success");
       }
