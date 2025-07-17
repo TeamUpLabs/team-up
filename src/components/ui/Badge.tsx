@@ -128,14 +128,15 @@ interface BadgeProps {
   isDark?: boolean;
   className?: string;
   isHover?: boolean;
+  fit?: boolean;
 }
 
-export default function Badge({ content, color, isEditable = false, onRemove, onClick, isDark = false, className, isHover = false }: BadgeProps) {
+export default function Badge({ content, color, isEditable = false, onRemove, onClick, isDark = false, className, isHover = false, fit = false }: BadgeProps) {
   return (
     <span 
     className={`${isDark ? darkBadgeColors[color] : badgeColors[color]} 
     ${isHover ? "transition-all duration-300 hover:scale-105" : ""}
-    px-3 py-1 rounded-md text-sm flex ${className}`} 
+    px-3 py-1 rounded-md text-sm ${fit ? "" : "flex"} ${className}`} 
     onClick={onClick}
     >
       {content}

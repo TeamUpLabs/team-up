@@ -173,18 +173,21 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
             isEditable={false}
             className="!rounded-full !px-2 !py-0.5"
             isDark={isDark}
+            fit
           />
           {isEditing === "status" ? (
             <Select
               options={[
-                { name: "status", value: "not-started", label: "NOT STARTED" },
-                { name: "status", value: "in-progress", label: "IN PROGRESS" },
-                { name: "status", value: "done", label: "Done" },
+                { name: "status", value: "not_started", label: "NOT STARTED" },
+                { name: "status", value: "in_progress", label: "IN PROGRESS" },
+                { name: "status", value: "completed", label: "COMPLETED" },
               ]}
               value={scheduleData.status}
               onChange={(value) => handleSelectChange("status", value as string)}
               color={getStatusColorName(scheduleData.status)}
-              className="px-3 py-1 rounded-full text-sm"
+              className="!px-2 !py-0.5 !rounded-full !text-sm"
+              autoWidth
+              likeBadge={true}
             />
           ) : (
             <div className="flex items-center gap-2 group relative">
@@ -194,6 +197,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
                 isDark={isDark}
+                fit
               />
               {isUserAssignee && (
                 <FontAwesomeIcon

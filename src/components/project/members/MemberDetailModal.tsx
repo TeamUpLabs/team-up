@@ -282,7 +282,17 @@ export default function MemberDetailModal({
         <div className="space-x-2">
           {member.tech_stacks && member.tech_stacks.length > 0 ? (
             member.tech_stacks.map((skill, index) => (
-              <Badge key={index} content={skill.tech} color="blue" isDark={isDark} />
+              <Badge
+                key={index}
+                content={
+                  <span>
+                    {skill.tech} {skill.level === 0 ? "초급" : skill.level === 1 ? "중급" : "고급"}
+                  </span>
+                }
+                color="blue"
+                isDark={isDark}
+                fit
+              />
             ))
           ) : (
             <p className="text-text-secondary">

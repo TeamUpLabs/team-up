@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Settings, Moon, Sun, LogOut } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { logout } from "@/auth/authApi";
+import { convertRoleName } from "@/utils/ConvertRoleName";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,7 +53,7 @@ export default function UserDropdown() {
                 text={
                   <div className="flex flex-col">
                     <span className="font-semibold">{user?.name}</span>
-                    <span className="text-text-secondary">{user?.role}</span>
+                    <span className="text-text-secondary">{convertRoleName(user?.role || "")}</span>
                   </div>
                 }
                 isHover={false}

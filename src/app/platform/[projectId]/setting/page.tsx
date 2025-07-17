@@ -38,7 +38,7 @@ export default function SettingsPage() {
         </button>
         <button
           onClick={() => setActiveTab("team")}
-          className={`px-4 py-2 font-medium relative cursor-pointer ${
+          className={`px-4 py-2 font-medium cursor-pointer ${
             activeTab === "team" ? "text-blue-500 border-b-2 border-blue-500" : "text-text-secondary"
           }`}
         >

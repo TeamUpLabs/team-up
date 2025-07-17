@@ -1,4 +1,5 @@
 import { Shield } from "lucide-react";
+import { convertRoleName } from "@/utils/ConvertRoleName";
 
 interface DepartmentCardProps {
   departments: string[];
@@ -18,7 +19,7 @@ export default function DepartmentCard({ departments }: DepartmentCardProps) {
           <Shield className="w-4 h-4 text-purple-500" />
         </div>
       </div>
-      <p className="text-xs text-text-secondary">{departments.join(', ')}</p>
+      <p className="text-xs text-text-secondary">{departments.map(department => convertRoleName(department)).join(', ')}</p>
     </div>
   )
 }

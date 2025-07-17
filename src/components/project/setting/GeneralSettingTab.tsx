@@ -19,6 +19,8 @@ import {
   Signal,
   Lock,
 } from "lucide-react";
+import CancelBtn from "@/components/ui/button/CancelBtn";
+import SubmitBtn from "@/components/ui/button/SubmitBtn";
 
 interface GeneralSettingTabProps {
   project: Project;
@@ -28,7 +30,6 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
   const { isDark } = useTheme();
   const user = useAuthStore((state) => state.user);
   const [isEditing, setIsEditing] = useState<string>("none");
-  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -41,6 +42,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
     team_size: 0,
     project_type: "",
   });
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
   // Add state for copy feedback
   const [copied, setCopied] = useState(false);
@@ -190,8 +192,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
 
   const handleSave = async () => {
     try {
-      setIsLoading(true);
-      // Validate required fields
+      setSubmitStatus('submitting');
       if (!formData.title.trim()) {
         alert("프로젝트 이름을 입력해주세요.");
         return;
@@ -202,11 +203,13 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
         .getState()
         .setAlert("프로젝트가 업데이트되었습니다.", "success");
       setIsEditing("none");
+      setSubmitStatus('success');
     } catch (error) {
       console.error("Error saving project:", error);
       useAuthStore.getState().setAlert("저장 중 오류가 발생했습니다.", "error");
+      setSubmitStatus('error');
     } finally {
-      setIsLoading(false);
+      setSubmitStatus('idle');
     }
   };
 
@@ -276,11 +279,10 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   label="프로젝트 이름"
                   value={formData.title}
                   onChange={handleChange}
-                  className={`w-full ${
-                    isEditing === "title"
+                  className={`w-full ${isEditing === "title"
                       ? "!bg-input-secondary-background"
                       : "!bg-component-background/50"
-                  } disabled:cursor-not-allowed`}
+                    } disabled:cursor-not-allowed`}
                   disabled={isEditing !== "title"}
                   isEditable
                   EditOnClick={() =>
@@ -293,11 +295,10 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   label="프로젝트 설명"
                   value={formData.description}
                   onChange={handleChange}
-                  className={`w-full ${
-                    isEditing === "description"
+                  className={`w-full ${isEditing === "description"
                       ? "!bg-input-secondary-background"
                       : "!bg-component-background/50"
-                  } disabled:cursor-not-allowed`}
+                    } disabled:cursor-not-allowed`}
                   disabled={isEditing !== "description"}
                   isEditable
                   EditOnClick={() =>
@@ -324,11 +325,10 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                     label="프로젝트 유형"
                     value={formData.project_type}
                     onChange={handleChange}
-                    className={`w-full ${
-                      isEditing === "project_type"
+                    className={`w-full ${isEditing === "project_type"
                         ? "!bg-input-secondary-background"
                         : "!bg-component-background/50"
-                    } disabled:cursor-not-allowed`}
+                      } disabled:cursor-not-allowed`}
                     disabled={isEditing !== "project_type"}
                     isEditable
                     EditOnClick={() =>
@@ -345,11 +345,10 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                     label="팀 규모"
                     value={formData.team_size}
                     onChange={handleChange}
-                    className={`w-full ${
-                      isEditing === "team_size"
+                    className={`w-full ${isEditing === "team_size"
                         ? "!bg-input-secondary-background"
                         : "!bg-component-background/50"
-                    } [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:cursor-not-allowed`}
+                      } [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:cursor-not-allowed`}
                     disabled={isEditing !== "team_size"}
                     isEditable
                     EditOnClick={() =>
@@ -367,11 +366,10 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   label="위치"
                   value={formData.location}
                   onChange={handleChange}
-                  className={`w-full ${
-                    isEditing === "location"
+                  className={`w-full ${isEditing === "location"
                       ? "!bg-input-secondary-background"
                       : "!bg-component-background/50"
-                  } disabled:cursor-not-allowed`}
+                    } disabled:cursor-not-allowed`}
                   disabled={isEditing !== "location"}
                   isEditable
                   EditOnClick={() =>
@@ -459,11 +457,10 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
               </div>
               <div className="p-6">
                 <div
-                  className={`bg-component-background/50 rounded-lg p-3 min-h-[120px] border ${
-                    isEditing === "tags"
+                  className={`bg-component-background/50 rounded-lg p-3 min-h-[120px] border ${isEditing === "tags"
                       ? "border-blue-900/30"
                       : "border-component-border"
-                  }`}
+                    }`}
                 >
                   <div className="flex flex-wrap gap-2">
                     {formData.tags.length > 0 ? (
@@ -530,11 +527,10 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   ]}
                   value={formData.status}
                   onChange={(value) => handleSelectChange("status", value as string)}
-                  className={`w-full ${
-                    isEditing === "status"
+                  className={`w-full ${isEditing === "status"
                       ? "!bg-input-secondary-background"
                       : "!bg-component-background/50"
-                  }`}
+                    }`}
                   isEditable
                   disabled={isEditing !== "status"}
                   EditOnClick={() =>
@@ -579,11 +575,10 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                   ]}
                   value={formData.visibility}
                   onChange={(value) => handleSelectChange("visibility", value as string)}
-                  className={`w-full ${
-                    isEditing === "visibility"
+                  className={`w-full ${isEditing === "visibility"
                       ? "!bg-input-secondary-background"
                       : "!bg-component-background/50"
-                  }`}
+                    }`}
                   isEditable
                   disabled={isEditing !== "visibility"}
                   EditOnClick={() =>
@@ -604,70 +599,15 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
         </div>
 
         {isEditing !== "none" && (
-          <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-700/50">
-            <button
-              onClick={handleCancel}
-              disabled={isLoading}
-              className="px-6 py-3 bg-cancel-button-background hover:bg-cancel-button-background-hover text-white rounded-md transition-colors flex items-center gap-2 active:scale-95"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              취소
-            </button>
-            <button
+          <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-component-border">
+            <CancelBtn handleCancel={handleCancel} withIcon />
+            <SubmitBtn
+              submitStatus={submitStatus}
               onClick={handleSave}
-              disabled={isLoading}
-              className={`px-6 py-3 bg-point-color-indigo hover:bg-point-color-indigo-hover text-white rounded-md transition-all flex items-center gap-2 active:scale-95 ${
-                isLoading ? "opacity-70 cursor-not-allowed" : ""
-              }`}
-            >
-              {isLoading ? (
-                <svg
-                  className="animate-spin h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              )}
-              저장하기
-            </button>
+              fit
+              withIcon
+              buttonText="저장하기"
+            />
           </div>
         )}
       </div>

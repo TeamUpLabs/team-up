@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense, lazy, useMemo, useCallback } fro
 import { User } from "@/types/User";
 import { useProject } from "@/contexts/ProjectContext";
 import TabSlider from "@/components/ui/TabSlider";
+import { convertRoleName } from "@/utils/ConvertRoleName";
 
 // 지연 로딩을 위한 컴포넌트들
 const MemberDetailModal = lazy(() => import("@/components/project/members/MemberDetailModal"));
@@ -46,7 +47,7 @@ export default function MembersPage() {
         uniqueRoles.map(role => [
           role,
           { 
-            label: role, 
+            label: convertRoleName(role), 
             count: project?.members?.filter(member => member.user.role === role).length || 0 
           }
         ])

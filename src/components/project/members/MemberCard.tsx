@@ -6,6 +6,7 @@ import { faBolt, faStar, faShieldAlt, faUser } from "@fortawesome/free-solid-svg
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useProject } from "@/contexts/ProjectContext";
+import { convertRoleName } from "@/utils/ConvertRoleName";
 
 interface MemberCardProps {
   member: User;
@@ -122,7 +123,7 @@ export default function MemberCard({
 
           <div className="flex items-center text-text-secondary">
             <p className="text-text-secondary font-medium">
-              {member.role || "역할 미지정"}
+              {convertRoleName(member.role) || "역할 미지정"}
             </p>
           </div>
 

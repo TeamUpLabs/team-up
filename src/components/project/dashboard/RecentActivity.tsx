@@ -243,6 +243,7 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
                         color="blue"
                         className="!text-xs !font-medium !px-2 !py-0.5 !rounded"
                         isDark={isDark}
+                        fit
                       />
                     </div>
                   </div>
