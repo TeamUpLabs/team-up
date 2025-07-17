@@ -139,7 +139,7 @@ export default function ProjectLayout({
     {
       icon: GithubSolid,
       activeIcon: GithubSolid,
-      category: "INTEGRATIONS",
+      category: "기능",
       label: "깃허브",
       href: `/platform/${projectId}/github`,
       isActive: pathname === `/platform/${projectId}/github`,

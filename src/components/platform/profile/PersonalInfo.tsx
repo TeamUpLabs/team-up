@@ -291,12 +291,29 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   };
 
   const handleSocialLinkChange = (platform: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      social_links: prev.social_links.map((link) =>
-        link.platform === platform ? { ...link, url: value } : link
-      ),
-    }));
+    setFormData((prev) => {
+      // Check if the platform already exists in social_links
+      const linkExists = prev.social_links.some(link => link.platform === platform);
+      
+      if (linkExists) {
+        // Update existing platform's URL
+        return {
+          ...prev,
+          social_links: prev.social_links.map((link) =>
+            link.platform === platform ? { ...link, url: value } : link
+          ),
+        };
+      } else {
+        // Add new platform with URL
+        return {
+          ...prev,
+          social_links: [
+            ...prev.social_links,
+            { platform, url: value }
+          ],
+        };
+      }
+    });
   };
 
   const handleCollaborationPreferenceChange = (
@@ -400,9 +417,9 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);
-    setSubmitStatus("submitting");
     try {
+      setIsLoading(true);
+      setSubmitStatus("submitting");
       const response = await updateUserProfile(formData);
       if (response) {
         useAuthStore.getState().setUser(response);
@@ -754,9 +771,7 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
           name="github"
           placeholder="Github URL을 입력해주세요."
           value={
-            formData.social_links
-              .find((link) => link.platform === "github")
-              ?.url.split("/")[3] || ""
+            isEditing === "github" ? formData.social_links.find((link) => link.platform === "github")?.url : formData.social_links.find((link) => link.platform === "github")?.url.split("/")[3] || ""
           }
           onChange={(e) => handleSocialLinkChange("github", e.target.value)}
           isEditable

@@ -32,6 +32,7 @@ const ExtraInfoPage = () => {
     auth_provider_id: "",
     auth_provider_access_token: "",
   });
+
   const [formData, setFormData] = useState<ExtraInfoFormData>({
     role: "",
     status: "inactive",
@@ -295,6 +296,10 @@ const ExtraInfoPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log({
+      ...formData,
+      ...partialUser,
+    });
     if (step - 2 === 5) {
       const res = await server.post(`/users/oauth`, {
         ...formData,
