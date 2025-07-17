@@ -187,7 +187,7 @@ export const deleteProject = async (project_id: string, token: string) => {
       },
     });
 
-    if (res.status === 200) {
+    if (res.status === 204) {
       return res.data;
     } else {
       throw new Error("Failed to delete project");
