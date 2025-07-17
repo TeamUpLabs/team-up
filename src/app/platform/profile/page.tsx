@@ -14,11 +14,14 @@ import { fetcher } from "@/auth/server";
 import { useAuthStore } from "@/auth/authStore";
 import { User, blankUser } from "@/types/User";
 
-type ProfileTab = 'personal-info' | 'security' | 'notifications';
+type ProfileTab = 'personal-info' | 'preference' | 'security' | 'notifications';
 
 const profileTabs: Record<ProfileTab, { label: string }> = {
   'personal-info': {
     label: '개인 정보',
+  },
+  'preference': {
+    label: '선호도',
   },
   'security': {
     label: '보안',

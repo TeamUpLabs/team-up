@@ -416,6 +416,15 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
     );
   };
 
+  const handleSkillLevelChange = (index: number, value: string) => {
+    const updatedTechStacks = [...formData.tech_stacks];
+    updatedTechStacks[index].level = parseInt(value);
+    setFormData((prev) => ({
+      ...prev,
+      tech_stacks: updatedTechStacks,
+    }));
+  };
+
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
@@ -672,7 +681,32 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
               isEditing === "tech_stacks" ? (
                 <Badge
                   key={index}
-                  content={stack.tech}
+                  content={
+                    <span className="flex items-center flex-wrap gap-2">
+                      {stack.tech} 
+                      <Select
+                        options={[
+                          { name: "tech_stacks", value: "0", label: "초급" },
+                          { name: "tech_stacks", value: "1", label: "중급" },
+                          { name: "tech_stacks", value: "2", label: "고급" },
+                        ]}
+                        value={stack.level.toString()}
+                        onChange={(value) => handleSkillLevelChange(index, value as string)}
+                        isEditable
+                        EditOnClick={() =>
+                          isEditing === "tech_stacks"
+                            ? handleCancelEdit()
+                            : handleEdit("tech_stacks")
+                        }
+                        disabled={isEditing !== "tech_stacks"}
+                        autoWidth
+                        likeBadge
+                        color="blue"
+                        isDark={isDark}
+                        className="!px-2 !py-1"
+                      />
+                    </span>
+                  }
                   color="blue"
                   isEditable={isEditing === "tech_stacks"}
                   onRemove={() => removeSkill(stack.tech)}
@@ -681,7 +715,11 @@ export default function PersonalInfo({ user }: PersonalInfoProps) {
               ) : (
                 <Badge
                   key={index}
-                  content={stack.tech}
+                  content={
+                    <span>
+                      {stack.tech} {stack.level === 0 ? "초급" : stack.level === 1 ? "중급" : "고급"}
+                    </span>
+                  }
                   color="blue"
                   isDark={isDark}
                 />

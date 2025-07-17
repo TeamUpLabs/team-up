@@ -5,12 +5,15 @@ import { Switch } from "@/components/ui/Switch";
 import { Info } from "lucide-react";
 import { updateUserProfile } from "@/hooks/getMemberData";
 import { User } from "@/types/User";
+import Badge from "@/components/ui/Badge";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface NotificationProps {
   notificationSettings: User['notification_settings'];
 }
 
 export default function Notification({ notificationSettings }: NotificationProps) {
+  const { isDark } = useTheme();
   const [emailEnabled, setEmailEnabled] = useState<boolean>(Boolean(notificationSettings.emailEnable));
   const [taskNotification, setTaskNotification] = useState<boolean>(Boolean(notificationSettings.taskNotification));
   const [milestoneNotification, setMilestoneNotification] = useState<boolean>(Boolean(notificationSettings.milestoneNotification));
@@ -19,7 +22,7 @@ export default function Notification({ notificationSettings }: NotificationProps
   const [weeklyReport, setWeeklyReport] = useState<boolean>(Boolean(notificationSettings.weeklyReport));
   const [pushNotification, setPushNotification] = useState<boolean>(Boolean(notificationSettings.pushNotification));
   const [securityNotification, setSecurityNotification] = useState<boolean>(Boolean(notificationSettings.securityNotification));
-  
+
 
   const handleEmailToggle = async (name: string, newValue: boolean) => {
     let newEmailEnabled = emailEnabled;
@@ -87,6 +90,17 @@ export default function Notification({ notificationSettings }: NotificationProps
       <div className="divide-y divide-component-border">
         <div className="flex flex-col gap-4 py-6">
           <h2 className="text-lg font-semibold text-text-secondary">이메일 알림</h2>
+          <Badge
+            content={
+              <div className="flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                <p className="text-sm">알림 설정은 자동으로 저장됩니다.</p>
+              </div>
+            }
+            color="indigo"
+            isDark={isDark}
+            className="!p-3"
+          />
           <Switch
             checked={emailEnabled}
             onChange={() => handleEmailToggle('emailEnabled', !emailEnabled)}
@@ -152,11 +166,6 @@ export default function Notification({ notificationSettings }: NotificationProps
             className="justify-between"
           />
         </div>
-      </div>
-
-      <div className="flex items-center gap-2 bg-indigo-400/20 text-indigo-400 p-4 border border-indigo-400/20 rounded-lg">
-        <Info className="w-4 h-4" />
-        <p className="text-sm">알림 설정은 자동으로 저장됩니다.</p>
       </div>
     </div>
   );
