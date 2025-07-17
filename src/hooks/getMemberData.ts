@@ -1,5 +1,5 @@
 import { server } from "@/auth/server";
-import { NotificationSetting, User, TechStack, Interest, SocialLink, CollaborationPreference } from "@/types/User";
+import { User, UpdateUserProfileData } from "@/types/User";
 import { useAuthStore } from "@/auth/authStore";
 
 export const getMembersExceptMe = async (): Promise<User[]> => {
@@ -114,24 +114,6 @@ export const cancelParticipationRequest = async (project_id: string, member_id: 
     console.error("Error canceling participation request:", error);
     throw error;
   }
-}
-
-interface UpdateUserProfileData {
-  name?: string;
-  email?: string;
-  profile_image?: string;
-  role?: string;
-  status?: string;
-  bio?: string;
-  languages?: string[];
-  phone?: string;
-  birth_date?: string;
-  last_login?: string;
-  notification_settings?: NotificationSetting;
-  collaboration_preference?: CollaborationPreference;
-  tech_stacks?: TechStack[];
-  interests?: Interest[];
-  social_links?: SocialLink[];
 }
 
 export const updateUserProfile = async (memberData: UpdateUserProfileData) => {

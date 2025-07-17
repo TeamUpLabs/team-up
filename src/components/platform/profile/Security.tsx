@@ -6,12 +6,53 @@ import { useState } from "react";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import Badge from "@/components/ui/Badge";
 import { useTheme } from "@/contexts/ThemeContext";
+import { User } from "@/types/User";
+import { updateUserProfile } from "@/hooks/getMemberData";
+import { useAuthStore } from "@/auth/authStore";
 
-export default function Security() {
+interface SecurityProps {
+  user: User;
+}
+
+export default function Security({ user }: SecurityProps) {
   const { isDark } = useTheme();
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      useAuthStore.getState().setAlert("비밀번호가 일치하지 않습니다.", "error");
+      return;
+    }
+    
+    if (newPassword.length < 8) {
+      useAuthStore.getState().setAlert("비밀번호는 8자 이상이어야 합니다.", "error");
+      return;
+    }
+    
+    try {
+      setSubmitStatus("submitting");
+      const response = await updateUserProfile({
+        password: newPassword,
+      });
+      if (response) {
+        useAuthStore.getState().setUser(response);
+        useAuthStore.getState().setAlert("비밀번호가 변경되었습니다.", "success");
+        setSubmitStatus("success");
+      }
+    } catch (error) {
+      console.error(error);
+      useAuthStore.getState().setAlert("비밀번호 변경 중 오류가 발생했습니다.", "error");
+      setSubmitStatus("error");
+    } finally {
+      setSubmitStatus("idle");
+      setNewPassword('');
+      setConfirmPassword('');
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4 border border-component-border rounded-lg px-6">
@@ -20,40 +61,36 @@ export default function Security() {
           <h2 className="text-lg font-semibold text-text-secondary">비밀번호 변경</h2>
           <Input
             type="password"
-            placeholder="현재 비밀번호를 입력해주세요."
-            label="현재 비밀번호"
-            isRequired={true}
-            startAdornment={<Lock className="w-4 h-4 text-text-secondary" />}
-            isPassword={true}
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-          />
-          <Input
-            type="password"
-            placeholder="새 비밀번호를 입력해주세요."
+            placeholder={user.auth_provider !== "local" ? "소셜 로그인을 사용 중이므로 새 비밀번호를 입력할 수 없습니다." : "새 비밀번호를 입력해주세요."}
             label="새 비밀번호"
             isRequired={true}
             startAdornment={<Lock className="w-4 h-4 text-text-secondary" />}
             isPassword={true}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
+            disabled={user.auth_provider !== "local"}
+            className="disabled:opacity-70 disabled:cursor-not-allowed"
           />
-          <Input
-            type="password"
-            placeholder="새 비밀번호를 확인해주세요."
-            label="새 비밀번호 확인"
-            isRequired={true}
-            startAdornment={<Lock className="w-4 h-4 text-text-secondary" />}
-            isPassword={true}
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            error={newPassword !== confirmPassword ? '비밀번호가 일치하지 않습니다.' : ''}
-          />
+          <div className="space-y-1">
+            <Input
+              type="password"
+              placeholder={user.auth_provider !== "local" ? "소셜 로그인을 사용 중이므로 새 비밀번호를 확인할 수 없습니다." : "새 비밀번호를 확인해주세요."}
+              label="새 비밀번호 확인"
+              isRequired={true}
+              startAdornment={<Lock className="w-4 h-4 text-text-secondary" />}
+              isPassword={true}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              error={newPassword !== confirmPassword ? '비밀번호가 일치하지 않습니다.' : ''}
+              disabled={user.auth_provider !== "local"}
+              className="disabled:opacity-70 disabled:cursor-not-allowed"
+            />
+          </div>
           <div className="flex justify-end">
             <SubmitBtn
               buttonText="변경하기"
-              onClick={() => { }}
-              submitStatus="idle"
+              onClick={handleChangePassword}
+              submitStatus={submitStatus}
               fit
               withIcon
             />
@@ -97,8 +134,8 @@ export default function Security() {
                   <p className="text-xs text-text-tertiary">Last active: 2 hours ago</p>
                 </div>
               </div>
-              <button 
-                onClick={() => {}}
+              <button
+                onClick={() => { }}
                 className="flex cursor-pointer"
               >
                 <Badge

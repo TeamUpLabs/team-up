@@ -132,3 +132,22 @@ export const blankUserBrief: UserBrief = {
     role: "",
     status: "",
 }
+
+export interface UpdateUserProfileData {
+    name?: string;
+    email?: string;
+    password?: string;
+    profile_image?: string;
+    role?: string;
+    status?: string;
+    bio?: string;
+    languages?: string[];
+    phone?: string;
+    birth_date?: string;
+    last_login?: string;
+    notification_settings?: NotificationSetting;
+    collaboration_preference?: CollaborationPreference;
+    tech_stacks?: TechStack[];
+    interests?: Interest[];
+    social_links?: SocialLink[];
+}

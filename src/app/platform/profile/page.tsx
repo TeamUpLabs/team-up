@@ -68,7 +68,7 @@ export default function ProfilePage() {
         fullWidth
       />
       {selectedTab === 'personal-info' && <PersonalInfo user={user || blankUser} />}
-      {selectedTab === 'security' && <Security />}
+      {selectedTab === 'security' && <Security user={user || blankUser} />}
       {selectedTab === 'notifications' && <Notification notificationSettings={user?.notification_settings || blankUser.notification_settings} />}
     </div>
   );
