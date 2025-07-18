@@ -27,7 +27,10 @@ export default function ChannelHeader({ channel }: { channel: Channel }) {
   return (
     <div>
       <div className="flex justify-between px-6 py-4 border-b border-component-border">
-        <h2 className="text-xl font-semibold"># {channel.name}</h2>
+        <div className="flex gap-4 items-center">
+          <h2 className="text-xl font-semibold"># {channel.name}</h2>
+          <span className="text-text-secondary text-sm">{channel.description}</span>
+        </div>
         <div className="flex items-center space-x-5">
           <FontAwesomeIcon
             icon={faPhone}
