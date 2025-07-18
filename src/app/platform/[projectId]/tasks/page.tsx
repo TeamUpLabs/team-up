@@ -94,10 +94,10 @@ export default function TasksPage() {
     return tasks.filter(task => 
       task.title.toLowerCase().includes(query) ||
       task.description?.toLowerCase().includes(query) ||
-      project?.members?.some(member => member.user.name.toLowerCase().includes(query)) ||
+      task.assignees?.some(assignee => assignee.name.toLowerCase().includes(query)) ||
       task.subtasks?.some(subtask => subtask.title.toLowerCase().includes(query))
     );
-  }, [tasks, searchQuery, project?.members]);
+  }, [tasks, searchQuery]);
 
   // 메모이제이션을 통한 그룹화 최적화
   const groupedTasks = useMemo(() => ({

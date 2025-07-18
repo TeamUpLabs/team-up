@@ -92,7 +92,8 @@ export default function MilestonePage() {
       const searchLower = searchQuery.toLowerCase();
       const matchesSearch = 
         milestone.title.toLowerCase().includes(searchLower) ||
-        milestone.description?.toLowerCase().includes(searchLower);
+        milestone.description?.toLowerCase().includes(searchLower) ||
+        milestone.assignees?.some(assignee => assignee.name.toLowerCase().includes(searchLower));
 
       return matchesTab && matchesSearch;
     }) ?? [];
