@@ -23,6 +23,7 @@ import Badge from "@/components/ui/Badge";
 import { useTheme } from "@/contexts/ThemeContext";
 import { Input } from "@/components/ui/Input";
 import { Search } from "lucide-react";
+import { convertRoleName } from "@/utils/ConvertRoleName";
 
 interface TeamSettingTabProps {
   project: Project;
@@ -89,13 +90,9 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
 
   const handleKickOutMember = (member: User) => {
     try {
-      useAuthStore
-        .getState()
-        .setConfirm("정말로 이 팀원을 퇴출하시겠습니까?", async () => {
+      useAuthStore.getState().setConfirm("정말로 이 팀원을 퇴출하시겠습니까?", async () => {
           await kickOutMemberFromProject(project.id, member.id);
-          useAuthStore
-            .getState()
-            .setAlert(`${member.name}님이 퇴출되었습니다.`, "success");
+          useAuthStore.getState().setAlert(`${member.name}님이 퇴출되었습니다.`, "success");
           useAuthStore.getState().clearConfirm();
         });
     } catch (error) {
@@ -110,12 +107,9 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
       return;
     }
     try {
-      useAuthStore
-        .getState()
-        .setConfirm(`${request.user.name}님의 참여 요청을 승인하시겠습니까?`, async () => {
+      useAuthStore.getState().setConfirm(`${request.user.name}님의 참여 요청을 승인하시겠습니까?`, async () => {
           if (project.members.length >= project.team_size) {
-            useAuthStore
-              .getState()
+            useAuthStore.getState()
               .setAlert(
                 "팀 인원이 다 찼습니다. 팀 규모를 늘리거나 팀원을 추방해주세요.",
                 "error"
@@ -123,15 +117,11 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
             return;
           }
           await allowParticipationRequest(request.id);
-          useAuthStore
-            .getState()
-            .setAlert(`${request.user.name}님의 참여 요청이 승인되었습니다.`, "success");
+          useAuthStore.getState().setAlert(`${request.user.name}님의 참여 요청이 승인되었습니다.`, "success");
           useAuthStore.getState().clearConfirm();
         });
     } catch (error) {
-      useAuthStore
-        .getState()
-        .setAlert("참여 요청 승인에 실패했습니다.", "error");
+      useAuthStore.getState().setAlert("참여 요청 승인에 실패했습니다.", "error");
       console.error("Error approving participation request:", error);
     }
   };
@@ -142,19 +132,13 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
       return;
     }
     try {
-      useAuthStore
-        .getState()
-        .setConfirm(`${request.user.name}님의 참여 요청을 거절하시겠습니까?`, async () => {
+      useAuthStore.getState().setConfirm(`${request.user.name}님의 참여 요청을 거절하시겠습니까?`, async () => {
           await rejectParticipationRequest(request.id);
-          useAuthStore
-            .getState()
-            .setAlert(`${request.user.name}님의 참여 요청이 거절되었습니다.`, "info");
+          useAuthStore.getState().setAlert(`${request.user.name}님의 참여 요청이 거절되었습니다.`, "info");
           useAuthStore.getState().clearConfirm();
         });
     } catch (error) {
-      useAuthStore
-        .getState()
-        .setAlert("참여 요청 거절에 실패했습니다.", "error");
+      useAuthStore.getState().setAlert("참여 요청 거절에 실패했습니다.", "error");
       console.error("Error rejecting participation request:", error);
     }
   };
@@ -173,10 +157,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
             <div className="rounded-lg border border-component-border overflow-hidden">
               <div className="bg-component-tertiary-background px-4 py-3 flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <FontAwesomeIcon
-                    icon={faUserGroup}
-                    className="text-blue-400"
-                  />
+                  <FontAwesomeIcon icon={faUserGroup} className="text-blue-400" />
                   <h3 className="font-medium text-text-primary">참여 요청</h3>
                   <span className="bg-blue-500/20 text-blue-300 text-xs px-2 py-0.5 rounded-full">
                     {project.participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length}
@@ -235,10 +216,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                                 handleApproveRequest(request)
                               }
                             >
-                              <FontAwesomeIcon
-                                icon={faCheck}
-                                className="mr-1.5"
-                              />
+                              <FontAwesomeIcon icon={faCheck} className="mr-1.5" />
                               승인
                             </button>
                             <button
@@ -247,10 +225,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                                 handleRejectRequest(request)
                               }
                             >
-                              <FontAwesomeIcon
-                                icon={faXmark}
-                                className="mr-1.5"
-                              />
+                              <FontAwesomeIcon icon={faXmark} className="mr-1.5" />
                               거절
                             </button>
                           </div>
@@ -332,7 +307,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                             />
                           )}
                           <Badge
-                            content={member.user.role}
+                            content={convertRoleName(member.user.role)}
                             color="cyan"
                             isDark={isDark}
                             className="!text-xs !px-2 !py-0.5"
