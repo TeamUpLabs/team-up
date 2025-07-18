@@ -159,7 +159,7 @@ export default function ProjectLayout({
     <div className="flex min-h-screen bg-background">
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-background/70 lg:hidden"
+          className="fixed inset-0 bg-background/70 lg:hidden z-[11]"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
