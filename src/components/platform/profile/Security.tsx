@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/Input";
-import { Lock, Smartphone, Laptop, Check, X } from "lucide-react";
+import { Lock, Smartphone, Laptop, Tablet, Check, X } from "lucide-react";
 import { useState } from "react";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import Badge from "@/components/ui/Badge";
@@ -9,6 +9,8 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { User } from "@/types/User";
 import { updateUserProfile } from "@/hooks/getMemberData";
 import { useAuthStore } from "@/auth/authStore";
+import { formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
 
 interface SecurityProps {
   user: User;
@@ -27,12 +29,12 @@ export default function Security({ user }: SecurityProps) {
       useAuthStore.getState().setAlert("비밀번호가 일치하지 않습니다.", "error");
       return;
     }
-    
+
     if (newPassword.length < 8) {
       useAuthStore.getState().setAlert("비밀번호는 8자 이상이어야 합니다.", "error");
       return;
     }
-    
+
     try {
       setSubmitStatus("submitting");
       const response = await updateUserProfile({
@@ -99,57 +101,36 @@ export default function Security({ user }: SecurityProps) {
         <div className="flex flex-col gap-4 py-6">
           <h2 className="text-lg font-semibold text-text-secondary mb-4">활성 세션</h2>
           <div className="flex flex-col gap-4">
-            <div className="border border-component-border rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-component-tertiary-background rounded-lg">
-                  <Laptop className="w-5 h-5 text-text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium text-text-primary">Current Session</p>
-                  <p className="text-sm text-text-secondary">Chrome on macOS • New York, USA</p>
-                  <p className="text-xs text-text-tertiary">Last active: Now</p>
-                </div>
-              </div>
-              <Badge
-                color="green"
-                content={
-                  <div className="flex items-center gap-1">
-                    <Check className="w-3 h-3" />
-                    <span>Current</span>
+            {user.sessions.map((session, idx) => (
+              <div key={idx} className="border border-component-border rounded-lg p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-component-tertiary-background rounded-lg">
+                    {session.device_type === "Mobile" ? (
+                      <Smartphone className="w-5 h-5 text-text-primary" />
+                    ) : session.device_type === "Tablet" ? (
+                      <Tablet className="w-5 h-5 text-text-primary" />
+                    ) : (
+                      <Laptop className="w-5 h-5 text-text-primary" />
+                    )}
                   </div>
-                }
-                isDark={isDark}
-              />
-            </div>
-
-            <div className="border border-component-border rounded-lg p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-component-tertiary-background rounded-lg">
-                  <Smartphone className="w-5 h-5 text-text-primary" />
+                  <div>
+                    <p className="font-medium text-text-primary">{session.is_current ? "Current Session" : "Other Session"}</p>
+                    <p className="text-sm text-text-secondary">{session.browser} on {session.device} • {session.geo_location}</p>
+                    <p className="text-xs text-text-tertiary">Last active: {formatDistanceToNow(session.last_active_at, { addSuffix: true, locale: ko })}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium text-text-primary">Mobile App</p>
-                  <p className="text-sm text-text-secondary">iPhone • New York, USA</p>
-                  <p className="text-xs text-text-tertiary">Last active: 2 hours ago</p>
-                </div>
-              </div>
-              <button
-                onClick={() => { }}
-                className="flex cursor-pointer"
-              >
                 <Badge
-                  color="red"
+                  color={session.is_current ? "green" : "red"}
                   content={
                     <div className="flex items-center gap-1">
-                      <X className="w-3 h-3" />
-                      <span>Revoke</span>
+                      {session.is_current ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
+                      <span>{session.is_current ? "Current" : "Revoke"}</span>
                     </div>
                   }
                   isDark={isDark}
-                  isHover
                 />
-              </button>
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -46,6 +46,20 @@ export interface SocialLink {
     url: string;
 }
 
+export interface Session {
+    session_id: string;
+    device_id: string;
+    user_agent: string;
+    geo_location: string;
+    ip_address: string;
+    browser: string;
+    os: string;
+    device: string;
+    device_type: string;
+    last_active_at: string;
+    is_current: boolean;
+}
+
 export interface User {
     id: number;
     name: string;
@@ -70,6 +84,7 @@ export interface User {
     social_links: SocialLink[];
     received_notifications: Notification[];
     sent_notifications: Notification[];
+    sessions: Session[];
 }
 
 export const blankUser: User = {
@@ -113,6 +128,7 @@ export const blankUser: User = {
     social_links: [],
     received_notifications: [],
     sent_notifications: [],
+    sessions: [],
 }
 
 export interface UserBrief {
