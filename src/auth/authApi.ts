@@ -1,17 +1,40 @@
 import { server } from '@/auth/server';
 import { useAuthStore } from '@/auth/authStore';
 import { AxiosError } from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+
+export const getOrCreateDeviceId = () => {
+  let deviceId = localStorage.getItem('deviceId');
+  if (!deviceId) {
+    deviceId = uuidv4();
+    localStorage.setItem('deviceId', deviceId);
+  }
+  return deviceId;
+};
+
+export const getDeviceIdentifier = () => {
+  const ua = navigator.userAgent;
+  const platform = navigator.platform;
+  const language = navigator.language;
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return btoa(`${ua}::${platform}::${language}::${timezone}`);
+};
 
 export const login = async (email: string, password: string) => {
   try {
-    const formData = new FormData();
-    formData.append('username', email);
-    formData.append('password', password);
+    const deviceId = getOrCreateDeviceId();
+    const sessionId = getDeviceIdentifier();
     
-    const res = await server.post('/auth/login', formData, {
+    const res = await server.post('/auth/login', {
+      email,
+      password,
+      device_id: deviceId,
+      session_id: sessionId,
+    }, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true,
     });
 
     const data = res.data;
@@ -51,7 +74,8 @@ export const logout = async () => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
-      }
+      },
+      withCredentials: true,
     });
     if (res.status === 200) {
       useAuthStore.getState().logout();

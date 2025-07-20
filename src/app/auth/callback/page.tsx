@@ -4,9 +4,11 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from '@/auth/authStore';
 import { server } from '@/auth/server';
+import { getOrCreateDeviceId, getDeviceIdentifier } from '@/auth/authApi';
 
 export default function AuthCallback() {
   const router = useRouter();
+  
   useEffect(() => {
     const exchangeCodeForToken = async () => {
       if (typeof window !== 'undefined') {
@@ -15,8 +17,12 @@ export default function AuthCallback() {
         const social = url.searchParams.get("social");
         if (!code || !social) return;
 
-        // Use relative URL that will be proxied through Next.js
-        const res = await server.get(`/auth/social/${social}/callback?code=${code}`, {
+        const res = await server.post(`/auth/social/callback`, {
+          provider: social,
+          code: code,
+          device_id: getOrCreateDeviceId(),
+          session_id: getDeviceIdentifier(),
+        }, {
           withCredentials: true,
         });
         const data = res.data;
@@ -27,7 +33,6 @@ export default function AuthCallback() {
           useAuthStore.getState().setAlert("로그인 성공", "success");
           window.location.href = "/";
         } else if (data.status === "need_additional_info") {
-          // Redirect to additional info page
           localStorage.setItem("partial_user", JSON.stringify(data.user_info));
           router.push(`/auth/extra-info?social=${social}`);
         }
