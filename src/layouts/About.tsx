@@ -116,6 +116,7 @@ export default function About() {
             content="🚀 베타 서비스 런칭"
             isDark={isDark}
             className="!rounded-full"
+            fit
           />
           <h1 className="text-5xl md:text-7xl font-bold my-8">
             <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-green-400 bg-clip-text text-transparent">
