@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import { geistSans } from "@/lib/fonts";
+import { notoSans } from "@/lib/fonts";
 import AlertProvider from "@/providers/AlertProvider";
 import ConfirmProvider from "@/providers/ConfirmProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -97,7 +97,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.className} antialiased`}
+        className={`${notoSans.className} antialiased`}
         suppressHydrationWarning
       >
         <SWRConfig

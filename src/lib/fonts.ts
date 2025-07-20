@@ -1,4 +1,7 @@
-import { GeistSans, GeistMono } from 'geist/font';
+import { Noto_Sans_KR } from "next/font/google";
 
-export const geistSans = GeistSans;
-export const geistMono = GeistMono;
+export const notoSans = Noto_Sans_KR({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-noto-sans",
+});

@@ -48,7 +48,7 @@ export default function ModalTemplete({ header, children, footer, isOpen, onClos
 
   return (
     <AnimatePresence mode="wait" onExitComplete={onClose}>
-      <div className="fixed inset-0 z-10" onClick={onClose}>
+      <div className="fixed inset-0 z-20" onClick={onClose}>
         {/* Backdrop */}
         <motion.div
           className="fixed inset-0 bg-black/50"
