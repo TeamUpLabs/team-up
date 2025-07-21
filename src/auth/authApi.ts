@@ -71,6 +71,8 @@ export const logout = async () => {
       throw new Error('Token not found');
     }
     const res = await server.post(`/auth/${user.id}/logout`, {
+      session_id: getDeviceIdentifier(),
+    }, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
