@@ -101,8 +101,6 @@ export default function SignUpLayout() {
   ];
 
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
 
   const [languageInput, setLanguageInput] = useState("");
@@ -348,11 +346,6 @@ export default function SignUpLayout() {
       };
       fetchSignup();
     } else {
-      if (step === 3 && !formData.role) {
-        useAuthStore.getState().setAlert("역할을 선택해주세요.", "error");
-        return;
-      }
-
       if (step === 1) {
         const isExists = await checkMember(formData.email);
         if (isExists) {
@@ -362,22 +355,48 @@ export default function SignUpLayout() {
           return;
         }
       }
+
+      if (step === 2 && confirmPassword !== formData.password) {
+        useAuthStore.getState().setAlert("비밀번호가 일치하지 않습니다.", "error");
+        return;
+      }
+
+      if (step === 3 && !formData.role) {
+        useAuthStore.getState().setAlert("역할을 선택해주세요.", "error");
+        return;
+      }
+
+      if (step === 4 && !formData.phone) {
+        useAuthStore.getState().setAlert("전화번호를 입력해주세요.", "error");
+        return;
+      }
+
+      if (step === 4 && !formData.birth_date) {
+        useAuthStore.getState().setAlert("생년월일을 선택해주세요.", "error");
+        return;
+      }
       setStep((prev) => Math.min(7, prev + 1));
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-xl bg-component-background rounded-lg shadow-md p-8 border border-component-border space-y-6">
-        <div className="space-y-2">
-          {step > 1 && (
-            <div
-              className="cursor-pointer transition-all duration-300 hover:translate-x-[-3px]"
-              onClick={() => setStep((prev) => Math.max(1, prev - 1))}
-            >
-              <ArrowLeft className="text-text-secondary text-xl" />
+      <div className="w-full max-w-3xl bg-component-background rounded-lg shadow-md p-8 border border-component-border space-y-6">
+        <div className="space-y-2 relative">
+          <div className="flex items-center justify-center relative w-full mb-6">
+            {step > 1 && (
+              <div
+                className="absolute left-0 cursor-pointer transition-all duration-300 hover:translate-x-[-3px]"
+                onClick={() => setStep((prev) => Math.max(1, prev - 1))}
+              >
+                <ArrowLeft className="text-text-secondary text-xl" />
+              </div>
+            )}
+            <div className="flex flex-col gap-1 text-center">
+              <h1 className="text-2xl font-bold">회원가입</h1>
+              <p className="text-point-color-indigo text-sm">TeamUp에서 당신의 역량을 발휘할 준비를 해보세요.</p>
             </div>
-          )}
+          </div>
           <div className="w-full h-4 bg-component-secondary-background rounded-full">
             <div
               className="h-full bg-point-color-indigo rounded-full transition-all duration-200"
@@ -424,8 +443,6 @@ export default function SignUpLayout() {
             <SignupStep2
               password={formData.password}
               confirmPassword={confirmPassword}
-              showPassword={showPassword}
-              showConfirmPassword={showConfirmPassword}
               passwordError={passwordError}
               onChange={handleInputChange}
               onConfirmChange={(e) => {
@@ -436,10 +453,6 @@ export default function SignUpLayout() {
                     : ""
                 );
               }}
-              toggleShowPassword={() => setShowPassword(!showPassword)}
-              toggleShowConfirmPassword={() =>
-                setShowConfirmPassword(!showConfirmPassword)
-              }
             />
           )}
 
