@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/github.css'; // 코드 하이라이트 스타일
 import { Heading, Bold, Italic, Strikethrough, Code, Link, List, ListOrdered, ListTodo, AtSign, Undo, Redo, Expand, Shrink } from 'lucide-react';
+import { MarkdownHighlighter } from '@/components/ui/MarkdownHighlighter';
 
 interface MarkdownEditorProps {
   value: string;
@@ -107,21 +105,24 @@ const MarkdownEditor = ({
   const generatedId = React.useId();
   const editorId = id || generatedId;
 
+  // Only sync when the value prop changes from outside the component
   useEffect(() => {
-    const valuePropHasChanged = prevValueRef.current !== value;
-
-    if (valuePropHasChanged) {
+    if (prevValueRef.current !== value) {
       sync(value);
-    } else {
-      if (value !== currentValue) {
-        onChange(currentValue);
-      }
+      prevValueRef.current = value;
     }
+  }, [value, sync]);
 
-    prevValueRef.current = value;
-  }, [value, currentValue, onChange, sync]);
+  // Only update parent when currentValue changes from user input
+  useEffect(() => {
+    if (prevValueRef.current !== currentValue) {
+      onChange(currentValue);
+      prevValueRef.current = currentValue;
+    }
+  }, [currentValue, onChange]);
 
   const handleToolbarClick = useCallback((syntax: 'h2' | 'bold' | 'italic' | 'strikethrough' | 'code' | 'link' | 'ul' | 'ol' | 'task') => {
+    if (!textAreaRef.current) return;
     const textarea = textAreaRef.current;
     if (!textarea) return;
 
@@ -152,8 +153,11 @@ const MarkdownEditor = ({
     }, 0);
   }, [currentValue, setValue]);
   
+  // Handle keyboard events for markdown shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle key events if not in write mode
+      if (mode !== 'write') return;
       const textarea = textAreaRef.current;
       if (!textarea) return;
 
@@ -212,7 +216,7 @@ const MarkdownEditor = ({
     return () => {
       editor?.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleToolbarClick, currentValue, setValue]);
+  }, [handleToolbarClick, currentValue, setValue, mode]);
 
   const ToolbarButton = ({ onClick, icon: Icon, 'aria-label': ariaLabel, title, disabled }: { onClick: () => void; icon: React.ElementType; 'aria-label': string; title: string; disabled?: boolean }) => (
     <button type="button" onClick={onClick} className="p-1.5 text-text-secondary hover:bg-input-border rounded disabled:opacity-50 disabled:cursor-not-allowed" aria-label={ariaLabel} title={title} disabled={disabled}>
@@ -273,12 +277,7 @@ const MarkdownEditor = ({
             />
           ) : (
             <div className="p-3 prose prose-invert max-w-none overflow-y-auto" style={{ height: editorHeight }}>
-              <ReactMarkdown 
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeHighlight]}
-              >
-                {currentValue || placeholder}
-              </ReactMarkdown>
+              <MarkdownHighlighter text={currentValue} />
             </div>
           )}
         </div>

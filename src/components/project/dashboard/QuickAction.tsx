@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Plus, Milestone, Calendar, UserPlus } from "lucide-react";
+import { Plus, Milestone, Calendar, Presentation } from "lucide-react";
 import { cn } from "@/lib/utils";
 import SelectMilestoneModal from '@/components/project/task/SelectMilestoneModal';
 import MilestoneCreateModal from '@/components/project/milestone/MilestoneCreateModal';
 import ScheduleCreateModal from '@/components/project/calendar/ScheduleCreateModal';
+import WhiteboardCreateModal from '@/components/project/WhiteBoard/whiteboardCreateModal';
 
 
 interface QuickActionItem {
@@ -19,7 +20,7 @@ export default function QuickAction() {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isMilestoneModalOpen, setIsMilestoneModalOpen] = useState(false);
   const [isMeetingModalOpen, setIsMeetingModalOpen] = useState(false);
-  // const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isWhiteboardModalOpen, setIsWhiteboardModalOpen] = useState(false);
 
   const quickActions: QuickActionItem[] = [
     {
@@ -44,9 +45,9 @@ export default function QuickAction() {
       textColor: 'text-green-600',
     },
     {
-      id: 'invite-member',
-      icon: <UserPlus />,
-      label: '팀원 초대',
+      id: 'new-whiteboard',
+      icon: <Presentation />,
+      label: '화이트 보드',
       bgColor: 'bg-orange-100',
       textColor: 'text-orange-600',
     },
@@ -63,9 +64,9 @@ export default function QuickAction() {
       case 'new-meeting':
         setIsMeetingModalOpen(true);
         break;
-      // case 'invite-member':
-      //   setIsInviteModalOpen(true);
-      //   break;
+      case 'new-whiteboard':
+        setIsWhiteboardModalOpen(true);
+        break;
       default:
         break;
     }
@@ -109,6 +110,11 @@ export default function QuickAction() {
       <ScheduleCreateModal
         isOpen={isMeetingModalOpen}
         onClose={() => setIsMeetingModalOpen(false)}
+      />
+
+      <WhiteboardCreateModal
+        isOpen={isWhiteboardModalOpen}
+        onClose={() => setIsWhiteboardModalOpen(false)}
       />
     </div>
   );
