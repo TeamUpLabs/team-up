@@ -118,7 +118,7 @@ export default function ScheduleCreateModal({
       try {
         await createSchedule(project.id, {
           ...formData,
-          status: "not-started",
+          status: "not_started",
           created_by: user?.id || 0,
           updated_by: user?.id || 0,
           project_id: project.id,
