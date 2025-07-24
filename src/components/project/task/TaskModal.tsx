@@ -164,9 +164,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
       }
     } else {
-      useAuthStore
-        .getState()
-        .setAlert("작업을 수정할 권한이 없습니다.", "error");
+      useAuthStore.getState().setAlert("작업을 수정할 권한이 없습니다.", "error");
     }
     if (isEditing === "subtasks") {
       // Remove subtasks with empty titles when finishing edit
@@ -209,6 +207,15 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   };
 
   const handleSelectChange = (name: string, value: string | string[]) => {
+    if (name === "status" && value === "completed") {
+      if (taskData?.subtasks && taskData.subtasks.length > 0) {
+        const allSubtasksCompleted = taskData.subtasks.every(subtask => subtask.is_completed);
+        if (!allSubtasksCompleted) {
+          useAuthStore.getState().setAlert('모든 하위 작업이 완료되어야 작업을 완료 상태로 이동할 수 있습니다.', 'error');
+          return;
+        }
+      }
+    }
     setTaskData((prevData) => ({ ...prevData, [name]: value }));
   };
 
@@ -224,9 +231,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     useAuthStore.getState().setConfirm("작업을 삭제하시겠습니까?", async () => {
       try {
         await deleteTask(task.id);
-        useAuthStore
-          .getState()
-          .setAlert("작업 삭제에 성공했습니다.", "success");
+        useAuthStore.getState().setAlert("작업 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
         setTimeout(() => {
           onClose();
@@ -723,10 +728,9 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Progress & Subtasks Accordian */}
       <Accordion
-        title={`Progress & Subtasks (${
-          taskData.subtasks &&
+        title={`Progress & Subtasks (${taskData.subtasks &&
           taskData.subtasks.filter((subtask) => subtask.is_completed).length
-        }/${(taskData.subtasks && taskData.subtasks.length) || 0})`}
+          }/${(taskData.subtasks && taskData.subtasks.length) || 0})`}
         icon={FileCheck}
         defaultOpen
       >
@@ -811,11 +815,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                         />
                       ) : (
                         <span
-                          className={`text-sm ${
-                            subtask?.is_completed
+                          className={`text-sm ${subtask?.is_completed
                               ? "text-text-secondary line-through"
                               : "text-text-primary"
-                          }`}
+                            }`}
                         >
                           {subtask?.title}
                         </span>
@@ -972,9 +975,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Assignee Accordian */}
       <Accordion
-        title={`Assignees (${
-          (taskData.assignees && taskData.assignees.length) || 0
-        })`}
+        title={`Assignees (${(taskData.assignees && taskData.assignees.length) || 0
+          })`}
         icon={User}
       >
         <div className="space-y-2">
@@ -1025,11 +1027,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                             });
                           }
                         }}
-                        className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all duration-200 ${
-                          isSelected
+                        className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all duration-200 ${isSelected
                             ? "bg-purple-500/20 border border-purple-500/50"
                             : "bg-component-tertiary-background border border-component-border hover:bg-component-tertiary-background/60"
-                        }`}
+                          }`}
                       >
                         <div className="relative flex-shrink-0">
                           <div className="w-10 h-10 rounded-full bg-component-secondary-background flex items-center justify-center overflow-hidden">
@@ -1038,11 +1039,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                                 <Image
                                   src={member.profile_image}
                                   alt="Profile"
-                                  className={`rounded-full absolute text-text-secondary transform transition-all duration-300 ${
-                                    isSelected
+                                  className={`rounded-full absolute text-text-secondary transform transition-all duration-300 ${isSelected
                                       ? "opacity-0 rotate-90 scale-0"
                                       : "opacity-100 rotate-0 scale-100"
-                                  }`}
+                                    }`}
                                   quality={100}
                                   width={60}
                                   height={60}
@@ -1053,20 +1053,18 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                               ) : (
                                 <FontAwesomeIcon
                                   icon={faUser}
-                                  className={`absolute text-text-secondary transform transition-all duration-300 ${
-                                    isSelected
+                                  className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
                                       ? "opacity-0 rotate-90 scale-0"
                                       : "opacity-100 rotate-0 scale-100"
-                                  }`}
+                                    }`}
                                 />
                               )}
                               <FontAwesomeIcon
                                 icon={faCheck}
-                                className={`absolute text-text-secondary transform transition-all duration-300 ${
-                                  isSelected
+                                className={`absolute text-text-secondary transform transition-all duration-300 ${isSelected
                                     ? "opacity-100 rotate-0 scale-100"
                                     : "opacity-0 -rotate-90 scale-0"
-                                }`}
+                                  }`}
                               />
                             </div>
                           </div>
@@ -1151,9 +1149,8 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
       {/* Comment Accordian */}
       <Accordion
-        title={`Comments (${
-          (taskData?.comments && taskData?.comments.length) || 0
-        })`}
+        title={`Comments (${(taskData?.comments && taskData?.comments.length) || 0
+          })`}
         icon={MessageDots}
       >
         <div className="flex flex-col gap-2">
