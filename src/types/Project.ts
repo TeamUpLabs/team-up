@@ -5,6 +5,7 @@ import { MileStone } from "@/types/MileStone";
 import { ParticipationRequest } from "@/types/ParticipationRequest";
 import { Schedule } from "@/types/Schedule";
 import { Channel } from "@/types/Channel";
+import { WhiteBoard } from "@/types/WhiteBoard";
 export interface Project {
   id: string;
   title: string;
@@ -32,6 +33,7 @@ export interface Project {
   participation_requests: ParticipationRequest[];
   schedules: Schedule[];
   channels: Channel[];
+  whiteboards: WhiteBoard[];
   task_count: number;
   task_completed_count: number;
   milestone_count: number;
@@ -40,6 +42,7 @@ export interface Project {
   schedule_count: number;
   channel_count: number;
   chat_count: number;
+  whiteboard_count: number;
 }
 
 export const blankProject: Project = {
@@ -63,6 +66,7 @@ export const blankProject: Project = {
   participation_requests: [],
   schedules: [],
   channels: [],
+  whiteboards: [],
   task_count: 0,
   task_completed_count: 0,
   milestone_count: 0,
@@ -71,6 +75,7 @@ export const blankProject: Project = {
   schedule_count: 0,
   channel_count: 0,
   chat_count: 0,
+  whiteboard_count: 0,
 }
 
 export interface ProjectFormData {
