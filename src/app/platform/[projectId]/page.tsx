@@ -2,7 +2,7 @@
 
 import { useProject } from '@/contexts/ProjectContext';
 import { Suspense, lazy, useMemo } from 'react';
-import { Project } from '@/types/Project';
+import { Project, blankProject } from '@/types/Project';
 
 // 지연 로딩을 위한 컴포넌트들
 const ActiveMilestoneCard = lazy(() => import("@/components/project/dashboard/ActiveMilestoneCard"));
@@ -41,67 +41,7 @@ export default function ProjectPage() {
   }, [project]);
 
   // Provide default empty values when project is loading
-  const projectData = project || {
-    id: '',
-    title: '',
-    status: 'in_progress',
-    description: '',
-    leader: {
-      id: 0,
-      name: '',
-      email: '',
-      role: '',
-      currentTask: [],
-      status: '',
-      lastLogin: '',
-      createdAt: '',
-      updatedAt: '',
-      skills: [],
-      projects: [],
-      projectDetails: [],
-      profileImage: '',
-      contactNumber: '',
-      birthDate: '',
-      introduction: '',
-      workingHours: {
-        start: '',
-        end: '',
-        timezone: ''
-      },
-      languages: [],
-      socialLinks: [],
-      participationRequests: [],
-      notification: [],
-      isGithub: false,
-      github_id: '',
-      github_access_token: '',
-      isGoogle: false,
-      google_id: '',
-      google_access_token: '',
-      isApple: false,
-      apple_id: '',
-      apple_access_token: '',
-      signupMethod: 'local' as const
-    },
-    manager: [],
-    roles: [],
-    techStack: [],
-    startDate: new Date().toISOString(),
-    endDate: new Date().toISOString(),
-    teamSize: 0,
-    location: '',
-    projectType: '',
-    members: [],
-    tasks: [],
-    milestones: [],
-    participationRequest: [],
-    participationRequestMembers: [],
-    schedules: [],
-    channels: [],
-    github_repo_url: '',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+  const projectData = project || blankProject;
 
   if (isLoading) {
     return (
