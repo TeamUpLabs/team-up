@@ -8,7 +8,10 @@ export interface WhiteBoardCreateFormData {
   attachments: {
     filename: string;
     file_url: string;
+    file_type: string;
+    file_size: number;
   }[];
+  tags: string[];
   created_by: number;
   updated_by: number;
 }
@@ -19,6 +22,7 @@ export const blankWhiteBoardCreateFormData: WhiteBoardCreateFormData = {
   title: "",
   content: "",
   attachments: [],
+  tags: [],
   created_by: 0,
   updated_by: 0,
 };
@@ -26,6 +30,8 @@ export const blankWhiteBoardCreateFormData: WhiteBoardCreateFormData = {
 export interface Attachment {
   filename: string;
   file_url: string;
+  file_type: string;
+  file_size: number;
   created_at: string;
   updated_at: string;
 }

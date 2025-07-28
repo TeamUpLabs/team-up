@@ -1,10 +1,13 @@
 import ModalTemplete from "@/components/ModalTemplete";
 import { Presentation } from "lucide-react";
-import TabSlider from "@/components/ui/TabSlider";
-import { useState } from "react";
 import Document from "@/components/project/WhiteBoard/Document";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import { useState } from "react";
+import { createWhiteBoard } from "@/hooks/getWhiteBoardData";
+import { blankWhiteBoardCreateFormData } from "@/types/WhiteBoard";
+import { useAuthStore } from "@/auth/authStore";
+import { useProject } from "@/contexts/ProjectContext";
 
 interface WhiteboardCreateModalProps {
   isOpen: boolean;
@@ -15,16 +18,47 @@ export default function WhiteboardCreateModal({
   isOpen,
   onClose,
 }: WhiteboardCreateModalProps) {
-  const [tab, setTab] = useState('document');
-  const WhiteboardTabs = {
-    'document': {
-      label: '문서',
-    },
-    'canvas': {
-      label: '캔버스',
-    },
-  }
+  const { project } = useProject();
+  const user = useAuthStore.getState().user;
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [whiteBoardData, setWhiteBoardData] = useState(blankWhiteBoardCreateFormData);
 
+  const handleSubmit = async () => {
+    // Form validation
+    if (!whiteBoardData.title.trim()) {
+      useAuthStore.getState().setAlert("화이트보드 제목을 입력해주세요.", "error");
+      return;
+    }
+
+    if (!whiteBoardData.content.trim()) {
+      useAuthStore.getState().setAlert("화이트보드 내용을 입력해주세요.", "error");
+      return;
+    }
+
+    try {
+      setSubmitStatus('submitting');
+      await createWhiteBoard({
+        ...whiteBoardData,
+        type: "document",
+        project_id: project?.id || "",
+        created_by: user?.id || 0,
+        updated_by: user?.id || 0
+      });
+      setSubmitStatus('success');
+      useAuthStore.getState().setAlert("화이트보드가 성공적으로 생성되었습니다.", "success");
+    } catch (error) {
+      console.error(error);
+      setSubmitStatus('error');
+      useAuthStore.getState().setAlert("화이트보드 생성에 실패했습니다. 잠시 후 다시 시도해주세요.", "error");
+    } finally {
+      setTimeout(() => {
+        onClose();
+        setWhiteBoardData(blankWhiteBoardCreateFormData);
+        setSubmitStatus('idle');
+      }, 1000);
+    }
+
+  }
   const modalHeader = (
     <div className="flex items-center space-x-3">
       <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary-100">
@@ -37,7 +71,7 @@ export default function WhiteboardCreateModal({
           화이트 보드 생성
         </h3>
         <p className="text-sm text-point-color-indigo mt-0.5">
-          프로젝트 화이트 보드를 관리하세요
+          당신의 아이디어를 자유롭게 표현하세요
         </p>
       </div>
     </div>
@@ -50,10 +84,11 @@ export default function WhiteboardCreateModal({
         withIcon
       />
       <SubmitBtn
-        submitStatus="idle"
+        submitStatus={submitStatus}
         buttonText="저장하기"
         withIcon
         fit
+        onClick={handleSubmit}
       />
     </div>
   )
@@ -64,24 +99,10 @@ export default function WhiteboardCreateModal({
       onClose={onClose}
       footer={modalFooter}
     >
-      <div className="space-y-2">
-        <TabSlider
-          tabs={WhiteboardTabs}
-          selectedTab={tab}
-          onTabChange={setTab}
-          fullWidth
-        />
-        {tab === 'document' && (
-          <div>
-            <Document />
-          </div>
-        )}
-        {tab === 'canvas' && (
-          <div>
-            <p>캔버스 탭</p>
-          </div>
-        )}
-      </div>
+      <Document
+        formData={whiteBoardData}
+        onChange={setWhiteBoardData}
+      />
     </ModalTemplete>
   );
 }
