@@ -22,6 +22,7 @@ import {
   Flag as FlagOutline,
   Cog as CogOutline,
   ArrowRightToBracket as ArrowRightToBracketOutline,
+  Book as BookOutline,
   Search,
   OpenSidebarAlt,
   CloseSidebarAlt,
@@ -35,6 +36,7 @@ import {
   Flag as FlagSolid,
   Cog as CogSolid,
   Github as GithubSolid,
+  Book as BookSolid,
 } from "flowbite-react-icons/solid";
 import { Input } from "@/components/ui/Input";
 
@@ -127,6 +129,14 @@ export default function ProjectLayout({
       label: "마일스톤",
       href: `/platform/${projectId}/milestone`,
       isActive: pathname === `/platform/${projectId}/milestone`,
+    },
+    {
+      icon: BookOutline,
+      activeIcon: BookSolid,
+      category: "프로젝트",
+      label: "화이트 보드",
+      href: `/platform/${projectId}/whiteboard`,
+      isActive: pathname === `/platform/${projectId}/whiteboard`,
     },
     {
       icon: CogOutline,

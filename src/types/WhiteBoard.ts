@@ -36,10 +36,25 @@ export interface Attachment {
   updated_at: string;
 }
 
+export interface Comment {
+  id: number;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  user: {
+    id: number;
+    name: string;
+    avatar?: string;
+  };
+}
+
 export interface WhiteBoardDocument {
   content: string;
   tags: string[];
   attachments: Attachment[];
+  likes: number;
+  comments: Comment[];
+  views: number;
   created_at: string;
   updated_at: string;
 }
