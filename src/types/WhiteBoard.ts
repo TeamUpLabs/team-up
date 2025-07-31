@@ -52,9 +52,6 @@ export interface WhiteBoardDocument {
   content: string;
   tags: string[];
   attachments: Attachment[];
-  likes: number;
-  comments: Comment[];
-  views: number;
   created_at: string;
   updated_at: string;
 }
@@ -69,6 +66,10 @@ export interface WhiteBoard {
   updated_at: string;
   creator: UserBrief;
   updater: UserBrief;
+
+  likes: number;
+  comments: Comment[];
+  views: number;
 }
 
 export const blankWhiteBoard: WhiteBoard = {
@@ -81,6 +82,10 @@ export const blankWhiteBoard: WhiteBoard = {
   updated_at: "",
   creator: blankUserBrief,
   updater: blankUserBrief,
+
+  likes: 0,
+  comments: [],
+  views: 0,
 };
 
 export interface WhiteBoardUpdateFormData {
