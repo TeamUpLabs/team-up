@@ -14,6 +14,8 @@ interface MarkdownEditorProps {
   isRequired?: boolean;
   error?: string;
   id?: string;
+  mode?: 'write' | 'preview';
+  disableModeToggle?: boolean;
 }
 
 type HistoryAction = 
@@ -96,8 +98,11 @@ const MarkdownEditor = ({
   isRequired,
   error,
   id,
+  mode: initialMode,
+  disableModeToggle = false,
 }: MarkdownEditorProps) => {
-  const [mode, setMode] = useState<'write' | 'preview'>('write');
+  const [internalMode, setInternalMode] = useState<'write' | 'preview'>(initialMode || 'write');
+  const mode = initialMode || internalMode;
   const [isFullScreen, setIsFullScreen] = useState(false);
   const { setValue, undo, redo, sync, canUndo, canRedo, currentValue } = useHistory(value);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -238,10 +243,24 @@ const MarkdownEditor = ({
       `}>
         
         <div className="flex items-center justify-between border-b border-input-border p-2">
-          <div className="flex items-center space-x-2">
-            <button onClick={() => setMode('write')} className={`px-3 py-1 text-sm rounded ${mode === 'write' ? 'bg-input-border' : ''}`}>Write</button>
-            <button onClick={() => setMode('preview')} className={`px-3 py-1 text-sm rounded ${mode === 'preview' ? 'bg-input-border' : ''}`}>Preview</button>
-          </div>
+          {!disableModeToggle && (
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={() => setInternalMode('write')} 
+                className={`px-3 py-1 text-sm rounded ${mode === 'write' ? 'bg-component-tertiary-background' : ''}`}
+                disabled={disableModeToggle}
+              >
+                Write
+              </button>
+              <button 
+                onClick={() => setInternalMode('preview')} 
+                className={`px-3 py-1 text-sm rounded ${mode === 'preview' ? 'bg-component-tertiary-background' : ''}`}
+                disabled={disableModeToggle}
+              >
+                Preview
+              </button>
+            </div>
+          )}
           <div className="flex items-center space-x-1">
             <ToolbarButton onClick={undo} icon={Undo} aria-label="Undo" title="Undo" disabled={!canUndo} />
             <ToolbarButton onClick={redo} icon={Redo} aria-label="Redo" title="Redo" disabled={!canRedo} />
