@@ -1,7 +1,7 @@
 import ModalTemplete from "@/components/ModalTemplete";
 import { WhiteBoard } from "@/types/WhiteBoard";
 import { useState, useCallback } from "react";
-import { Lightbulb, Eye, ThumbsUp, MessageCircle } from "lucide-react";
+import { Lightbulb, Eye, ThumbsUp, MessageCircle, Download } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +15,8 @@ import Select from "@/components/ui/Select";
 import Image from "next/image";
 import { formatDate } from "date-fns";
 import MarkdownEditor from "@/components/ui/MarkdownEditor";
+import { useTheme } from "@/contexts/ThemeContext";
+import { formatFileSize } from "@/utils/fileSize";
 
 interface WhiteboardModalProps {
   isOpen: boolean;
@@ -30,19 +32,30 @@ export default function WhiteboardModal({
   const user = useAuthStore.getState().user;
   const [ideaData, setIdeaData] = useState(idea);
   const [isEditing, setIsEditing] = useState("none");
-  const [editorMode, setEditorMode] = useState<'write' | 'preview'>('preview');
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [editorMode, setEditorMode] = useState<"write" | "preview">("preview");
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const { isDark } = useTheme();
 
-
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setIdeaData({ ...ideaData, [name]: value });
-  }
+  };
 
-  const handleContentChange = useCallback((value: string) => {
-    setIdeaData({ ...ideaData, documents: [{ ...ideaData.documents[0], content: value }] });
-  }, [ideaData]);
+  const handleContentChange = useCallback(
+    (value: string) => {
+      setIdeaData({
+        ...ideaData,
+        documents: [{ ...ideaData.documents[0], content: value }],
+      });
+    },
+    [ideaData]
+  );
 
   const handleSelectChange = (name: string, value: string | string[]) => {
     setIdeaData({ ...ideaData, [name]: value });
@@ -57,7 +70,9 @@ export default function WhiteboardModal({
         useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
       }
     } else {
-      useAuthStore.getState().setAlert("담당자가 아니므로 수정할 수 없습니다.", "warning");
+      useAuthStore
+        .getState()
+        .setAlert("담당자가 아니므로 수정할 수 없습니다.", "warning");
     }
   };
 
@@ -111,7 +126,7 @@ export default function WhiteboardModal({
         </div>
       </div>
 
-      {(isEditing !== "none") && (
+      {isEditing !== "none" && (
         <div className="flex items-center gap-2">
           <CancelBtn
             handleCancel={handleCancelEdit}
@@ -133,16 +148,8 @@ export default function WhiteboardModal({
   );
 
   return (
-    <ModalTemplete
-      isOpen={isOpen}
-      onClose={onClose}
-      header={header}
-    >
-      <Accordion
-        title="Overview"
-        icon={InfoCircle}
-        defaultOpen
-      >
+    <ModalTemplete isOpen={isOpen} onClose={onClose} header={header}>
+      <Accordion title="Overview" icon={InfoCircle} defaultOpen>
         <div className="grid grid-cols-2 gap-4 border border-component-border rounded-lg p-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2 group relative">
@@ -171,7 +178,9 @@ export default function WhiteboardModal({
               />
             ) : (
               <Badge
-                content={ideaData.type[0].toUpperCase() + ideaData.type.slice(1)}
+                content={
+                  ideaData.type[0].toUpperCase() + ideaData.type.slice(1)
+                }
                 color="violet"
                 fit
                 className="!rounded-full !px-2 !py-0.5 !text-sm"
@@ -180,8 +189,12 @@ export default function WhiteboardModal({
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-medium text-text-secondary text-sm">프로젝트 ID</h4>
-            <span className="text-text-primary font-medium text-sm">{ideaData.project_id}</span>
+            <h4 className="font-medium text-text-secondary text-sm">
+              프로젝트 ID
+            </h4>
+            <span className="text-text-primary font-medium text-sm">
+              {ideaData.project_id}
+            </span>
           </div>
 
           <div className="space-y-2">
@@ -201,12 +214,16 @@ export default function WhiteboardModal({
                   </div>
                 )}
               </div>
-              <span className="text-text-primary font-medium text-sm">{ideaData.creator.name}</span>
+              <span className="text-text-primary font-medium text-sm">
+                {ideaData.creator.name}
+              </span>
             </div>
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-medium text-text-secondary text-sm">최종 수정자</h4>
+            <h4 className="font-medium text-text-secondary text-sm">
+              최종 수정자
+            </h4>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full overflow-hidden">
                 {ideaData.updater.profile_image ? (
@@ -222,34 +239,56 @@ export default function WhiteboardModal({
                   </div>
                 )}
               </div>
-              <span className="text-text-primary font-medium text-sm">{ideaData.updater.name}</span>
+              <span className="text-text-primary font-medium text-sm">
+                {ideaData.updater.name}
+              </span>
             </div>
           </div>
 
           <div className="space-y-2">
             <h4 className="font-medium text-text-secondary text-sm">생성일</h4>
-            <span className="text-text-primary font-medium text-sm">{formatDate(new Date(ideaData.created_at), "yyyy년 MM월 dd일 hh:mm a")}</span>
+            <span className="text-text-primary font-medium text-sm">
+              {formatDate(
+                new Date(ideaData.created_at),
+                "yyyy년 MM월 dd일 hh:mm a"
+              )}
+            </span>
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-medium text-text-secondary text-sm">최종 수정일</h4>
-            <span className="text-text-primary font-medium text-sm">{formatDate(new Date(ideaData.updated_at), "yyyy년 MM월 dd일 hh:mm a")}</span>
+            <h4 className="font-medium text-text-secondary text-sm">
+              최종 수정일
+            </h4>
+            <span className="text-text-primary font-medium text-sm">
+              {formatDate(
+                new Date(ideaData.updated_at),
+                "yyyy년 MM월 dd일 hh:mm a"
+              )}
+            </span>
           </div>
         </div>
       </Accordion>
 
-      <Accordion
-        title="문서 내용"
-        icon={FileLines}
-        defaultOpen
-      >
+      <Accordion title="문서 내용" icon={FileLines}>
         <div className="space-y-4 p-4 border border-component-border rounded-lg">
           <div className="space-y-2">
             <h1 className="text-base font-semibold">문서 1</h1>
             <div className="flex items-center gap-2 text-xs text-text-secondary">
-              <span>생성: {formatDate(new Date(ideaData.documents[0].created_at), "yyyy년 MM월 dd일 hh:mm a")}</span>
+              <span>
+                생성:{" "}
+                {formatDate(
+                  new Date(ideaData.documents[0].created_at),
+                  "yyyy년 MM월 dd일 hh:mm a"
+                )}
+              </span>
               <span>|</span>
-              <span>수정: {formatDate(new Date(ideaData.documents[0].updated_at), "yyyy년 MM월 dd일 hh:mm a")}</span>
+              <span>
+                수정:{" "}
+                {formatDate(
+                  new Date(ideaData.documents[0].updated_at),
+                  "yyyy년 MM월 dd일 hh:mm a"
+                )}
+              </span>
             </div>
           </div>
 
@@ -259,13 +298,17 @@ export default function WhiteboardModal({
               <FontAwesomeIcon
                 icon={faPencil}
                 size="xs"
-                className={`${isEditing === "content" ? 'text-primary' : 'text-text-secondary'} hover:text-primary transition-colors`}
+                className={`${
+                  isEditing === "content"
+                    ? "text-primary"
+                    : "text-text-secondary"
+                } hover:text-primary transition-colors`}
                 onClick={() => {
                   if (isEditing === "content") {
                     handleEdit("none");
                   } else {
                     handleEdit("content");
-                    setEditorMode('write');
+                    setEditorMode("write");
                   }
                 }}
               />
@@ -274,9 +317,71 @@ export default function WhiteboardModal({
               value={ideaData.documents[0].content}
               onChange={handleContentChange}
               placeholder="문서 내용을 작성하세요."
-              mode={isEditing === "content" ? editorMode : 'preview'}
+              mode={isEditing === "content" ? editorMode : "preview"}
               disableModeToggle={isEditing !== "content"}
             />
+          </div>
+
+          <div className="flex flex-col space-y-1">
+            <div className="flex items-center gap-2 group relative">
+              <span className="text-text-secondary text-sm">태그</span>
+              <FontAwesomeIcon
+                icon={faPencil}
+                size="xs"
+                className="text-text-secondary cursor-pointer hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                onClick={() =>
+                  isEditing === "tags" ? handleEdit("none") : handleEdit("tags")
+                }
+              />
+            </div>
+
+            {ideaData.documents[0].tags.length == 0 && (
+              <span className="text-text-secondary text-xs">태그 없음</span>
+            )}
+
+            {ideaData.documents[0].tags.map((tag, idx) => (
+              <Badge
+                key={idx}
+                content={tag}
+                color="pink"
+                isDark={isDark}
+                fit
+                className="!text-xs !px-2 !py-0.5 !rounded-full"
+              />
+            ))}
+          </div>
+
+          <div className="flex flex-col space-y-1">
+            <span className="text-text-secondary text-sm">첨부파일</span>
+
+            {ideaData.documents[0].attachments.length == 0 && (
+              <span className="text-text-secondary text-xs">첨부파일 없음</span>
+            )}
+
+            {ideaData.documents[0].attachments.map((attachment, idx) => (
+              <div key={idx} className="p-3 border border-component-border rounded-md flex justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-component-tertiary-background">
+                    <Download className="w-5 h-5" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm text-text-primary font-semibold">{attachment.filename}</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-text-secondary">{attachment.file_type}</span>
+                      <span className="text-xs text-text-secondary">•</span>
+                      <span className="text-xs text-text-secondary">{formatFileSize(attachment.file_size)}</span>
+                    </div>
+                  </div>
+                </div>
+                <a
+                  href={attachment.file_url}
+                  className="px-2 py-1 border border-component-border rounded-md bg-transparent hover:bg-component-tertiary-background cursor-pointer"
+                  download
+                >
+                  <span className="text-sm">다운로드</span>
+                </a>
+              </div>
+            ))}
           </div>
         </div>
       </Accordion>
