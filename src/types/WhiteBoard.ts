@@ -48,6 +48,17 @@ export interface Comment {
   };
 }
 
+export interface CommentCreateFormData {
+  content: string;
+  created_at: string;
+  updated_at: string;
+  user: {
+    id: number;
+    name: string;
+    avatar?: string;
+  }
+}
+
 export interface WhiteBoardDocument {
   content: string;
   tags: string[];

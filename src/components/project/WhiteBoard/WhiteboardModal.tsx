@@ -1,15 +1,16 @@
 import ModalTemplete from "@/components/ModalTemplete";
-import { WhiteBoard } from "@/types/WhiteBoard";
+import { blankUserBrief } from "@/types/User";
+import { WhiteBoard, CommentCreateFormData } from "@/types/WhiteBoard";
 import { useState, useCallback } from "react";
 import { Lightbulb, Eye, ThumbsUp, MessageCircle, Download } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faTrash, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { useAuthStore } from "@/auth/authStore";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import Accordion from "@/components/ui/Accordion";
-import { InfoCircle, FileLines } from "flowbite-react-icons/outline";
+import { InfoCircle, FileLines, MessageDots } from "flowbite-react-icons/outline";
 import Badge from "@/components/ui/Badge";
 import Select from "@/components/ui/Select";
 import Image from "next/image";
@@ -17,6 +18,8 @@ import { formatDate } from "date-fns";
 import MarkdownEditor from "@/components/ui/MarkdownEditor";
 import { useTheme } from "@/contexts/ThemeContext";
 import { formatFileSize } from "@/utils/fileSize";
+import { useProject } from "@/contexts/ProjectContext";
+import { addComment, deleteComment } from "@/hooks/getWhiteBoardData";
 
 interface WhiteboardModalProps {
   isOpen: boolean;
@@ -36,7 +39,12 @@ export default function WhiteboardModal({
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
+  const [commentSubmitStatus, setCommentSubmitStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+
   const { isDark } = useTheme();
+  const { project } = useProject();
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -81,6 +89,92 @@ export default function WhiteboardModal({
     setIdeaData(idea);
     useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
   };
+
+  const handleCommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const commentInput = form.elements.namedItem(
+      "comment"
+    ) as HTMLTextAreaElement;
+    const commentContent = commentInput.value.trim();
+
+    if (commentContent === "") {
+      useAuthStore.getState().setAlert("댓글을 작성해주세요.", "warning");
+      return;
+    }
+
+    const newComment: CommentCreateFormData = {
+      content: commentContent,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      user: user ? user : blankUserBrief,
+    };
+
+    setCommentSubmitStatus("submitting");
+
+    try {
+      const data = await addComment(
+        project?.id ? String(project.id) : "0",
+        ideaData.id,
+        newComment
+      );
+      setCommentSubmitStatus("success");
+      useAuthStore
+        .getState()
+        .setAlert("댓글이 성공적으로 추가되었습니다.", "success");
+
+      commentInput.value = "";
+      setIdeaData((prev) => ({
+        ...prev,
+        comments: [
+          ...prev.comments,
+          {
+            id: data.id,
+            content: newComment.content,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            user: user ? user : blankUserBrief,
+          },
+        ],
+      }));
+    } catch (error) {
+      console.error("Error adding comment:", error);
+      setCommentSubmitStatus("error");
+      useAuthStore.getState().setAlert("댓글 추가에 실패했습니다.", "error");
+    } finally {
+      setCommentSubmitStatus("idle");
+    }
+  };
+
+  const handleDeleteComment = async (commentId: number) => {
+      try {
+        useAuthStore
+          .getState()
+          .setConfirm("댓글을 삭제하시겠습니까?", async () => {
+            try {
+              await deleteComment(ideaData.id, commentId);
+              useAuthStore
+                .getState()
+                .setAlert("댓글이 성공적으로 삭제되었습니다.", "success");
+              setIdeaData((prev) => ({
+                ...prev,
+                comments: prev.comments.filter(
+                  (comment) => comment.id !== commentId
+                ),
+              }));
+            } catch (error) {
+              console.error("Error deleting comment:", error);
+              useAuthStore
+                .getState()
+                .setAlert("댓글 삭제에 실패했습니다.", "error");
+            }
+          });
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+        useAuthStore.getState().setAlert("댓글 삭제에 실패했습니다.", "error");
+      }
+    };
+
 
   const header = (
     <div className="flex items-start">
@@ -322,7 +416,7 @@ export default function WhiteboardModal({
             />
           </div>
 
-          <div className="flex flex-col space-y-1">
+          <div className="space-y-1">
             <div className="flex items-center gap-2 group relative">
               <span className="text-text-secondary text-sm">태그</span>
               <FontAwesomeIcon
@@ -345,8 +439,8 @@ export default function WhiteboardModal({
                 content={tag}
                 color="pink"
                 isDark={isDark}
-                fit
                 className="!text-xs !px-2 !py-0.5 !rounded-full"
+                fit
               />
             ))}
           </div>
@@ -383,6 +477,135 @@ export default function WhiteboardModal({
               </div>
             ))}
           </div>
+        </div>
+      </Accordion>
+
+      <Accordion
+        title={`댓글 (${ideaData.comments && ideaData.comments.length || 0})`}
+        icon={MessageDots}
+      >
+        <div className="flex flex-col gap-2">
+          {ideaData?.comments && ideaData?.comments.length > 0 ? (
+            ideaData?.comments?.map((comment, index) => (
+              <div
+                key={index}
+                className="bg-component-secondary-background p-4 rounded-md border border-component-border hover:border-component-border-hover transition-all duration-200"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 relative border border-component-border rounded-full bg-component-tertiary-background flex items-center justify-center">
+                    {project?.members.find(
+                      (member) => member.user.id === comment?.user.id
+                    )?.user.profile_image ? (
+                      <Image
+                        src={
+                          project?.members.find(
+                            (member) => member.user.id === comment?.user.id
+                          )?.user.profile_image ?? "/DefaultProfile.jpg"
+                        }
+                        alt="Profile"
+                        className="w-full h-full object-fit rounded-full"
+                        quality={100}
+                        width={40}
+                        height={40}
+                      />
+                    ) : (
+                      <p>
+                        {project?.members
+                          .find(
+                            (member) => member.user.id === comment?.user.id
+                          )
+                          ?.user.name.charAt(0)}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-text-primary">
+                          {
+                            project?.members.find(
+                              (member) => member.user.id === comment?.user.id
+                            )?.user.name
+                          }
+                        </span>
+                        <span className="text-xs text-text-secondary">
+                          {
+                            project?.members.find(
+                              (member) => member.user.id === comment?.user.id
+                            )?.role
+                          }{" "}
+                          • {new Date(comment?.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      {comment?.user.id === user?.id && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="text-text-secondary hover:text-red-400 p-1.5 transition-all cursor-pointer"
+                          aria-label="댓글 삭제"
+                        >
+                          <FontAwesomeIcon icon={faTrash} size="sm" />
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-text-secondary leading-relaxed">
+                      {comment?.content}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 bg-component-secondary-background border border-dashed border-component-border rounded-md">
+              <p className="text-text-secondary mb-1">아직 댓글이 없습니다</p>
+              <p className="text-xs text-text-secondary">
+                첫 댓글을 작성해보세요
+              </p>
+            </div>
+          )}
+
+          {/* 댓글 입력 폼 */}
+          <form className="mt-4" onSubmit={handleCommentSubmit}>
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 mt-2 relative border border-component-border rounded-full bg-component-tertiary-background flex-shrink-0 flex items-center justify-center">
+                {user?.profile_image ? (
+                  <Image
+                    src={user?.profile_image ?? "/DefaultProfile.jpg"}
+                    alt="Profile"
+                    className="w-full h-full object-fit rounded-full"
+                    quality={100}
+                    width={40}
+                    height={40}
+                  />
+                ) : (
+                  <p>{user?.name.charAt(0)}</p>
+                )}
+              </div>
+              <div className="flex-1">
+                <textarea
+                  name="comment"
+                  placeholder="댓글을 작성하세요..."
+                  className="w-full p-3 rounded-md bg-component-secondary-background border border-component-border text-text-primary hover:border-input-border-hover focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent resize-none"
+                  rows={3}
+                />
+                <div className="flex items-center justify-end mt-2">
+                  <SubmitBtn
+                    submitStatus={commentSubmitStatus}
+                    buttonText={
+                      <div className="flex items-center gap-1">
+                        <FontAwesomeIcon icon={faCircleArrowUp} />
+                        댓글 등록
+                      </div>
+                    }
+                    successText="등록 완료"
+                    errorText="등록 실패"
+                    className="!text-sm !px-4 !py-2"
+                    fit
+                  />
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </Accordion>
     </ModalTemplete>
