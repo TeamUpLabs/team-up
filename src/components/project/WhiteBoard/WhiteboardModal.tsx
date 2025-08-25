@@ -1,7 +1,9 @@
+"use client";
+
 import ModalTemplete from "@/components/ModalTemplete";
 import { blankUserBrief } from "@/types/User";
 import { WhiteBoard, CommentCreateFormData } from "@/types/WhiteBoard";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Lightbulb, Eye, Heart, MessageCircle, Download } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,7 +21,7 @@ import MarkdownEditor from "@/components/ui/MarkdownEditor";
 import { useTheme } from "@/contexts/ThemeContext";
 import { formatFileSize } from "@/utils/fileSize";
 import { useProject } from "@/contexts/ProjectContext";
-import { addComment, deleteComment, updateIdea, likeIdea } from "@/hooks/getWhiteBoardData";
+import { addComment, deleteComment, updateIdea, likeIdea, updateViews } from "@/hooks/getWhiteBoardData";
 
 interface WhiteboardModalProps {
   isOpen: boolean;
@@ -45,6 +47,23 @@ export default function WhiteboardModal({
 
   const { isDark } = useTheme();
   const { project } = useProject();
+
+  // Update views when modal opens
+  useEffect(() => {
+    if (isOpen && ideaData.id) {
+      updateViews(ideaData.id)
+        .then(() => {
+          // Update local state to reflect the new view count
+          setIdeaData(prev => ({
+            ...prev,
+            views: prev.views + 1
+          }));
+        })
+        .catch(error => {
+          console.error("Failed to update views:", error);
+        });
+    }
+  }, [isOpen, ideaData.id]);
 
   const handleChange = (
     e: React.ChangeEvent<

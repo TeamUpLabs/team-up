@@ -25,9 +25,6 @@ export default function IdeaList({ idea }: IdeaListProps) {
   const document = idea.documents[0] || {
     content: '',
     tags: [],
-    likes: 0,
-    comments: [],
-    views: 0
   };
 
   const formattedDate = idea.created_at

@@ -86,4 +86,17 @@ export const likeIdea = async (whiteboard_id: number) => {
     }
 };
 
+export const updateViews = async (whiteboard_id: number) => {
+    try {
+        const res = await server.put(`/whiteboards/${whiteboard_id}/view`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error updating views:", error);
+        throw error;
+    }
+};
     
