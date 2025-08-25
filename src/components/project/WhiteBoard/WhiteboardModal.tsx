@@ -105,16 +105,13 @@ export default function WhiteboardModal({
 
     const newComment: CommentCreateFormData = {
       content: commentContent,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      user: user ? user : blankUserBrief,
+      creator: user ? user : blankUserBrief,
     };
 
     setCommentSubmitStatus("submitting");
 
     try {
       const data = await addComment(
-        project?.id ? String(project.id) : "0",
         ideaData.id,
         newComment
       );
@@ -130,10 +127,10 @@ export default function WhiteboardModal({
           ...prev.comments,
           {
             id: data.id,
-            content: newComment.content,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            user: user ? user : blankUserBrief,
+            content: data.content,
+            creator: data.creator,
+            created_at: data.created_at,
+            updated_at: data.updated_at,
           },
         ],
       }));
@@ -147,56 +144,55 @@ export default function WhiteboardModal({
   };
 
   const handleDeleteComment = async (commentId: number) => {
-      try {
-        useAuthStore
-          .getState()
-          .setConfirm("댓글을 삭제하시겠습니까?", async () => {
-            try {
-              await deleteComment(ideaData.id, commentId);
-              useAuthStore
-                .getState()
-                .setAlert("댓글이 성공적으로 삭제되었습니다.", "success");
-              setIdeaData((prev) => ({
-                ...prev,
-                comments: prev.comments.filter(
-                  (comment) => comment.id !== commentId
-                ),
-              }));
-            } catch (error) {
-              console.error("Error deleting comment:", error);
-              useAuthStore
-                .getState()
-                .setAlert("댓글 삭제에 실패했습니다.", "error");
-            }
-          });
-      } catch (error) {
-        console.error("Error deleting comment:", error);
-        useAuthStore.getState().setAlert("댓글 삭제에 실패했습니다.", "error");
-      }
-    };
+    try {
+      useAuthStore
+        .getState()
+        .setConfirm("댓글을 삭제하시겠습니까?", async () => {
+          try {
+            await deleteComment(ideaData.id, commentId);
+            useAuthStore
+              .getState()
+              .setAlert("댓글이 성공적으로 삭제되었습니다.", "success");
+            setIdeaData((prev) => ({
+              ...prev,
+              comments: prev.comments.filter(
+                (comment) => comment.id !== commentId
+              ),
+            }));
+          } catch (error) {
+            console.error("Error deleting comment:", error);
+            useAuthStore
+              .getState()
+              .setAlert("댓글 삭제에 실패했습니다.", "error");
+          }
+        });
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      useAuthStore.getState().setAlert("댓글 삭제에 실패했습니다.", "error");
+    }
+  };
 
-    const handleUpdateIdea = async () => {
-      try {
-        await updateIdea(
-          project?.id ? String(project.id) : "0",
-          ideaData.id,
-          ideaData
-        );
-        setSubmitStatus("success");
-        useAuthStore
-          .getState()
-          .setAlert("아이디어가 성공적으로 수정되었습니다.", "success");
-        onClose();
-      } catch (error) {
-        console.error("Error updating idea:", error);
-        setSubmitStatus("error");
-        useAuthStore.getState().setAlert("아이디어 수정에 실패했습니다.", "error");
-      } finally {
-        setTimeout(() => {
-          setSubmitStatus("idle");
-        }, 1000);
-      }
-    };
+  const handleUpdateIdea = async () => {
+    try {
+      await updateIdea(
+        ideaData.id,
+        ideaData
+      );
+      setSubmitStatus("success");
+      useAuthStore
+        .getState()
+        .setAlert("아이디어가 성공적으로 수정되었습니다.", "success");
+      onClose();
+    } catch (error) {
+      console.error("Error updating idea:", error);
+      setSubmitStatus("error");
+      useAuthStore.getState().setAlert("아이디어 수정에 실패했습니다.", "error");
+    } finally {
+      setTimeout(() => {
+        setSubmitStatus("idle");
+      }, 1000);
+    }
+  };
 
 
   const header = (
@@ -415,11 +411,10 @@ export default function WhiteboardModal({
               <FontAwesomeIcon
                 icon={faPencil}
                 size="xs"
-                className={`${
-                  isEditing === "content"
-                    ? "text-primary"
-                    : "text-text-secondary"
-                } hover:text-primary transition-colors`}
+                className={`${isEditing === "content"
+                  ? "text-primary"
+                  : "text-text-secondary"
+                  } hover:text-primary transition-colors`}
                 onClick={() => {
                   if (isEditing === "content") {
                     handleEdit("none");
@@ -455,17 +450,18 @@ export default function WhiteboardModal({
             {ideaData.documents[0].tags.length == 0 && (
               <span className="text-text-secondary text-xs">태그 없음</span>
             )}
-
-            {ideaData.documents[0].tags.map((tag, idx) => (
-              <Badge
-                key={idx}
-                content={tag}
-                color="pink"
-                isDark={isDark}
-                className="!text-xs !px-2 !py-0.5 !rounded-full"
-                fit
-              />
-            ))}
+            <div className="space-x-1">
+              {ideaData.documents[0].tags.map((tag, idx) => (
+                <Badge
+                  key={idx}
+                  content={tag}
+                  color="pink"
+                  isDark={isDark}
+                  className="!text-xs !px-2 !py-0.5 !rounded-full"
+                  fit
+                />
+              ))}
+            </div>
           </div>
 
           <div className="flex flex-col space-y-1">
@@ -516,13 +512,13 @@ export default function WhiteboardModal({
               >
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 relative border border-component-border rounded-full bg-component-tertiary-background flex items-center justify-center">
-                    {project?.members.find(
-                      (member) => member.user.id === comment?.user.id
-                    )?.user.profile_image ? (
+                    {project?.members?.find(
+                      (member) => member?.user?.id === comment?.creator?.id
+                    )?.user?.profile_image ? (
                       <Image
                         src={
                           project?.members.find(
-                            (member) => member.user.id === comment?.user.id
+                            (member) => member.user.id === comment?.creator?.id
                           )?.user.profile_image ?? "/DefaultProfile.jpg"
                         }
                         alt="Profile"
@@ -535,9 +531,9 @@ export default function WhiteboardModal({
                       <p>
                         {project?.members
                           .find(
-                            (member) => member.user.id === comment?.user.id
+                            (member) => member.user.id === comment?.creator?.id
                           )
-                          ?.user.name.charAt(0)}
+                          ?.user?.name?.charAt(0) || '?'}
                       </p>
                     )}
                   </div>
@@ -546,21 +542,21 @@ export default function WhiteboardModal({
                       <div className="flex flex-col">
                         <span className="font-semibold text-text-primary">
                           {
-                            project?.members.find(
-                              (member) => member.user.id === comment?.user.id
-                            )?.user.name
+                            project?.members?.find(
+                              (member) => member?.user?.id === comment?.creator?.id
+                            )?.user?.name || '알 수 없음'
                           }
                         </span>
                         <span className="text-xs text-text-secondary">
                           {
-                            project?.members.find(
-                              (member) => member.user.id === comment?.user.id
-                            )?.role
+                            project?.members?.find(
+                              (member) => member?.user?.id === comment?.creator?.id
+                            )?.role || '팀원'
                           }{" "}
                           • {new Date(comment?.created_at).toLocaleDateString()}
                         </span>
                       </div>
-                      {comment?.user.id === user?.id && (
+                      {comment?.creator?.id && comment.creator.id === user?.id && (
                         <button
                           type="button"
                           onClick={() => handleDeleteComment(comment.id)}

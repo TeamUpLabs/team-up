@@ -15,9 +15,9 @@ export const createWhiteBoard = async (whiteBoardData: WhiteBoardCreateFormData)
     }
 };
 
-export const addComment = async (project_id: string, whiteboard_id: number, comment: CommentCreateFormData) => {
+export const addComment = async (whiteboard_id: number, comment: CommentCreateFormData) => {
     try {
-        const res = await server.post(`/projects/${project_id}/whiteboards/${whiteboard_id}/comments`, comment, {
+        const res = await server.post(`/whiteboards/${whiteboard_id}/comments`, comment, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -43,9 +43,9 @@ export const deleteComment = async (whiteboard_id: number, comment_id: number) =
     }
 };
 
-export const updateIdea = async (project_id: string, whiteboard_id: number, idea: WhiteBoard) => {
+export const updateIdea = async (whiteboard_id: number, idea: WhiteBoard) => {
     try {
-        const res = await server.put(`/projects/${project_id}/whiteboards/${whiteboard_id}`, idea, {
+        const res = await server.put(`/whiteboards/${whiteboard_id}`, idea, {
             headers: {
                 "Content-Type": "application/json",
             },

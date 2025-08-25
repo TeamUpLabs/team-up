@@ -41,22 +41,12 @@ export interface Comment {
   content: string;
   created_at: string;
   updated_at: string;
-  user: {
-    id: number;
-    name: string;
-    avatar?: string;
-  };
+  creator: UserBrief;
 }
 
 export interface CommentCreateFormData {
   content: string;
-  created_at: string;
-  updated_at: string;
-  user: {
-    id: number;
-    name: string;
-    avatar?: string;
-  }
+  creator: UserBrief;
 }
 
 export interface WhiteBoardDocument {
