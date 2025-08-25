@@ -44,11 +44,17 @@ export default function WhiteboardPage() {
       </div>
 
       <ul className="space-y-4">
-        {project?.whiteboards?.map((whiteboard) => (
-          <li key={whiteboard.id}>
-            <IdeaList idea={whiteboard} />
-          </li>
-        ))}
+        {project?.whiteboards?.length === 0 ? (
+          <p className="text-center text-text-secondary">
+            아이디어가 없습니다.
+          </p>
+        ) : (
+          project?.whiteboards?.map((whiteboard) => (
+            <li key={whiteboard.id}>
+              <IdeaList idea={whiteboard} />
+            </li>
+          ))
+        )}
       </ul>
 
       <Suspense fallback={<LoadingSpinner />}>

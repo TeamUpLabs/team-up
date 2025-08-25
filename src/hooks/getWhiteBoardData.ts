@@ -100,3 +100,18 @@ export const updateViews = async (whiteboard_id: number) => {
     }
 };
     
+
+export const deleteWhiteBoard = async (whiteboard_id: number) => {
+    try {
+        const res = await server.delete(`/whiteboards/${whiteboard_id}`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error deleting whiteboard:", error);
+        throw error;
+    }
+};
+    

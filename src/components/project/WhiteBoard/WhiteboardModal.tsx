@@ -21,7 +21,8 @@ import MarkdownEditor from "@/components/ui/MarkdownEditor";
 import { useTheme } from "@/contexts/ThemeContext";
 import { formatFileSize } from "@/utils/fileSize";
 import { useProject } from "@/contexts/ProjectContext";
-import { addComment, deleteComment, updateIdea, likeIdea, updateViews } from "@/hooks/getWhiteBoardData";
+import { addComment, deleteComment, updateIdea, likeIdea, updateViews, deleteWhiteBoard } from "@/hooks/getWhiteBoardData";
+import DeleteBtn from "@/components/ui/button/DeleteBtn";
 
 interface WhiteboardModalProps {
   isOpen: boolean;
@@ -215,16 +216,36 @@ export default function WhiteboardModal({
 
   const handleLike = async () => {
     try {
-      const data = await likeIdea(ideaData.id);
-      setIdeaData((prev) => ({
-        ...prev,
-        likes: data.likes,
-        liked_by_users: data.liked_by_users,
-      }));
-      console.log(data.liked_by_users);
+      useAuthStore.getState().setConfirm("아이디어를 좋아요 하시겠습니까?", async () => {
+        try {
+          const data = await likeIdea(ideaData.id);
+          setIdeaData((prev) => ({
+            ...prev,
+            likes: data.likes,
+            liked_by_users: data.liked_by_users,
+          }));
+          console.log(data.liked_by_users);
+        } catch (error) {
+          console.error("Error liking idea:", error);
+          useAuthStore.getState().setAlert("아이디어 좋아요에 실패했습니다.", "error");
+        }
+      });
     } catch (error) {
       console.error("Error liking idea:", error);
       useAuthStore.getState().setAlert("아이디어 좋아요에 실패했습니다.", "error");
+    }
+  }
+
+  const handleDeleteIdea = async () => {
+    try {
+      await deleteWhiteBoard(ideaData.id);
+      useAuthStore
+        .getState()
+        .setAlert("아이디어가 성공적으로 삭제되었습니다.", "success");
+      onClose();
+    } catch (error) {
+      console.error("Error deleting idea:", error);
+      useAuthStore.getState().setAlert("아이디어 삭제에 실패했습니다.", "error");
     }
   }
 
@@ -294,8 +315,18 @@ export default function WhiteboardModal({
     </div>
   );
 
+  const footer = 
+    isEditing !== "none" ? (
+      <DeleteBtn
+        handleDelete={handleDeleteIdea}
+        className="!text-sm justify-self-end"
+        text="아이디어 삭제"
+        withIcon
+      />
+    ) : null;
+
   return (
-    <ModalTemplete isOpen={isOpen} onClose={onClose} header={header}>
+    <ModalTemplete isOpen={isOpen} onClose={onClose} header={header} footer={footer}>
       <Accordion title="Overview" icon={InfoCircle} defaultOpen>
         <div className="grid grid-cols-2 gap-4 border border-component-border rounded-lg p-4">
           <div className="space-y-2">
