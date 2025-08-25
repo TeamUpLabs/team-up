@@ -103,6 +103,7 @@ export default function ProjectPage() {
             tasks={project?.tasks || []} 
             milestones={project?.milestones || []} 
             schedules={project?.schedules || []}
+            whiteboards={project?.whiteboards || []}
           />
         </Suspense>
         <Suspense fallback={<SkeletonCard />}>

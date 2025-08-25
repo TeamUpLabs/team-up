@@ -20,7 +20,7 @@ interface Activity {
     profile_image?: string;
     isActive?: string;
   };
-  type: 'task' | 'milestone' | 'meeting' | 'event';
+  type: 'task' | 'milestone' | 'meeting' | 'event' | 'whiteboard';
   action: string;
   timestamp: Date;
   link?: string;
@@ -37,6 +37,7 @@ const getActivityTypeLabel = (type: string) => {
     case 'milestone': return '마일스톤';
     case 'meeting': return '회의';
     case 'event': return '이벤트';
+    case 'whiteboard': return '아이디어';
     default: return type;
   }
 };
@@ -120,6 +121,21 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
         type: 'event' as const,
         action: `"${schedule.title}" 이벤트를 ${schedule.status === 'completed' ? '참여했습니다.' : '시작했습니다.'}`,
         timestamp: new Date(schedule.updated_at || schedule.created_at)
+      };
+    }) || []),
+
+    ...(project.whiteboards?.map(whiteboard => {
+      return {
+        id: `whiteboard-${whiteboard.id}`,
+        user: {
+          name: whiteboard.creator.name || '담당자 없음',
+          email: whiteboard.creator.email || '이메일 없음',
+          profile_image: whiteboard.creator.profile_image || '/DefaultProfile.jpg',
+          isActive: whiteboard.creator.status || '활동 없음',
+        },
+        type: 'whiteboard' as const,
+        action: `"${whiteboard.title}" 아이디어를 추가했습니다.`,
+        timestamp: new Date(whiteboard.updated_at || whiteboard.created_at)
       };
     }) || []),
   ].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());

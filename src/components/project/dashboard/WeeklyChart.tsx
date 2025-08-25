@@ -2,11 +2,13 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Task } from '@/types/Task';
 import { MileStone } from '@/types/MileStone';
 import { Schedule } from '@/types/Schedule';
+import { WhiteBoard } from '@/types/WhiteBoard';
 
 interface WeeklyChartProps {
   tasks: Task[];
   milestones: MileStone[];
   schedules: Schedule[];
+  whiteboards: WhiteBoard[];
 }
 
 interface ChartData {
@@ -15,10 +17,11 @@ interface ChartData {
   milestoneCount: number;
   meetingCount: number;
   eventCount: number;
+  whiteboardCount: number;
   date: Date;
 }
 
-export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChartProps) {
+export default function WeeklyChart({ tasks, milestones, schedules, whiteboards }: WeeklyChartProps) {
   // Get dates for the past 7 days
   const getPastWeekDates = () => {
     const dates = [];
@@ -47,7 +50,7 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
   };
 
   // Helper function to extract date from different item types
-  const getDateFromItem = (item: Task | MileStone | Schedule, dateField: string): Date | null => {
+  const getDateFromItem = (item: Task | MileStone | Schedule | WhiteBoard, dateField: string): Date | null => {
     // Handle Task type
     if ('created_at' in item && dateField === 'created_at') {
       return safeDateParse(item.created_at);
@@ -62,11 +65,17 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
   };
 
   // Count items by a specific date field
-  const countItemsByDateField = <T extends Task | MileStone | Schedule>(
-    items: T[], 
+  const countItemsByDateField = <T extends Task | MileStone | Schedule | WhiteBoard>(
+    items: T[] | undefined | null, 
     dateField: string
   ): Record<string, number> => {
     const counts: Record<string, number> = {};
+    
+    // Return empty counts if items is undefined or null
+    if (!items || !Array.isArray(items)) {
+      return counts;
+    }
+    
     const today = new Date();
     const weekAgo = new Date();
     weekAgo.setDate(today.getDate() - 6);
@@ -104,6 +113,8 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
     const events = schedules.filter((s): s is Schedule => s.type === 'event');
     const eventCounts = countItemsByDateField<Schedule>(events, 'created_at');
 
+    const whiteboardCounts = countItemsByDateField<WhiteBoard>(whiteboards, 'created_at');
+
     return getPastWeekDates().map(date => {
       const dateStr = formatDate(date);
       const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
@@ -116,6 +127,7 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
         milestoneCount: milestoneCounts[dateStr] || 0,
         meetingCount: meetingCounts[dateStr] || 0,
         eventCount: eventCounts[dateStr] || 0,
+        whiteboardCount: whiteboardCounts[dateStr] || 0,
       };
     });
   };
@@ -200,6 +212,15 @@ export default function WeeklyChart({ tasks, milestones, schedules }: WeeklyChar
               dataKey="eventCount" 
               name="이벤트" 
               stroke="#8b5cf6" 
+              strokeWidth={2}
+              dot={{ r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="whiteboardCount" 
+              name="아이디어" 
+              stroke="#f43f5e" 
               strokeWidth={2}
               dot={{ r: 3 }}
               activeDot={{ r: 5 }}
