@@ -4,7 +4,7 @@ import Badge from "@/components/ui/Badge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useState } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import IdeaList from "@/components/project/WhiteBoard/IdeaList";
 import { useProject } from "@/contexts/ProjectContext";
 import { Suspense } from "react";
@@ -21,6 +21,42 @@ export default function WhiteboardPage() {
   const { isDark } = useTheme();
   const { project } = useProject();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // 디바운스된 검색 함수
+  const debouncedSetSearchQuery = useCallback((value: string) => {
+    const timeoutId = setTimeout(() => setSearchQuery(value), 300);
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  // Listen for header search events
+  useEffect(() => {
+    const handleHeaderSearch = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const searchValue = customEvent.detail || '';
+
+      // 디바운스된 검색 적용
+      debouncedSetSearchQuery(searchValue);
+    };
+
+    window.addEventListener('headerSearch', handleHeaderSearch);
+
+    return () => {
+      window.removeEventListener('headerSearch', handleHeaderSearch);
+    };
+  }, [debouncedSetSearchQuery]);
+
+
+  const filteredWhiteboards = useMemo(() => {
+    if (!searchQuery.trim()) return project?.whiteboards || [];
+
+    const searchLower = searchQuery.toLowerCase();
+    return project?.whiteboards?.filter((whiteboard) =>
+      whiteboard.title.toLowerCase().includes(searchLower) ||
+      whiteboard.documents[0].tags?.some(tag => tag.toLowerCase().includes(searchLower)) ||
+      whiteboard.creator.name.toLowerCase().includes(searchLower)
+    ) || [];
+  }, [project?.whiteboards, searchQuery]);
 
   return (
     <div className="p-4 flex flex-col gap-4">
@@ -44,12 +80,12 @@ export default function WhiteboardPage() {
       </div>
 
       <ul className="space-y-4">
-        {project?.whiteboards?.length === 0 ? (
+        {filteredWhiteboards.length === 0 ? (
           <p className="text-center text-text-secondary">
             아이디어가 없습니다.
           </p>
         ) : (
-          project?.whiteboards?.map((whiteboard) => (
+          filteredWhiteboards.map((whiteboard) => (
             <li key={whiteboard.id}>
               <IdeaList idea={whiteboard} />
             </li>
