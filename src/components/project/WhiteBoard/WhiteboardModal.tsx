@@ -239,11 +239,18 @@ export default function WhiteboardModal({
 
   const handleDeleteIdea = async () => {
     try {
-      await deleteWhiteBoard(ideaData.id);
-      useAuthStore
-        .getState()
-        .setAlert("아이디어가 성공적으로 삭제되었습니다.", "success");
-      onClose();
+      useAuthStore.getState().setConfirm("아이디어를 삭제하시겠습니까?", async () => {
+        try {
+          await deleteWhiteBoard(ideaData.id);
+          useAuthStore
+            .getState()
+            .setAlert("아이디어가 성공적으로 삭제되었습니다.", "success");
+          onClose();
+        } catch (error) {
+          console.error("Error deleting idea:", error);
+          useAuthStore.getState().setAlert("아이디어 삭제에 실패했습니다.", "error");
+        }
+      });
     } catch (error) {
       console.error("Error deleting idea:", error);
       useAuthStore.getState().setAlert("아이디어 삭제에 실패했습니다.", "error");
