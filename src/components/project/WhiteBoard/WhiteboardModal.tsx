@@ -100,9 +100,7 @@ export default function WhiteboardModal({
         useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
       }
     } else {
-      useAuthStore
-        .getState()
-        .setAlert("담당자가 아니므로 수정할 수 없습니다.", "warning");
+      useAuthStore.getState().setAlert("담당자가 아니므로 수정할 수 없습니다.", "warning");
     }
   };
 
@@ -138,9 +136,7 @@ export default function WhiteboardModal({
         newComment
       );
       setCommentSubmitStatus("success");
-      useAuthStore
-        .getState()
-        .setAlert("댓글이 성공적으로 추가되었습니다.", "success");
+      useAuthStore.getState().setAlert("댓글이 성공적으로 추가되었습니다.", "success");
 
       commentInput.value = "";
       setIdeaData((prev) => ({
@@ -167,14 +163,10 @@ export default function WhiteboardModal({
 
   const handleDeleteComment = async (commentId: number) => {
     try {
-      useAuthStore
-        .getState()
-        .setConfirm("댓글을 삭제하시겠습니까?", async () => {
+      useAuthStore.getState().setConfirm("댓글을 삭제하시겠습니까?", async () => {
           try {
             await deleteComment(ideaData.id, commentId);
-            useAuthStore
-              .getState()
-              .setAlert("댓글이 성공적으로 삭제되었습니다.", "success");
+            useAuthStore.getState().setAlert("댓글이 성공적으로 삭제되었습니다.", "success");
             setIdeaData((prev) => ({
               ...prev,
               comments: prev.comments.filter(
@@ -183,9 +175,7 @@ export default function WhiteboardModal({
             }));
           } catch (error) {
             console.error("Error deleting comment:", error);
-            useAuthStore
-              .getState()
-              .setAlert("댓글 삭제에 실패했습니다.", "error");
+            useAuthStore.getState().setAlert("댓글 삭제에 실패했습니다.", "error");
           }
         });
     } catch (error) {
@@ -206,9 +196,7 @@ export default function WhiteboardModal({
         }
       );
       setSubmitStatus("success");
-      useAuthStore
-        .getState()
-        .setAlert("아이디어가 성공적으로 수정되었습니다.", "success");
+      useAuthStore.getState().setAlert("아이디어가 성공적으로 수정되었습니다.", "success");
       onClose();
     } catch (error) {
       console.error("Error updating idea:", error);
@@ -242,9 +230,7 @@ export default function WhiteboardModal({
       useAuthStore.getState().setConfirm("아이디어를 삭제하시겠습니까?", async () => {
         try {
           await deleteWhiteBoard(ideaData.id);
-          useAuthStore
-            .getState()
-            .setAlert("아이디어가 성공적으로 삭제되었습니다.", "success");
+          useAuthStore.getState().setAlert("아이디어가 성공적으로 삭제되었습니다.", "success");
           onClose();
         } catch (error) {
           console.error("Error deleting idea:", error);
