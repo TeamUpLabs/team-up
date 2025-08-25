@@ -2,7 +2,7 @@ import ModalTemplete from "@/components/ModalTemplete";
 import { blankUserBrief } from "@/types/User";
 import { WhiteBoard, CommentCreateFormData } from "@/types/WhiteBoard";
 import { useState, useCallback } from "react";
-import { Lightbulb, Eye, ThumbsUp, MessageCircle, Download } from "lucide-react";
+import { Lightbulb, Eye, Heart, MessageCircle, Download } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
@@ -19,7 +19,7 @@ import MarkdownEditor from "@/components/ui/MarkdownEditor";
 import { useTheme } from "@/contexts/ThemeContext";
 import { formatFileSize } from "@/utils/fileSize";
 import { useProject } from "@/contexts/ProjectContext";
-import { addComment, deleteComment, updateIdea } from "@/hooks/getWhiteBoardData";
+import { addComment, deleteComment, updateIdea, likeIdea } from "@/hooks/getWhiteBoardData";
 
 interface WhiteboardModalProps {
   isOpen: boolean;
@@ -194,6 +194,21 @@ export default function WhiteboardModal({
     }
   };
 
+  const handleLike = async () => {
+    try {
+      const data = await likeIdea(ideaData.id);
+      setIdeaData((prev) => ({
+        ...prev,
+        likes: data.likes,
+        liked_by_users: data.liked_by_users,
+      }));
+      console.log(data.liked_by_users);
+    } catch (error) {
+      console.error("Error liking idea:", error);
+      useAuthStore.getState().setAlert("아이디어 좋아요에 실패했습니다.", "error");
+    }
+  }
+
 
   const header = (
     <div className="flex items-start">
@@ -225,7 +240,7 @@ export default function WhiteboardModal({
         )}
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-1 text-text-secondary text-xs">
-            <ThumbsUp className="w-4 h-4" />
+            <Heart onClick={handleLike} className={`w-4 h-4 hover:scale-115 transition-transform duration-200 cursor-pointer hover:text-red-500 ${ideaData.liked_by_users.some((user) => user.id === (user ? user.id : blankUserBrief.id)) ? "text-red-500 fill-red-500" : ""}`} />
             <span>{ideaData.likes || 0}</span>
           </div>
           <div className="flex items-center space-x-1 text-text-secondary text-xs">

@@ -1,5 +1,6 @@
 import { server } from "@/auth/server";
 import { WhiteBoardCreateFormData, CommentCreateFormData, WhiteBoard } from "@/types/WhiteBoard";
+import { useAuthStore } from "@/auth/authStore";
 
 export const createWhiteBoard = async (whiteBoardData: WhiteBoardCreateFormData) => {
     try {
@@ -54,6 +55,34 @@ export const updateIdea = async (whiteboard_id: number, idea: WhiteBoard) => {
     } catch (error) {
         console.error("Error updating idea:", error);
         throw error;
+    }
+};
+
+export const likeIdea = async (whiteboard_id: number) => {
+    try {
+        const token = useAuthStore.getState().token;
+        if (!token) {
+            throw new Error("No authentication token found");
+        }
+        
+        const res = await server.put(`/whiteboards/${whiteboard_id}/like`, 
+            {},
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            }
+        );
+        
+        if (!res.data) {
+            throw new Error("No data in response");
+        }
+        
+        return res.data;
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        throw new Error(errorMessage);
     }
 };
 

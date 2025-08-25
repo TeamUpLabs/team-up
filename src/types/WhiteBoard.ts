@@ -71,6 +71,8 @@ export interface WhiteBoard {
   likes: number;
   comments: Comment[];
   views: number;
+
+  liked_by_users: UserBrief[];
 }
 
 export const blankWhiteBoard: WhiteBoard = {
@@ -87,6 +89,8 @@ export const blankWhiteBoard: WhiteBoard = {
   likes: 0,
   comments: [],
   views: 0,
+
+  liked_by_users: [blankUserBrief],
 };
 
 export interface WhiteBoardUpdateFormData {
