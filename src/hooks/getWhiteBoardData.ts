@@ -1,5 +1,5 @@
 import { server } from "@/auth/server";
-import { WhiteBoardCreateFormData, CommentCreateFormData } from "@/types/WhiteBoard";
+import { WhiteBoardCreateFormData, CommentCreateFormData, WhiteBoard } from "@/types/WhiteBoard";
 
 export const createWhiteBoard = async (whiteBoardData: WhiteBoardCreateFormData) => {
     try {
@@ -39,6 +39,20 @@ export const deleteComment = async (whiteboard_id: number, comment_id: number) =
         return res.data;
     } catch (error) {
         console.error("Error deleting comment:", error);
+        throw error;
+    }
+};
+
+export const updateIdea = async (project_id: string, whiteboard_id: number, idea: WhiteBoard) => {
+    try {
+        const res = await server.put(`/projects/${project_id}/whiteboards/${whiteboard_id}`, idea, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error updating idea:", error);
         throw error;
     }
 };

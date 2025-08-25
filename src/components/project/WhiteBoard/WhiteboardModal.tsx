@@ -19,7 +19,7 @@ import MarkdownEditor from "@/components/ui/MarkdownEditor";
 import { useTheme } from "@/contexts/ThemeContext";
 import { formatFileSize } from "@/utils/fileSize";
 import { useProject } from "@/contexts/ProjectContext";
-import { addComment, deleteComment } from "@/hooks/getWhiteBoardData";
+import { addComment, deleteComment, updateIdea } from "@/hooks/getWhiteBoardData";
 
 interface WhiteboardModalProps {
   isOpen: boolean;
@@ -175,6 +175,29 @@ export default function WhiteboardModal({
       }
     };
 
+    const handleUpdateIdea = async () => {
+      try {
+        await updateIdea(
+          project?.id ? String(project.id) : "0",
+          ideaData.id,
+          ideaData
+        );
+        setSubmitStatus("success");
+        useAuthStore
+          .getState()
+          .setAlert("아이디어가 성공적으로 수정되었습니다.", "success");
+        onClose();
+      } catch (error) {
+        console.error("Error updating idea:", error);
+        setSubmitStatus("error");
+        useAuthStore.getState().setAlert("아이디어 수정에 실패했습니다.", "error");
+      } finally {
+        setTimeout(() => {
+          setSubmitStatus("idle");
+        }, 1000);
+      }
+    };
+
 
   const header = (
     <div className="flex items-start">
@@ -228,7 +251,7 @@ export default function WhiteboardModal({
             withIcon
           />
           <SubmitBtn
-            // onClick={handleSaveEdit}
+            onClick={handleUpdateIdea}
             submitStatus={submitStatus}
             buttonText="저장"
             successText="저장 완료"
