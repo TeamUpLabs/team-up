@@ -37,6 +37,8 @@ export default function WhiteboardModal({
 }: WhiteboardModalProps) {
   const user = useAuthStore.getState().user;
   const [ideaData, setIdeaData] = useState(idea);
+  const [newTags, setNewTags] = useState<string>("");
+  const [isComposing, setIsComposing] = useState(false);
   const [isEditing, setIsEditing] = useState("none");
   const [editorMode, setEditorMode] = useState<"write" | "preview">("preview");
   const [submitStatus, setSubmitStatus] = useState<
@@ -196,7 +198,12 @@ export default function WhiteboardModal({
     try {
       await updateIdea(
         ideaData.id,
-        ideaData
+        {
+          title: ideaData.title,
+          content: ideaData.documents[0].content,
+          tag: ideaData.documents[0].tags,
+          updated_by: user ? user.id : 0,
+        }
       );
       setSubmitStatus("success");
       useAuthStore
@@ -210,26 +217,20 @@ export default function WhiteboardModal({
     } finally {
       setTimeout(() => {
         setSubmitStatus("idle");
+        setIsEditing("none");
       }, 1000);
     }
   };
 
   const handleLike = async () => {
     try {
-      useAuthStore.getState().setConfirm("아이디어를 좋아요 하시겠습니까?", async () => {
-        try {
-          const data = await likeIdea(ideaData.id);
-          setIdeaData((prev) => ({
-            ...prev,
-            likes: data.likes,
-            liked_by_users: data.liked_by_users,
-          }));
-          console.log(data.liked_by_users);
-        } catch (error) {
-          console.error("Error liking idea:", error);
-          useAuthStore.getState().setAlert("아이디어 좋아요에 실패했습니다.", "error");
-        }
-      });
+      const data = await likeIdea(ideaData.id);
+      setIdeaData((prev) => ({
+        ...prev,
+        likes: data.likes,
+        liked_by_users: data.liked_by_users,
+      }));
+      console.log(data.liked_by_users);
     } catch (error) {
       console.error("Error liking idea:", error);
       useAuthStore.getState().setAlert("아이디어 좋아요에 실패했습니다.", "error");
@@ -248,6 +249,24 @@ export default function WhiteboardModal({
       useAuthStore.getState().setAlert("아이디어 삭제에 실패했습니다.", "error");
     }
   }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !isComposing) {
+      e.preventDefault();
+      if (newTags.trim() !== '') {
+        setIdeaData({
+          ...ideaData,
+          documents: [{ ...ideaData.documents[0], tags: [...ideaData.documents[0].tags, newTags.trim()] }],
+        });
+        setNewTags('');
+      }
+    }
+  };
+
+  const handleRemoveTag = (tagIndex: number) => {
+    const updatedTags = ideaData.documents[0].tags.filter((_, index) => index !== tagIndex);
+    setIdeaData({ ...ideaData, documents: [{ ...ideaData.documents[0], tags: updatedTags }] });
+  };
 
 
   const header = (
@@ -315,7 +334,7 @@ export default function WhiteboardModal({
     </div>
   );
 
-  const footer = 
+  const footer =
     isEditing !== "none" ? (
       <DeleteBtn
         handleDelete={handleDeleteIdea}
@@ -523,10 +542,25 @@ export default function WhiteboardModal({
                   color="pink"
                   isDark={isDark}
                   className="!text-xs !px-2 !py-0.5 !rounded-full"
+                  isEditable={isEditing === "tags"}
+                  onRemove={() => handleRemoveTag(idx)}
                   fit
                 />
               ))}
             </div>
+            {isEditing === "tags" && (
+              <Input
+                type="text"
+                name="tags"
+                value={newTags}
+                onChange={(e) => setNewTags(e.target.value)}
+                className="!text-xs !px-2 !py-0.5 !rounded-md"
+                placeholder="태그를 입력하세요."
+                onKeyDown={handleKeyDown}
+                onCompositionStart={() => setIsComposing(true)}
+                onCompositionEnd={() => setIsComposing(false)}
+              />
+            )}
           </div>
 
           <div className="flex flex-col space-y-1">

@@ -1,5 +1,5 @@
 import { server } from "@/auth/server";
-import { WhiteBoardCreateFormData, CommentCreateFormData, WhiteBoard } from "@/types/WhiteBoard";
+import { WhiteBoardCreateFormData, CommentCreateFormData, WhiteBoardUpdateFormData } from "@/types/WhiteBoard";
 import { useAuthStore } from "@/auth/authStore";
 
 export const createWhiteBoard = async (whiteBoardData: WhiteBoardCreateFormData) => {
@@ -44,11 +44,21 @@ export const deleteComment = async (whiteboard_id: number, comment_id: number) =
     }
 };
 
-export const updateIdea = async (whiteboard_id: number, idea: WhiteBoard) => {
+export const updateIdea = async (whiteboard_id: number, idea: WhiteBoardUpdateFormData) => {
     try {
-        const res = await server.put(`/whiteboards/${whiteboard_id}`, idea, {
+        const token = useAuthStore.getState().token;
+        if (!token) {
+            throw new Error("No authentication token found");
+        }
+        const res = await server.put(`/whiteboards/${whiteboard_id}`, {
+          title: idea.title,
+          content: idea.content,
+          tag: idea.tag,
+          updated_by: idea.updated_by,
+        }, {
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
             },
         });
         return res.data;

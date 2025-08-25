@@ -94,18 +94,16 @@ export const blankWhiteBoard: WhiteBoard = {
 };
 
 export interface WhiteBoardUpdateFormData {
-  id: number;
   title: string;
   content: string;
-  documents: WhiteBoardDocument[];
+  tag: string[];
   updated_by: number;
 }
 
 export const blankWhiteBoardUpdateFormData: WhiteBoardUpdateFormData = {
-  id: 0,
   title: "",
   content: "",
-  documents: [],
+  tag: [],
   updated_by: 0,
 };
 
