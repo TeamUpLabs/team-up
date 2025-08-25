@@ -6,7 +6,6 @@ import Badge from "@/components/ui/Badge";
 import { useTheme } from "@/contexts/ThemeContext";
 import {
   Lightbulb,
-  EllipsisVertical,
   Paperclip,
   Heart,
   MessageCircle,
@@ -58,11 +57,6 @@ export default function IdeaList({ idea }: IdeaListProps) {
             <span className="text-sm font-medium text-blue-600">
               {idea.type === "document" ? "Document" : "Canvas"}
             </span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <button className="group cursor-pointer">
-              <EllipsisVertical className="w-4 h-4 text-text-secondary group-hover:text-text-primary" />
-            </button>
           </div>
         </div>
 
