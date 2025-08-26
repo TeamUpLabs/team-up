@@ -39,7 +39,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [cropImage, setCropImage] = useState<string | null>(null);
   const [showCropModal, setShowCropModal] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(user.profile_image);
   const [originalProfileData, setOriginalProfileData] = useState<UserType | null>(user);
   const [newSkill, setNewSkill] = useState<string>("");
   const [newLanguage, setNewLanguage] = useState<string>("");
@@ -50,31 +50,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
   const [formData, setFormData] = useState<UserType>(blankUser);
 
   useEffect(() => {
-    setFormData({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      profile_image: user.profile_image,
-      role: user.role,
-      status: user.status,
-      bio: user.bio,
-      languages: user.languages,
-      phone: user.phone,
-      birth_date: user.birth_date,
-      last_login: user.last_login,
-      auth_provider: user.auth_provider,
-      auth_provider_id: user.auth_provider_id,
-      auth_provider_access_token: user.auth_provider_access_token,
-      notification_settings: user.notification_settings,
-      projects: user.projects,
-      participation_requests: user.participation_requests,
-      collaboration_preference: user.collaboration_preference,
-      tech_stacks: user.tech_stacks,
-      interests: user.interests,
-      social_links: user.social_links,
-      received_notifications: user.received_notifications,
-      sent_notifications: user.sent_notifications,
-    });
+    setFormData(user);
   }, [user]);
 
   const handleEdit = (name: string) => {
@@ -92,63 +68,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
 
   const handleCancelEdit = () => {
     if (originalProfileData) {
-      setFormData({
-        id: originalProfileData.id,
-        name: originalProfileData.name,
-        email: originalProfileData.email,
-        profile_image: originalProfileData.profile_image,
-        role: originalProfileData.role,
-        status: originalProfileData.status,
-        bio: originalProfileData.bio,
-        languages: originalProfileData.languages,
-        phone: originalProfileData.phone,
-        birth_date: originalProfileData.birth_date,
-        last_login: originalProfileData.last_login,
-        auth_provider: originalProfileData.auth_provider,
-        auth_provider_id: originalProfileData.auth_provider_id,
-        auth_provider_access_token:
-          originalProfileData.auth_provider_access_token,
-        notification_settings: {
-          emailEnable: originalProfileData.notification_settings.emailEnable,
-          taskNotification:
-            originalProfileData.notification_settings.taskNotification,
-          milestoneNotification:
-            originalProfileData.notification_settings.milestoneNotification,
-          scheduleNotification:
-            originalProfileData.notification_settings.scheduleNotification,
-          deadlineNotification:
-            originalProfileData.notification_settings.deadlineNotification,
-          weeklyReport: originalProfileData.notification_settings.weeklyReport,
-          pushNotification:
-            originalProfileData.notification_settings.pushNotification,
-          securityNotification:
-            originalProfileData.notification_settings.securityNotification,
-        },
-        projects: originalProfileData.projects,
-        participation_requests: originalProfileData.participation_requests,
-        collaboration_preference: {
-          collaboration_style:
-            originalProfileData.collaboration_preference.collaboration_style,
-          preferred_project_type:
-            originalProfileData.collaboration_preference.preferred_project_type,
-          preferred_role:
-            originalProfileData.collaboration_preference.preferred_role,
-          available_time_zone:
-            originalProfileData.collaboration_preference.available_time_zone,
-          work_hours_start:
-            originalProfileData.collaboration_preference.work_hours_start,
-          work_hours_end:
-            originalProfileData.collaboration_preference.work_hours_end,
-          preferred_project_length:
-            originalProfileData.collaboration_preference
-              .preferred_project_length,
-        },
-        tech_stacks: originalProfileData.tech_stacks,
-        interests: originalProfileData.interests,
-        social_links: originalProfileData.social_links,
-        received_notifications: originalProfileData.received_notifications,
-        sent_notifications: originalProfileData.sent_notifications,
-      });
+      setFormData(originalProfileData);
     }
 
     setIsEditing("none");
