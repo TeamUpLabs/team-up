@@ -21,9 +21,11 @@ import {
   Smartphone,
   Code,
 } from "lucide-react";
+import { useAuthStore } from "@/auth/authStore";
 
 export default function About() {
   const { isDark } = useTheme();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   const features = [
     {
@@ -131,7 +133,7 @@ export default function About() {
             코드를 공유하고, 지식을 나누며, 함께 미래를 만들어갑니다.
           </p>
           <Link
-            href="/signin"
+            href={isAuthenticated() ? "/platform" : "/signin"}
             className="flex w-fit items-center justify-center mx-auto"
           >
             <Badge
