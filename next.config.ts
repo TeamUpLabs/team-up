@@ -2,7 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["vnaetwpgkoexfobnveuv.supabase.co", "avatars.githubusercontent.com"],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'vnaetwpgkoexfobnveuv.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+      },
+    ],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30일 캐시
   },
