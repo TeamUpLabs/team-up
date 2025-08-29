@@ -10,8 +10,9 @@ import { getStatusColorName } from "@/utils/getStatusColor";
 import { useProject } from '@/contexts/ProjectContext';
 import { updateTaskStatus } from '@/hooks/getTaskData';
 import { useAuthStore } from '@/auth/authStore';
-import { useTheme } from '@/contexts/ThemeContext';
 import Badge from '@/components/ui/Badge';
+import { useTheme } from "@/contexts/ThemeContext";
+
 // 지연 로딩을 위한 컴포넌트들
 const TaskComponent = lazy(() => import('@/components/project/task/TaskComponent'));
 const TaskModal = lazy(() => import('@/components/project/task/TaskModal'));
@@ -30,8 +31,8 @@ const SkeletonTaskCard = () => (
 );
 
 export default function TasksPage() {
-  const { isDark } = useTheme();
   const { project } = useProject();
+  const { isDark } = useTheme();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -155,7 +156,6 @@ export default function TasksPage() {
                 </div>
               }
               color={isDark ? 'white' : 'black'}
-              isDark={isDark}
               className="!px-4 !py-2 !font-semibold"
             />
           </button>
@@ -179,7 +179,6 @@ export default function TasksPage() {
                     <Badge
                       content={getStatusText(status as Task['status'])}
                       color={getStatusColorName(status as Task['status'])}
-                      isDark={isDark}
                       className="!inline-flex !px-2 !py-1 !rounded-md !text-xs !font-medium !mr-2"
                     />
                     <span className="text-text-secondary text-sm">

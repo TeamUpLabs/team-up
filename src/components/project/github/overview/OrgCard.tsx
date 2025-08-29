@@ -4,7 +4,6 @@ import Badge from "@/components/ui/Badge";
 import { Book, Users, Building, MapPinAlt } from "flowbite-react-icons/outline";
 
 interface OrgDataProps {
-  isDark: boolean;
   orgData: {
     name: string;
     login: string;
@@ -38,7 +37,7 @@ interface OrgDataProps {
   };
 }
 
-export default function OrgCard({ isDark, orgData }: OrgDataProps) {
+export default function OrgCard({ orgData }: OrgDataProps) {
   return (
     <div className="flex flex-col gap-10 justify-between bg-component-background border border-component-border rounded-lg p-4">
       <div className="space-y-4">
@@ -99,17 +98,16 @@ export default function OrgCard({ isDark, orgData }: OrgDataProps) {
             content="connected"
             color="black"
             className="!text-xs !px-3 !py-1 !rounded-full !font-semibold"
-            isDark={isDark}
           />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className={`flex flex-col items-center gap-1 ${isDark ? "bg-blue-900 text-blue-200" : "bg-blue-100 text-blue-800"} rounded-lg p-4`}>
+        <div className="flex flex-col items-center gap-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-lg p-4">
           <span className="text-lg font-semibold">{orgData.public_repos || 0}</span>
           <span className="text-lg font-semibold">Total Repos</span>
         </div>
-        <div className={`flex flex-col items-center gap-1 ${isDark ? "bg-green-900 text-green-200" : "bg-green-100 text-green-800"} rounded-lg p-4`}>
+        <div className="flex flex-col items-center gap-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-lg p-4">
           <span className="text-lg font-semibold">{orgData.collaborators || 0}</span>
           <span className="text-lg font-semibold">Team Members</span>
         </div>

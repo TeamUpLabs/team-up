@@ -3,7 +3,6 @@ import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Image from "next/image";
 import Badge from "@/components/ui/Badge";
-import { useTheme } from "@/contexts/ThemeContext";
 import {
   Lightbulb,
   Paperclip,
@@ -32,9 +31,6 @@ export default function IdeaList({ idea }: IdeaListProps) {
       locale: ko
     })
     : '';
-
-  const { isDark } = useTheme();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -51,7 +47,6 @@ export default function IdeaList({ idea }: IdeaListProps) {
                 <Lightbulb className="w-4 h-4" />
               }
               color="blue"
-              isDark={isDark}
               className="!p-2"
             />
             <span className="text-sm font-medium text-blue-600">
@@ -81,7 +76,6 @@ export default function IdeaList({ idea }: IdeaListProps) {
                     key={index}
                     content={tag}
                     color="green"
-                    isDark={isDark}
                     className="!px-2.5 !py-1 !font-semibold !text-xs !rounded-full"
                   />
                 ))}

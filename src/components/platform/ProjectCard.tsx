@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useAuthStore } from "@/auth/authStore";
 import { sendParticipationRequest, cancelParticipationRequest } from "@/hooks/getMemberData";
 import Badge from "@/components/ui/Badge";
-import { useTheme } from "@/contexts/ThemeContext";
 import { Clock, Users } from "flowbite-react-icons/outline";
 
 interface ProjectCardProps {
@@ -11,9 +10,7 @@ interface ProjectCardProps {
   isExplore?: boolean;
 }
 
-export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
-  const { isDark } = useTheme();
-  const user = useAuthStore((state) => state.user);
+export default function ProjectCard({ project, isExplore }: ProjectCardProps) {  const user = useAuthStore((state) => state.user);
     
   const statusColor = project.status === "planning" ? "indigo" : project.status === "in_progress" ? "blue" : project.status === "completed" ? "green" : "gray";
   const statusLabel = project.status === "planning" ? "모집중" : project.status === "in_progress" ? "진행중" : project.status === "completed" ? "완료" : "보류";
@@ -32,7 +29,6 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
             </span>
           }
           color={statusColor}
-          isDark={isDark}
           className="!text-xs !rounded-full"
         />
         <div className="flex items-center gap-1 text-sm text-text-secondary">
@@ -55,7 +51,6 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) {
               key={index}
               content={tag}
               color="purple"
-              isDark={isDark}
               className="!text-xs !rounded-full"
             />
           ))}

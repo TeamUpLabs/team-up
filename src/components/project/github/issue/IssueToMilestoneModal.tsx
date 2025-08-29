@@ -13,7 +13,6 @@ import { useProject } from "@/contexts/ProjectContext";
 import { useAuthStore } from "@/auth/authStore";
 import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";
 import Badge from "@/components/ui/Badge";
-import { useTheme } from "@/contexts/ThemeContext";
 import AssigneeSelect from "@/components/project/AssigneeSelect";
 import { createMilestone } from "@/hooks/getMilestoneData";
 import { MilestoneCreateFormData, blankMilestoneCreateFormData } from "@/types/MileStone";
@@ -25,7 +24,6 @@ interface IssueToMilestoneModalProps {
 }
 
 export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: IssueToMilestoneModalProps) {
-  const { isDark } = useTheme();
   const { project } = useProject();
   const user = useAuthStore((state) => state.user);
   const [formData, setFormData] = useState<MilestoneCreateFormData>(blankMilestoneCreateFormData);
@@ -301,7 +299,6 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
               color="pink"
               isEditable={true}
               onRemove={() => handleRemoveTag(tag)}
-              isDark={isDark}
             />
           ))}
         </div>

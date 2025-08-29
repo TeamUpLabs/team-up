@@ -1,4 +1,3 @@
-import { useTheme } from "@/contexts/ThemeContext";
 import OrgCard from "@/components/project/github/overview/OrgCard";
 import RecentActivityCard from "@/components/project/github/overview/RecentActivityCard";
 import { CommitData } from "@/types/github/CommitData";
@@ -94,8 +93,6 @@ const transformToActivities = (
 };
 
 export default function Overview({ issueData, prData, commitData, orgData }: OverviewProps) {
-  const { isDark } = useTheme();
-
   const allIssues = issueData || [];
   const allPRs = prData || [];
   const allCommits = commitData || [];
@@ -108,7 +105,7 @@ export default function Overview({ issueData, prData, commitData, orgData }: Ove
 
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
-      {orgData && <OrgCard isDark={isDark} orgData={orgData} />}
+      {orgData && <OrgCard orgData={orgData} />}
       <RecentActivityCard recentItems={recentActivities} />
     </div>
   );

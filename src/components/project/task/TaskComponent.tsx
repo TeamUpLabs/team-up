@@ -4,10 +4,7 @@ import Tooltip from '@/components/ui/Tooltip';
 import Badge from '@/components/ui/Badge';
 import { Flag } from 'flowbite-react-icons/outline';
 import { getPriorityColorName } from '@/utils/getPriorityColor';
-import { useTheme } from '@/contexts/ThemeContext';
-
 export default function TaskComponent({ task }: { task: Task }) {
-  const { isDark } = useTheme();
 
   return (
     <div
@@ -32,7 +29,6 @@ export default function TaskComponent({ task }: { task: Task }) {
             color={getPriorityColorName(task.priority)}
             isEditable={false}
             className="!rounded-full !px-2 !py-0.5"
-            isDark={isDark}
           />
         </div>
         {task?.description && (

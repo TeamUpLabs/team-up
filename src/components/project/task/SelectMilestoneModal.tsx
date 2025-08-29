@@ -7,7 +7,6 @@ import CancelBtn from '@/components/ui/button/CancelBtn';
 import { Flag } from 'flowbite-react-icons/outline';
 import { isMarkdown } from '@/utils/isMarkdown';
 import { summarizeMarkdown } from '@/utils/summarizeMarkdown';
-import { useTheme } from '@/contexts/ThemeContext';
 
 interface SelectMilestoneModalProps {
   isOpen: boolean;
@@ -16,7 +15,6 @@ interface SelectMilestoneModalProps {
 
 export default function SelectMilestoneModal({ isOpen, onClose }: SelectMilestoneModalProps) {
   const { project } = useProject();
-  const { isDark } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMilestone, setSelectedMilestone] = useState<number | null>(null);
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
@@ -137,7 +135,7 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
                 )}
                 <div className="mt-3 flex flex-wrap gap-2">
                   {milestone.tags.map((tag, idx) => (
-                    <Badge key={idx} content={tag} color="red" className="text-xs" isDark={isDark} />
+                    <Badge key={idx} content={tag} color="red" className="text-xs" />
                   ))}
                 </div>
               </div>

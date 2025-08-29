@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { useTheme } from "@/contexts/ThemeContext";
 
 export type BadgeColor = 
   | "red" | "orange" | "amber" | "yellow" | "lime" | "green" 
@@ -125,13 +126,14 @@ interface BadgeProps {
   isEditable?: boolean;
   onRemove?: () => void;
   onClick?: () => void;
-  isDark?: boolean;
   className?: string;
   isHover?: boolean;
   fit?: boolean;
 }
 
-export default function Badge({ content, color, isEditable = false, onRemove, onClick, isDark = false, className, isHover = false, fit = false }: BadgeProps) {
+export default function Badge({ content, color, isEditable = false, onRemove, onClick, className, isHover = false, fit = false }: BadgeProps) {
+  const { isDark } = useTheme();
+
   return (
     <span 
     className={`${isDark ? darkBadgeColors[color] : badgeColors[color]} 

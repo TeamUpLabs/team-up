@@ -3,7 +3,6 @@ import { Star, CodeFork, CodePullRequest, ExclamationCircle } from "flowbite-rea
 import { getLanguageColor } from "@/utils/languageColors";
 import Tooltip from "@/components/ui/Tooltip";
 import Link from "next/link";
-import { useTheme } from "@/contexts/ThemeContext";
 
 interface RepoData {
   name: string;
@@ -30,8 +29,6 @@ interface RepoProps {
 }
 
 export default function Repo({ repoData, prCount }: RepoProps) {
-  const { isDark } = useTheme();
-
   return (
     <div className="flex items-center justify-between bg-component-background border border-component-border rounded-lg p-4">
       <div className="flex flex-col items-start gap-2">
@@ -47,7 +44,6 @@ export default function Repo({ repoData, prCount }: RepoProps) {
                 content={topic}
                 color="blue"
                 className="!text-xs !font-semibold !px-2 !py-0.5 !rounded-full"
-                isDark={isDark}
               />
             ))}
           </div>

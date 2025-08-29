@@ -15,7 +15,6 @@ import { useProject } from "@/contexts/ProjectContext";
 import { formatRelativeTime } from "@/utils/dateUtils";
 import Accordion from "@/components/ui/Accordion";
 import { getStatusInfo } from "@/utils/getStatusColor";
-import { useTheme } from "@/contexts/ThemeContext";
 
 interface MemberDetailModalProps {
   member: User;
@@ -36,7 +35,6 @@ export default function MemberDetailModal({
   const { project } = useProject();
   const router = useRouter();
   const params = useParams();
-  const { isDark } = useTheme();
 
   const handleTaskClick = (taskId: number) => {
     localStorage.setItem("selectedTaskId", taskId.toString());
@@ -128,7 +126,6 @@ export default function MemberDetailModal({
               </div>
             }
             color={roleInfo.className as BadgeColor}
-            isDark={isDark}
             className="!inline-flex !px-3 !py-1.5 !rounded-full !text-sm !font-medium"
           />
         </div>
@@ -290,7 +287,6 @@ export default function MemberDetailModal({
                   </span>
                 }
                 color="blue"
-                isDark={isDark}
                 fit
               />
             ))
@@ -310,7 +306,7 @@ export default function MemberDetailModal({
         <div className="space-x-2">
           {member.languages && member.languages.length > 0 ? (
             member.languages.map((language: string, index: number) => (
-              <Badge key={index} content={language} color="purple" isDark={isDark} fit />
+              <Badge key={index} content={language} color="purple" fit />
             ))
           ) : (
             <p className="text-text-secondary">
@@ -366,7 +362,6 @@ export default function MemberDetailModal({
                   }
                   color="pink"
                   isEditable={false}
-                  isDark={isDark}
                 />
               </Link>
             ))

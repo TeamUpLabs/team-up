@@ -2,7 +2,6 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { Input } from '@/components/ui/Input';
 import { Paperclip, X } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
-import { useTheme } from '@/contexts/ThemeContext';
 import MarkdownEditor from '@/components/ui/MarkdownEditor';
 import { WhiteBoardCreateFormData, blankWhiteBoardCreateFormData } from '@/types/WhiteBoard';
 import { useAuthStore } from '@/auth/authStore';
@@ -20,8 +19,6 @@ export default function Document({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isComposing, setIsComposing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const { isDark } = useTheme();
-
   const [documentData, setDocumentData] = useState<WhiteBoardCreateFormData>(formData || blankWhiteBoardCreateFormData);
   const MAX_FILE_SIZE_MB = 10;
   const MAX_FILE_COUNT = 5;
@@ -187,7 +184,6 @@ export default function Document({
               onRemove={() => removeTag(tag)}
               content={tag}
               isEditable
-              isDark={isDark}
               fit
             />
           ))}

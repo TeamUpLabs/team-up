@@ -6,13 +6,10 @@ import { MileStone } from '@/types/MileStone';
 import Badge from '@/components/ui/Badge';
 import { Flag, ArrowRight, Users } from 'flowbite-react-icons/outline';
 import { getPriorityColorName } from '@/utils/getPriorityColor';
-import { useTheme } from '@/contexts/ThemeContext';
 import { isMarkdown } from '@/utils/isMarkdown';
 import { summarizeMarkdown } from '@/utils/summarizeMarkdown';
 
-export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
-  const { isDark } = useTheme();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default function MilestoneCard({ milestone }: { milestone: MileStone }) {  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -44,7 +41,6 @@ export default function MilestoneCard({ milestone }: { milestone: MileStone }) {
             color={getPriorityColorName(milestone.priority)}
             isEditable={false}
             className="!rounded-full !px-2 !py-0.5"
-            isDark={isDark}
           />
         </div>
 

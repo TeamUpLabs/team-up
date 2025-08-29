@@ -21,10 +21,9 @@ function getLast7Days(): string[] {
   });
 }
 
-export default function WeeklyReport({ commits, repoData, pullRequests = [], issues = [] }: WeeklyReportProps) {
+export default function WeeklyReport({ commits, repoData, pullRequests = [], issues = [] }: WeeklyReportProps) {  const last7Days = getLast7Days();
   const { isDark } = useTheme();
-  const last7Days = getLast7Days();
-
+  
   const weeklyCommits = commits.filter((commit) => {
     const date = new Date(commit.commit.author.date).toISOString().split("T")[0];
     return last7Days.includes(date);

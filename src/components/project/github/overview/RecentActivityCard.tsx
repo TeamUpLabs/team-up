@@ -5,7 +5,6 @@ import { faCodeCommit, faCodePullRequest, faExclamation } from "@fortawesome/fre
 import { faCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Activity } from "@/types/github/ActivityData";
-import { useTheme } from "@/contexts/ThemeContext";
 
 interface RecentActivityCardProps {
   recentItems: Activity[];
@@ -44,8 +43,6 @@ const getTypeInfo = (item: Activity) => {
 };
 
 export default function RecentActivityCard({ recentItems }: RecentActivityCardProps) {
-  const { isDark } = useTheme();
-
   const renderItem = (item: Activity, index: number) => {
     const { icon, label, color } = getTypeInfo(item);
 
@@ -71,7 +68,6 @@ export default function RecentActivityCard({ recentItems }: RecentActivityCardPr
               content={label}
               color={color as BadgeColor}
               className="!text-xs !px-2 !py-0.5 !rounded-full"
-              isDark={isDark}
             />
           </div>
         </div>

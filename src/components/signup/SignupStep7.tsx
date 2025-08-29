@@ -1,7 +1,6 @@
 import { Input } from "@/components/ui/Input";
 import Badge from "@/components/ui/Badge";
 import { TechStack } from "@/types/User";
-import { useTheme } from "@/contexts/ThemeContext";
 
 interface SignupStep7Props {
   skills: TechStack[];
@@ -25,8 +24,6 @@ export default function SignupStep7({
   onRemoveSkill,
   onChangeSkillLevel,
 }: SignupStep7Props) {
-  const { isDark } = useTheme();
-
   return (
     <div className="space-y-6">
       <Input
@@ -66,7 +63,6 @@ export default function SignupStep7({
                     : "고급"
                 }
                 color={skill.level === 0 ? "green" : skill.level === 1 ? "blue" : "red"}
-                isDark={isDark}
               />
             </div>
             <div className="flex flex-col gap-2 mt-2">
@@ -79,7 +75,6 @@ export default function SignupStep7({
                     key={level}
                     content={level === 0 ? "초급" : level === 1 ? "중급" : "고급"}
                     color={skill.level === level ? level === 0 ? "green" : level === 1 ? "blue" : "red" : "gray"}
-                    isDark={isDark}
                     onClick={() => onChangeSkillLevel(skill.tech, level)}
                     className="cursor-pointer !rounded-full"
                   />

@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import { Book, Users, Building, MapPinAlt, Refresh } from "flowbite-react-icons/outline";
-import { useTheme } from "@/contexts/ThemeContext";
 import { User } from "@/types/User";
 import { GithubUser } from "@/types/github/GithubUser";
 import RateLimitWarning from "@/components/project/github/RateLimitWarning";
@@ -15,9 +14,7 @@ interface Props {
   onRefresh: () => void;
 }
 
-export default function ProfileCard({ user, githubUser, onRefresh }: Props) {
-  const { isDark } = useTheme();
-  const [isRefreshing, setIsRefreshing] = useState(false);
+export default function ProfileCard({ user, githubUser, onRefresh }: Props) {  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -54,7 +51,6 @@ export default function ProfileCard({ user, githubUser, onRefresh }: Props) {
                 content="웹훅 활성화"
                 color="black"
                 className="!text-xs !px-3 !py-1 !rounded-full !font-semibold"
-                isDark={isDark}
               />
             </div>
             <p className="text-text-secondary text-sm">{githubUser?.email || "이메일 없음"}</p>

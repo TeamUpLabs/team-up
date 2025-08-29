@@ -2,7 +2,6 @@
 
 import Badge from "@/components/ui/Badge";
 import { Camera, User } from "lucide-react";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import {
@@ -32,9 +31,7 @@ interface PersonalInfoProps {
   setUser: React.Dispatch<React.SetStateAction<UserType>>;
 }
 
-export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
-  const { isDark } = useTheme();
-  const [isEditing, setIsEditing] = useState<string>("none");
+export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  const [isEditing, setIsEditing] = useState<string>("none");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [cropImage, setCropImage] = useState<string | null>(null);
@@ -622,7 +619,6 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
                         autoWidth
                         likeBadge
                         color="blue"
-                        isDark={isDark}
                         className="!px-2 !py-1"
                       />
                     </span>
@@ -630,7 +626,6 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
                   color="blue"
                   isEditable={isEditing === "tech_stacks"}
                   onRemove={() => removeSkill(stack.tech)}
-                  isDark={isDark}
                 />
               ) : (
                 <Badge
@@ -641,7 +636,6 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
                     </span>
                   }
                   color="blue"
-                  isDark={isDark}
                 />
               )
             )}
@@ -676,14 +670,12 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
                   color="green"
                   isEditable={isEditing === "languages"}
                   onRemove={() => removeLanguage(language)}
-                  isDark={isDark}
                 />
               ) : (
                 <Badge
                   key={index}
                   content={language}
                   color="green"
-                  isDark={isDark}
                 />
               )
             )}

@@ -6,13 +6,10 @@ import { useAuthStore } from "@/auth/authStore"
 import { ArrowRight } from "flowbite-react-icons/outline"
 import { Zap } from "lucide-react";
 import Badge from "@/components/ui/Badge"
-import { useTheme } from "@/contexts/ThemeContext"
 
 export default function Hero() {
   const [isClient, setIsClient] = useState(false)
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-  const { isDark } = useTheme();
-
   useEffect(() => {
     setIsClient(true)
   }, [])
@@ -46,7 +43,6 @@ export default function Hero() {
                 }
                 color="purple"
                 className="!px-10 !py-3 !font-semibold flex !w-full sm:!w-fit !justify-center"
-                isDark={isDark}
                 isHover
               />
             </Link>
@@ -61,7 +57,6 @@ export default function Hero() {
               }
               color="indigo"
               className="!px-10 !py-3 !font-semibold flex !w-full sm:!w-fit !justify-center"
-              isDark={isDark}
               isHover
             />
           </Link>

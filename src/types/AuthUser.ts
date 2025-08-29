@@ -5,6 +5,6 @@ export interface AuthUser {
     profile_image: string;
     role: string;
     status: string;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
 }

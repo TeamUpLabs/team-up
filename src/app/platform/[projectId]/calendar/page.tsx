@@ -15,7 +15,7 @@ import { useProject } from "@/contexts/ProjectContext";
 import { Schedule } from '@/types/Schedule';
 import { MileStone } from '@/types/MileStone';
 import Badge from '@/components/ui/Badge';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme } from "@/contexts/ThemeContext";
 
 // 지연 로딩을 위한 컴포넌트들
 const TaskModal = lazy(() => import('@/components/project/task/TaskModal'));
@@ -39,14 +39,13 @@ const SkeletonCalendar = () => (
 
 export default function CalendarPage() {
   const { project } = useProject();
+  const { isDark } = useTheme();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
   const [selectedMilestone, setSelectedMilestone] = useState<MileStone | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { isDark } = useTheme();
-
   // 메모이제이션을 통한 날짜 계산 최적화
   const calendarData = useMemo(() => {
     const monthStart = startOfMonth(currentDate);
@@ -123,7 +122,6 @@ export default function CalendarPage() {
               </div>
             }
             color={isDark ? 'white' : 'black'}
-            isDark={isDark}
             className="!px-4 !py-2 !font-semibold"
           />
         </button>

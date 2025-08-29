@@ -5,7 +5,6 @@ import { useAuthStore } from "@/auth/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faPencil } from "@fortawesome/free-solid-svg-icons";
 import Badge from "@/components/ui/Badge";
-import { useTheme } from "@/contexts/ThemeContext";
 import DatePicker from "@/components/ui/DatePicker";
 import { Input } from "@/components/ui/Input";
 import { TextArea } from "@/components/ui/TextArea";
@@ -27,7 +26,6 @@ interface GeneralSettingTabProps {
 }
 
 export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
-  const { isDark } = useTheme();
   const user = useAuthStore((state) => state.user);
   const [isEditing, setIsEditing] = useState<string>("none");
   const [formData, setFormData] = useState({
@@ -471,7 +469,6 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
                           color="blue"
                           isEditable={isEditing === "tags" ? true : false}
                           onRemove={() => handleRemoveTagItem(index)}
-                          isDark={isDark}
                         />
                       ))
                     ) : (

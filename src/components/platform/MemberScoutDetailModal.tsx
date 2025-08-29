@@ -7,7 +7,6 @@ import SelectProjectModal from '@/components/platform/SelectProjectModal';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/ui/Badge';
 import { UserAdd } from 'flowbite-react-icons/outline';
-import { useTheme } from '@/contexts/ThemeContext';
 import { getStatusInfo } from '@/utils/getStatusColor';
 import { Globe, Clock, InfoCircle, ShieldCheck, Language, Link as LinkIcon } from 'flowbite-react-icons/outline';
 import { Github, Linkedin, Twitter, Facebook, Instagram } from "flowbite-react-icons/solid";
@@ -22,7 +21,6 @@ interface MemberScoutDetailModalProps {
 }
 
 export default function MemberScoutDetailModal({ member, isOpen, onClose }: MemberScoutDetailModalProps) {
-  const { isDark } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 숫자 형식의 시간을 HH:MM 형식으로 변환
@@ -181,7 +179,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
         <div className="space-x-2">
           {member.tech_stacks && member.tech_stacks.length > 0 ? (
             member.tech_stacks.map((skill, index) => (
-              <Badge key={index} content={skill.tech} color="blue" isDark={isDark} />
+              <Badge key={index} content={skill.tech} color="blue" />
             ))
           ) : (
             <p className="text-text-secondary">
@@ -199,7 +197,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
         <div className="space-x-2">
           {member.languages && member.languages.length > 0 ? (
             member.languages.map((language: string, index: number) => (
-              <Badge key={index} content={language} color="purple" isDark={isDark} />
+              <Badge key={index} content={language} color="purple" />
             ))
           ) : (
             <p className="text-text-secondary">
@@ -255,7 +253,6 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
                   }
                   color="pink"
                   isEditable={false}
-                  isDark={isDark}
                 />
               </Link>
             ))

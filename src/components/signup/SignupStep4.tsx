@@ -1,7 +1,6 @@
 import Badge from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import DatePicker from "@/components/ui/DatePicker";
-import { useTheme } from "@/contexts/ThemeContext";
 
 interface SignupStep4Props {
   phone: string;
@@ -30,9 +29,7 @@ export default function SignupStep4({
   onKeyDown,
   onRemoveLanguage,
   setIsComposing,
-}: SignupStep4Props) {
-  const { isDark } = useTheme();
-  // Helper to parse YYYY-MM-DD string to Date object (local timezone)
+}: SignupStep4Props) {  // Helper to parse YYYY-MM-DD string to Date object (local timezone)
   const parseStringToDate = (dateString: string): Date | undefined => {
     if (!dateString) return undefined;
     const parts = dateString.split("-");
@@ -88,7 +85,6 @@ export default function SignupStep4({
             content={language}
             isEditable={true}
             onRemove={() => onRemoveLanguage(language)}
-            isDark={isDark}
           />
         ))}
       </div>

@@ -11,14 +11,13 @@ import {
   Messages,
   Flag
 } from "flowbite-react-icons/outline";
-import { useTheme } from "@/contexts/ThemeContext";
 import Link from "next/link";
 import { useState } from "react";
 import IssueToMilestoneModal from "@/components/project/github/issue/IssueToMilestoneModal";
+import { useTheme } from "@/contexts/ThemeContext";
 
-export default function IssueCard({ issueData }: { issueData: IssueData }) {
+export default function IssueCard({ issueData }: { issueData: IssueData }) {  const [isModalOpen, setIsModalOpen] = useState(false);
   const { isDark } = useTheme();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div
@@ -40,7 +39,6 @@ export default function IssueCard({ issueData }: { issueData: IssueData }) {
             content={`#${issueData.number || 0}`}
             color="pink"
             className="!text-xs !px-2 !py-0.5 !rounded-full"
-            isDark={isDark}
           />
         </div>
         <p className="text-sm text-text-secondary">

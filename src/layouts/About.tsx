@@ -3,7 +3,6 @@
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import Badge from "@/components/ui/Badge"
-import { useTheme } from "@/contexts/ThemeContext"
 import Link from "next/link";
 import {
   Users,
@@ -24,7 +23,6 @@ import {
 import { useAuthStore } from "@/auth/authStore";
 
 export default function About() {
-  const { isDark } = useTheme();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   const features = [
@@ -116,7 +114,6 @@ export default function About() {
           <Badge
             color="purple"
             content="🚀 베타 서비스 런칭"
-            isDark={isDark}
             className="!rounded-full"
             fit
           />
@@ -144,7 +141,6 @@ export default function About() {
                   지금 시작하기
                 </span>
               }
-              isDark={isDark}
               className="!w-fit !flex !justify-center !items-center !px-8 !py-3"
               isHover
             />
@@ -241,7 +237,6 @@ export default function About() {
                       <div className="text-sm text-text-secondary">통합 솔루션</div>
                     </div>
                   }
-                  isDark={isDark}
                   className="!rounded-lg items-center h-full !p-4"
                 />
                 <Badge
@@ -252,7 +247,6 @@ export default function About() {
                       <div className="text-sm text-text-secondary">실시간 협업</div>
                     </div>
                   }
-                  isDark={isDark}
                   className="!rounded-lg items-center h-full !p-4"
                 />
                 <Badge
@@ -263,7 +257,6 @@ export default function About() {
                       <div className="text-sm text-text-secondary">확장 가능</div>
                     </div>
                   }
-                  isDark={isDark}
                   className="!rounded-lg items-center h-full !p-4"
                 />
                 <Badge
@@ -274,7 +267,6 @@ export default function About() {
                       <div className="text-sm text-text-secondary">복잡한 설정</div>
                     </div>
                   }
-                  isDark={isDark}
                   className="!rounded-lg items-center h-full !p-4"
                 />
               </div>
@@ -363,7 +355,6 @@ export default function About() {
                 </span>
               }
               color="blue"
-              isDark={isDark}
               className="!px-8 !py-3"
               isHover
             />

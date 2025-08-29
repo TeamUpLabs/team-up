@@ -5,7 +5,6 @@ import { Lock, Smartphone, Laptop, Tablet, Check, X } from "lucide-react";
 import { useState } from "react";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import Badge from "@/components/ui/Badge";
-import { useTheme } from "@/contexts/ThemeContext";
 import { User } from "@/types/User";
 import { updateUserProfile } from "@/hooks/getMemberData";
 import { useAuthStore } from "@/auth/authStore";
@@ -16,9 +15,7 @@ interface SecurityProps {
   user: User;
 }
 
-export default function Security({ user }: SecurityProps) {
-  const { isDark } = useTheme();
-  const [newPassword, setNewPassword] = useState('');
+export default function Security({ user }: SecurityProps) {  const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
@@ -127,7 +124,6 @@ export default function Security({ user }: SecurityProps) {
                       <span>{session.is_current ? "Current" : "Revoke"}</span>
                     </div>
                   }
-                  isDark={isDark}
                 />
               </div>
             ))}

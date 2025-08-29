@@ -23,7 +23,6 @@ import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { Input } from "@/components/ui/Input";
 import DatePicker from "@/components/ui/DatePicker";
 import { detectTasks } from "@/utils/detectTask";
-import { useTheme } from "@/contexts/ThemeContext";
 import { isMarkdown } from "@/utils/isMarkdown";
 import MarkdownEditor from "@/components/ui/MarkdownEditor";
 import MarkdownViewer from "@/components/ui/MarkdownViewer";
@@ -44,8 +43,6 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const [newTag, setNewTag] = useState('');
   const [isComposing, setIsComposing] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const { isDark } = useTheme();
-
   const handleDescriptionChange = useCallback((value: string) => {
     setMilestoneData((prev) => {
       if (prev.description === value) {
@@ -297,7 +294,6 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               color={getStatusColorName(milestoneData.status)}
               className="!px-2 !py-0.5 !rounded-full !text-sm"
               autoWidth
-              isDark={isDark}
               isHoverEffect={false}
               likeBadge={true}
             />
@@ -308,7 +304,6 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 color={getStatusColorName(milestoneData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
-                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -332,7 +327,6 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               color={getPriorityColorName(milestoneData.priority.toLowerCase())}
               className="!px-2 !py-0.5 !rounded-full !text-sm"
               autoWidth
-              isDark={isDark}
               isHoverEffect={false}
               likeBadge={true}
             />
@@ -348,7 +342,6 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                 color={getPriorityColorName(milestoneData.priority)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
-                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}
@@ -798,7 +791,6 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                   color="pink"
                   isEditable={true}
                   onRemove={() => handleRemoveTag(index)}
-                  isDark={isDark}
                 />
               ))}
               <div className="flex">
@@ -816,7 +808,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
           ) : (
             <div className="flex items-center gap-2 group relative">
               {milestoneData.tags && milestoneData.tags.map((tag, index) => (
-                <Badge key={index} content={tag} color="pink" isDark={isDark} />
+                <Badge key={index} content={tag} color="pink" />
               ))}
               <FontAwesomeIcon
                 icon={faPencil}

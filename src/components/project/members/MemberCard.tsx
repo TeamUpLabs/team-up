@@ -4,7 +4,6 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt, faStar, faShieldAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 import { getStatusInfo } from "@/utils/getStatusColor";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useProject } from "@/contexts/ProjectContext";
 import { convertRoleName } from "@/utils/ConvertRoleName";
 
@@ -23,7 +22,6 @@ export default function MemberCard({
   isExplore,
   onClick,
 }: MemberCardProps) {
-  const { isDark } = useTheme();
   const { project } = useProject();
 
   const getContributionLevel = () => {
@@ -111,7 +109,6 @@ export default function MemberCard({
               </div>
             }
             color={roleInfo.className as BadgeColor}
-            isDark={isDark}
             className="!inline-flex !px-3 !py-1.5 !rounded-full !text-sm !font-medium"
           />
         </div>
@@ -136,7 +133,6 @@ export default function MemberCard({
                 </div>
               }
               color={contributionInfo.class as BadgeColor}
-              isDark={isDark}
               className="!inline-flex !px-3 !py-1.5 !rounded-md !text-sm !font-medium"
             />
           )}
@@ -155,7 +151,6 @@ export default function MemberCard({
                   key={idx}
                   content={skill.tech}
                   color="blue"
-                  isDark={isDark}
                 />
               ))}
             </div>

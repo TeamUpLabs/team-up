@@ -20,7 +20,6 @@ import AssigneeSelect from "@/components/project/AssigneeSelect";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
 import { TextArea } from "@/components/ui/TextArea";
-import { useTheme } from "@/contexts/ThemeContext";
 import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";
 import { MilestoneCreateFormData, blankMilestoneCreateFormData } from "@/types/MileStone";
 
@@ -34,8 +33,6 @@ export default function MilestoneCreateModal({
   onClose,
 }: MilestoneCreateModalProps) {
   const [step, setStep] = useState(1);
-  const { isDark } = useTheme();
-
   const totalSteps = 5
   const progress = (step / totalSteps) * 100
 
@@ -449,7 +446,6 @@ export default function MilestoneCreateModal({
                       color="pink"
                       isEditable={true}
                       onRemove={() => handleRemoveTag(tag)}
-                      isDark={isDark}
                     />
                   ))}
                 </div>

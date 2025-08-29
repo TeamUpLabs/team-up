@@ -20,7 +20,6 @@ import {
 import { useAuthStore } from "@/auth/authStore";
 import Image from "next/image";
 import Badge from "@/components/ui/Badge";
-import { useTheme } from "@/contexts/ThemeContext";
 import { Input } from "@/components/ui/Input";
 import { Search } from "lucide-react";
 import { convertRoleName } from "@/utils/ConvertRoleName";
@@ -29,9 +28,7 @@ interface TeamSettingTabProps {
   project: Project;
 }
 
-export default function TeamSettingTab({ project }: TeamSettingTabProps) {
-  const { isDark } = useTheme();
-  const [searchTerm, setSearchTerm] = useState("");
+export default function TeamSettingTab({ project }: TeamSettingTabProps) {  const [searchTerm, setSearchTerm] = useState("");
   const [showJoinRequests, setShowJoinRequests] = useState(true);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState<User | null>(null);
@@ -288,28 +285,24 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {
                             <Badge
                               content="프로젝트 리더"
                               color="yellow"
-                              isDark={isDark}
                               className="!text-xs !px-2 !py-0.5"
                             />
                           ) : member.is_manager ? (
                             <Badge
                               content="관리자"
                               color="blue"
-                              isDark={isDark}
                               className="!text-xs !px-2 !py-0.5"
                             />
                           ) : (
                             <Badge
                               content="멤버"
                               color="green"
-                              isDark={isDark}
                               className="!text-xs !px-2 !py-0.5"
                             />
                           )}
                           <Badge
                             content={convertRoleName(member.user.role)}
                             color="cyan"
-                            isDark={isDark}
                             className="!text-xs !px-2 !py-0.5"
                           />
                         </div>

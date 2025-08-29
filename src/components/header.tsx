@@ -4,7 +4,6 @@ import { Logo } from "@/components/logo"
 import { useAuthStore } from "@/auth/authStore"
 import UserDropdown from "@/components/platform/UserDropdown"
 import Badge from "@/components/ui/Badge"
-import { useTheme } from '@/contexts/ThemeContext';
 
 
 export default function Header() {
@@ -13,7 +12,6 @@ export default function Header() {
     useAuthStore.getState().setAlert("서비스 준비중입니다.", "info");
   }
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const { isDark } = useTheme();
 
   useEffect(() => {
     setIsMounted(true);
@@ -38,7 +36,6 @@ export default function Header() {
           }
           color="purple"
           className="!px-3 !py-1 flex"
-          isDark={isDark}
           isHover
         />
       </Link>

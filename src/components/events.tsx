@@ -1,7 +1,6 @@
 import eventsData from '../../public/json/events.json';
 import { ArrowRight, Users, MapPin, CalendarMonth } from "flowbite-react-icons/outline"
 import Badge, { BadgeColor } from '@/components/ui/Badge';
-import { useTheme } from '@/contexts/ThemeContext';
 import Link from 'next/link';
 
 interface event {
@@ -13,9 +12,7 @@ interface event {
   participant: number;
 }
 
-export default function Events() {
-  const { isDark } = useTheme();
-  const events: event[] = eventsData.slice(0, 3);
+export default function Events() {  const events: event[] = eventsData.slice(0, 3);
   const colorPalette = [
     {
       color: "green",
@@ -68,7 +65,6 @@ export default function Events() {
                 content={event.date}
                 color={colorPalette[index % colorPalette.length].color as BadgeColor}
                 className="!rounded-full !text-xs"
-                isDark={isDark}
               />
               <div className="flex items-center gap-1 text-sm text-text-secondary">
                 <Users className="h-4 w-4" />
@@ -108,7 +104,6 @@ export default function Events() {
           }
           color="fuchsia"
           className="!px-6 !py-2 !font-semibold flex !w-full sm:!w-fit !justify-center"
-          isDark={isDark}
           isHover
         />
       </Link>

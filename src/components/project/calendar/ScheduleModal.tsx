@@ -27,7 +27,6 @@ import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { Input } from "@/components/ui/Input";
-import { useTheme } from "@/contexts/ThemeContext";
 
 interface ScheduleModalProps {
   schedule: Schedule;
@@ -36,9 +35,7 @@ interface ScheduleModalProps {
 }
 
 export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleModalProps) {
-  const user = useAuthStore.getState().user;
-  const { isDark } = useTheme();
-  const { project } = useProject();
+  const user = useAuthStore.getState().user;  const { project } = useProject();
   const params = useParams();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState<string>("none");
@@ -172,7 +169,6 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
             color="teal"
             isEditable={false}
             className="!rounded-full !px-2 !py-0.5"
-            isDark={isDark}
             fit
           />
           {isEditing === "status" ? (
@@ -196,7 +192,6 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                 color={getStatusColorName(scheduleData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
-                isDark={isDark}
                 fit
               />
               {isUserAssignee && (
@@ -422,7 +417,6 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                 color="none"
                 isEditable={false}
                 className={`!p-0 w-fit`}
-                isDark={isDark}
               />
               <FontAwesomeIcon
                 icon={faPencil}

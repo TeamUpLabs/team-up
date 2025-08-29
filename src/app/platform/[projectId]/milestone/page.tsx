@@ -6,8 +6,8 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { useProject } from '@/contexts/ProjectContext';
 import { MileStone } from '@/types/MileStone';
 import Badge from '@/components/ui/Badge';
-import { useTheme } from '@/contexts/ThemeContext';
 import TabSlider from '@/components/ui/TabSlider';
+import { useTheme } from "@/contexts/ThemeContext";
 
 // 지연 로딩을 위한 컴포넌트들
 const MilestoneCard = lazy(() => import('@/components/project/milestone/MilestoneCard'));
@@ -28,13 +28,12 @@ const SkeletonCard = () => (
 
 export default function MilestonePage() {
   const { project } = useProject();
+  const { isDark } = useTheme();
   const [tab, setTab] = useState('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState<MileStone | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { isDark } = useTheme();
-
   // 메모이제이션을 통한 탭 데이터 최적화
   const milestoneTabs = useMemo(() => ({
     'all': {
@@ -128,7 +127,6 @@ export default function MilestonePage() {
               </div>
             }
             color={isDark ? 'white' : 'black'}
-            isDark={isDark}
             className="!px-4 !py-2 !font-semibold"
           />
         </button>

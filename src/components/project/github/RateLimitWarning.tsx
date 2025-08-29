@@ -17,10 +17,9 @@ interface Props {
   className?: string;
 }
 
-export default function RateLimitWarning({ token, threshold = 100, className = "" }: Props) {
-  const { isDark } = useTheme();
-  const [rate, setRate] = useState<RateLimit | null>(null);
+export default function RateLimitWarning({ token, threshold = 100, className = "" }: Props) {  const [rate, setRate] = useState<RateLimit | null>(null);
   const [error, setError] = useState("");
+  const { isDark } = useTheme();
 
   useEffect(() => {
     const fetchRate = async () => {

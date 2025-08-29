@@ -54,7 +54,6 @@ import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { Input } from "@/components/ui/Input";
-import { useTheme } from "@/contexts/ThemeContext";
 import { Check, Info, X } from "lucide-react";
 
 interface TaskModalProps {
@@ -64,7 +63,6 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
-  const { isDark } = useTheme();
   const { project } = useProject();
   const user = useAuthStore.getState().user;
   const router = useRouter();
@@ -442,7 +440,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               isEditable={false}
               className="!rounded-full !px-2 !py-0.5 cursor-pointer"
               onClick={() => handleMilestoneClick(taskData?.milestone_id ?? 0)}
-              isDark={isDark}
             />
           ) : (
             <Badge
@@ -450,7 +447,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               color="teal"
               isEditable={false}
               className="!rounded-full !px-2 !py-0.5 cursor-pointer"
-              isDark={isDark}
             />
           )}
           {isEditing === "status" ? (
@@ -467,7 +463,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               color={getStatusColorName(taskData.status)}
               className="!px-2 !py-0.5 !rounded-full !text-sm"
               autoWidth
-              isDark={isDark}
               isHoverEffect={false}
               likeBadge={true}
             />
@@ -478,8 +473,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 color={getStatusColorName(taskData.status)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
-                isDark={isDark}
-              />
+                />
               <FontAwesomeIcon
                 icon={faPencil}
                 size="xs"
@@ -506,7 +500,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
               color={getPriorityColorName(taskData.priority)}
               className="!px-2 !py-0.5 !rounded-full !text-sm"
               autoWidth
-              isDark={isDark}
               isHoverEffect={false}
               likeBadge={true}
             />
@@ -522,8 +515,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 color={getPriorityColorName(taskData.priority)}
                 isEditable={false}
                 className="!rounded-full !px-2 !py-0.5"
-                isDark={isDark}
-              />
+                />
               <FontAwesomeIcon
                 icon={faPencil}
                 size="xs"

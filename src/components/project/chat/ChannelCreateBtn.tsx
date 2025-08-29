@@ -5,12 +5,10 @@ import { Plus } from "flowbite-react-icons/outline"
 import ChannelCreateModal from "@/components/project/chat/ChannelCreateModal"
 import { createPortal } from "react-dom"
 import Badge from "@/components/ui/Badge"
-import { useTheme } from "@/contexts/ThemeContext"
 
 export default function CreateChannelButton() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const { isDark } = useTheme()
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true)
@@ -29,7 +27,6 @@ export default function CreateChannelButton() {
         }
         className="flex !px-3 !py-2 active:scale-95 cursor-pointer"
         onClick={() => setIsModalOpen(true)}
-        isDark={isDark}
       />
       {mounted && isModalOpen && createPortal(
         <ChannelCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />,

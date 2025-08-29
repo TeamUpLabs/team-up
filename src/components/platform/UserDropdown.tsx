@@ -5,9 +5,9 @@ import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "@/auth/authStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings, Moon, Sun, LogOut } from "lucide-react";
-import { useTheme } from "@/contexts/ThemeContext";
 import { logout } from "@/auth/authApi";
 import { convertRoleName } from "@/utils/ConvertRoleName";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);

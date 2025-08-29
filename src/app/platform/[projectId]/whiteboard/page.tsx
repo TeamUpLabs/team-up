@@ -3,12 +3,12 @@
 import Badge from "@/components/ui/Badge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import IdeaList from "@/components/project/WhiteBoard/IdeaList";
 import { useProject } from "@/contexts/ProjectContext";
 import { Suspense } from "react";
 import WhiteboardCreateModal from "@/components/project/WhiteBoard/whiteboardCreateModal";
+import { useTheme } from "@/contexts/ThemeContext";
 
 // 로딩 컴포넌트
 const LoadingSpinner = () => (
@@ -18,8 +18,8 @@ const LoadingSpinner = () => (
 );
 
 export default function WhiteboardPage() {
-  const { isDark } = useTheme();
   const { project } = useProject();
+  const { isDark } = useTheme();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -73,7 +73,6 @@ export default function WhiteboardPage() {
               </div>
             }
             color={isDark ? 'white' : 'black'}
-            isDark={isDark}
             className="!px-4 !py-2 !font-semibold"
           />
         </button>

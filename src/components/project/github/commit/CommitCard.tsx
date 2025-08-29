@@ -1,6 +1,5 @@
 import { CommitData } from "@/types/github/CommitData";
 import Link from "next/link";
-import { useTheme } from "@/contexts/ThemeContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeCommit } from "@fortawesome/free-solid-svg-icons";
 import Badge from "@/components/ui/Badge";
@@ -28,8 +27,6 @@ const changedFileIcon = {
 }
 
 export default function CommitCard({ commitData }: { commitData: CommitData }) {
-  const { isDark } = useTheme();
-
   const files = commitData.commitDetail.files;
   const MAX_INITIAL_FILES = 3;
   const MAX_FINAL_FILES = 2;
@@ -53,7 +50,6 @@ export default function CommitCard({ commitData }: { commitData: CommitData }) {
             content={`#${commitData.sha.slice(0, 7) || "커밋 없음"}`}
             color="pink"
             className="!text-xs !px-2 !py-0.5 !rounded-full"
-            isDark={isDark}
           />
         </div>
 

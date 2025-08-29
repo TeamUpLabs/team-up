@@ -4,13 +4,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCodeCommit } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
-import { useTheme } from "@/contexts/ThemeContext";
 import { summarizeMarkdown } from "@/utils/summarizeMarkdown";
 import { hexToRgba, isColorDark } from "@/utils/hexToRgba";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function PRCard({ prData }: { prData: PrData }) {
   const { isDark } = useTheme();
-
+  
   return (
     <div
       className="flex flex-row items-start justify-between gap-4 bg-component-background border border-component-border rounded-lg p-4"
@@ -31,7 +31,6 @@ export default function PRCard({ prData }: { prData: PrData }) {
             content={`#${prData.number || 0}`}
             color="pink"
             className="!text-xs !px-2 !py-0.5 !rounded-full"
-            isDark={isDark}
           />
         </div>
 

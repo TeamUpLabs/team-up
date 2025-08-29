@@ -18,7 +18,6 @@ import Select from "@/components/ui/Select";
 import Image from "next/image";
 import { formatDate } from "date-fns";
 import MarkdownEditor from "@/components/ui/MarkdownEditor";
-import { useTheme } from "@/contexts/ThemeContext";
 import { formatFileSize } from "@/utils/fileSize";
 import { useProject } from "@/contexts/ProjectContext";
 import { addComment, deleteComment, updateIdea, likeIdea, updateViews, deleteWhiteBoard } from "@/hooks/getWhiteBoardData";
@@ -46,10 +45,7 @@ export default function WhiteboardModal({
   >("idle");
   const [commentSubmitStatus, setCommentSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
-  >("idle");
-
-  const { isDark } = useTheme();
-  const { project } = useProject();
+  >("idle");  const { project } = useProject();
 
   // Update views when modal opens
   useEffect(() => {
@@ -533,7 +529,6 @@ export default function WhiteboardModal({
                   key={idx}
                   content={tag}
                   color="pink"
-                  isDark={isDark}
                   className="!text-xs !px-2 !py-0.5 !rounded-full"
                   isEditable={isEditing === "tags"}
                   onRemove={() => handleRemoveTag(idx)}

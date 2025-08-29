@@ -7,7 +7,6 @@ import {
   Gamepad2,
   BookOpen,
 } from "lucide-react";
-import { useTheme } from "@/contexts/ThemeContext";
 import { Interest } from "@/types/User";
 
 interface SignupStep6Props {
@@ -109,8 +108,6 @@ export default function SignupStep6({
   addInterest,
   removeInterest,
 }: SignupStep6Props) {
-  const { isDark } = useTheme();
-
   return (
     <div className="space-y-6">
       {/* Selected Interests */}
@@ -136,7 +133,6 @@ export default function SignupStep6({
                   );
                 }}
                 isEditable
-                isDark={isDark}
               />
             ))}
           </div>
@@ -173,7 +169,6 @@ export default function SignupStep6({
                           ? removeInterest(category.category, interest)
                           : addInterest(category.category, interest)
                       }
-                      isDark={isDark}
                       isHover
                     />
                   );

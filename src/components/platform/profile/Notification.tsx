@@ -6,16 +6,13 @@ import { Info } from "lucide-react";
 import { updateUserProfile } from "@/hooks/getMemberData";
 import { User } from "@/types/User";
 import Badge from "@/components/ui/Badge";
-import { useTheme } from "@/contexts/ThemeContext";
 
 interface NotificationProps {
   notificationSettings: User['notification_settings'];
   setUser: React.Dispatch<React.SetStateAction<User>>;
 }
 
-export default function Notification({ notificationSettings, setUser }: NotificationProps) {
-  const { isDark } = useTheme();
-  const [emailEnabled, setEmailEnabled] = useState<boolean>(Boolean(notificationSettings.emailEnable));
+export default function Notification({ notificationSettings, setUser }: NotificationProps) {  const [emailEnabled, setEmailEnabled] = useState<boolean>(Boolean(notificationSettings.emailEnable));
   const [taskNotification, setTaskNotification] = useState<boolean>(Boolean(notificationSettings.taskNotification));
   const [milestoneNotification, setMilestoneNotification] = useState<boolean>(Boolean(notificationSettings.milestoneNotification));
   const [scheduleNotification, setScheduleNotification] = useState<boolean>(Boolean(notificationSettings.scheduleNotification));
@@ -101,7 +98,6 @@ export default function Notification({ notificationSettings, setUser }: Notifica
               </div>
             }
             color="indigo"
-            isDark={isDark}
             className="!p-3"
           />
           <Switch
