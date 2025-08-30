@@ -1,5 +1,6 @@
 import WelcomeBanner from "@/components/community/Sidebar/WelcomeBanner";
 import Topics from "@/components/community/Sidebar/Topics";
+import RecommendFollow from "@/components/community/Sidebar/RecommendFollow";
 
 interface SideBarProps {
   isSidebarOpen: boolean;
@@ -16,6 +17,7 @@ export default function SideBar({ isSidebarOpen }: SideBarProps) {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <WelcomeBanner />
           <Topics />
+          <RecommendFollow />
         </div>
       </div>
     </div>
