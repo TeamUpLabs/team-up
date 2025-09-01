@@ -1,6 +1,7 @@
 import WelcomeBanner from "@/components/community/Sidebar/WelcomeBanner";
 import Topics from "@/components/community/Sidebar/Topics";
 import RecommendFollow from "@/components/community/Sidebar/RecommendFollow";
+import RecentActivities from "@/components/community/Sidebar/RecentActivities";
 
 interface SideBarProps {
   isSidebarOpen: boolean;
@@ -18,6 +19,7 @@ export default function SideBar({ isSidebarOpen }: SideBarProps) {
           <WelcomeBanner />
           <Topics />
           <RecommendFollow />
+          <RecentActivities />
         </div>
       </div>
     </div>
