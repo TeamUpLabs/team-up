@@ -1,16 +1,30 @@
 import { useState } from "react";
-import { Plus, ChevronDown } from "lucide-react";
+import { ChevronDown, Check, UserPlus } from "lucide-react";
 import Image from "next/image";
 import Badge from "@/components/ui/Badge";
 
+interface User {
+  id: number;
+  name: string;
+  role: string;
+  profile_image: string;
+}
+
 export default function RecommendFollow() {
   const [isExpanded, setIsExpanded] = useState(true);
-
-  const users = [
+  const [users] = useState<User[]>([
     { id: 1, name: "김민수", role: "developer", profile_image: "/DefaultProfile.jpg" },
     { id: 2, name: "이자인", role: "designer", profile_image: "/DefaultProfile.jpg" },
     { id: 3, name: "박다은", role: "planner", profile_image: "/DefaultProfile.jpg" },
-  ];
+  ]);
+  const [following, setFollowing] = useState<Record<number, boolean>>({});
+
+  const toggleFollow = (userId: number) => {
+    setFollowing(prev => ({
+      ...prev,
+      [userId]: !prev[userId]
+    }));
+  };
 
   return (
     <div className="bg-component-background border border-component-border rounded-lg overflow-hidden">
@@ -50,16 +64,16 @@ export default function RecommendFollow() {
             </div>
             <button
               className="flex flex-shrink-0 self-center cursor-pointer active:scale-95 hover:scale-105 transition-all duration-200"
-              onClick={() => {}}
+              onClick={() => { toggleFollow(user.id); }}
             >
               <Badge
                 content={
                   <div className="flex items-center gap-2">
-                    <Plus className="w-4 h-4" />
-                    <span className="text-xs">팔로우</span>
+                    {following[user.id] ? <Check className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                    <span className="text-xs">{following[user.id] ? "팔로잉" : "팔로우"}</span>
                   </div>
                 }
-                color="violet"
+                color="purple"
               />
             </button>
           </div>
