@@ -38,6 +38,7 @@
     "openai": "^5.5.1",
     "react": "^19.0.0",
     "react-calendar": "^5.1.0",
+    "react-code-blocks": "^0.1.6",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.0.0",
