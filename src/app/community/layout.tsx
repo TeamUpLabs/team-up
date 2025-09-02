@@ -5,11 +5,16 @@ import Header from "@/components/community/Header";
 import SideBar from "@/components/community/SideBar";
 
 export default function CommunityLayout({ children }: { children: React.ReactNode }) {
-  const [isSiderbarOpen, setIsSiderbarOpen] = useState(false);
-    return <div>
-      <SideBar isSidebarOpen={isSiderbarOpen} />
-      <Header isSidebarOpen={isSiderbarOpen} setIsSidebarOpen={setIsSiderbarOpen}>
-        {children}
-      </Header>
-    </div>;
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  return (
+    <div className="flex min-h-screen bg-background">
+      <SideBar isSidebarOpen={isSidebarOpen} />
+      <div className={`flex-1 transition-all duration-300 ${!isSidebarOpen ? 'md:ml-80' : 'md:ml-0'}`}>
+        <Header isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen}>
+          {children}
+        </Header>
+      </div>
+    </div>
+  );
 }
