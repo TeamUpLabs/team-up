@@ -6,9 +6,11 @@ import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale/ko";
 import Badge from "@/components/ui/Badge";
 import { UserPlus, Check, Bookmark, Copy, Heart, MessageCircle, Share2, Eye } from "lucide-react";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Tooltip from "@/components/ui/Tooltip";
 import { useTheme } from "@/contexts/ThemeContext";
+import CommentModal from "@/components/community/CommentModal";
+import Loading from "@/components/ui/Loading";
 
 export default function Posts({ user, content, code, tags, reaction, created_at }: PostsProps) {
   const { isDark } = useTheme();
@@ -16,6 +18,7 @@ export default function Posts({ user, content, code, tags, reaction, created_at 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
 
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
   const handleCopyCode = async () => {
@@ -136,11 +139,11 @@ export default function Posts({ user, content, code, tags, reaction, created_at 
             <span className="text-text-secondary text-sm">{isLiked ? reaction.likes + 1 : reaction.likes}</span>
           </div>
           <div className="flex items-center gap-2">
-            <MessageCircle className="w-4 h-4 text-text-secondary" />
+            <MessageCircle className="w-4 h-4 text-text-secondary cursor-pointer hover:text-green-500" onClick={() => setIsCommentModalOpen(true)} />
             <span className="text-text-secondary text-sm">{reaction.comments}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Share2 className="w-4 h-4 text-text-secondary" />
+            <Share2 className="w-4 h-4 text-text-secondary cursor-pointer hover:text-blue-500" />
             <span className="text-text-secondary text-sm">{reaction.shares}</span>
           </div>
         </div>
@@ -150,6 +153,9 @@ export default function Posts({ user, content, code, tags, reaction, created_at 
           <span className="text-text-secondary text-sm">{reaction.views}</span>
         </div>
       </div>
+      <Suspense fallback={<Loading />}>
+        <CommentModal isOpen={isCommentModalOpen} onClose={() => setIsCommentModalOpen(false)} />
+      </Suspense>
     </div>
   );
 }
