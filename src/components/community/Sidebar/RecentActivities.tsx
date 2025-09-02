@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, MessageSquare, ThumbsUp, UserPlus, FileText, CheckCircle2 } from "lucide-react";
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -17,6 +17,7 @@ interface Activity {
   content: string;
   target?: string;
   timestamp: Date;
+  formattedTime?: string;
 }
 
 const sampleActivities: Activity[] = [
@@ -71,14 +72,24 @@ const getActivityIcon = (type: ActivityType) => {
 
 export default function RecentActivities() {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [activities] = useState<Activity[]>(sampleActivities);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
-  const getActivityMessage = (activity: Activity) => {
-    const { user, type, content, target } = activity;
-    const timeAgo = formatDistanceToNow(activity.timestamp, { 
-      addSuffix: true, 
-      locale: ko 
-    });
+  useEffect(() => {
+    setIsClient(true);
+    // Format dates after component mounts
+    const formattedActivities = sampleActivities.map(activity => ({
+      ...activity,
+      formattedTime: formatDistanceToNow(activity.timestamp, {
+        addSuffix: true,
+        locale: ko
+      })
+    }));
+    setActivities(formattedActivities);
+  }, []);
+
+  const getActivityMessage = (activity: Activity & { formattedTime?: string }) => {
+    const { user, type, content, target, formattedTime } = activity;
 
     const userElement = <span className="font-medium text-text-primary">{user.name}</span>;
     const contentElement = <span className="font-medium text-text-primary">{content}</span>;
@@ -89,28 +100,36 @@ export default function RecentActivities() {
         return (
           <div>
             {userElement}님이 {targetElement}에 댓글을 남겼어요: &quot;{contentElement}&quot;
-            <div className="text-xs text-text-secondary mt-1">{timeAgo}</div>
+            {isClient && formattedTime && (
+              <div className="text-xs text-text-secondary mt-1">{formattedTime}</div>
+            )}
           </div>
         );
       case 'like':
         return (
           <div>
             {userElement}님이 {contentElement}에 좋아요를 눌렀어요
-            <div className="text-xs text-text-secondary mt-1">{timeAgo}</div>
+            {isClient && formattedTime && (
+              <div className="text-xs text-text-secondary mt-1">{formattedTime}</div>
+            )}
           </div>
         );
       case 'complete':
         return (
           <div>
             {userElement}님이 {contentElement}를 완료했어요! 🎉
-            <div className="text-xs text-text-secondary mt-1">{timeAgo}</div>
+            {isClient && formattedTime && (
+              <div className="text-xs text-text-secondary mt-1">{formattedTime}</div>
+            )}
           </div>
         );
       case 'post':
         return (
           <div>
             {userElement}님이 {targetElement}에 새로운 게시글을 작성했어요: &quot;{contentElement}&quot;
-            <div className="text-xs text-text-secondary mt-1">{timeAgo}</div>
+            {isClient && formattedTime && (
+              <div className="text-xs text-text-secondary mt-1">{formattedTime}</div>
+            )}
           </div>
         );
       default:
@@ -142,8 +161,8 @@ export default function RecentActivities() {
           <div className="space-y-4">
             {activities.length > 0 ? (
               activities.map((activity) => (
-                <div 
-                  key={activity.id} 
+                <div
+                  key={activity.id}
                   className="flex items-start gap-3 p-3 rounded-lg hover:bg-component-secondary-background transition-colors"
                 >
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-component-tertiary-background flex items-center justify-center">
