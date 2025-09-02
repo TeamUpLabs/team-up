@@ -1,20 +1,15 @@
 import { OpenSidebarAlt, CloseSidebarAlt } from "flowbite-react-icons/outline";
 import UserDropdown from "@/components/platform/UserDropdown";
-import { Home, Pencil, Menu, Search } from "lucide-react";
+import { Home, Pencil, Search as SearchIcon } from "lucide-react";
 import Badge from "@/components/ui/Badge";
+import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
 import { useState } from "react";
-import Link from "next/link";
+import Search from "@/components/ui/Search";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
   setIsSidebarOpen: (open: boolean) => void;
   children: React.ReactNode;
-}
-
-interface IconProps {
-  icon: React.ReactNode;
-  label: string;
-  href?: string;
 }
 
 const icons: IconProps[] = [
@@ -24,19 +19,20 @@ const icons: IconProps[] = [
     href: "/",
   },
   {
-    icon: <Search className="w-5 h-5" />,
+    icon: <SearchIcon className="w-5 h-5" />,
     label: "Search",
   },
 ]
 
 export default function Header({ isSidebarOpen, setIsSidebarOpen, children }: HeaderProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <div className="w-full">
       <header className="sticky top-0 z-10 bg-component-background min-h-10 border-b border-component-border">
-        <div className="px-3 py-2 sm:px-4 flex items-center gap-3 justify-between">
-          <div className="flex items-center gap-2">
+        <div className="px-3 py-2 flex items-center gap-3 w-full justify-between">
+          <div className="flex items-center">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="p-2 rounded-md text-text-secondary hover:bg-component-tertiary-background hover:text-text-primary cursor-pointer"
@@ -47,32 +43,16 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen, children }: He
 
             <div className="h-6 w-px bg-component-border mx-2"></div>
 
-            <div className="flex gap-2">
-              <button
-                onMouseEnter={() => setIsMenuOpen(true)}
-                onMouseLeave={() => setIsMenuOpen(false)}
-                className={`p-2 rounded-md text-text-secondary hover:bg-component-tertiary-background hover:text-text-primary cursor-pointer`}
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-              <div 
-                className={`flex items-center gap-2 transition-all duration-300 overflow-hidden ${isMenuOpen ? 'max-w-[200px]' : 'max-w-0'}`}
-                onMouseEnter={() => setIsMenuOpen(true)}
-                onMouseLeave={() => setIsMenuOpen(false)}
-              >
-                {icons.map((value) => (
-                  <Link
-                    key={value.label}
-                    href={value.href || ""}
-                    className="p-2 rounded-md text-text-secondary hover:bg-component-tertiary-background hover:text-text-primary cursor-pointer"
-                    aria-label={value.label}
-                  >
-                    {value.icon}
-                  </Link>
-                ))}
-              </div>
+            <div className="w-full">
+              <SlideingMenu icons={icons} isSearchOpen={isSearchOpen} setIsSearchOpen={setIsSearchOpen} />
             </div>
           </div>
+
+          {isSearchOpen && (
+            <div className="flex-1">
+              <Search placeholder="검색어를 입력하세요" searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            </div>
+          )}
 
           <div className="flex items-center gap-4">
             <Badge
