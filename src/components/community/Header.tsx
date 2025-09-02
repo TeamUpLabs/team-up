@@ -1,5 +1,7 @@
 import { OpenSidebarAlt, CloseSidebarAlt } from "flowbite-react-icons/outline";
 import UserDropdown from "@/components/platform/UserDropdown";
+import Link from "next/link";
+import { Home } from "lucide-react";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -21,6 +23,13 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen, children }: He
               {isSidebarOpen ? <CloseSidebarAlt /> : <OpenSidebarAlt />}
             </button>
             <div className="h-6 w-px bg-component-border mx-2"></div>
+            <Link 
+              href="/" 
+              className="p-2 rounded-md text-text-secondary hover:bg-component-tertiary-background hover:text-text-primary"
+              aria-label="Go to home"
+            >
+              <Home className="w-5 h-5" />
+            </Link>
           </div>
 
           <UserDropdown />
