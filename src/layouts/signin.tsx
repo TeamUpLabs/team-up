@@ -24,6 +24,11 @@ export default function SignIn() {
     const githubAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/social/github/login`;
     window.location.href = githubAuthUrl;
   }
+
+  const handleGoogleLogin = () => {
+    const googleAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/social/google/login`;
+    window.location.href = googleAuthUrl;
+  }
     
 
   return (
@@ -108,6 +113,7 @@ export default function SignIn() {
           <div className="mt-6 space-y-3">
             <button
               type="button"
+              onClick={handleGoogleLogin}
               className="w-full inline-flex justify-center items-center py-2.5 px-4 border border-component-border rounded-md bg-component-secondary-background hover:bg-component-tertiary-background text-sm font-medium text-text-primary transition duration-200 cursor-pointer"
             >
               <Google className="mr-2" />
