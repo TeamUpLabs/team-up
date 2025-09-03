@@ -197,7 +197,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
         <div className="space-x-2">
           {member.languages && member.languages.length > 0 ? (
             member.languages.map((language: string, index: number) => (
-              <Badge key={index} content={language} color="purple" />
+              <Badge key={index} content={language} color="purple" fit />
             ))
           ) : (
             <p className="text-text-secondary">
