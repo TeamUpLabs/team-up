@@ -104,7 +104,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {  cons
       return;
     }
     try {
-      useAuthStore.getState().setConfirm(`${request.user.name}님의 참여 요청을 승인하시겠습니까?`, async () => {
+      useAuthStore.getState().setConfirm(`${request.sender.name}님의 참여 요청을 승인하시겠습니까?`, async () => {
           if (project.members.length >= project.team_size) {
             useAuthStore.getState()
               .setAlert(
@@ -114,7 +114,7 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {  cons
             return;
           }
           await allowParticipationRequest(request.id);
-          useAuthStore.getState().setAlert(`${request.user.name}님의 참여 요청이 승인되었습니다.`, "success");
+          useAuthStore.getState().setAlert(`${request.sender.name}님의 참여 요청이 승인되었습니다.`, "success");
           useAuthStore.getState().clearConfirm();
         });
     } catch (error) {
@@ -129,9 +129,9 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {  cons
       return;
     }
     try {
-      useAuthStore.getState().setConfirm(`${request.user.name}님의 참여 요청을 거절하시겠습니까?`, async () => {
+      useAuthStore.getState().setConfirm(`${request.sender.name}님의 참여 요청을 거절하시겠습니까?`, async () => {
           await rejectParticipationRequest(request.id);
-          useAuthStore.getState().setAlert(`${request.user.name}님의 참여 요청이 거절되었습니다.`, "info");
+          useAuthStore.getState().setAlert(`${request.sender.name}님의 참여 요청이 거절되었습니다.`, "info");
           useAuthStore.getState().clearConfirm();
         });
     } catch (error) {
@@ -179,9 +179,9 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {  cons
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 relative bg-component-tertiary-background rounded-full flex items-center justify-center text-text-secondary">
-                              {request.user.profile_image ? (
+                              {request.sender.profile_image ? (
                                 <Image
-                                  src={request.user.profile_image || ""}
+                                  src={request.sender.profile_image || ""}
                                   alt="Profile"
                                   className="w-full h-full object-fit rounded-full"
                                   quality={100}
@@ -189,20 +189,20 @@ export default function TeamSettingTab({ project }: TeamSettingTabProps) {  cons
                                   height={32}
                                 />
                               ) : (
-                                <p>{request.user.name.charAt(0)}</p>
+                                <p>{request.sender.name.charAt(0)}</p>
                               )}
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
                                 <p className="text-text-primary font-medium">
-                                  {request.user.name}
+                                  {request.sender.name}
                                 </p>
                                 <span className="bg-component-tertiary-background text-text-secondary text-xs px-2 py-0.5 rounded-md">
-                                  {request.user.role}
+                                  {request.sender.role}
                                 </span>
                               </div>
                               <p className="text-text-secondary text-xs">
-                                {request.user.email}
+                                {request.sender.email}
                               </p>
                             </div>
                           </div>
