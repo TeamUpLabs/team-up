@@ -73,6 +73,7 @@ export default function NewPostCreateModal({ isOpen, onClose }: NewPostCreateMod
   }
 
   const handleSubmit = async () => {
+    setSubmitStatus('submitting');
     try {
       await createCommunityPost(formData);
       setSubmitStatus('success');
