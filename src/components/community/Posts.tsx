@@ -109,8 +109,8 @@ export default function Posts({ user, content, code, tags, reaction, created_at 
           </div>
 
           <div className="text-white w-full overflow-x-auto">
-            <pre className="font-mono">
-              <code className={`language-${code.language} block`}>
+            <pre className="font-mono !p-0">
+              <code className="block whitespace-pre">
                 {code.code}
               </code>
             </pre>
