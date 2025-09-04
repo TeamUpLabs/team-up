@@ -1,12 +1,10 @@
 "use client";
 
 import SideBar from "@/components/platform/SideBar";
-import { useState, useEffect, use, useRef } from "react";
+import { useState, use } from "react";
 import { Project } from "@/types/Project";
 import { usePathname } from "next/navigation";
 import { ProjectProvider } from "@/contexts/ProjectContext";
-import UserDropdown from "@/components/platform/UserDropdown";
-import NotificationDropdown from "@/components/platform/NotificationDropdown";
 import NotificationSidebar from "@/components/platform/NotificationSidebar";
 import { VoiceCallProvider } from "@/contexts/VoiceCallContext";
 import VoiceCallContainer from "@/components/project/VoiceCall/VoiceCallContainer";
@@ -23,9 +21,6 @@ import {
   Cog as CogOutline,
   ArrowRightToBracket as ArrowRightToBracketOutline,
   Book as BookOutline,
-  Search,
-  OpenSidebarAlt,
-  CloseSidebarAlt,
 } from "flowbite-react-icons/outline";
 import {
   Grid as GridSolid,
@@ -38,7 +33,8 @@ import {
   Github as GithubSolid,
   Book as BookSolid,
 } from "flowbite-react-icons/solid";
-import { Input } from "@/components/ui/Input";
+import Header from "@/components/platform/Header";
+
 
 export default function ProjectLayout({
   children,
@@ -49,11 +45,8 @@ export default function ProjectLayout({
 }) {
   const { projectId } = use(params);
   const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [headerSearchQuery, setHeaderSearchQuery] = useState("");
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNotificationSidebarOpen, setIsNotificationSidebarOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const hydrated = useAuthHydration();
   const { data: project, error, isLoading } = useSWR<Project>(
@@ -61,98 +54,78 @@ export default function ProjectLayout({
     fetcher
   );
 
-  // Close sidebar on navigation change (for mobile)
-  useEffect(() => {
-    setIsSidebarOpen(false);
-  }, [pathname]);
-
-  const toggleNotificationSidebar = () => {
-    setIsNotificationSidebarOpen(!isNotificationSidebarOpen);
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   const projectNavItems = [
     {
       icon: GridOutline,
       activeIcon: GridSolid,
       category: "프로젝트",
       label: "대시보드",
-      href: `/platform/${projectId}`,
-      isActive: pathname === `/platform/${projectId}`,
+      href: `/project/${projectId}`,
+      isActive: pathname === `/project/${projectId}`,
     },
     {
       icon: UsersOutline,
       activeIcon: UsersSolid,
       category: "팀",
       label: "팀원",
-      href: `/platform/${projectId}/members`,
-      isActive: pathname === `/platform/${projectId}/members`,
+      href: `/project/${projectId}/members`,
+      isActive: pathname === `/project/${projectId}/members`,
     },
     {
       icon: MessagesOutline,
       activeIcon: MessagesSolid,
       category: "팀",
       label: "채팅",
-      href: `/platform/${projectId}/chat`,
-      isActive: pathname === `/platform/${projectId}/chat`,
+      href: `/project/${projectId}/chat`,
+      isActive: pathname === `/project/${projectId}/chat`,
     },
     {
       icon: ClipboardListOutline,
       activeIcon: ClipboardListSolid,
       category: "프로젝트",
       label: "작업",
-      href: `/platform/${projectId}/tasks`,
-      isActive: pathname === `/platform/${projectId}/tasks`,
+      href: `/project/${projectId}/tasks`,
+      isActive: pathname === `/project/${projectId}/tasks`,
     },
     {
       icon: CalendarMonthOutline,
       activeIcon: CalendarMonthSolid,
       category: "프로젝트",
       label: "일정",
-      href: `/platform/${projectId}/calendar`,
-      isActive: pathname === `/platform/${projectId}/calendar`,
+      href: `/project/${projectId}/calendar`,
+      isActive: pathname === `/project/${projectId}/calendar`,
     },
     {
       icon: FlagOutline,
       activeIcon: FlagSolid,
       category: "프로젝트",
       label: "마일스톤",
-      href: `/platform/${projectId}/milestone`,
-      isActive: pathname === `/platform/${projectId}/milestone`,
+      href: `/project/${projectId}/milestone`,
+      isActive: pathname === `/project/${projectId}/milestone`,
     },
     {
       icon: BookOutline,
       activeIcon: BookSolid,
       category: "프로젝트",
       label: "화이트 보드",
-      href: `/platform/${projectId}/whiteboard`,
-      isActive: pathname === `/platform/${projectId}/whiteboard`,
+      href: `/project/${projectId}/whiteboard`,
+      isActive: pathname === `/project/${projectId}/whiteboard`,
     },
     {
       icon: CogOutline,
       activeIcon: CogSolid,
       category: "환경 설정",
       label: "설정",
-      href: `/platform/${projectId}/setting`,
-      isActive: pathname === `/platform/${projectId}/setting`,
+      href: `/project/${projectId}/setting`,
+      isActive: pathname === `/project/${projectId}/setting`,
     },
     {
       icon: GithubSolid,
       activeIcon: GithubSolid,
       category: "기능",
       label: "깃허브",
-      href: `/platform/${projectId}/github`,
-      isActive: pathname === `/platform/${projectId}/github`,
+      href: `/project/${projectId}/github`,
+      isActive: pathname === `/project/${projectId}/github`,
       hasIndicator: true,
       IndicatorColor: project?.github_url ? "green" : "red",
     },
@@ -167,7 +140,7 @@ export default function ProjectLayout({
 
   const layoutContent = (
     <div className="flex min-h-screen bg-background">
-      {isSidebarOpen && (
+      {/* {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-background/70 lg:hidden z-[11]"
           onClick={() => setIsSidebarOpen(false)}
@@ -178,74 +151,27 @@ export default function ProjectLayout({
           className="fixed inset-0 bg-background/70 lg:hidden"
           onClick={() => setIsNotificationSidebarOpen(false)}
         />
-      )}
+      )} */}
       <SideBar
         isSidebarOpen={isSidebarOpen}
         title={project?.title}
-        titleHref={`/platform/${projectId}`}
+        titleHref={`/project/${projectId}`}
         navItems={projectNavItems}
-        isMinimized={isSidebarCollapsed}
       />
-      <div
-        className={`w-full flex-1 transition-all duration-300 
-          ${isSidebarCollapsed ? "lg:ml-0" : "lg:ml-64"}
-          ${isNotificationSidebarOpen ? "lg:mr-72" : ""}`}
-      >
-        <header
-          className={`h-auto bg-component-background min-h-16 z-[10] border-b border-component-border backdrop-blur-sm fixed top-0 right-0 left-0 ${isSidebarCollapsed ? "lg:left-0" : "lg:left-64"} ${isNotificationSidebarOpen ? "lg:right-72" : ""} content-center transition-all duration-300`}
+      <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "md:ml-64" : "md:ml-0"} ${isNotificationSidebarOpen ? "md:mr-72" : "md:mr-0"}`}>
+        <Header
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isNotificationSidebarOpen={isNotificationSidebarOpen}
+          setIsNotificationSidebarOpen={setIsNotificationSidebarOpen}
         >
-          <div className="h-full px-3 py-2 sm:px-4 flex items-center gap-3 justify-between">
-            <div className="flex items-center gap-4 w-full">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => {
-                    if (window.innerWidth < 1024) {
-                      setIsSidebarOpen(!isSidebarOpen);
-                    } else {
-                      setIsSidebarCollapsed(!isSidebarCollapsed);
-                    }
-                  }}
-                  className="p-2 rounded-md text-text-secondary hover:bg-component-tertiary-background hover:text-text-primary cursor-pointer"
-                >
-                  {isSidebarCollapsed ? (
-                    <OpenSidebarAlt className="w-5 h-5" />
-                  ) : (
-                    <CloseSidebarAlt className="w-5 h-5" />
-                  )}
-                </button>
-                <div className="h-6 w-px bg-component-border mx-2"></div>
-              </div>
-              <div className="relative flex-1 max-w-2xl">
-                <Input
-                  ref={inputRef}
-                  placeholder="Search projects, tasks, or team members..."
-                  value={headerSearchQuery}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setHeaderSearchQuery(value);
-                    const searchEvent = new CustomEvent("headerSearch", { detail: value, bubbles: true, cancelable: true });
-                    window.dispatchEvent(searchEvent);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      const searchEvent = new CustomEvent("headerSearch", { detail: headerSearchQuery, bubbles: true, cancelable: true });
-                      window.dispatchEvent(searchEvent);
-                    }
-                  }}
-                  startAdornment={<Search className="w-5 h-5 text-text-secondary" />}
-                  endAdornment={<span className="text-text-secondary p-1 border border-component-border rounded w-6 h-6 flex items-center justify-center">/</span>}
-                />
-              </div>
-            </div>
-            <div className="flex flex-shrink-0 items-center gap-3">
-              <NotificationDropdown onToggleSidebar={toggleNotificationSidebar} />
-              <UserDropdown />
-            </div>
-          </div>
-        </header>
-        <main className="mt-16">{children}</main>
+          {children}
+        </Header>
       </div>
-      <NotificationSidebar isOpen={isNotificationSidebarOpen} onClose={() => setIsNotificationSidebarOpen(false)} />
+      <NotificationSidebar
+        isOpen={isNotificationSidebarOpen}
+        onClose={() => setIsNotificationSidebarOpen(false)}
+      />
     </div>
   );
 

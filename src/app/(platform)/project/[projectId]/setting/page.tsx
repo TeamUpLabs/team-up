@@ -19,7 +19,7 @@ export default function SettingsPage() {
   const hasParticipationRequests = project?.participation_requests && project.participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length > 0;
 
   return (
-    <div className="p-4">
+    <div className="">
       <div className="flex items-center justify-between mb-8 bg-project-page-title-background border border-project-page-title-border p-6 rounded-lg">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">설정</h1>

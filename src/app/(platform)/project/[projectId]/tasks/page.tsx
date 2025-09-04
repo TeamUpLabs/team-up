@@ -142,7 +142,7 @@ export default function TasksPage() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="p-4 flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         <div className="flex items-center justify-end">
           <button
             onClick={() => setIsSelectMilestoneModalOpen(true)}

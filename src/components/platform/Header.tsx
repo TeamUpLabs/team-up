@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
 import Search from "@/components/ui/Search";
 import UserDropdown from "@/components/platform/UserDropdown";
@@ -18,6 +18,29 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen, isNotification
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Handle keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only trigger if not in an input field and '/' is pressed
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+        // Use setTimeout to ensure the input is rendered before focusing
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 0);
+      }
+      // Close search on Escape key
+      if (e.key === 'Escape' && isSearchOpen) {
+        e.preventDefault();
+        setIsSearchOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSearchOpen]);
 
   const icons: IconProps[] = [
     {
@@ -53,18 +76,18 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen, isNotification
               <SlideingMenu icons={icons} isSearchOpen={isSearchOpen} setIsSearchOpen={setIsSearchOpen} />
             </div>
 
-            {isSearchOpen && (
-              <div className="flex-1">
-                <Search
-                  placeholder="Search projects, tasks, or team members..."
-                  searchQuery={searchQuery}
-                  setSearchQuery={setSearchQuery}
-                  inputRef={inputRef}
-                />
-              </div>
-            )}
 
           </div>
+          {isSearchOpen && (
+            <div className="flex-1">
+              <Search
+                placeholder="Search projects, tasks, or team members..."
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                inputRef={inputRef}
+              />
+            </div>
+          )}
           <div className="flex flex-shrink-0 items-center gap-3">
             <NotificationDropdown
               onToggleSidebar={() => setIsNotificationSidebarOpen(!isNotificationSidebarOpen)}

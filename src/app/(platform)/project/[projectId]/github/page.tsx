@@ -108,7 +108,7 @@ export default function GithubPage() {
 
 
   return (
-    <div className="flex items-start justify-center p-4">
+    <div className="flex items-start justify-center">
       {!project ? (
         <div className="flex flex-col items-center space-y-4">
           <div className="h-16 w-16 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
