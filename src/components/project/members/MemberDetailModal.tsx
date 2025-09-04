@@ -207,7 +207,7 @@ export default function MemberDetailModal({
         icon={Clock}
       >
         <div className="space-y-2">
-          {member.collaboration_preference.available_time_zone ? (
+          {member.collaboration_preference?.available_time_zone ? (
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
                 <div className="flex items-center gap-2">
