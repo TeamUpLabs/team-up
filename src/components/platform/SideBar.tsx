@@ -116,7 +116,7 @@ export default function SideBar({
                                       .map((channel) => (
                                         <Link
                                           key={channel.channel_id}
-                                          href={`/platform/${titleHref.split('/').pop()}/chat?project_id=${project.id}&channel=${channel.channel_id}`}
+                                          href={`/project/${titleHref.split('/').pop()}/chat?project_id=${project.id}&channel=${channel.channel_id}`}
                                           className="block text-sm text-text-secondary hover:text-text-primary px-2 py-1 rounded hover:bg-component-hover-background"
                                         >
                                           # {channel.name}
