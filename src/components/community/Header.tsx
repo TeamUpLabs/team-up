@@ -5,6 +5,7 @@ import Badge from "@/components/ui/Badge";
 import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
 import { useState } from "react";
 import Search from "@/components/ui/Search";
+import NewPostCreateModal from "@/components/community/NewPostCreateModal";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -27,6 +28,7 @@ const icons: IconProps[] = [
 export default function Header({ isSidebarOpen, setIsSidebarOpen, children }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="w-full">
@@ -65,10 +67,12 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen, children }: He
               color="white"
               className="!px-3 !py-1 !flex active:scale-95 cursor-pointer"
               isHover
+              onClick={() => setIsModalOpen(true)}
             />
             <UserDropdown />
           </div>
         </div>
+        <NewPostCreateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </header>
       <main className="p-4">
         {children}
