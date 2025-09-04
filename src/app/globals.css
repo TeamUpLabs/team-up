@@ -222,3 +222,29 @@ body.video-call-active [class*="z-[9999]"] {
   bottom: 0;
   top: 0;
 }
+
+
+.editor {
+  counter-reset: line;
+}
+
+#codeArea {
+  outline: none;
+  padding-left: 45px !important;
+  font-size: 0.875rem !important;
+}
+
+pre {
+  padding-left: 45px !important;
+  font-size: 0.875rem !important;
+}
+
+.editorLineNumber {
+  position: absolute;
+  left: 0px;
+  color: #cccccc;
+  text-align: right;
+  width: 25px;
+  font-weight: 100;
+  font-size: 0.875rem !important;
+}
