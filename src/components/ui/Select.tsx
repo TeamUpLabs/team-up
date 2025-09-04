@@ -317,7 +317,7 @@ export default function Select({
         ref={selectRef}
         className={`relative
           ${likeBadge ? isDark ? darkBadgeColors[color as BadgeColor] : badgeColors[color as BadgeColor] : "bg-input-background border-input-border"}
-          px-3 py-2 border rounded-md transition-all duration-200
+          border rounded-md transition-all duration-200
           ${isHoverEffect ? "focus:outline-none focus:ring-1 focus:ring-point-color-indigo focus:border-transparent hover:border-input-border-hover" : ""}
           ${className}`
         }
@@ -334,9 +334,9 @@ export default function Select({
           onClick={() => !disabled && setIsOpen(!isOpen)}
           disabled={disabled}
           className={`
-          w-full focus:outline-none focus:ring-0 text-left
-          ${likeBadge ? "" : "text-text-primary"}
-          ${disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"}
+            px-3 py-2 w-full focus:outline-none focus:ring-0 text-left
+            ${likeBadge ? "" : "text-text-primary"}
+            ${disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"}
         `}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
