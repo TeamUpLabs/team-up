@@ -111,7 +111,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) { 
             </button>
           )
         ) : (
-          <Link href={`/platform/${project.id}`} className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover hover:underline">
+          <Link href={`/project/${project.id}`} className="text-sm text-point-color-indigo hover:text-point-color-indigo-hover hover:underline">
             참여하기
           </Link>
         )}
