@@ -19,7 +19,8 @@ const LoadingSpinner = () => (
   </div>
 );
 
-export default function Platform() {
+// Separate component to handle search params with Suspense
+function PlatformContent() {
   const searchParams = useSearchParams();
   const initialSearchQuery = searchParams?.get("search") || "";
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
@@ -112,5 +113,17 @@ export default function Platform() {
         <NewProjectModal isOpen={isModalOpen} onClose={handleCloseModal} />
       </Suspense>
     </div>
+  );
+}
+
+export default function Platform() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center p-8">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+      </div>
+    }>
+      <PlatformContent />
+    </Suspense>
   );
 }
