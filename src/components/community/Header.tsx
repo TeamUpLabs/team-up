@@ -40,7 +40,7 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen, children }: He
               className="p-2 rounded-md text-text-secondary hover:bg-component-tertiary-background hover:text-text-primary cursor-pointer"
               aria-label={isSidebarOpen ? "Open sidebar" : "Close sidebar"}
             >
-              {isSidebarOpen ? <CloseSidebarAlt /> : <OpenSidebarAlt />}
+              {isSidebarOpen ? <OpenSidebarAlt /> : <CloseSidebarAlt />}
             </button>
 
             <div className="h-6 w-px bg-component-border mx-2"></div>
