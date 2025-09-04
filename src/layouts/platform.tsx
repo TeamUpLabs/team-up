@@ -69,10 +69,7 @@ export default function Platform() {
     );
   });
 
-  if (!hydrated || isLoading) {
-    return <div className="text-center text-text-secondary p-8">로딩 중...</div>;
-  }
-
+  // Show error state if there's an error
   if (error) {
     return <div className="text-center text-red-500 p-8">프로젝트를 가져오는 데 실패했습니다.</div>;
   }
@@ -80,25 +77,36 @@ export default function Platform() {
   return (
     <div className="mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
-        <Suspense fallback={<LoadingSpinner />}>
-          {filteredProjects.map((project: Project) => (
-            <ProjectCard key={project.id} project={project} isExplore={false} />
-          ))}
-        </Suspense>
-
-        <div className="bg-component-background rounded-lg p-6 border border-dashed border-gray-700/50 flex flex-col">
-          <div className="flex-1 flex items-center justify-center min-h-[12rem]">
-            <div className="text-center">
-              <p className="text-text-secondary mb-2">새로운 프로젝트를 시작해보세요</p>
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="text-point-color-indigo hover:text-point-color-indigo-hover hover:underline cursor-pointer"
-              >
-                + 프로젝트 생성
-              </button>
-            </div>
+        <Suspense fallback={
+          <div className="col-span-full flex justify-center p-8">
+            <LoadingSpinner />
           </div>
-        </div>
+        }>
+          {isLoading || !hydrated ? (
+            <div className="col-span-full flex justify-center p-8">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <>
+              {filteredProjects.map((project: Project) => (
+                <ProjectCard key={project.id} project={project} isExplore={false} />
+              ))}
+              <div className="bg-component-background rounded-lg p-6 border border-dashed border-gray-700/50 flex flex-col">
+                <div className="flex-1 flex items-center justify-center min-h-[12rem]">
+                  <div className="text-center">
+                    <p className="text-text-secondary mb-2">새로운 프로젝트를 시작해보세요</p>
+                    <button
+                      onClick={() => setIsModalOpen(true)}
+                      className="text-point-color-indigo hover:text-point-color-indigo-hover hover:underline cursor-pointer"
+                    >
+                      + 프로젝트 생성
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </Suspense>
       </div>
       <Suspense fallback={<LoadingSpinner />}>
         <NewProjectModal isOpen={isModalOpen} onClose={handleCloseModal} />

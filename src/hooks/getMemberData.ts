@@ -40,7 +40,8 @@ export const sendScout = async (project_id: string, project_name: string, receiv
   try {
     const res = await server.post(`/participation-requests`, {
       project_id: project_id,
-      user_id: receiver_id,
+      sender_id: receiver_id,
+      receiver_id: receiver_id,
       request_type: "scout",
       message: `'${project_name}' 프로젝트에 스카우트 요청을 받았습니다!`,
     });
@@ -83,11 +84,12 @@ export const rejectScout = async (member_id: number, notification_id: number) =>
   }
 }
 
-export const sendParticipationRequest = async (project_id: string, user_id: number) => {
+export const sendParticipationRequest = async (project_id: string, user_id: number, receiver_id: number) => {
   try {
     const res = await server.post(`/participation-requests`, {
       project_id: project_id,
-      user_id: user_id,
+      sender_id: user_id,
+      receiver_id: receiver_id,
       request_type: "request",
       message: "해당 프로젝트에 참여하고 싶습니다!",
     });
@@ -102,9 +104,13 @@ export const sendParticipationRequest = async (project_id: string, user_id: numb
   }
 }
 
-export const cancelParticipationRequest = async (project_id: string, member_id: number) => {
+export const cancelParticipationRequest = async (request_id: number) => {
   try {
-    const res = await server.put(`/project/${project_id}/participationRequest/${member_id}/reject`);
+    const res = await server.put(`/participation-requests/${request_id}/cancel`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     if (res.status === 200) {
       return res.data;
     } else {

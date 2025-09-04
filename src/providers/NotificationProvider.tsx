@@ -51,6 +51,7 @@ export function NotificationProvider({
   const lastProcessedNotificationIds = useRef(new Set<number>());
   const lastAlertedNotificationId = useRef<number | null>(null);
   const initialNotificationsHydrated = useRef(false);
+  const token = useAuthStore.getState().token;
 
   const fetchInitialNotifications = useCallback(async () => {
     initialNotificationsHydrated.current = false;
@@ -64,7 +65,7 @@ export function NotificationProvider({
           initialNotifications = user.received_notifications || [];
           console.warn("Fetched initial notifications from user.notification due to API issue or unexpected data.", response);
         }
-        
+
         setNotifications(initialNotifications);
         lastProcessedNotificationIds.current = new Set(
           initialNotifications.map((n) => n.id)
@@ -87,7 +88,7 @@ export function NotificationProvider({
         const fallbackNotifications = user.received_notifications || [];
         setNotifications(fallbackNotifications);
         lastProcessedNotificationIds.current = new Set(
-            fallbackNotifications.map((n: Notification) => n.id)
+          fallbackNotifications.map((n: Notification) => n.id)
         );
         if (fallbackNotifications.length > 0) {
           const mostRecentFallbackNotification = fallbackNotifications.sort(
@@ -139,7 +140,7 @@ export function NotificationProvider({
         return;
       }
       const sseUrl = `${apiUrl}/notifications/user/${user.id}/sse`;
-      
+
       console.log("Attempting to connect to SSE:", sseUrl);
       const newEventSource = new EventSource(sseUrl);
       eventSourceRef.current = newEventSource;
@@ -151,17 +152,17 @@ export function NotificationProvider({
       newEventSource.onmessage = (event) => {
         try {
           const eventData = JSON.parse(event.data);
-          
+
           if (!eventData) {
             console.warn("Received empty SSE data");
             return;
           }
 
           // Handle both formats: { notifications: [] } and []
-          const notifications = Array.isArray(eventData.notifications) 
-            ? eventData.notifications 
-            : Array.isArray(eventData) 
-              ? eventData 
+          const notifications = Array.isArray(eventData.notifications)
+            ? eventData.notifications
+            : Array.isArray(eventData)
+              ? eventData
               : [];
 
           if (!Array.isArray(notifications)) {
@@ -172,17 +173,17 @@ export function NotificationProvider({
           // Validate each notification
           const validNotifications = notifications.filter((n): n is Notification => {
             if (!n || typeof n !== 'object') return false;
-            
-            const hasRequiredFields = 
-              typeof n.id === 'number' && 
-              typeof n.timestamp === 'string' && 
+
+            const hasRequiredFields =
+              typeof n.id === 'number' &&
+              typeof n.timestamp === 'string' &&
               typeof n.is_read === 'boolean';
 
             if (!hasRequiredFields) {
               console.warn(`Skipping invalid notification:`, n);
               return false;
             }
-            
+
             return true;
           });
 
@@ -232,7 +233,7 @@ export function NotificationProvider({
 
       newEventSource.onerror = (event: Event) => {
         console.error("SSE connection error:", event);
-        
+
         // Check error type
         const errorEvent = event as MessageEvent;
         if (errorEvent.data) {
@@ -242,18 +243,18 @@ export function NotificationProvider({
         if (eventSourceRef.current === newEventSource) {
           eventSourceRef.current.close();
           eventSourceRef.current = null;
-          
+
           // Only attempt reconnection if we're still authenticated
           if (user?.id) {
             // Exponential backoff for reconnection attempts
             let retryAttempts = 0;
             const backoffTime = Math.min(5000 * Math.pow(2, retryAttempts), 30000); // Max 30s
             retryAttempts++;
-            
+
             console.log(
               `SSE error. Attempting to reconnect in ${backoffTime}ms... (Attempt ${retryAttempts})`
             );
-            
+
             setTimeout(() => {
               if (user?.id) {
                 connect();
@@ -281,32 +282,27 @@ export function NotificationProvider({
     if (!user?.id) return;
 
     const originalNotifications = [...notifications];
-    const notificationIndex = originalNotifications.findIndex(n => n.id === id);
-    
-    if (notificationIndex === -1) {
-      console.error(`Notification with id ${id} not found`);
-      return;
-    }
-
-    // Optimistically update state
-    setNotifications((prevNotifications) =>
-      prevNotifications.map((notification) =>
-        notification.id === id
-          ? { ...notification, is_read: true }
-          : notification
-      )
-    );
-
     try {
-      const res = await server.put(`/member/${user.id}/notification/${id}`, {
-        is_read: true,
+      const res = await server.put(`/notifications/${id}/read`, null, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (res.status !== 200) {
         throw new Error(`Server returned status ${res.status}`);
       }
-      
+
       lastProcessedNotificationIds.current.add(id);
+      // Optimistically update state
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) =>
+          notification.id === id
+            ? { ...notification, is_read: true }
+            : notification
+        )
+      );
     } catch (error) {
       console.error("Failed to update notification:", error);
       // Only revert if the error is not a 404 (notification not found)
@@ -325,12 +321,31 @@ export function NotificationProvider({
 
     if (unreadNotificationIds.length === 0) return;
 
-    for (const id of unreadNotificationIds) {
-      try {
-        await markAsRead(id);
-      } catch (error) {
-        console.error(`Failed to mark notification ${id} as read during markAllAsRead operation:`, error);
+    try {
+      const res = await server.put(`notifications/mark-all-read`, null, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.status !== 200) {
+        throw new Error(`Server returned status ${res.status}`);
       }
+
+      lastProcessedNotificationIds.current = new Set(
+        notifications.map((n) => n.id)
+      );
+      // Optimistically update state
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) =>
+          notification.is_read
+            ? { ...notification, is_read: true }
+            : notification
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update notification:", error);
     }
   };
 
@@ -344,7 +359,12 @@ export function NotificationProvider({
     lastProcessedNotificationIds.current.delete(id);
 
     try {
-      const res = await server.delete(`/member/${user.id}/notification/${id}`);
+      const res = await server.delete(`/notifications/${id}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (res.status === 200) {
         useAuthStore.getState().setAlert("알림이 삭제되었습니다.", "success");
@@ -369,7 +389,12 @@ export function NotificationProvider({
     lastAlertedNotificationId.current = null;
 
     try {
-      const res = await server.delete(`/member/${user.id}/notifications`);
+      const res = await server.delete(`/notifications`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       if (res.status === 200) {
         useAuthStore

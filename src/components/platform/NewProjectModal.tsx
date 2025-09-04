@@ -1,3 +1,5 @@
+"use client";
+
 import ModalTemplete from "@/components/ModalTemplete";
 import { useState, KeyboardEvent, useEffect } from "react";
 import { InfoCircle, CalendarWeek, Layers, Tag, MapPin, AngleLeft, AngleRight } from "flowbite-react-icons/outline";

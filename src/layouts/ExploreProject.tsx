@@ -58,17 +58,20 @@ export default function ExploreProject() {
     );
   }, [projects, debouncedQuery]);
 
-  if (!hydrated) {
-    return <div className="text-center text-text-secondary p-8">로딩 중...</div>;
+  // Show loading state consistently on both server and client
+  if (!hydrated || isLoading) {
+    return (
+      <div className="mx-auto">
+        <div className="text-center text-text-secondary p-8">로딩 중...</div>
+      </div>
+    );
   }
   if (error) {
     return <div className="text-center text-red-500 p-8">프로젝트를 가져오는 데 실패했습니다.</div>;
   }
   return (
     <div className="mx-auto">
-      {isLoading ? (
-        <div className="text-center text-text-secondary p-8">로딩 중...</div>
-      ) : filteredProjects.length === 0 ? (
+      {filteredProjects.length === 0 ? (
         <div className="text-center text-text-secondary p-8 bg-component-background border border-component-border rounded-lg">
           검색 결과가 없습니다.
         </div>

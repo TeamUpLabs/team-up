@@ -1,9 +1,7 @@
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import React from "react";
-import {
-  ChevronDown,
-} from "flowbite-react-icons/outline";
+import { ChevronDown } from "flowbite-react-icons/outline";
 import { useProject } from "@/contexts/ProjectContext";
 import CreateChannelButton from "@/components/project/chat/ChannelCreateBtn";
 import { useAuthStore } from "@/auth/authStore";
@@ -25,7 +23,6 @@ interface SidebarProps {
   title?: string | React.ReactNode;
   titleHref: string;
   navItems: NavItem[];
-  isMinimized?: boolean;
 }
 
 export default function SideBar({
@@ -33,34 +30,19 @@ export default function SideBar({
   title,
   titleHref,
   navItems,
-  isMinimized,
 }: SidebarProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const { project } = useProject();
   const user = useAuthStore((state) => state.user);
-
-  // Check if we're on mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024); // 1024px is the lg breakpoint in Tailwind
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   return (
     <div
       className={`fixed h-full border-r border-component-border
-        bg-sidebar-background transition-all duration-300 z-[20]
-        ${isMobile
-          ? (isSidebarOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-64')
-          : (isMinimized ? 'w-0 -translate-x-64' : 'w-64 translate-x-0')}`}
+        bg-sidebar-background transition-all duration-300 overflow-hidden
+        ${isSidebarOpen ? 'w-64' : 'w-0'}`}
     >
-      <div className="flex flex-col h-full">
-        <div className="flex flex-col text-center p-6 border-b border-component-border">
+      <div className="w-64 h-full flex flex-col transition-opacity duration-300">
+        <div className="flex-1 text-center p-6 border-b border-component-border">
           {project || title ? (
             <>
               <span className="text-lg font-bold">{project?.title || title}</span>

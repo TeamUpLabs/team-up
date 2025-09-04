@@ -61,7 +61,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) { 
       </div>
       <div className="flex justify-end">
         {isExplore ? (
-          project.participation_requests && project.participation_requests.some(request => request.user_id === user?.id && request.status === "pending") ? (
+          project.participation_requests && project.participation_requests.some(request => request.sender_id === user?.id && request.status === "pending") ? (
             <button
               onClick={() => {
                 if (!user) {
@@ -70,7 +70,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) { 
                 }
                 useAuthStore.getState().setConfirm("참여 요청을 취소하시겠습니까?", async () => {
                   try {
-                    await cancelParticipationRequest(project.id, user.id);
+                    await cancelParticipationRequest(project.participation_requests.find(request => request.sender_id === user?.id)?.id || 0);
                     useAuthStore.getState().setAlert("참여 요청이 취소되었습니다.", "success");
                     useAuthStore.getState().clearConfirm();
                     window.location.reload();
@@ -95,7 +95,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) { 
                 }
                 useAuthStore.getState().setConfirm("참여 요청하시겠습니까?", async () => {
                   try {
-                    await sendParticipationRequest(project.id, user.id);
+                    await sendParticipationRequest(project.id, user?.id || 0, project.members.find(member => member.is_leader || member.is_manager)?.user.id || 0);
                     useAuthStore.getState().setAlert("참여 요청이 완료되었습니다.", "success");
                     useAuthStore.getState().clearConfirm();
                     window.location.reload();

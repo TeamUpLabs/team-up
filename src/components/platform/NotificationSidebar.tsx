@@ -344,13 +344,14 @@ export default function NotificationSidebar({
 
   return (
     <div
-      className={`fixed top-0 right-0 h-full z-[8400] border-l border-component-border bg-component-background transition-transform duration-300 ease-in-out w-72 transform ${
-        isOpen ? "translate-x-0" : "translate-x-full"
+      className={`fixed h-full right-0 border-l border-component-border
+        bg-component-background transition-all duration-300 overflow-hidden ${
+        isOpen ? "w-72" : "w-0"
       }`}
       aria-label="알림 목록"
       role="complementary"
     >
-      <div className="py-4 h-full flex flex-col">
+      <div className="w-72 py-4 h-full flex flex-col">
         <div className="px-4 flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold text-text-primary">알림</h1>
           {onClose && (
