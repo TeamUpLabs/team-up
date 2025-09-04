@@ -3,7 +3,7 @@ import UserDropdown from "@/components/platform/UserDropdown";
 import { Home, Pencil, Search as SearchIcon } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Search from "@/components/ui/Search";
 import NewPostCreateModal from "@/components/community/NewPostCreateModal";
 
@@ -29,6 +29,30 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen, children }: He
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+    // Handle keyboard shortcut for search
+    useEffect(() => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        // Only trigger if not in an input field and '/' is pressed
+        if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          setIsSearchOpen(true);
+          // Use setTimeout to ensure the input is rendered before focusing
+          setTimeout(() => {
+            inputRef.current?.focus();
+          }, 0);
+        }
+        // Close search on Escape key
+        if (e.key === 'Escape' && isSearchOpen) {
+          e.preventDefault();
+          setIsSearchOpen(false);
+        }
+      };
+  
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isSearchOpen]);
 
   return (
     <div className="w-full">
@@ -52,7 +76,7 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen, children }: He
 
           {isSearchOpen && (
             <div className="flex-1">
-              <Search placeholder="검색어를 입력하세요" searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+              <Search placeholder="검색어를 입력하세요" searchQuery={searchQuery} setSearchQuery={setSearchQuery} inputRef={inputRef} />
             </div>
           )}
 
