@@ -85,6 +85,9 @@ export interface User {
     received_notifications: Notification[];
     sent_notifications: Notification[];
     sessions: Session[];
+
+    following: UserBrief[];
+    followers: UserBrief[];
 }
 
 export const blankUser: User = {
@@ -129,6 +132,9 @@ export const blankUser: User = {
     received_notifications: [],
     sent_notifications: [],
     sessions: [],
+
+    following: [],
+    followers: [],
 }
 
 export interface UserBrief {
