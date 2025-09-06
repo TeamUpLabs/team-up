@@ -1,6 +1,5 @@
 "use client";
 
-import { PostsProps } from "@/app/community/page";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale/ko";
@@ -11,8 +10,9 @@ import Tooltip from "@/components/ui/Tooltip";
 import { useTheme } from "@/contexts/ThemeContext";
 import CommentModal from "@/components/community/CommentModal";
 import Loading from "@/components/ui/Loading";
+import { Post } from "@/types/community/Post";
 
-export default function Posts({ user, content, code, tags, reaction, created_at }: PostsProps) {
+export default function Posts({ post }: { post: Post }) {
   const { isDark } = useTheme();
   const [isFollowing, setIsFollowing] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -22,7 +22,7 @@ export default function Posts({ user, content, code, tags, reaction, created_at 
   const [isLiked, setIsLiked] = useState(false);
 
   const handleCopyCode = async () => {
-    const codeToCopy = typeof code === 'object' ? code.code : code;
+    const codeToCopy = typeof post.code === 'object' ? post.code.code : post.code;
     if (!codeToCopy) return;
     
     try {
@@ -43,16 +43,16 @@ export default function Posts({ user, content, code, tags, reaction, created_at 
       <div className="flex justify-between">
         <div className="flex items-center gap-4">
           <div className="bg-component-tertiary-background rounded-full w-10 h-10 flex items-center justify-center">
-            <Image src={user.avatar} alt={user.name} width={40} height={40} className="w-10 h-10 rounded-full ring-2 ring-offset-2 ring-red-500" />
+            <Image src={post.creator.profile_image} alt={post.creator.name} width={40} height={40} className="w-10 h-10 rounded-full ring-2 ring-offset-2 ring-red-500" />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <span className="font-semibold">{user.name}</span>
+              <span className="font-semibold">{post.creator.name}</span>
               <span className="text-xs text-text-secondary">
-                {created_at ? `${formatDistanceToNow(new Date(created_at), { locale: ko })} 전` : '방금 전'}
+                {post.created_at ? `${formatDistanceToNow(new Date(post.created_at), { locale: ko })} 전` : '방금 전'}
               </span>
             </div>
-            <span className="text-xs text-text-secondary">{user.role}</span>
+            <span className="text-xs text-text-secondary">{post.creator.role}</span>
           </div>
         </div>
 
@@ -86,9 +86,9 @@ export default function Posts({ user, content, code, tags, reaction, created_at 
       </div>
 
       <div className="font-medium text-text-primary whitespace-pre-line break-words">
-        {content}
+        {post.content}
       </div>
-      {code && (
+      {post.code && (
         <div className={`bg-${isDark ? "gray-800" : "gray-700"} p-4 rounded-md flex flex-col gap-2`}>
           <div className="flex justify-between">
             <div className="flex items-center gap-2">
@@ -111,14 +111,14 @@ export default function Posts({ user, content, code, tags, reaction, created_at 
           <div className="text-white w-full overflow-x-auto">
             <pre className="font-mono !p-0">
               <code className="block whitespace-pre">
-                {code.code}
+                {post.code?.code}
               </code>
             </pre>
           </div>
         </div>
       )}
       <div className="flex items-center gap-2">
-        {tags.map((tag, index) => (
+        {post.tags.map((tag, index) => (
           <Badge 
             key={index} 
             content={
@@ -136,21 +136,21 @@ export default function Posts({ user, content, code, tags, reaction, created_at 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Heart className="w-4 h-4 text-text-secondary cursor-pointer hover:text-red-500" onClick={() => setIsLiked(!isLiked)} fill={isLiked ? "red" : "none"} stroke={isLiked ? "red" : "currentColor"} />
-            <span className="text-text-secondary text-sm">{isLiked ? reaction.likes + 1 : reaction.likes}</span>
+            <span className="text-text-secondary text-sm">{isLiked ? post.reaction.likes + 1 : post.reaction.likes}</span>
           </div>
           <div className="flex items-center gap-2">
             <MessageCircle className="w-4 h-4 text-text-secondary cursor-pointer hover:text-green-500" onClick={() => setIsCommentModalOpen(true)} />
-            <span className="text-text-secondary text-sm">{reaction.comments}</span>
+            <span className="text-text-secondary text-sm">{post.reaction.comments.length}</span>
           </div>
           <div className="flex items-center gap-2">
             <Share2 className="w-4 h-4 text-text-secondary cursor-pointer hover:text-blue-500" />
-            <span className="text-text-secondary text-sm">{reaction.shares}</span>
+            <span className="text-text-secondary text-sm">{post.reaction.shares}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <Eye className="w-4 h-4 text-text-secondary" />
-          <span className="text-text-secondary text-sm">{reaction.views}</span>
+          <span className="text-text-secondary text-sm">{post.reaction.views}</span>
         </div>
       </div>
       <Suspense fallback={<Loading />}>

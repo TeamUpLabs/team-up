@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/Switch";
 import { useAuthStore } from "@/auth/authStore";
 import CodeEditor from "@/components/ui/CodeEditor";
 import Badge from "@/components/ui/Badge";
-import { createCommunityPost } from "@/hooks/getCommunityPostData";
+import { createCommunityPost } from "@/hooks/community/getCommunityPostData";
 import { createPostData, blankCreatePostData } from "@/types/community/Post";
 
 interface NewPostCreateModalProps {
@@ -18,6 +18,7 @@ interface NewPostCreateModalProps {
 
 export default function NewPostCreateModal({ isOpen, onClose }: NewPostCreateModalProps) {
   const [step, setStep] = useState(1);
+  const [isCode, setIsCode] = useState(false);
 
   const totalSteps = 2;
   const progress = (step / totalSteps) * 100;
@@ -69,13 +70,22 @@ export default function NewPostCreateModal({ isOpen, onClose }: NewPostCreateMod
         }
         break;
     }
-    setStep(step + 1);
+    setStep(prevStep => prevStep + 1);
   }
 
   const handleSubmit = async () => {
+    const userId = useAuthStore.getState().user?.id;
+    if (!userId) {
+      useAuthStore.getState().setAlert("로그인 후 게시글을 작성할 수 있습니다.", "error");
+      return;
+    }
+    
     setSubmitStatus('submitting');
     try {
-      await createCommunityPost(formData);
+      await createCommunityPost({
+        ...formData,
+        user_id: userId,
+      });
       setSubmitStatus('success');
       useAuthStore.getState().setAlert("게시글이 생성되었습니다.", "success");
     } catch (error) {
@@ -185,19 +195,31 @@ export default function NewPostCreateModal({ isOpen, onClose }: NewPostCreateMod
                 />
 
                 <Switch
-                  checked={formData.is_code}
-                  onChange={(e) => setFormData({ ...formData, is_code: e })}
+                  checked={isCode}
+                  onChange={(e) => setIsCode(e)}
                   label="코드 포함"
                   labelClassName="!text-sm"
                   size="sm"
                 />
 
-                {formData.is_code && (
+                {isCode && (
                   <CodeEditor
-                    value={formData.code}
-                    onValueChange={(code) => setFormData({ ...formData, code })}
-                    languageValue={formData.code_language}
-                    onLanguageChange={(language) => setFormData({ ...formData, code_language: language })}
+                    value={formData.code?.code || ''}
+                    onValueChange={(code) => setFormData({ 
+                      ...formData, 
+                      code: { 
+                        ...(formData.code || { language: '', code: '' }), 
+                        code 
+                      } 
+                    })}
+                    languageValue={formData.code?.language || ''}
+                    onLanguageChange={(language) => setFormData({ 
+                      ...formData, 
+                      code: { 
+                        ...(formData.code || { language: '', code: '' }), 
+                        language 
+                      } 
+                    })}
                   />
                 )}
               </div>

@@ -3,21 +3,20 @@ import { UserBrief, blankUserBrief } from "@/types/User";
 export interface Post {
   id: number;
   content: string;
-  code: string;
-  code_language: string;
-  is_code: boolean;
+  code?: {
+    language: string;
+    code: string;
+  };
   tags: string[];
   created_at: string;
   updated_at: string;
 
   creator: UserBrief;
-  updator: UserBrief;
-
-  comments: Comment[];
 
   reaction: {
     likes: number;
-    comments: number;
+    dislikes: number;
+    comments: Comment[];
     views: number;
     shares: number;
   },
@@ -35,21 +34,17 @@ export interface Comment {
 export const blankPost: Post = {
   id: 0,
   content: "",
-  code: "",
-  code_language: "",
-  is_code: false,
+  code: undefined,
   tags: [],
   created_at: "",
   updated_at: "",
 
   creator: blankUserBrief,
-  updator: blankUserBrief,
-
-  comments: [],
 
   reaction: {
     likes: 0,
-    comments: 0,
+    dislikes: 0,
+    comments: [],
     views: 0,
     shares: 0,
   },
@@ -66,16 +61,17 @@ export const blankComment: Comment = {
 
 export interface createPostData {
   content: string;
-  code: string;
-  code_language: string;
-  is_code: boolean;
+  code?: {
+    language: string;
+    code: string;
+  };
   tags: string[];
+  user_id: number;
 }
 
 export const blankCreatePostData: createPostData = {
   content: "",
-  code: "",
-  code_language: "javascript",
-  is_code: false,
+  code: undefined,
   tags: [],
+  user_id: 0,
 }
