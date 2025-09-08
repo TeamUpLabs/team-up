@@ -14,6 +14,17 @@ import { Post } from "@/types/community/Post";
 import { useAuthStore } from "@/auth/authStore";
 import { followUser, unfollowUser } from "@/hooks/follow";
 
+// Decodes escaped sequences (e.g., "\n", "\t") into actual characters
+function decodeEscapedWhitespace(input?: string): string {
+  if (!input) return "";
+  return input
+    .replace(/\\n/g, "\n")
+    .replace(/\\r/g, "\r")
+    .replace(/\\t/g, "\t")
+    .replace(/\\f/g, "\f")
+    .replace(/\\v/g, "\v");
+}
+
 export default function Posts({ post }: { post: Post }) {
   const { isDark } = useTheme();
   const user = useAuthStore.getState().user;
@@ -25,7 +36,8 @@ export default function Posts({ post }: { post: Post }) {
   const [isLiked, setIsLiked] = useState(false);
 
   const handleCopyCode = async () => {
-    const codeToCopy = typeof post.code === 'object' ? post.code.code : post.code;
+    const raw = typeof post.code === 'object' ? post.code.code : post.code;
+    const codeToCopy = decodeEscapedWhitespace(raw ?? "");
     if (!codeToCopy) return;
     
     try {
@@ -138,7 +150,9 @@ export default function Posts({ post }: { post: Post }) {
           <div className="text-white w-full overflow-x-auto">
             <pre className="font-mono !p-0">
               <code className="block whitespace-pre">
-                {post.code?.code}
+                {decodeEscapedWhitespace(
+                  typeof post.code === 'object' ? post.code?.code : (post.code as string)
+                )}
               </code>
             </pre>
           </div>
