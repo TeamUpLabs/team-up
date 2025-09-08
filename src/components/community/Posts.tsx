@@ -12,7 +12,7 @@ import CommentModal from "@/components/community/CommentModal";
 import Loading from "@/components/ui/Loading";
 import { Post } from "@/types/community/Post";
 import { useAuthStore } from "@/auth/authStore";
-import { followUser, unfollowUser } from "@/hooks/follow";
+import { useFollow } from "@/contexts/FollowContext";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
@@ -30,7 +30,7 @@ function decodeEscapedWhitespace(input?: string): string {
 export default function Posts({ post }: { post: Post }) {
   const { isDark } = useTheme();
   const user = useAuthStore.getState().user;
-  const [isFollowing, setIsFollowing] = useState(false);
+  const { isFollowing, followUser, unfollowUser } = useFollow();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
 
@@ -56,24 +56,14 @@ export default function Posts({ post }: { post: Post }) {
   };
 
   const handleFollow = async () => {
-    if (isFollowing) {
-      try {
+    try {
+      if (isFollowing(post.creator.id)) {
         await unfollowUser(post.creator.id);
-        useAuthStore.getState().setAlert("팔로우를 취소했습니다.", "success");
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsFollowing(false);
-      }
-    } else {
-      try {
+      } else {
         await followUser(post.creator.id);
-        useAuthStore.getState().setAlert("팔로우를 추가했습니다.", "success");
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsFollowing(true);
       }
+    } catch (error) {
+      console.error('Follow action failed:', error);
     }
   };
 
@@ -104,8 +94,8 @@ export default function Posts({ post }: { post: Post }) {
               <Badge
                 content={
                   <div className="flex items-center gap-2">
-                    {isFollowing ? <Check className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
-                    <span className="text-xs">{isFollowing ? "팔로잉" : "팔로우"}</span>
+                    {isFollowing(post.creator.id) ? <Check className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                    <span className="text-xs">{isFollowing(post.creator.id) ? "팔로잉" : "팔로우"}</span>
                   </div>
                 }
                 color="purple"

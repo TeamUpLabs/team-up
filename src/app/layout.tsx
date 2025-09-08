@@ -6,6 +6,7 @@ import { notoSans } from "@/lib/fonts";
 import AlertProvider from "@/providers/AlertProvider";
 import ConfirmProvider from "@/providers/ConfirmProvider";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { FollowProvider } from "@/contexts/FollowContext";
 import { NotificationProvider } from "@/providers/NotificationProvider";
 import NotificationAlertProvider from "@/providers/NotificationAlertProvider";
 import { SWRConfig } from "swr";
@@ -115,7 +116,11 @@ export default function RootLayout({
             <NotificationAlertProvider />
             <AlertProvider />
             <ConfirmProvider />
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              <FollowProvider>
+                {children}
+              </FollowProvider>
+            </ThemeProvider>
           </NotificationProvider>
         </SWRConfig>
       </body>
