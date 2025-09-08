@@ -13,6 +13,8 @@ import Loading from "@/components/ui/Loading";
 import { Post } from "@/types/community/Post";
 import { useAuthStore } from "@/auth/authStore";
 import { followUser, unfollowUser } from "@/hooks/follow";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 // Decodes escaped sequences (e.g., "\n", "\t") into actual characters
 function decodeEscapedWhitespace(input?: string): string {
@@ -148,13 +150,11 @@ export default function Posts({ post }: { post: Post }) {
           </div>
 
           <div className="text-white w-full overflow-x-auto">
-            <pre className="font-mono !p-0">
-              <code className="block whitespace-pre">
-                {decodeEscapedWhitespace(
-                  typeof post.code === 'object' ? post.code?.code : (post.code as string)
-                )}
-              </code>
-            </pre>
+            <SyntaxHighlighter language={post.code.language} style={docco} className="!pl-2">
+              {decodeEscapedWhitespace(
+                typeof post.code === 'object' ? post.code?.code : (post.code as string)
+              )}
+            </SyntaxHighlighter>
           </div>
         </div>
       )}
