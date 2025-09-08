@@ -11,9 +11,12 @@ import { useTheme } from "@/contexts/ThemeContext";
 import CommentModal from "@/components/community/CommentModal";
 import Loading from "@/components/ui/Loading";
 import { Post } from "@/types/community/Post";
+import { useAuthStore } from "@/auth/authStore";
+import { followUser, unfollowUser } from "@/hooks/follow";
 
 export default function Posts({ post }: { post: Post }) {
   const { isDark } = useTheme();
+  const user = useAuthStore.getState().user;
   const [isFollowing, setIsFollowing] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
@@ -38,6 +41,28 @@ export default function Posts({ post }: { post: Post }) {
     }
   };
 
+  const handleFollow = async () => {
+    if (isFollowing) {
+      try {
+        await unfollowUser(post.creator.id);
+        useAuthStore.getState().setAlert("팔로우를 취소했습니다.", "success");
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsFollowing(false);
+      }
+    } else {
+      try {
+        await followUser(post.creator.id);
+        useAuthStore.getState().setAlert("팔로우를 추가했습니다.", "success");
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsFollowing(true);
+      }
+    }
+  };
+
   return (
     <div className="p-6 border border-component-border rounded-lg flex flex-col gap-4">
       <div className="flex justify-between">
@@ -57,20 +82,22 @@ export default function Posts({ post }: { post: Post }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            className="flex flex-shrink-0 self-center cursor-pointer active:scale-95 hover:scale-105 transition-all duration-200"
-            onClick={() => setIsFollowing(!isFollowing)}
-          >
-            <Badge
-              content={
-                <div className="flex items-center gap-2">
-                  {isFollowing ? <Check className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
-                  <span className="text-xs">{isFollowing ? "팔로잉" : "팔로우"}</span>
-                </div>
-              }
-              color="purple"
-            />
-          </button>
+          {user?.id != post.creator.id && (
+            <button
+              className="flex flex-shrink-0 self-center cursor-pointer active:scale-95 hover:scale-105 transition-all duration-200"
+              onClick={handleFollow}
+            >
+              <Badge
+                content={
+                  <div className="flex items-center gap-2">
+                    {isFollowing ? <Check className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                    <span className="text-xs">{isFollowing ? "팔로잉" : "팔로우"}</span>
+                  </div>
+                }
+                color="purple"
+              />
+            </button>
+          )}
 
           <button
             className="flex p-2 hover:bg-component-tertiary-background cursor-pointer rounded-md"
