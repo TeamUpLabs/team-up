@@ -71,6 +71,7 @@ export default function NewPostCreateModal({ isOpen, onClose }: NewPostCreateMod
         break;
     }
     setStep(prevStep => prevStep + 1);
+    console.log(formData.code);
   }
 
   const handleSubmit = async () => {
@@ -82,8 +83,20 @@ export default function NewPostCreateModal({ isOpen, onClose }: NewPostCreateMod
     
     setSubmitStatus('submitting');
     try {
+      // Escape newlines and tabs in code content before submission
+      const escapedCode = formData.code
+        ? {
+            ...formData.code,
+            code: formData.code.code
+              .replace(/\\/g, "\\\\") // escape existing backslashes first
+              .replace(/\n/g, "\\n")
+              .replace(/\t/g, "\\t"),
+          }
+        : undefined;
+
       await createCommunityPost({
         ...formData,
+        code: escapedCode,
         user_id: userId,
       });
       setSubmitStatus('success');

@@ -90,6 +90,70 @@ export default function CodeEditor({ value, onValueChange, languageValue, onLang
     }
   };
 
+  // Insert text at the current cursor position in the textarea
+  const insertAtCursor = (
+    text: string,
+    insertText: string,
+    selectionStart: number,
+    selectionEnd: number
+  ) => {
+    return text.slice(0, selectionStart) + insertText + text.slice(selectionEnd);
+  };
+
+  const getCurrentLineText = (text: string, cursorIndex: number) => {
+    const lineStart = text.lastIndexOf("\n", cursorIndex - 1) + 1; // -1 => returns -1, so +1 -> 0
+    const lineEnd = text.indexOf("\n", cursorIndex);
+    const endIndex = lineEnd === -1 ? text.length : lineEnd;
+    return text.slice(lineStart, endIndex);
+  };
+
+  const getLineIndentation = (lineText: string) => {
+    const match = lineText.match(/^[\t ]+/);
+    return match ? match[0] : "";
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    const ta = document.getElementById("codeArea") as HTMLTextAreaElement | null;
+    if (!ta) return;
+    const { selectionStart, selectionEnd } = ta;
+
+    // Handle Tab key to insert a real tab character
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const newValue = insertAtCursor(value, "\t", selectionStart, selectionEnd);
+      onValueChange(newValue);
+      // restore caret after state update
+      requestAnimationFrame(() => {
+        const caret = selectionStart + 1;
+        ta.setSelectionRange(caret, caret);
+      });
+      return;
+    }
+
+    // Handle Enter key to auto-indent next line
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      const lineText = getCurrentLineText(value, selectionStart);
+      const indentation = getLineIndentation(lineText);
+
+      const prevChar = value[selectionStart - 1];
+      const needsExtraIndent = prevChar === "{";
+      const extraIndent = needsExtraIndent ? "\t" : "";
+
+      const insertText = "\n" + indentation + extraIndent;
+      const newValue = insertAtCursor(value, insertText, selectionStart, selectionEnd);
+      onValueChange(newValue);
+
+      // place caret at the end of inserted indentation
+      requestAnimationFrame(() => {
+        const caret = selectionStart + insertText.length;
+        ta.setSelectionRange(caret, caret);
+      });
+      return;
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="flex items-center justify-between relative group mb-1">
@@ -118,6 +182,7 @@ export default function CodeEditor({ value, onValueChange, languageValue, onLang
           onValueChange={(code) => onValueChange(code)}
           highlight={code => hightlightWithLineNumbers(code, languageValue)}
           padding={10}
+          onKeyDown={handleKeyDown}
           style={{
             fontFamily: '"Fira code", "Fira Mono", monospace',
             fontSize: 18,

@@ -71,7 +71,10 @@ export interface createPostData {
 
 export const blankCreatePostData: createPostData = {
   content: "",
-  code: undefined,
+  code: {
+    language: "javascript",
+    code: "",
+  },
   tags: [],
   user_id: 0,
 }
