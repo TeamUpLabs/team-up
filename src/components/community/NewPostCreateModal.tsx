@@ -83,11 +83,12 @@ export default function NewPostCreateModal({ isOpen, onClose }: NewPostCreateMod
     
     setSubmitStatus('submitting');
     try {
-      // Escape newlines and tabs in code content before submission
+      // Normalize Windows line endings then escape newlines and tabs before submission
       const escapedCode = formData.code
         ? {
             ...formData.code,
             code: formData.code.code
+              .replace(/\r\n?|\u2028|\u2029/g, "\n")
               .replace(/\\/g, "\\\\") // escape existing backslashes first
               .replace(/\n/g, "\\n")
               .replace(/\t/g, "\\t"),

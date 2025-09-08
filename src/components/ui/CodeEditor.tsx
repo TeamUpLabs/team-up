@@ -28,7 +28,8 @@ import "prismjs/components/prism-bash";
 import "prismjs/components/prism-json";
 import "prismjs/components/prism-yaml";
 import "prismjs/components/prism-markdown";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import type React from "react";
 import Select from "@/components/ui/Select";
 
 interface CodeEditorProps {
@@ -153,6 +154,66 @@ export default function CodeEditor({ value, onValueChange, languageValue, onLang
       return;
     }
   };
+
+  // Convert consistent leading spaces to tabs for pasted content
+  const convertLeadingSpacesToTabs = (text: string) => {
+    const lines = text.split("\n");
+    const spaceCounts: number[] = [];
+
+    for (const line of lines) {
+      if (line.startsWith("\t")) {
+        // Already tabs present; skip conversion
+        return text;
+      }
+      const m = line.match(/^( +)/);
+      if (m) spaceCounts.push(m[1].length);
+    }
+
+    if (spaceCounts.length === 0) return text;
+
+    const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+    const indentUnit = spaceCounts.reduce((acc, n) => gcd(acc, n), spaceCounts[0]);
+    if (indentUnit !== 2 && indentUnit !== 4) return text;
+
+    const converted = lines
+      .map((line) => {
+        const m = line.match(/^( +)/);
+        if (!m) return line;
+        const count = m[1].length;
+        const tabs = "\t".repeat(Math.floor(count / indentUnit));
+        const remainder = " ".repeat(count % indentUnit);
+        return tabs + remainder + line.slice(count);
+      })
+      .join("\n");
+
+    return converted;
+  };
+
+  useEffect(() => {
+    const ta = document.getElementById("codeArea") as HTMLTextAreaElement | null;
+    if (!ta) return;
+
+    const onPaste = (e: ClipboardEvent) => {
+      const pasted = e.clipboardData?.getData("text");
+      if (!pasted) return;
+      e.preventDefault();
+
+      const normalized = pasted.replace(/\r\n?|\u2028|\u2029/g, "\n");
+      const maybeTabified = convertLeadingSpacesToTabs(normalized);
+
+      const { selectionStart, selectionEnd } = ta;
+      const newValue = insertAtCursor(value, maybeTabified, selectionStart, selectionEnd);
+      onValueChange(newValue);
+
+      requestAnimationFrame(() => {
+        const caret = selectionStart + maybeTabified.length;
+        ta.setSelectionRange(caret, caret);
+      });
+    };
+
+    ta.addEventListener("paste", onPaste);
+    return () => ta.removeEventListener("paste", onPaste);
+  }, [value, onValueChange]);
 
   return (
     <div className="w-full">
