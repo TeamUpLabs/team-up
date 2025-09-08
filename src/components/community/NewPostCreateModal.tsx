@@ -71,7 +71,6 @@ export default function NewPostCreateModal({ isOpen, onClose }: NewPostCreateMod
         break;
     }
     setStep(prevStep => prevStep + 1);
-    console.log(formData.code);
   }
 
   const handleSubmit = async () => {
