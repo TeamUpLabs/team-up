@@ -66,7 +66,7 @@ export default function UserDropdown() {
               <MenuItem
                 icon={<Settings className="w-4 h-4" />}
                 text="설정"
-                onClick={() => { setIsOpen(false); window.location.href = "/platform/profile"; }}
+                onClick={() => { setIsOpen(false); window.location.href = "/profile"; }}
                 className="text-text-primary"
                 isHover
               />
