@@ -76,7 +76,7 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen, children }: He
 
           {isSearchOpen && (
             <div className="flex-1">
-              <Search placeholder="검색어를 입력하세요" searchQuery={searchQuery} setSearchQuery={setSearchQuery} inputRef={inputRef} />
+              <Search placeholder="내용, 태그, 작성자를 검색하세요." searchQuery={searchQuery} setSearchQuery={setSearchQuery} inputRef={inputRef} />
             </div>
           )}
 
