@@ -39,3 +39,83 @@ export const createCommunityPost = async (data: createPostData) => {
         throw error;
     }
 }
+
+export const likeCommunityPost = async (postId: number) => {
+    try {
+        const token = useAuthStore.getState().token;
+        const res = await server.post(`/community/posts/${postId}/likes`, null, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (res.status === 200) {
+            return res.data;
+        } else {
+            throw new Error("Failed to like community post");
+        }
+    } catch (error) {
+        console.error("Error liking community post:", error);
+        throw error;
+    }
+}
+
+export const unlikeCommunityPost = async (postId: number) => {
+    try {
+        const token = useAuthStore.getState().token;
+        const res = await server.delete(`/community/posts/${postId}/likes`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (res.status === 200) {
+            return res.data;
+        } else {
+            throw new Error("Failed to unlike community post");
+        }
+    } catch (error) {
+        console.error("Error unliking community post:", error);
+        throw error;
+    }
+}
+
+export const dislikeCommunityPost = async (postId: number) => {
+    try {
+        const token = useAuthStore.getState().token;
+        const res = await server.post(`/community/posts/${postId}/dislikes`, null, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (res.status === 200) {
+            return res.data;
+        } else {
+            throw new Error("Failed to dislike community post");
+        }
+    } catch (error) {
+        console.error("Error disliking community post:", error);
+        throw error;
+    }
+}
+
+export const undislikeCommunityPost = async (postId: number) => {
+    try {
+        const token = useAuthStore.getState().token;
+        const res = await server.delete(`/community/posts/${postId}/dislikes`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (res.status === 200) {
+            return res.data;
+        } else {
+            throw new Error("Failed to undislike community post");
+        }
+    } catch (error) {
+        console.error("Error undisliking community post:", error);
+        throw error;
+    }
+}

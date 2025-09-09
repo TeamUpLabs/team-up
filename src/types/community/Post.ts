@@ -14,11 +14,23 @@ export interface Post {
   creator: UserBrief;
 
   reaction: {
-    likes: number;
-    dislikes: number;
+    likes: {
+      count: number;
+      users: UserBrief[];
+    };
+    dislikes: {
+      count: number;
+      users: UserBrief[];
+    };
     comments: Comment[];
-    views: number;
-    shares: number;
+    views: {
+      count: number;
+      users: UserBrief[];
+    };
+    shares: {
+      count: number;
+      users: UserBrief[];
+    };
   },
 }
 
@@ -42,11 +54,23 @@ export const blankPost: Post = {
   creator: blankUserBrief,
 
   reaction: {
-    likes: 0,
-    dislikes: 0,
+    likes: {
+      count: 0,
+      users: [],
+    },
+    dislikes: {
+      count: 0,
+      users: [],
+    },
     comments: [],
-    views: 0,
-    shares: 0,
+    views: {
+      count: 0,
+      users: [],
+    },
+    shares: {
+      count: 0,
+      users: [],
+    },
   },
 }
 

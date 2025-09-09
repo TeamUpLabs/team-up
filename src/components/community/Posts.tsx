@@ -5,7 +5,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale/ko";
 import Badge from "@/components/ui/Badge";
 import { UserPlus, Check, Bookmark, Copy, Heart, MessageCircle, Share2, Eye } from "lucide-react";
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Tooltip from "@/components/ui/Tooltip";
 import { useTheme } from "@/contexts/ThemeContext";
 import CommentModal from "@/components/community/CommentModal";
@@ -15,6 +15,7 @@ import { useAuthStore } from "@/auth/authStore";
 import { useFollow } from "@/contexts/FollowContext";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { likeCommunityPost, unlikeCommunityPost } from "@/hooks/community/getCommunityPostData";
 
 // Decodes escaped sequences (e.g., "\n", "\t") into actual characters
 function decodeEscapedWhitespace(input?: string): string {
@@ -36,6 +37,12 @@ export default function Posts({ post }: { post: Post }) {
 
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    if (post.reaction?.likes?.users.some(user => user.id === user?.id)) {
+      setIsLiked(true);
+    }
+  }, [post.reaction?.likes?.users]);
 
   const handleCopyCode = async () => {
     const raw = typeof post.code === 'object' ? post.code.code : post.code;
@@ -67,26 +74,56 @@ export default function Posts({ post }: { post: Post }) {
     }
   };
 
+  const handleLike = async () => {
+    try {
+      if (isLiked) {
+        const data = await unlikeCommunityPost(post.id);
+        setIsLiked(false);
+        post.reaction.likes.count = data.reaction.likes.count;
+      } else {
+        const data = await likeCommunityPost(post.id);
+        setIsLiked(true);
+        post.reaction.likes.count = data.reaction.likes.count;
+      }
+    } catch (error) {
+      console.error('Like action failed:', error);
+    }
+  };
+  
   return (
     <div className="p-6 border border-component-border rounded-lg flex flex-col gap-4">
       <div className="flex justify-between">
         <div className="flex items-center gap-4">
           <div className="bg-component-tertiary-background rounded-full w-10 h-10 flex items-center justify-center">
-            <Image src={post.creator.profile_image} alt={post.creator.name} width={40} height={40} className="w-10 h-10 rounded-full ring-2 ring-offset-2 ring-red-500" />
+            {post.creator?.profile_image ? (
+              <Image 
+                src={post.creator.profile_image} 
+                alt={post.creator?.name || 'User'} 
+                width={40} 
+                height={40} 
+                className="w-10 h-10 rounded-full ring-2 ring-offset-2 ring-red-500" 
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
+                {post.creator?.name?.[0]?.toUpperCase() || '?'}
+              </div>
+            )}
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <span className="font-semibold">{post.creator.name}</span>
+              <span className="font-semibold">{post.creator?.name || 'Unknown User'}</span>
               <span className="text-xs text-text-secondary">
                 {post.created_at ? `${formatDistanceToNow(new Date(post.created_at), { locale: ko })} 전` : '방금 전'}
               </span>
             </div>
-            <span className="text-xs text-text-secondary">{post.creator.role}</span>
+            {post.creator?.role && (
+              <span className="text-xs text-text-secondary">{post.creator.role}</span>
+            )}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          {user?.id != post.creator.id && (
+          {user?.id && post.creator?.id && user.id !== post.creator.id && (
             <button
               className="flex flex-shrink-0 self-center cursor-pointer active:scale-95 hover:scale-105 transition-all duration-200"
               onClick={handleFollow}
@@ -166,22 +203,24 @@ export default function Posts({ post }: { post: Post }) {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <Heart className="w-4 h-4 text-text-secondary cursor-pointer hover:text-red-500" onClick={() => setIsLiked(!isLiked)} fill={isLiked ? "red" : "none"} stroke={isLiked ? "red" : "currentColor"} />
-            <span className="text-text-secondary text-sm">{isLiked ? post.reaction.likes + 1 : post.reaction.likes}</span>
+            <Heart className="w-4 h-4 text-text-secondary cursor-pointer hover:text-red-500" onClick={handleLike} fill={isLiked ? "red" : "none"} stroke={isLiked ? "red" : "currentColor"} />
+            <span className="text-text-secondary text-sm">
+              {post.reaction?.likes ? post.reaction.likes.count : 0}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <MessageCircle className="w-4 h-4 text-text-secondary cursor-pointer hover:text-green-500" onClick={() => setIsCommentModalOpen(true)} />
-            <span className="text-text-secondary text-sm">{post.reaction.comments.length}</span>
+            <span className="text-text-secondary text-sm">{post.reaction?.comments?.length || 0}</span>
           </div>
           <div className="flex items-center gap-2">
             <Share2 className="w-4 h-4 text-text-secondary cursor-pointer hover:text-blue-500" />
-            <span className="text-text-secondary text-sm">{post.reaction.shares}</span>
+            <span className="text-text-secondary text-sm">{post.reaction?.shares?.count || 0}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <Eye className="w-4 h-4 text-text-secondary" />
-          <span className="text-text-secondary text-sm">{post.reaction.views}</span>
+          <span className="text-text-secondary text-sm">{post.reaction?.views?.count || 0}</span>
         </div>
       </div>
       <Suspense fallback={<Loading />}>
