@@ -39,10 +39,9 @@ export default function Posts({ post }: { post: Post }) {
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
-    if (post.reaction?.likes?.users.some(user => user.id === user?.id)) {
-      setIsLiked(true);
-    }
-  }, [post.reaction?.likes?.users]);
+    const currentUserId = user?.id;
+    setIsLiked(post.reaction?.likes?.users.some(u => u.id === currentUserId));
+  }, [post.reaction?.likes?.users, user?.id]);
 
   const handleCopyCode = async () => {
     const raw = typeof post.code === 'object' ? post.code.code : post.code;
