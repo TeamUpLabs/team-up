@@ -224,7 +224,12 @@ export default function Posts({ post }: { post: Post }) {
         </div>
       </div>
       <Suspense fallback={<Loading />}>
-        <CommentModal isOpen={isCommentModalOpen} onClose={() => setIsCommentModalOpen(false)} />
+        <CommentModal 
+          isOpen={isCommentModalOpen} 
+          onClose={() => setIsCommentModalOpen(false)} 
+          comments={post.reaction?.comments || []} 
+          post_id={post.id} 
+        />
       </Suspense>
     </div>
   );

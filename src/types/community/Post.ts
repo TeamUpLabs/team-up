@@ -40,7 +40,7 @@ export interface Comment {
   created_at: string;
   updated_at: string;
 
-  creator: UserBrief;
+  user: UserBrief;
 }
 
 export const blankPost: Post = {
@@ -80,7 +80,7 @@ export const blankComment: Comment = {
   created_at: "",
   updated_at: "",
 
-  creator: blankUserBrief,
+  user: blankUserBrief,
 }
 
 export interface createPostData {

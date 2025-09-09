@@ -119,3 +119,44 @@ export const undislikeCommunityPost = async (postId: number) => {
         throw error;
     }
 }
+
+export const createComment = async (post_id: number, comment: string) => {
+    try {
+        const token = useAuthStore.getState().token;
+        const res = await server.post(`/community/posts/${post_id}/comments`, { content: comment }, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (res.status === 200) {
+            return res.data;
+        } else {
+            throw new Error("Failed to create comment");
+        }
+    } catch (error) {
+        console.error("Error creating comment:", error);
+        throw error;
+    }
+}
+
+export const deleteComment = async (post_id: number, comment_id: number) => {
+    try {
+        const token = useAuthStore.getState().token;
+        const res = await server.delete(`/community/posts/${post_id}/comments/${comment_id}`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (res.status === 200) {
+            return res.data;
+        } else {
+            throw new Error("Failed to delete comment");
+        }
+    } catch (error) {
+        console.error("Error deleting comment:", error);
+        throw error;
+    }
+}
+
