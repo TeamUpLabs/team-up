@@ -202,7 +202,12 @@ export default function Posts({ post }: { post: Post }) {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <Heart className="w-4 h-4 text-text-secondary cursor-pointer hover:text-red-500" onClick={handleLike} fill={isLiked ? "red" : "none"} stroke={isLiked ? "red" : "currentColor"} />
+            <Heart 
+              className="w-4 h-4 text-text-secondary cursor-pointer hover:text-red-500 hover:scale-105 transition-all duration-200 active:scale-95" 
+              onClick={handleLike} 
+              fill={isLiked ? "red" : "none"} 
+              stroke={isLiked ? "red" : "currentColor"} 
+            />
             <span className="text-text-secondary text-sm">
               {post.reaction?.likes ? post.reaction.likes.count : 0}
             </span>
