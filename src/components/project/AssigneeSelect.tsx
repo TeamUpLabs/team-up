@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useProject } from "@/contexts/ProjectContext";
 import { Check } from "flowbite-react-icons/outline";
 import { getStatusInfo } from "@/utils/getStatusColor";
+import Badge, { BadgeColor } from "@/components/ui/Badge";
 
 interface AssigneeSelectProps {
   selectedAssignee: number[];
@@ -23,29 +24,29 @@ export default function AssigneeSelect({
 }: AssigneeSelectProps) {
   const { project } = useProject();
 
-  const getRoleInfo = (assignee_id: number) => {
+  const getRoleInfo = (assignee_id: number): { text: string; color: BadgeColor } => {
     if (project?.members.find((member) => member.user.id === assignee_id)?.is_leader) {
       return {
         text: "리더",
-        className: "bg-yellow-100 text-yellow-700 border-yellow-200"
-      };
+        color: "yellow"
+      } as const;
     }
     if (project?.members.find((member) => member.user.id === assignee_id)?.is_manager) {
       return {
         text: "관리자",
-        className: "bg-blue-100 text-blue-700 border-blue-200"
-      };
+        color: "blue"
+      } as const;
     }
     return {
       text: "멤버",
-      className: "bg-gray-100 text-gray-700 border-gray-200"
+      color: "gray"
     };
   };
 
-  const getWorkloadColor = (workload: number) => {
-    if (workload <= 2) return "text-green-600 bg-green-100"
-    if (workload <= 4) return "text-yellow-600 bg-yellow-100"
-    return "text-red-600 bg-red-100"
+  const getWorkloadColor = (workload: number): BadgeColor => {
+    if (workload <= 2) return "green"
+    if (workload <= 4) return "yellow"
+    return "red"
   }
 
   const getWorkloadText = (workload: number) => {
@@ -81,9 +82,11 @@ export default function AssigneeSelect({
                 </div>
               )}
               <div className="relative w-full">
-                <div className={`absolute left-0 flex items-center gap-1.5 px-2 py-1 rounded-lg text-sm font-medium ${roleInfo.className} border`}>
-                  <span className="text-sm">{roleInfo.text}</span>
-                </div>
+                <Badge
+                  className="absolute left-0 flex items-center gap-1.5 px-2 py-1 rounded-lg text-sm font-medium border"
+                  color={roleInfo.color}
+                  content={roleInfo.text}
+                />
                 <div className="flex justify-center items-center">
                   <div className="relative">
                     <Image
@@ -102,9 +105,11 @@ export default function AssigneeSelect({
               </div>
               <span className="text-text-primary">{member.name}</span>
               <span className="text-text-secondary text-sm">{member.role}</span>
-              <div className={`px-2 py-1 rounded-full text-xs font-medium ${getWorkloadColor(project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)}`}>
-                {getWorkloadText(project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)} ({project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0}개 작업)
-              </div>
+              <Badge
+                className="!px-2 !py-1 !rounded-full !text-xs !font-medium"
+                color={getWorkloadColor(project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)}
+                content={`${getWorkloadText(project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)} (${project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0}개 작업)`}
+              />
             </div>
           )
         })}

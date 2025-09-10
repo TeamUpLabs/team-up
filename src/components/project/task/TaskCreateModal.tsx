@@ -11,7 +11,6 @@ import {
   FileLines,
 } from "flowbite-react-icons/outline";
 import { TaskCreateFormData, blankTaskCreateFormData } from "@/types/Task";
-import { CloseCircle } from "flowbite-react-icons/solid";
 import { useProject } from "@/contexts/ProjectContext";
 import { useAuthStore } from "@/auth/authStore";
 import { createTask } from "@/hooks/getTaskData";
@@ -22,6 +21,7 @@ import AssigneeSelect from "@/components/project/AssigneeSelect";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { Input } from "@/components/ui/Input";
 import { TextArea } from "@/components/ui/TextArea";
+import Badge from "@/components/ui/Badge";
 
 interface TaskCreateModalProps {
   isOpen: boolean;
@@ -155,9 +155,9 @@ export default function TaskCreateModal({
       estimated_hours: Math.floor(
         (formData.due_date
           ? new Date(formData.due_date).getTime() -
-            new Date(formData.start_date).getTime()
+          new Date(formData.start_date).getTime()
           : 0) /
-          (24 * 60 * 60 * 1000)
+        (24 * 60 * 60 * 1000)
       ),
       subtasks: formData.subtasks.map((subtask) => ({
         title: subtask.title,
@@ -177,9 +177,9 @@ export default function TaskCreateModal({
           estimated_hours: Math.floor(
             (formData.due_date
               ? new Date(formData.due_date).getTime() -
-                new Date(formData.start_date).getTime()
+              new Date(formData.start_date).getTime()
               : 0) /
-              (24 * 60 * 60 * 1000)
+            (24 * 60 * 60 * 1000)
           ),
           subtasks: formData.subtasks.map((subtask) => ({
             title: subtask.title,
@@ -366,9 +366,8 @@ export default function TaskCreateModal({
               return (
                 <div
                   key={title}
-                  className={`flex items-center gap-1 ${
-                    step === index + 1 ? "text-text-primary font-medium" : ""
-                  }`}
+                  className={`flex items-center gap-1 ${step === index + 1 ? "text-text-primary font-medium" : ""
+                    }`}
                 >
                   <Icon className="h-4 w-4" />
                   {title}
@@ -436,19 +435,19 @@ export default function TaskCreateModal({
                       minDate={
                         milestone_id
                           ? parseStringToDate(
-                              project?.milestones.find(
-                                (milestone) => milestone.id === milestone_id
-                              )?.start_date || ""
-                            )
+                            project?.milestones.find(
+                              (milestone) => milestone.id === milestone_id
+                            )?.start_date || ""
+                          )
                           : undefined
                       }
                       maxDate={
                         milestone_id
                           ? parseStringToDate(
-                              project?.milestones.find(
-                                (milestone) => milestone.id === milestone_id
-                              )?.due_date || ""
-                            )
+                            project?.milestones.find(
+                              (milestone) => milestone.id === milestone_id
+                            )?.due_date || ""
+                          )
                           : undefined
                       }
                     />
@@ -472,10 +471,10 @@ export default function TaskCreateModal({
                       maxDate={
                         milestone_id
                           ? parseStringToDate(
-                              project?.milestones.find(
-                                (milestone) => milestone.id === milestone_id
-                              )?.due_date || ""
-                            )
+                            project?.milestones.find(
+                              (milestone) => milestone.id === milestone_id
+                            )?.due_date || ""
+                          )
                           : undefined
                       }
                     />
@@ -515,29 +514,25 @@ export default function TaskCreateModal({
 
                   <div className="mt-2 flex flex-col gap-2">
                     {formData.subtasks.map((subtask, index) => (
-                      <div
+                      <Badge
                         key={index}
-                        className="flex items-center justify-between gap-2 bg-point-color-indigo/20 px-3 py-2 rounded-lg"
-                      >
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={false}
-                            readOnly
-                            className="rounded"
-                          />
-                          <span className="text-text-secondary">
-                            {subtask.title}
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveSubtask(subtask.title)}
-                          className="text-point-color-indigo hover:text-point-color-indigo-hover ml-1 focus:outline-none"
-                        >
-                          <CloseCircle />
-                        </button>
-                      </div>
+                        content={
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={false}
+                              readOnly
+                              className="rounded"
+                            />
+                            <span className="text-text-secondary">
+                              {subtask.title}
+                            </span>
+                          </div>
+                        }
+                        color="indigo"
+                        isEditable
+                        onRemove={() => handleRemoveSubtask(subtask.title)}
+                      />
                     ))}
                   </div>
                 </div>
