@@ -96,11 +96,13 @@ export default function CommentModal({ isOpen, onClose, comments, post_id }: Com
                   </div>
                 </div>
 
-                <button
-                  onClick={() => handleDeleteComment(comment.id)}
-                >
-                  <Trash2 className="w-4 h-4 hover:text-red-500 cursor-pointer" />
-                </button>
+                {comment.user.id === user?.id && (
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                  >
+                    <Trash2 className="w-4 h-4 hover:text-red-500 cursor-pointer" />
+                  </button>
+                )}
               </div>
             ))}
           </div>
