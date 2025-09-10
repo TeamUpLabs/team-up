@@ -16,6 +16,7 @@ import { useFollow } from "@/contexts/FollowContext";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { likeCommunityPost, unlikeCommunityPost } from "@/hooks/community/getCommunityPostData";
+import { bookmarkCommunityPost, unbookmarkCommunityPost } from "@/hooks/community/getCommunityPostData";
 
 // Decodes escaped sequences (e.g., "\n", "\t") into actual characters
 function decodeEscapedWhitespace(input?: string): string {
@@ -32,16 +33,19 @@ export default function Posts({ post }: { post: Post }) {
   const { isDark } = useTheme();
   const user = useAuthStore.getState().user;
   const { isFollowing, followUser, unfollowUser } = useFollow();
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
 
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  console.log(post)
 
   useEffect(() => {
     const currentUserId = user?.id;
     setIsLiked(post.reaction?.likes?.users.some(u => u.id === currentUserId));
-  }, [post.reaction?.likes?.users, user?.id]);
+    setIsBookmarked(post.bookmark?.is_bookmarked);
+  }, [post.reaction?.likes?.users, post.bookmark?.is_bookmarked, user?.id]);
 
   const handleCopyCode = async () => {
     const raw = typeof post.code === 'object' ? post.code.code : post.code;
@@ -86,6 +90,22 @@ export default function Posts({ post }: { post: Post }) {
       }
     } catch (error) {
       console.error('Like action failed:', error);
+    }
+  };
+
+  const handleBookmark = async () => {
+    try {
+      if (isBookmarked) {
+        await unbookmarkCommunityPost(post.id);
+        setIsBookmarked(false);
+        post.bookmark.count = post.bookmark.count - 1;
+      } else {
+        await bookmarkCommunityPost(post.id);
+        setIsBookmarked(true);
+        post.bookmark.count = post.bookmark.count + 1;
+      }
+    } catch (error) {
+      console.error('Bookmark action failed:', error);
     }
   };
   
@@ -141,7 +161,7 @@ export default function Posts({ post }: { post: Post }) {
 
           <button
             className="flex p-2 hover:bg-component-tertiary-background cursor-pointer rounded-md"
-            onClick={() => setIsBookmarked(!isBookmarked)}
+            onClick={handleBookmark}
           >
             <Bookmark
               className="w-4 h-4"

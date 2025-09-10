@@ -160,3 +160,42 @@ export const deleteComment = async (post_id: number, comment_id: number) => {
     }
 }
 
+export const bookmarkCommunityPost = async (post_id: number) => {
+    try {
+        const token = useAuthStore.getState().token;
+        const res = await server.post(`/community/posts/${post_id}/bookmark`, null, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (res.status === 200) {
+            return res.data;
+        } else {
+            throw new Error("Failed to bookmark community post");
+        }
+    } catch (error) {
+        console.error("Error bookmarking community post:", error);
+        throw error;
+    }
+} 
+
+export const unbookmarkCommunityPost = async (post_id: number) => {
+    try {
+        const token = useAuthStore.getState().token;
+        const res = await server.delete(`/community/posts/${post_id}/bookmark`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+        if (res.status === 200) {
+            return res.data;
+        } else {
+            throw new Error("Failed to unbookmark community post");
+        }
+    } catch (error) {
+        console.error("Error unbookmarking community post:", error);
+        throw error;
+    }
+}

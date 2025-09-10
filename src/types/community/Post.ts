@@ -32,6 +32,12 @@ export interface Post {
       users: UserBrief[];
     };
   },
+
+  bookmark: {
+    is_bookmarked: boolean;
+    count: number;
+    users: UserBrief[];
+  }
 }
 
 export interface Comment {
@@ -72,6 +78,12 @@ export const blankPost: Post = {
       users: [],
     },
   },
+
+  bookmark: {
+    is_bookmarked: false,
+    count: 0,
+    users: [],
+  }
 }
 
 export const blankComment: Comment = {
