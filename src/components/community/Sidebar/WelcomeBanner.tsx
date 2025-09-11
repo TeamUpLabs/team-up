@@ -16,38 +16,31 @@ export default function WelcomeBanner() {
   const messages = {
     // 일요일
     0: [
-      "지난 한 주를 돌아보고 스스로를 칭찬해보세요 🌈",
       "내일의 시작을 위해 오늘은 차분히 준비해요 📖"
     ],
     // 월요일
     1: [
-      "한 주의 시작, 새로운 기회가 기다리고 있어요 🌱",
       "작은 목표부터 차근차근 시작해봐요 🚶"
     ],
     // 화요일
     2: [
-      "오늘은 어제보다 한 걸음 더 나아가는 날이에요 ✨",
       "꾸준함이 결국 큰 힘이 됩니다 💪"
     ],
     // 수요일
     3: [
       "벌써 절반! 잘해오고 있다는 증거예요 🙌",
-      "오늘도 멋진 성취가 기다리고 있어요 🌟"
     ],
     // 목요일
     4: [
       "노력은 결코 배신하지 않아요 🌿",
-      "성장하는 당신을 응원합니다 🚀"
     ],
     // 금요일
     5: [
-      "이번 주도 고생 많으셨어요 👏",
       "주말이 다가와요! 조금만 더 힘내요 🌞"
     ],
     // 토요일
     6: [
       "오늘은 잠시 쉬어가도 좋아요 ☕",
-      "마음의 여유가 또 다른 힘이 됩니다 🌸"
     ]
   };
 
@@ -71,7 +64,7 @@ export default function WelcomeBanner() {
       {day !== null && (
         <div className="bg-component-tertiary-background rounded-md px-2 py-0.5 text-center">
           <span className="text-xs font-semibold text-text-primary">
-            &quot;{messages[day as keyof typeof messages][Math.floor(Math.random() * 2)]}&quot;
+            &quot;{messages[day as keyof typeof messages][0]}&quot;
           </span>
         </div>
       )}

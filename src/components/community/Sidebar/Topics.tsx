@@ -1,10 +1,34 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown, Loader2 } from 'lucide-react';
 import { useCommunity } from '@/contexts/CommunityContext';
+import { useSearchParams } from 'next/navigation';
 
-export default function Topics() {
+interface TopicsProps {
+  onTopicClick?: (topic: string) => void;
+  onOpenSearch?: () => void;
+}
+
+export default function Topics({ onTopicClick, onOpenSearch }: TopicsProps) {
   const { hot_topic, isLoading, error } = useCommunity();
   const [isExpanded, setIsExpanded] = useState(true);
+  const searchParams = useSearchParams();
+
+  // Update search query when URL search params change
+  useEffect(() => {
+    const search = searchParams?.get('search');
+    if (search && onTopicClick) {
+      onTopicClick(search);
+    }
+  }, [searchParams, onTopicClick]);
+
+  const handleTopicClick = (topic: string) => {
+    if (onTopicClick) {
+      onTopicClick(topic);
+    }
+    if (onOpenSearch) {
+      onOpenSearch();
+    }
+  };
 
   if (error) {
     console.error('Error loading hot topics:', error);
@@ -43,7 +67,10 @@ export default function Topics() {
         ) : hot_topic.length > 0 ? (
           hot_topic.map((topic, idx) => (
             <div key={idx} className="flex flex-col px-2">
-              <span className="font-semibold text-text-primary hover:underline cursor-pointer">
+              <span 
+                className="font-semibold text-text-primary hover:underline cursor-pointer"
+                onClick={() => handleTopicClick(topic.tag)}
+              >
                 #{topic.tag}
               </span>
               <span className="text-sm text-text-secondary">

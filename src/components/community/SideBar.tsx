@@ -5,9 +5,11 @@ import RecentActivities from "@/components/community/Sidebar/RecentActivities";
 
 interface SideBarProps {
   isSidebarOpen: boolean;
+  onTopicClick?: (topic: string) => void;
+  onOpenSearch?: () => void;
 }
 
-export default function SideBar({ isSidebarOpen }: SideBarProps) {
+export default function SideBar({ isSidebarOpen, onTopicClick, onOpenSearch }: SideBarProps) {
   return (
     <div
       className={`fixed h-full border-r border-component-border
@@ -17,7 +19,7 @@ export default function SideBar({ isSidebarOpen }: SideBarProps) {
       <div className="w-80 h-full flex flex-col transition-opacity duration-300">
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           <WelcomeBanner />
-          <Topics />
+          <Topics onTopicClick={onTopicClick} onOpenSearch={onOpenSearch} />
           <RecommendFollow />
           <RecentActivities />
         </div>

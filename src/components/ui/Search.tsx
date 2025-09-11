@@ -6,6 +6,7 @@ interface SearchProps {
   searchQuery?: string;
   setSearchQuery?: (query: string) => void;
   inputRef?: React.RefObject<HTMLInputElement | null>;
+  autoFocus?: boolean;
 }
 
 export default function Search({ 
@@ -13,12 +14,14 @@ export default function Search({
   searchQuery = "", 
   setSearchQuery = () => {}, 
   inputRef,
+  autoFocus = false,
 }: SearchProps) {
   return (
     <Input
       ref={inputRef}
       placeholder={placeholder}
       value={searchQuery}
+      autoFocus={autoFocus}
       onChange={(e) => {
         const value = e.target.value;
         setSearchQuery(value);
