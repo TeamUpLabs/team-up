@@ -15,11 +15,14 @@ import { fetcher } from "@/auth/server";
 import { useAuthStore } from "@/auth/authStore";
 import { User, blankUser } from "@/types/User";
 
-type ProfileTab = 'personal-info' | 'preference' | 'security' | 'notifications';
+type ProfileTab = 'personal-info' | 'posts' | 'preference' | 'security' | 'notifications';
 
 const profileTabs: Record<ProfileTab, { label: string }> = {
   'personal-info': {
     label: '개인 정보',
+  },
+  'posts': {
+    label: '게시글',
   },
   'preference': {
     label: '선호도',
@@ -81,6 +84,7 @@ export default function ProfilePage() {
         fullWidth
       />
       {selectedTab === 'personal-info' && <PersonalInfo user={user || blankUser} setUser={setUser} />}
+      {selectedTab === 'posts' && <></>}
       {selectedTab === 'preference' && <Preference user={user || blankUser} setUser={setUser} />}
       {selectedTab === 'security' && <Security user={user || blankUser} />}
       {selectedTab === 'notifications' && <Notification notificationSettings={user?.notification_settings || blankUser.notification_settings} setUser={setUser} />}

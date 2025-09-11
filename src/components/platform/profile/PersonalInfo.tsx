@@ -25,13 +25,15 @@ import {
 import { Globe } from "lucide-react";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
+import FollowListModal from "@/components/FollowListModal";
 
 interface PersonalInfoProps {
   user: UserType;
   setUser: React.Dispatch<React.SetStateAction<UserType>>;
 }
 
-export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  const [isEditing, setIsEditing] = useState<string>("none");
+export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
+  const [isEditing, setIsEditing] = useState<string>("none");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [cropImage, setCropImage] = useState<string | null>(null);
@@ -45,6 +47,8 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  co
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [formData, setFormData] = useState<UserType>(blankUser);
+  const [followListModalOpen, setFollowListModalOpen] = useState(false);
+  const [whatToFollow, setWhatToFollow] = useState<string>("");
 
   useEffect(() => {
     setFormData(user);
@@ -212,7 +216,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  co
     setFormData((prev) => {
       // Check if the platform already exists in social_links
       const linkExists = prev.social_links.some(link => link.platform === platform);
-      
+
       if (linkExists) {
         // Update existing platform's URL
         return {
@@ -275,33 +279,33 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  co
   // Convert numeric time value (hours * 100 + minutes) to HH:MM string
   const formatNumericTime = (timeValue: number | string | undefined): string => {
     if (!timeValue) return "";
-    
+
     if (typeof timeValue === 'number') {
       const hours = Math.floor(timeValue / 100);
       const minutes = timeValue % 100;
       return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
     }
-    
+
     return timeValue.toString();
   };
 
   // Convert time string or number to minutes since midnight for easier comparison
   const toMinutes = (time: string | number | undefined): number => {
     if (!time) return 0;
-    
+
     // If time is a number (stored format: hours * 100 + minutes)
     if (typeof time === 'number') {
       const hours = Math.floor(time / 100);
       const minutes = time % 100;
       return hours * 60 + minutes;
     }
-    
+
     // If time is a string (HH:MM format)
     if (typeof time === 'string') {
       const [hours, minutes] = time.split(":").map(Number);
       return hours * 60 + (minutes || 0);
     }
-    
+
     return 0;
   };
 
@@ -366,6 +370,16 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  co
     }
   };
 
+  const handleFollowListModalOpen = (whatToFollow: string) => {
+    setFollowListModalOpen(true);
+    setWhatToFollow(whatToFollow)
+  };
+
+  const handleFollowListModalClose = () => {
+    setFollowListModalOpen(false);
+    setWhatToFollow("")
+  };
+
   return (
     <div className="flex flex-col gap-4 border border-component-border rounded-lg p-6">
       <div className="flex items-center gap-4">
@@ -409,9 +423,25 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  co
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
             <h2 className="text-2xl font-bold">{user?.name}</h2>
-            <Badge 
-              content={`${user?.auth_provider == "github" ? "Github와" : "Google과"} 연동됨`} 
-              color="violet" 
+            <div className="flex items-center gap-2 text-sm">
+              <div 
+                className="flex flex-row items-center gap-1 cursor-pointer"
+                onClick={() => handleFollowListModalOpen("following")}
+              >
+                <span>{user?.following.length}</span>
+                <span>팔로우</span>
+              </div>
+              <div 
+                className="flex flex-row items-center gap-1 cursor-pointer"
+                onClick={() => handleFollowListModalOpen("followers")}
+              >
+                <span>{user?.followers.length}</span>
+                <span>팔로워</span>
+              </div>
+            </div>
+            <Badge
+              content={`${user?.auth_provider == "github" ? "Github와" : "Google과"} 연동됨`}
+              color="violet"
               className="!px-2 !py-1 !text-xs"
             />
           </div>
@@ -542,7 +572,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  co
               if (
                 formData.collaboration_preference.work_hours_end &&
                 toMinutes(formData.collaboration_preference.work_hours_end) <=
-                  toMinutes(value as string)
+                toMinutes(value as string)
               ) {
                 handleWorkingHoursChange("end", "");
               }
@@ -607,7 +637,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  co
                   key={index}
                   content={
                     <span className="flex items-center flex-wrap gap-2">
-                      {stack.tech} 
+                      {stack.tech}
                       <Select
                         options={[
                           { name: "tech_stacks", value: "0", label: "초급" },
@@ -794,6 +824,12 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  co
           />
         </div>
       )}
+      <FollowListModal 
+        isOpen={followListModalOpen} 
+        onClose={handleFollowListModalClose} 
+        followList={whatToFollow === "following" ? user.following : user.followers} 
+        whatToFollow={whatToFollow}
+      />
     </div>
   );
 }
