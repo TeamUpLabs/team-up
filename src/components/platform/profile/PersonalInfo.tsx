@@ -407,7 +407,14 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {  co
         />
 
         <div className="flex flex-col">
-          <h2 className="text-2xl font-bold">{user?.name}</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold">{user?.name}</h2>
+            <Badge 
+              content={`${user?.auth_provider == "github" ? "Github와" : "Google과"} 연동됨`} 
+              color="violet" 
+              className="!px-2 !py-1 !text-xs"
+            />
+          </div>
           <p className="text-base text-text-secondary">{user?.role}</p>
         </div>
       </div>
