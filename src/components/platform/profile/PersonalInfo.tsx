@@ -428,14 +428,14 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
                 className="flex flex-row items-center gap-1 cursor-pointer"
                 onClick={() => handleFollowListModalOpen("following")}
               >
-                <span>{user?.following.length}</span>
+                <span>{user?.following ? user?.following.length : 0}</span>
                 <span>팔로우</span>
               </div>
               <div 
                 className="flex flex-row items-center gap-1 cursor-pointer"
                 onClick={() => handleFollowListModalOpen("followers")}
               >
-                <span>{user?.followers.length}</span>
+                <span>{user?.followers ? user?.followers.length : 0}</span>
                 <span>팔로워</span>
               </div>
             </div>

@@ -36,12 +36,12 @@ export default function FollowListModal({ isOpen, onClose, followList, whatToFol
     <FollowProvider>
       <ModalTemplete isOpen={isOpen} onClose={onClose} header={Header}>
         <div className="min-h-[400px]">
-          {followList.length === 0 ? (
+          {!followList || followList.length === 0 ? (
             <p className="text-center text-text-secondary">{whatToFollow === "following" ? "팔로우가 없습니다." : "팔로워가 없습니다."}</p>
           ) : (
-            followList.map((user, index) => {
+            followList?.map((user, index) => {
               const isFirst = index === 0;
-              const isLast = index === followList.length - 1;
+              const isLast = index === followList?.length - 1;
 
               return (
                 <div key={user.id} className={`bg-transparent p-2 hover:bg-component-tertiary-background cursor-pointer ${isFirst ? "rounded-t-md" : ""} ${isLast ? "rounded-b-md" : ""}`}>

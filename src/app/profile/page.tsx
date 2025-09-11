@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 import PersonalInfo from "@/components/platform/profile/PersonalInfo";
+import MyPosts from "@/components/platform/profile/MyPosts";
 import Preference from "@/components/platform/profile/Preference";
 import Security from "@/components/platform/profile/Security";
 import Notification from "@/components/platform/profile/Notification";
@@ -84,7 +85,7 @@ export default function ProfilePage() {
         fullWidth
       />
       {selectedTab === 'personal-info' && <PersonalInfo user={user || blankUser} setUser={setUser} />}
-      {selectedTab === 'posts' && <></>}
+      {selectedTab === 'posts' && <MyPosts posts={user.posts} />}
       {selectedTab === 'preference' && <Preference user={user || blankUser} setUser={setUser} />}
       {selectedTab === 'security' && <Security user={user || blankUser} />}
       {selectedTab === 'notifications' && <Notification notificationSettings={user?.notification_settings || blankUser.notification_settings} setUser={setUser} />}

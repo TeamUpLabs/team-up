@@ -98,7 +98,7 @@ export default function Security({ user }: SecurityProps) {  const [newPassword,
         <div className="flex flex-col gap-4 py-6">
           <h2 className="text-lg font-semibold text-text-secondary mb-4">활성 세션</h2>
           <div className="flex flex-col gap-4">
-            {user.sessions.map((session, idx) => (
+            {user.sessions && user.sessions.map((session, idx) => (
               <div key={idx} className="border border-component-border rounded-lg p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-component-tertiary-background rounded-lg">

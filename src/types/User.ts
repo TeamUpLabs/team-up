@@ -1,5 +1,6 @@
 import { Project } from "@/types/Project";
 import { Notification } from "@/types/Notification";
+import { Post } from "@/types/community/Post";
 
 export interface CollaborationPreference {
     collaboration_style: string;
@@ -88,6 +89,10 @@ export interface User {
 
     following: UserBrief[];
     followers: UserBrief[];
+
+    posts: Post[];
+    bookmarked_posts: Post[];
+    liked_posts: Post[];
 }
 
 export const blankUser: User = {
@@ -135,6 +140,10 @@ export const blankUser: User = {
 
     following: [],
     followers: [],
+
+    posts: [],
+    bookmarked_posts: [],
+    liked_posts: [],
 }
 
 export interface UserBrief {
