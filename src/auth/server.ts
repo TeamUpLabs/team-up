@@ -34,11 +34,17 @@ server.interceptors.response.use(
   }
 );
 
-export const fetcher = (url: string, token?: string) => server.get(url, {
-  withCredentials: true,
-  ...(token ? {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  } : {}),
-}).then((res) => res.data);
+export const fetcher = async (url: string) => {
+  const token = useAuthStore.getState().token;
+
+  const res = await server.get(url, {
+    withCredentials: true,
+    ...(token ? {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    } : {}),
+  });
+  return res.data;
+};

@@ -43,6 +43,18 @@ export interface User {
         title: string;
       },
       projects: {
+        my: {
+          href: string;
+          method: string;
+          title: string;
+        },
+        exclude_me: {
+          href: string;
+          method: string;
+          title: string;
+        }
+      },
+      exclude_projects: {
         href: string;
         method: string;
         title: string;
@@ -114,6 +126,18 @@ export const blankUser: User = {
         title: "",
       },
       projects: {
+        my: {
+          href: "",
+          method: "",
+          title: "",
+        },
+        exclude_me: {
+          href: "",
+          method: "",
+          title: "",
+        }
+      },
+      exclude_projects: {
         href: "",
         method: "",
         title: "",

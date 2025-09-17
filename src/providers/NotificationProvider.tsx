@@ -57,7 +57,7 @@ export function NotificationProvider({
     initialNotificationsHydrated.current = false;
     if (user?.id) {
       try {
-        const response = await server.get(`/api/v1/notifications/user/${user.id}/sse`);
+        const response = await server.get(`${user.links.notifications.href}/sse`);
         let initialNotifications: Notification[] = [];
         if (response.status === 200 && Array.isArray(response.data)) {
           initialNotifications = response.data;
@@ -108,7 +108,7 @@ export function NotificationProvider({
       lastAlertedNotificationId.current = null;
       initialNotificationsHydrated.current = false;
     }
-  }, [user?.id, user?.received_notifications]);
+  }, [user?.id, user?.received_notifications, user?.links.notifications.href]);
 
   useEffect(() => {
     fetchInitialNotifications();
@@ -134,12 +134,7 @@ export function NotificationProvider({
         return;
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL + "/api";
-      if (!apiUrl) {
-        console.error("NEXT_PUBLIC_API_URL is not defined.");
-        return;
-      }
-      const sseUrl = `${apiUrl}/notifications/user/${user.id}/sse`;
+      const sseUrl = `${process.env.NEXT_PUBLIC_API_URL}${user.links.notifications.href}/sse`;
 
       console.log("Attempting to connect to SSE:", sseUrl);
       const newEventSource = new EventSource(sseUrl);
@@ -274,7 +269,7 @@ export function NotificationProvider({
         eventSourceRef.current = null;
       }
     };
-  }, [user?.id, setNotificationAlert]);
+  }, [user?.id, setNotificationAlert, user?.links.notifications?.href]);
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 

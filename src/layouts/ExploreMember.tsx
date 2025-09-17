@@ -21,7 +21,7 @@ export default function ExploreMember() {
 
   // Fetch members using SWR
   const { data: users, error, isLoading } = useSWR<User[]>(
-    hydrated && user?.id ? `/users/exclude/${user.id}` : null,
+    hydrated && user?.id ? `api/v1/users/exclude/me` : null,
     fetcher
   );
 
@@ -57,7 +57,6 @@ export default function ExploreMember() {
     return users.filter((user: User) =>
       user.id.toString().includes(lowercaseQuery) ||
       user.name.toLowerCase().includes(lowercaseQuery) ||
-      user.tech_stacks.some(skill => skill.tech.toLowerCase().includes(lowercaseQuery)) ||
       user.role.toLowerCase().includes(lowercaseQuery) ||
       (user.email && user.email.toLowerCase().includes(lowercaseQuery)) ||
       (user.phone && user.phone.toLowerCase().includes(lowercaseQuery)) ||
