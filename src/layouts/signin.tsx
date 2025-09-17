@@ -21,12 +21,12 @@ export default function SignIn() {
   };
 
   const handleGithubLogin = () => {
-    const githubAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/social/github/login`;
+    const githubAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/oauth/login?provider=github`;
     window.location.href = githubAuthUrl;
   }
 
   const handleGoogleLogin = () => {
-    const googleAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/social/google/login`;
+    const googleAuthUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/oauth/login?provider=google`;
     window.location.href = googleAuthUrl;
   }
     

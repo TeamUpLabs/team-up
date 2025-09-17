@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AuthUser } from "@/types/AuthUser";
+import { UserBrief } from "@/types/brief/Userbrief";
 import { Notification } from "@/types/Notification";
 import { server } from '@/auth/server';
 import { logout } from "@/auth/authApi";
@@ -10,13 +10,13 @@ type NotificationAlertType = "info" | "message" | "task" | "milestone" | "chat" 
 
 type AuthState = {
   token: string | null;
-  user: AuthUser | null;
+  user: UserBrief | null;
   alert: { message: string; type: AlertType } | null;
   confirm: { message: string; onConfirm?: () => void } | null;
   notificationAlert: { message: Notification; type: NotificationAlertType } | null;
   isInitialized: boolean;
   setToken: (token: string) => void;
-  setUser: (user: AuthUser) => void;
+  setUser: (user: UserBrief) => void;
   setAlert: (message: string, type: AlertType) => void;
   setConfirm: (message: string, onConfirm?: () => void) => void;
   setNotificationAlert: (message: Notification, type: NotificationAlertType) => void;
@@ -37,7 +37,7 @@ export const useAuthStore = create<AuthState>()(
       confirm: null,
       notificationAlert: null,
       setToken: (token: string) => set({ token }),
-      setUser: (user: AuthUser) => set({ user }),
+      setUser: (user: UserBrief) => set({ user }),
       setAlert: (message: string, type: AlertType) => set({ alert: { message, type } }),
       setConfirm: (message: string, onConfirm?: () => void) => set({ confirm: { message, onConfirm } }),
       setNotificationAlert: (message: Notification, type: NotificationAlertType) => set({ notificationAlert: { message, type } }),
@@ -70,16 +70,12 @@ export const useAuthStore = create<AuthState>()(
 );
 
 export const checkAndRefreshAuth = async () => {
-  const token = useAuthStore.getState().token;
-  if (!token) return false;
+  const user = useAuthStore.getState().user;
+
+  if (!user) return false;
 
   try {
-    const res = await server.get('/me', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
+    const res = await server.get(user.links.self.href);
 
     if (res.status === 200) {
       if (res.data) {
@@ -102,13 +98,6 @@ export const checkAndRefreshAuth = async () => {
 };
 
 export const fetchUserDetail = async (url: string) => {
-  const token = useAuthStore.getState().token;
-  if (!token) return null;
-  const res = await server.get(url, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  });
+  const res = await server.get(url);
   return res.data;
 };

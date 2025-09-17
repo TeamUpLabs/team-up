@@ -1,11 +1,24 @@
 import axios from 'axios';
+import { useAuthStore } from './authStore';
 
 export const server = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL + "/api",
+  baseURL: process.env.NEXT_PUBLIC_API_URL + "/api/v1",
   headers: {
     'Content-Type': 'application/json',
-  }
+  },
+  withCredentials: true,
 });
+
+server.interceptors.request.use(
+  (config) => {
+    const token = useAuthStore.getState().token;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      config.headers['Content-Type'] = 'application/json';
+    }
+    return config;
+  }
+);
 
 server.interceptors.response.use(
   (response) => response,

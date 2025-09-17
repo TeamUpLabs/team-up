@@ -5,6 +5,16 @@ export interface UserBrief {
   profile_image: string;
   role: string;
   status: string;
+  created_at: string;
+  updated_at: string;
+
+  links: {
+    self: {
+      href: string;
+      method: string;
+      title: string;
+    }
+  };
 }
 
 export const blankUserBrief: UserBrief = {
@@ -14,4 +24,13 @@ export const blankUserBrief: UserBrief = {
   profile_image: "",
   role: "",
   status: "",
+  created_at: "",
+  updated_at: "",
+  links: {
+    self: {
+      href: "",
+      method: "",
+      title: "",
+    }
+  },
 }

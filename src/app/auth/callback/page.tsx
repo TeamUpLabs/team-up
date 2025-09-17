@@ -17,7 +17,7 @@ export default function AuthCallback() {
         const social = url.searchParams.get("social");
         if (!code || !social) return;
 
-        const res = await server.post(`/auth/social/callback`, {
+        const res = await server.post(`/user/oauth/callback`, {
           provider: social,
           code: code,
           device_id: getOrCreateDeviceId(),
