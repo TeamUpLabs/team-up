@@ -37,10 +37,47 @@ export interface User {
     };
     notification_settings: NotificationSetting;
     links: {
-      href: string;
-      method: string;
-      title: string;
-    }[];
+      self: {
+        href: string;
+        method: string;
+        title: string;
+      },
+      projects: {
+        href: string;
+        method: string;
+        title: string;
+      },
+      collaboration_preferences: {
+        href: string;
+        method: string;
+        title: string;
+      },
+      tech_stacks: {
+        href: string;
+        method: string;
+        title: string;
+      },
+      interests: {
+        href: string;
+        method: string;
+        title: string;
+      },
+      social_links: {
+        href: string;
+        method: string;
+        title: string;
+      },
+      notifications: {
+        href: string;
+        method: string;
+        title: string;
+      },
+      sessions: {
+        href: string;
+        method: string;
+        title: string;
+      }
+    };
 }
 
 export const blankUser: User = {
@@ -70,7 +107,48 @@ export const blankUser: User = {
         pushNotification: 1,
         securityNotification: 1,
     },
-    links: [],
+    links: {
+      self: {
+        href: "",
+        method: "",
+        title: "",
+      },
+      projects: {
+        href: "",
+        method: "",
+        title: "",
+      },
+      collaboration_preferences: {
+        href: "",
+        method: "",
+        title: "",
+      },
+      tech_stacks: {
+        href: "",
+        method: "",
+        title: "",
+      },
+      interests: {
+        href: "",
+        method: "",
+        title: "",
+      },
+      social_links: {
+        href: "",
+        method: "",
+        title: "",
+      },
+      notifications: {
+        href: "",
+        method: "",
+        title: "",
+      },
+      sessions: {
+        href: "",
+        method: "",
+        title: "",
+      },
+    },
 }
 
 // export interface User {

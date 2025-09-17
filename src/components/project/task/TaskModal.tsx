@@ -8,7 +8,7 @@ import {
   blankTask,
   SubTaskCreateFormData,
 } from "@/types/Task";
-import { blankUserBrief } from "@/types/user/User";
+import { blankUserBrief } from "@/types/brief/Userbrief";
 import ModalTemplete from "@/components/ModalTemplete";
 import { useProject } from "@/contexts/ProjectContext";
 import { useAuthStore } from "@/auth/authStore";

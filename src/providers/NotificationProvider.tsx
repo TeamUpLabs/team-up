@@ -43,7 +43,7 @@ export function NotificationProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { data } = useSWR('/users/me', fetchUserDetail);
+  const { data } = useSWR(`${useAuthStore.getState().user?.links.self.href}`, fetchUserDetail);
   const user = data;
   const setNotificationAlert = useAuthStore((state) => state.setNotificationAlert);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -57,7 +57,7 @@ export function NotificationProvider({
     initialNotificationsHydrated.current = false;
     if (user?.id) {
       try {
-        const response = await server.get(`/notifications/user/${user.id}/sse`);
+        const response = await server.get(`/api/v1/notifications/user/${user.id}/sse`);
         let initialNotifications: Notification[] = [];
         if (response.status === 200 && Array.isArray(response.data)) {
           initialNotifications = response.data;

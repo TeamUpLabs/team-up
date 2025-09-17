@@ -1,4 +1,4 @@
-import { UserBrief, blankUserBrief } from "@/types/user/User";
+import { UserBrief, blankUserBrief } from "@/types/brief/Userbrief";
 
 export interface WhiteBoardCreateFormData {
   type: string;

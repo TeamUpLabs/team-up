@@ -7,8 +7,7 @@ import UserReview from "@/components/UserReview"
 import Events from "@/components/events"
 import Footer from "@/components/footer"
 
-export default function Home() {
-
+export default function Home() {;
   return (
     <div className="min-h-screen">
       {/* Header */}

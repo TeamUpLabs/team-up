@@ -24,7 +24,7 @@ interface FollowProviderProps {
 export function FollowProvider({ children }: FollowProviderProps) {
   const user = useAuthStore.getState().user;
 
-  const { data, mutate } = useSWR<UserFollowingMinimal | null>(user ? `/users/${user.id}` : null, fetchUserDetail, {
+  const { data, mutate } = useSWR<UserFollowingMinimal | null>(user ? `/api/v1/users/${user.id}` : null, fetchUserDetail, {
     revalidateOnFocus: true,
   });
 
