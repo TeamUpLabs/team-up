@@ -8,7 +8,7 @@ import {
   updateUserProfileImage,
   updateUserProfile,
 } from "@/hooks/getMemberData";
-import { User as UserType, blankUser } from "@/types/User";
+import { User as UserType, blankUser } from "@/types/user/User";
 import { useAuthStore } from "@/auth/authStore";
 import ImageCropModal from "@/components/platform/profile/ImageCropModal";
 import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";

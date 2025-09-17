@@ -1,8 +1,8 @@
 "use client";
 
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 import React, { useState, useEffect } from "react";
-import { collaborationStyles, projectTypes, preferred_roles } from "@/types/CollaborationPreference";
+import { collaborationStyles, projectTypes, preferred_roles } from "@/types/user/CollaborationPreference";
 import Select from "@/components/ui/Select";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import { updateUserProfile } from "@/hooks/getMemberData";

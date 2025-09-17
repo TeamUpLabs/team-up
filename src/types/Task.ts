@@ -1,4 +1,4 @@
-import { User, UserBrief, blankUser } from "@/types/User";
+import { User, UserBrief, blankUser } from "@/types/user/User";
 import { MileStone, blankMileStone } from "@/types/MileStone";
 
 export interface SubTaskCreateFormData {

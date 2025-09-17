@@ -1,4 +1,4 @@
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/auth/authStore";

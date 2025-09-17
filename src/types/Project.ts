@@ -1,5 +1,5 @@
 import { AuthUser } from "@/types/AuthUser";
-import { User, blankUser } from "@/types/User";
+import { User, blankUser } from "@/types/user/User";
 import { Task } from "@/types/Task";
 import { MileStone } from "@/types/MileStone";
 import { ParticipationRequest } from "@/types/ParticipationRequest";

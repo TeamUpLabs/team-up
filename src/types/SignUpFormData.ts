@@ -1,4 +1,4 @@
-import { CollaborationPreference, TechStack, Interest } from "@/types/User";
+import { CollaborationPreference, TechStack, Interest } from "@/types/user/User";
 
 export interface SignUpFormData {
   name: string;

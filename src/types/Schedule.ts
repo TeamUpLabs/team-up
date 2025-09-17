@@ -1,5 +1,5 @@
 import { Project, blankProject } from "@/types/Project";
-import { UserBrief, blankUserBrief } from "@/types/User";
+import { UserBrief, blankUserBrief } from "@/types/user/User";
 
 export interface ScheduleCreateFormData {
     type: "meeting" | "event";

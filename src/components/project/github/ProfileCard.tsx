@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import { Book, Users, Building, MapPinAlt, Refresh } from "flowbite-react-icons/outline";
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 import { GithubUser } from "@/types/github/GithubUser";
 import RateLimitWarning from "@/components/project/github/RateLimitWarning";
 import { useAuthStore } from "@/auth/authStore";

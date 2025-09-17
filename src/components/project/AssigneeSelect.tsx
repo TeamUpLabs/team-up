@@ -1,4 +1,4 @@
-import { UserBrief } from "@/types/User";
+import { UserBrief } from "@/types/user/User";
 import Image from "next/image";
 import { useProject } from "@/contexts/ProjectContext";
 import { Check } from "flowbite-react-icons/outline";

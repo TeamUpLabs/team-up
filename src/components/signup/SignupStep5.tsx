@@ -1,6 +1,6 @@
 import React from "react";
 import Select from "@/components/ui/Select";
-import { collaborationStyles, projectTypes, preferred_roles } from "@/types/CollaborationPreference";
+import { collaborationStyles, projectTypes, preferred_roles } from "@/types/user/CollaborationPreference";
 
 interface SignupStep5Props {
   collaborationStyle: string;

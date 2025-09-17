@@ -10,7 +10,7 @@ import { Globe, Lock } from "flowbite-react-icons/outline";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import useAuthHydration from "@/hooks/useAuthHydration";
 import { fetcher } from "@/auth/server";
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 import useSWR from "swr";
 
 interface CreateRepositoryData {

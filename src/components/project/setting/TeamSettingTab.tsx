@@ -9,7 +9,7 @@ import {
   faShield,
 } from "@fortawesome/free-solid-svg-icons";
 import { Users } from "lucide-react";
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 import { ParticipationRequest } from "@/types/ParticipationRequest";
 import PermissionChangeModal from "@/components/project/setting/PermissionChangeModal";
 import {

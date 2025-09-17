@@ -27,7 +27,7 @@ import AnalyticsTracker from "@/components/project/github/analytics/AnalyticsTra
 import useSWR from "swr";
 import useAuthHydration from "@/hooks/useAuthHydration";
 import { fetcher } from "@/auth/server";
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 
 export default function GithubPage() {
   const { project } = useProject();

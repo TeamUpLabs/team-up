@@ -7,7 +7,7 @@ import {
   Gamepad2,
   BookOpen,
 } from "lucide-react";
-import { Interest } from "@/types/User";
+import { Interest } from "@/types/user/User";
 
 interface SignupStep6Props {
   interests: Interest[];

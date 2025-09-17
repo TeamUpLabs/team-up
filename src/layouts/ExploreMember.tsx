@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, Suspense, lazy } from "react";
 import useSWR from 'swr';
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 import MemberScoutDetailModal from "@/components/platform/MemberScoutDetailModal";
 import { fetcher } from "@/auth/server";
 import { useAuthStore } from "@/auth/authStore";

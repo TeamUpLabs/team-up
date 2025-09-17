@@ -13,7 +13,7 @@ import {
 import { summarizeMarkdown } from "@/utils/summarizeMarkdown";
 import { Suspense, useState } from "react";
 import WhiteboardModal from "@/components/project/WhiteBoard/WhiteboardModal";
-import { blankUserBrief } from "@/types/User";
+import { blankUserBrief } from "@/types/user/User";
 
 interface IdeaListProps {
   idea: WhiteBoard;

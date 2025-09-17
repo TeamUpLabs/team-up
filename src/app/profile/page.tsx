@@ -14,7 +14,7 @@ import useSWR from "swr";
 import useAuthHydration from "@/hooks/useAuthHydration";
 import { fetcher } from "@/auth/server";
 import { useAuthStore } from "@/auth/authStore";
-import { User, blankUser } from "@/types/User";
+import { User, blankUser } from "@/types/user/User";
 
 type ProfileTab = 'personal-info' | 'posts' | 'preference' | 'security' | 'notifications';
 

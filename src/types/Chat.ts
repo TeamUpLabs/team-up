@@ -1,7 +1,7 @@
 import { Channel } from "@/types/Channel";
-import { UserBrief } from "@/types/User";
+import { UserBrief } from "@/types/user/User";
 import { blankChannel } from "@/types/Channel";
-import { blankUser } from "@/types/User";
+import { blankUser } from "@/types/user/User";
 
 export interface ChatCreateForm {
   project_id: string;

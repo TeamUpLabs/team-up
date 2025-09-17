@@ -1,7 +1,7 @@
 "use client";
 
 import ModalTemplete from "@/components/ModalTemplete";
-import { blankUserBrief } from "@/types/User";
+import { blankUserBrief } from "@/types/user/User";
 import { WhiteBoard, CommentCreateFormData } from "@/types/WhiteBoard";
 import { useState, useCallback, useEffect } from "react";
 import { Lightbulb, Eye, Heart, MessageCircle, Download } from "lucide-react";

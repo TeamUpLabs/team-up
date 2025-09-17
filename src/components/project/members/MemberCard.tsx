@@ -1,4 +1,4 @@
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 import Badge, { BadgeColor } from "@/components/ui/Badge";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

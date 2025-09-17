@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, Suspense, lazy, useMemo, useCallback } from "react";
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 import { useProject } from "@/contexts/ProjectContext";
 import TabSlider from "@/components/ui/TabSlider";
 import { convertRoleName } from "@/utils/ConvertRoleName";

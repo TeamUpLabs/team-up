@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Switch } from "@/components/ui/Switch";
 import { Info } from "lucide-react";
 import { updateUserProfile } from "@/hooks/getMemberData";
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 import Badge from "@/components/ui/Badge";
 
 interface NotificationProps {

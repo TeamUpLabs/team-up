@@ -1,4 +1,4 @@
-import { UserBrief, blankUserBrief } from "@/types/User";
+import { UserBrief, blankUserBrief } from "@/types/user/User";
 import { Task } from "@/types/Task";
 
 export interface MileStone {

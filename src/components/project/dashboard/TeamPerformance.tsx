@@ -3,7 +3,7 @@ import Image from "next/image";
 import MemberDetailModal from "@/components/project/members/MemberDetailModal";
 import { useState } from "react";
 import { AuthUser } from "@/types/AuthUser";
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 
 interface TeamPerformanceProps {
   project: Project;

@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserShield, faUser, faCheck } from '@fortawesome/free-solid-svg-icons';
-import { User } from '@/types/User';
+import { User } from '@/types/user/User';
 import { Project } from '@/types/Project';
 import ModalTemplete from '@/components/ModalTemplete';
 import CancelBtn from '@/components/ui/button/CancelBtn';

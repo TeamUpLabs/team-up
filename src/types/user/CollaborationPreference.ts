@@ -164,3 +164,24 @@ export const preferred_roles = {
     },
   ],
 };
+
+export interface CollaborationPreference {
+  collaboration_style: string;
+  preferred_project_type: string;
+  preferred_role: string;
+  available_time_zone: string;
+  work_hours_start: string;
+  work_hours_end: string;
+  preferred_project_length: string;
+}
+
+export const blankCollaborationPreference: CollaborationPreference = {
+  collaboration_style: "",
+  preferred_project_type: "",
+  preferred_role: "",
+  available_time_zone: "",
+  work_hours_start: "",
+  work_hours_end: "",
+  preferred_project_length: "",
+}
+    

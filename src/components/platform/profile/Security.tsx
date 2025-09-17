@@ -5,7 +5,7 @@ import { Lock, Smartphone, Laptop, Tablet, Check, X } from "lucide-react";
 import { useState } from "react";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import Badge from "@/components/ui/Badge";
-import { User } from "@/types/User";
+import { User } from "@/types/user/User";
 import { updateUserProfile } from "@/hooks/getMemberData";
 import { useAuthStore } from "@/auth/authStore";
 import { formatDistanceToNow } from "date-fns";

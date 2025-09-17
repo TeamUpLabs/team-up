@@ -1,4 +1,4 @@
-import { UserBrief } from "@/types/User";
+import { UserBrief } from "@/types/user/User";
 
 export interface ChannelCreateForm {
   name: string;

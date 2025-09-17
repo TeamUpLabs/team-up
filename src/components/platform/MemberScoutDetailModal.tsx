@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { User } from '@/types/User';
+import { User } from '@/types/user/User';
 import SelectProjectModal from '@/components/platform/SelectProjectModal';
 import ModalTemplete from '@/components/ModalTemplete';
 import Badge from '@/components/ui/Badge';

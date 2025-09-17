@@ -1,5 +1,5 @@
 import { server } from "@/auth/server";
-import { User, UpdateUserProfileData } from "@/types/User";
+import { User, UpdateUserProfileData } from "@/types/user/User";
 import { useAuthStore } from "@/auth/authStore";
 
 export const getMembersExceptMe = async (): Promise<User[]> => {
