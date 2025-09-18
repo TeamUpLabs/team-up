@@ -1,4 +1,4 @@
-import { User, UserBrief, blankUser } from "@/types/user/User";
+import { UserBrief, blankUserBrief } from "@/types/brief/Userbrief";
 import { MileStone, blankMileStone } from "@/types/MileStone";
 
 export interface SubTaskCreateFormData {
@@ -49,8 +49,8 @@ export interface Task {
   updated_at: string;
   completed_at: string;
   milestone: MileStone;
-  assignees: User[];
-  creator: User;
+  assignees: UserBrief[];
+  creator: UserBrief;
   subtasks: SubTask[];
   comments: Comment[];
 }
@@ -72,7 +72,7 @@ export const blankTask: Task = {
   completed_at: "",
   milestone: blankMileStone,
   assignees: [],
-  creator: blankUser,
+  creator: blankUserBrief,
   subtasks: [],
   comments: [],
 }

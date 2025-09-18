@@ -15,9 +15,14 @@ import { useProject } from "@/contexts/ProjectContext";
 import { formatRelativeTime } from "@/utils/dateUtils";
 import Accordion from "@/components/ui/Accordion";
 import { getStatusInfo } from "@/utils/getStatusColor";
+import { UserBrief } from "@/types/brief/Userbrief";
+import { fetcher } from "@/auth/server";
+import useAuthHydration from "@/hooks/useAuthHydration";
+import useSWR from "swr";
+import { useUser } from "@/contexts/UserContext";
 
 interface MemberDetailModalProps {
-  member: User;
+  member: UserBrief;
   isOpen: boolean;
   onClose: () => void;
   isLeader?: boolean;
@@ -31,10 +36,16 @@ export default function MemberDetailModal({
   isLeader,
   isManager,
 }: MemberDetailModalProps) {
-  const user = useAuthStore.getState().user;
-  const { project } = useProject();
+  const { user, collaboration_preference, tech_stacks, social_links } = useUser();
+  const { project, tasks } = useProject();
   const router = useRouter();
   const params = useParams();
+  const hydrated = useAuthHydration();
+
+  const { data: userData } = useSWR<User>(
+    hydrated ? `${member.links.self.href}` : null,
+    (url: string) => fetcher(url)
+  );
 
   const handleTaskClick = (taskId: number) => {
     localStorage.setItem("selectedTaskId", taskId.toString());
@@ -137,7 +148,7 @@ export default function MemberDetailModal({
             <span className="text-sm">{statusInfo.label}</span>
           </div>
           <span className="text-text-secondary text-sm">
-            마지막 로그인: {formatRelativeTime(member.last_login)}
+            마지막 로그인: {userData?.last_login ? formatRelativeTime(userData.last_login) : ""}
           </span>
         </div>
       </div>
@@ -173,8 +184,8 @@ export default function MemberDetailModal({
         <div className="space-y-4">
           <div className="space-y-2">
             <h4 className="font-medium">Introduction</h4>
-            {member.bio ? (
-              <p className="text-muted-foreground leading-relaxed">{member.bio}</p>
+            {userData?.bio ? (
+              <p className="text-muted-foreground leading-relaxed">{userData.bio}</p>
             ) : (
               <p className="text-text-secondary">소개글이 없습니다.</p>
             )}
@@ -183,16 +194,16 @@ export default function MemberDetailModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <h4 className="font-medium">Email</h4>
-              {member.email ? (
-                <p className="text-muted-foreground">{member.email}</p>
+              {userData?.email ? (
+                <p className="text-muted-foreground">{userData.email}</p>
               ) : (
                 <p className="text-text-secondary">이메일이 없습니다.</p>
               )}
             </div>
             <div>
               <h4 className="font-medium">Phone Number</h4>
-              {member.phone ? (
-                <p className="text-muted-foreground">{member.phone}</p>
+              {userData?.phone ? (
+                <p className="text-muted-foreground">{userData.phone}</p>
               ) : (
                 <p className="text-text-secondary">연락처가 없습니다.</p>
               )}
@@ -207,7 +218,7 @@ export default function MemberDetailModal({
         icon={Clock}
       >
         <div className="space-y-2">
-          {member.collaboration_preference?.available_time_zone ? (
+          {collaboration_preference?.available_time_zone ? (
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
                 <div className="flex items-center gap-2">
@@ -215,15 +226,15 @@ export default function MemberDetailModal({
                   <h4 className="font-medium">Timezone</h4>
                 </div>
                 <p className="text-muted-foreground">
-                  {member.collaboration_preference.available_time_zone === "Asia/Seoul"
+                  {collaboration_preference.available_time_zone === "Asia/Seoul"
                     ? "한국 표준시 (KST)"
-                    : member.collaboration_preference.available_time_zone === "UTC"
+                    : collaboration_preference.available_time_zone === "UTC"
                       ? "세계 표준시 (UTC)"
-                      : member.collaboration_preference.available_time_zone === "America/New_York"
+                      : collaboration_preference.available_time_zone === "America/New_York"
                         ? "동부 표준시 (EST)"
-                        : member.collaboration_preference.available_time_zone === "America/Los_Angeles"
+                        : collaboration_preference.available_time_zone === "America/Los_Angeles"
                           ? "태평양 표준시 (PST)"
-                          : member.collaboration_preference.available_time_zone}
+                          : collaboration_preference.available_time_zone}
                 </p>
               </div>
               <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
@@ -232,7 +243,7 @@ export default function MemberDetailModal({
                   <h4 className="font-medium">Time</h4>
                 </div>
                 <p className="text-muted-foreground">
-                  {formatTimeFromNumber(member.collaboration_preference.work_hours_start)} - {formatTimeFromNumber(member.collaboration_preference.work_hours_end)}
+                  {formatTimeFromNumber(collaboration_preference?.work_hours_start)} - {formatTimeFromNumber(collaboration_preference?.work_hours_end)}
                 </p>
               </div>
             </div>
@@ -246,13 +257,13 @@ export default function MemberDetailModal({
 
       {/* Current Tasks Accordian */}
       <Accordion
-        title={`Current Tasks (${project?.tasks?.filter(task => task.assignees?.some(assi => assi.id === member.id)).length || 0})`}
+        title={`Current Tasks (${tasks?.filter(task => task.assignees?.some(assi => assi.id === member.id)).length || 0})`}
         icon={ClipboardClean}
         defaultOpen
       >
         <div className="space-y-2">
-          {project?.tasks && project?.tasks.length > 0 ? (
-            project?.tasks.map((task, idx) => (
+          {tasks && tasks.length > 0 ? (
+            tasks.map((task, idx) => (
               <div
                 key={idx}
                 className="p-3 bg-component-secondary-background border border-component-border rounded-lg cursor-pointer transition-colors"
@@ -273,12 +284,12 @@ export default function MemberDetailModal({
 
       {/* Skills Accordian */}
       <Accordion
-        title={`Skills (${member.tech_stacks && member.tech_stacks.length || 0})`}
+        title={`Skills (${tech_stacks && tech_stacks.length || 0})`}
         icon={ShieldCheck}
       >
         <div className="space-x-2">
-          {member.tech_stacks && member.tech_stacks.length > 0 ? (
-            member.tech_stacks.map((skill, index) => (
+          {tech_stacks && tech_stacks.length > 0 ? (
+            tech_stacks.map((skill, index) => (
               <Badge
                 key={index}
                 content={
@@ -299,7 +310,7 @@ export default function MemberDetailModal({
       </Accordion>
 
       {/* Languages Accordian */}
-      <Accordion
+      {/* <Accordion
         title={`Languages (${member.languages && member.languages.length || 0})`}
         icon={Language}
       >
@@ -314,16 +325,16 @@ export default function MemberDetailModal({
             </p>
           )}
         </div>
-      </Accordion>
+      </Accordion> */}
 
       {/* Social Links Accordian */}
       <Accordion
-        title={`Social Links (${member.social_links && member.social_links.length || 0})`}
+        title={`Social Links (${social_links && social_links.length || 0})`}
         icon={LinkIcon}
       >
         <div className="flex flex-wrap gap-2">
-          {member.social_links && member.social_links.length > 0 ? (
-            member.social_links.map((link, index) => (
+          {social_links && social_links.length > 0 ? (
+            social_links.map((link, index) => (
               <Link
                 key={index}
                 href={link.url}

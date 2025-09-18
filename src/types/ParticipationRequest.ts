@@ -1,15 +1,13 @@
-import { UserBrief } from "@/types/user/User";
+import { UserBrief } from "@/types/brief/Userbrief";
 
 export interface ParticipationRequest {
   id: number;
-  project_id: number;
-  sender_id: number;
-  receiver_id: number;
+  project_id: string;
+  user_id: number;
+  message: string;
   request_type: string;
   status: string;
-  message: string;
   created_at: string;
   processed_at: string;
-  sender: UserBrief;
-  receiver: UserBrief;
+  user: UserBrief;
 }

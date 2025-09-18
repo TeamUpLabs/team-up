@@ -1,4 +1,3 @@
-import { Project } from "@/types/Project";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import Image from "next/image";
@@ -10,6 +9,7 @@ import { Task } from "@/types/Task";
 import { MileStone } from "@/types/MileStone";
 import { Schedule } from "@/types/Schedule";
 import { useState } from "react";
+import { useProject } from "@/contexts/ProjectContext";
 
 interface Activity {
   id: string;
@@ -26,7 +26,6 @@ interface Activity {
 }
 
 interface RecentActivityProps {
-  project: Project;
   isLoading?: boolean;
 }
 
@@ -56,14 +55,15 @@ const skeleton = () => {
   )
 }
 
-export default function RecentActivity({ project, isLoading = false }: RecentActivityProps) {
+export default function RecentActivity({ isLoading = false }: RecentActivityProps) {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isMilestoneModalOpen, setIsMilestoneModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Task | MileStone | Schedule | null>(null);
+  const { tasks, milestones, schedules, whiteboards } = useProject();
   // Generate sample activities from project data
   const activities: Activity[] = [
-    ...(project.tasks?.map(task => ({
+    ...(tasks?.map(task => ({
       id: `task-${task.id}`,
       user: {
         name: task.creator.name || '담당자 없음',
@@ -76,7 +76,7 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
       timestamp: new Date(task.updated_at || task.created_at)
     })) || []),
 
-    ...(project.milestones?.map(milestone => {
+    ...(milestones?.map(milestone => {
       return {
         id: `milestone-${milestone.id}`,
         user: {
@@ -91,7 +91,7 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
       };
     }) || []),
 
-    ...(project.schedules?.filter(schedule => schedule.type === 'meeting').map(schedule => {
+    ...(schedules?.filter(schedule => schedule.type === 'meeting').map(schedule => {
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
@@ -106,7 +106,7 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
       };
     }) || []),
 
-    ...(project.schedules?.filter(schedule => schedule.type === 'event').map(schedule => {
+    ...(schedules?.filter(schedule => schedule.type === 'event').map(schedule => {
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
@@ -121,7 +121,7 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
       };
     }) || []),
 
-    ...(project.whiteboards?.map(whiteboard => {
+    ...(whiteboards?.map(whiteboard => {
       return {
         id: `whiteboard-${whiteboard.id}`,
         user: {
@@ -146,19 +146,19 @@ export default function RecentActivity({ project, isLoading = false }: RecentAct
     const itemId = id.split('-')[1]; // Extract the ID from the activity ID
 
     if (type === 'task') {
-      const task = project.tasks?.find(t => t.id.toString() === itemId);
+      const task = tasks?.find(t => t.id.toString() === itemId);
       if (task) {
         setSelectedItem(task);
         setIsTaskModalOpen(true);
       }
     } else if (type === 'milestone') {
-      const milestone = project.milestones?.find(m => m.id.toString() === itemId);
+      const milestone = milestones?.find(m => m.id.toString() === itemId);
       if (milestone) {
         setSelectedItem(milestone);
         setIsMilestoneModalOpen(true);
       }
     } else if (type === 'meeting' || type === 'event') {
-      const schedule = project.schedules?.find(s => s.id.toString() === itemId);
+      const schedule = schedules?.find(s => s.id.toString() === itemId);
       if (schedule) {
         setSelectedItem(schedule);
         setIsScheduleModalOpen(true);

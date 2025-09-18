@@ -70,22 +70,25 @@ export const logout = async () => {
     if (!token) {
       throw new Error('Token not found');
     }
-    const res = await server.post(`/auth/${user.id}/logout`, {
-      session_id: getDeviceIdentifier(),
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      withCredentials: true,
-    });
-    if (res.status === 200) {
-      useAuthStore.getState().logout();
-      useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");
-      window.location.href = '/';
-    } else {
-      throw new Error('Logout failed');
-    }
+    useAuthStore.getState().logout();
+    useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");
+    window.location.href = '/';
+    // const res = await server.post(`/auth/${user.id}/logout`, {
+    //   session_id: getDeviceIdentifier(),
+    // }, {
+    //   headers: {
+    //     'Authorization': `Bearer ${token}`,
+    //     'Content-Type': 'application/json'
+    //   },
+    //   withCredentials: true,
+    // });
+    // if (res.status === 200) {
+    //   useAuthStore.getState().logout();
+    //   useAuthStore.getState().setAlert("로그아웃 되었습니다.", "info");
+    //   window.location.href = '/';
+    // } else {
+    //   throw new Error('Logout failed');
+    // }
   } catch (error) {
     console.error("Logout error:", error);
     useAuthStore.getState().setAlert("로그아웃에 실패했습니다.", "error");

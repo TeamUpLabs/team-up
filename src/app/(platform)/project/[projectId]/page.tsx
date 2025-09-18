@@ -2,7 +2,7 @@
 
 import { useProject } from '@/contexts/ProjectContext';
 import { Suspense, lazy, useMemo } from 'react';
-import { Project, blankProject } from '@/types/Project';
+import { blankProject } from '@/types/Project';
 
 // 지연 로딩을 위한 컴포넌트들
 const ActiveMilestoneCard = lazy(() => import("@/components/project/dashboard/ActiveMilestoneCard"));
@@ -21,14 +21,14 @@ const SkeletonCard = () => (
 );
 
 export default function ProjectPage() {
-  const { project, isLoading } = useProject();
+  const { project, tasks, milestones, schedules, whiteboards, isLoading } = useProject();
   
   // 메모이제이션을 통한 계산 최적화
   const projectStats = useMemo(() => {
     if (!project) return null;
     
-    const activeMilestoneCount = project.milestones?.filter(milestone => milestone.status !== "completed").length || 0;
-    const activeTaskCount = project.tasks?.filter(task => task.status !== "completed").length || 0;
+    const activeMilestoneCount = milestones?.filter(milestone => milestone.status !== "completed").length || 0;
+    const activeTaskCount = tasks?.filter(task => task.status !== "completed").length || 0;
     const totalMemberCount = project.members?.length || 0;
     const activeMemberCount = project.members?.filter(member => member.user.status === "active").length || 0;
     
@@ -38,7 +38,7 @@ export default function ProjectPage() {
       totalMemberCount,
       activeMemberCount,
     };
-  }, [project]);
+  }, [project, milestones, tasks]);
 
   // Provide default empty values when project is loading
   const projectData = project || blankProject;
@@ -86,24 +86,25 @@ export default function ProjectPage() {
         </Suspense>
         <Suspense fallback={<SkeletonCard />}>
           <CompletionRateCard 
-            project={project as Project || projectData} 
+            tasks={tasks || []} 
           />
         </Suspense>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Suspense fallback={<SkeletonCard />}>
           <TeamPerformance 
-            project={project as Project || projectData} 
+            project={projectData}
+            tasks={tasks || []}
             className="md:col-span-2" 
             isLoading={isLoading}
           />
         </Suspense>
         <Suspense fallback={<SkeletonCard />}>
           <WeeklyChart 
-            tasks={project?.tasks || []} 
-            milestones={project?.milestones || []} 
-            schedules={project?.schedules || []}
-            whiteboards={project?.whiteboards || []}
+            tasks={tasks || []} 
+            milestones={milestones || []} 
+            schedules={schedules || []}
+            whiteboards={whiteboards || []}
           />
         </Suspense>
         <Suspense fallback={<SkeletonCard />}>
@@ -113,13 +114,11 @@ export default function ProjectPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         <Suspense fallback={<SkeletonCard />}>
           <RecentActivity 
-            project={project as Project || projectData} 
             isLoading={isLoading}
           />
         </Suspense>
         <Suspense fallback={<SkeletonCard />}>
           <UpcommingDeadline 
-            project={project as Project || projectData} 
             isLoading={isLoading}
           />
         </Suspense>

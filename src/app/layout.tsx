@@ -10,6 +10,7 @@ import { FollowProvider } from "@/contexts/FollowContext";
 import { NotificationProvider } from "@/providers/NotificationProvider";
 import NotificationAlertProvider from "@/providers/NotificationAlertProvider";
 import { SWRConfig } from "swr";
+import { UserProvider } from "@/contexts/UserContext";
 
 config.autoAddCss = false;
 
@@ -117,9 +118,11 @@ export default function RootLayout({
             <AlertProvider />
             <ConfirmProvider />
             <ThemeProvider>
-              <FollowProvider>
-                {children}
-              </FollowProvider>
+              <UserProvider>
+                <FollowProvider>
+                  {children}
+                </FollowProvider>
+              </UserProvider>
             </ThemeProvider>
           </NotificationProvider>
         </SWRConfig>

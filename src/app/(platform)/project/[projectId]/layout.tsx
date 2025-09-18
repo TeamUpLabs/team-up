@@ -50,7 +50,7 @@ export default function ProjectLayout({
 
   const hydrated = useAuthHydration();
   const { data: project, error, isLoading } = useSWR<Project>(
-    hydrated ? `/projects/${projectId}` : null,
+    hydrated ? `/api/v1/projects/${projectId}` : null,
     fetcher
   );
 
@@ -201,7 +201,7 @@ export default function ProjectLayout({
   }
 
   return (
-    <ProjectProvider project={project}>
+    <ProjectProvider projectId={projectId}>
       <VoiceCallProvider>
         {layoutContent}
         <VoiceCallContainer />

@@ -14,16 +14,16 @@ interface SelectMilestoneModalProps {
 }
 
 export default function SelectMilestoneModal({ isOpen, onClose }: SelectMilestoneModalProps) {
-  const { project } = useProject();
+  const { milestones } = useProject();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMilestone, setSelectedMilestone] = useState<number | null>(null);
   const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
 
   useEffect(() => {
-    if (project?.milestones) {
+    if (milestones) {
       setIsLoading(false);
     }
-  }, [project]);
+  }, [milestones]);
 
   const handleSelectMilestone = () => {
     setIsCreateTaskModalOpen(true);
@@ -81,7 +81,7 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
             </svg>
             <span className="text-text-secondary">마일스톤을 불러오는 중...</span>
           </div>
-        ) : project?.milestones.length === 0 ? (
+        ) : milestones.length === 0 ? (
           <div
             onClick={() => setSelectedMilestone(null)}
             className={`p-4 rounded-lg border ${selectedMilestone === null
@@ -105,7 +105,7 @@ export default function SelectMilestoneModal({ isOpen, onClose }: SelectMileston
           </div>
         ) : (
           <div className="grid gap-4">
-            {project?.milestones.map((milestone) => (
+            {milestones.map((milestone) => (
               <div
                 key={milestone.id}
                 onClick={() => setSelectedMilestone(milestone.id)}

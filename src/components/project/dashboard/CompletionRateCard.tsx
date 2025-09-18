@@ -1,20 +1,20 @@
 import { Check } from "flowbite-react-icons/outline"
 import { TrendingUp, TrendingDown } from "lucide-react"
-import { Project } from "@/types/Project"
+import { Task } from "@/types/Task"
 
 interface CompletionRateCardProps {
-  project: Project;
+  tasks: Task[];
 }
 
 // Function to calculate completion rate for last week
-const calculateLastWeekCompletionRate = (project: Project | null): number => {
-  if (!project?.tasks?.length) return 0;
+const calculateLastWeekCompletionRate = (tasks: Task[] | null): number => {
+  if (!tasks?.length) return 0;
 
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
   // Get tasks created before last week
-  const tasksLastWeek = project.tasks.filter(task => {
+  const tasksLastWeek = tasks.filter(task => {
     const taskDate = new Date(task.created_at);
     return taskDate < oneWeekAgo;
   });
@@ -25,14 +25,14 @@ const calculateLastWeekCompletionRate = (project: Project | null): number => {
   return Math.round((completedLastWeek / tasksLastWeek.length) * 100);
 };
 
-export default function CompletionRateCard({ project }: CompletionRateCardProps) {
+export default function CompletionRateCard({ tasks }: CompletionRateCardProps) {
   // Calculate completion rate based on completed tasks vs total tasks
-  const totalTasks = project.tasks?.length || 0;
-  const completedTasks = project.tasks?.filter(task => task.status === 'completed').length || 0;
+  const totalTasks = tasks?.length || 0;
+  const completedTasks = tasks?.filter(task => task.status === 'completed').length || 0;
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   // Calculate week-over-week progress
-  const weeklyProgress = completionRate - calculateLastWeekCompletionRate(project);
+  const weeklyProgress = completionRate - calculateLastWeekCompletionRate(tasks);
 
   return (
     <div className="bg-component-background rounded-lg shadow-sm p-6 border border-component-border space-y-2 hover:border-point-color-indigo-hover transition duration-200 ease-in-out">
