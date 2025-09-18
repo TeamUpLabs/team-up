@@ -66,10 +66,28 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode; projectId: s
         },
       });
       
-      console.log(`Response status: ${response.status}`);
-      console.log(`Response data:`, response.data);
-      
-      return response.data;
+      // Check if response is successful
+      if (response.status >= 200 && response.status < 300) {
+        // Handle different response structures
+        if (response.data && typeof response.data === 'object') {
+          // If the response has a 'data' field, use that (common in REST APIs)
+          if ('data' in response.data) {
+            console.log('Response data (with data wrapper):', response.data);
+            return response.data.data as T;
+          }
+          // If the response has a 'result' field, use that
+          if ('result' in response.data) {
+            console.log('Response data (with result wrapper):', response.data);
+            return response.data.result as T;
+          }
+          // Otherwise use the entire response
+          console.log('Response data (direct):', response.data);
+          return response.data as T;
+        }
+        return response.data as T;
+      } else {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
     } catch (err) {
       console.error(`Error fetching data from ${url}:`, err);
       throw err;
@@ -77,61 +95,91 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode; projectId: s
   }, [token]);
 
   // 태스크 데이터 가져오기
-  const fetchTasks = useCallback(async (tasksUrl: string) => {
+  const fetchTasks = useCallback(async (tasksUrl?: string) => {
+    const url = tasksUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/v1/projects/${projectId}/tasks`;
     try {
-      const tasksData = await fetchRelatedData<Task[]>(tasksUrl);
-      setTasks(tasksData);
+      console.log('Fetching tasks from:', url);
+      const tasksData = await fetchRelatedData<Task[]>(url);
+      setTasks(Array.isArray(tasksData) ? tasksData : []);
+      return tasksData;
     } catch (err) {
       console.error("Error fetching tasks:", err);
+      setTasks([]);
+      throw err;
     }
-  }, [fetchRelatedData]);
+  }, [fetchRelatedData, projectId]);
 
   // 마일스톤 데이터 가져오기
-  const fetchMilestones = useCallback(async (milestonesUrl: string) => {
+  const fetchMilestones = useCallback(async (milestonesUrl?: string) => {
+    const url = milestonesUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/v1/projects/${projectId}/milestones`;
     try {
-      const milestonesData = await fetchRelatedData<MileStone[]>(milestonesUrl);
-      setMilestones(milestonesData);
+      console.log('Fetching milestones from:', url);
+      const milestonesData = await fetchRelatedData<MileStone[]>(url);
+      setMilestones(Array.isArray(milestonesData) ? milestonesData : []);
+      return milestonesData;
     } catch (err) {
       console.error("Error fetching milestones:", err);
+      setMilestones([]);
+      throw err;
     }
-  }, [fetchRelatedData]);
+  }, [fetchRelatedData, projectId]);
 
   // 참여 요청 데이터 가져오기
-  const fetchParticipationRequests = useCallback(async (participationRequestsUrl: string) => {
+  const fetchParticipationRequests = useCallback(async (participationRequestsUrl?: string) => {
+    const url = participationRequestsUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/v1/projects/${projectId}/participation_requests`;
     try {
-      const participationRequestsData = await fetchRelatedData<ParticipationRequest[]>(participationRequestsUrl);
-      setParticipationRequests(participationRequestsData);
+      console.log('Fetching participation requests from:', url);
+      const data = await fetchRelatedData<ParticipationRequest[]>(url);
+      setParticipationRequests(Array.isArray(data) ? data : []);
+      return data;
     } catch (err) {
       console.error("Error fetching participation requests:", err);
+      setParticipationRequests([]);
+      throw err;
     }
-  }, [fetchRelatedData]);
+  }, [fetchRelatedData, projectId]);
 
-  const fetchChannels = useCallback(async (channelsUrl: string) => {
+  const fetchChannels = useCallback(async (channelsUrl?: string) => {
+    const url = channelsUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/v1/projects/${projectId}/channels`;
     try {
-      const channelsData = await fetchRelatedData<Channel[]>(channelsUrl);
-      setChannels(channelsData);
+      console.log('Fetching channels from:', url);
+      const data = await fetchRelatedData<Channel[]>(url);
+      setChannels(Array.isArray(data) ? data : []);
+      return data;
     } catch (err) {
       console.error("Error fetching channels:", err);
+      setChannels([]);
+      throw err;
     }
-  }, [fetchRelatedData]);
+  }, [fetchRelatedData, projectId]);
 
-  const fetchSchedules = useCallback(async (schedulesUrl: string) => {
+  const fetchSchedules = useCallback(async (schedulesUrl?: string) => {
+    const url = schedulesUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/v1/projects/${projectId}/schedules`;
     try {
-      const schedulesData = await fetchRelatedData<Schedule[]>(schedulesUrl);
-      setSchedules(schedulesData);
+      console.log('Fetching schedules from:', url);
+      const data = await fetchRelatedData<Schedule[]>(url);
+      setSchedules(Array.isArray(data) ? data : []);
+      return data;
     } catch (err) {
       console.error("Error fetching schedules:", err);
+      setSchedules([]);
+      throw err;
     }
-  }, [fetchRelatedData]);
+  }, [fetchRelatedData, projectId]);
 
-  const fetchWhiteboards = useCallback(async (whiteboardsUrl: string) => {
+  const fetchWhiteboards = useCallback(async (whiteboardsUrl?: string) => {
+    const url = whiteboardsUrl || `${process.env.NEXT_PUBLIC_API_URL}/api/v1/projects/${projectId}/whiteboards`;
     try {
-      const whiteboardsData = await fetchRelatedData<WhiteBoard[]>(whiteboardsUrl);
-      setWhiteboards(whiteboardsData);
+      console.log('Fetching whiteboards from:', url);
+      const data = await fetchRelatedData<WhiteBoard[]>(url);
+      setWhiteboards(Array.isArray(data) ? data : []);
+      return data;
     } catch (err) {
       console.error("Error fetching whiteboards:", err);
+      setWhiteboards([]);
+      throw err;
     }
-  }, [fetchRelatedData]);
+  }, [fetchRelatedData, projectId]);
 
   // 프로젝트 SSE 연결
   useEffect(() => {
@@ -146,24 +194,26 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode; projectId: s
           const data = JSON.parse(event.data) as Project;
           setProject(prev => ({ ...prev, ...data }));
 
-          // 연관 데이터가 있는 경우 가져오기
-          if (data.links?.tasks?.href) {
-            fetchTasks(data.links.tasks.href);
-          }
-          if (data.links?.milestones?.href) {
-            fetchMilestones(data.links.milestones.href);
-          }
-          if (data.links?.participation_requests?.href) {
-            fetchParticipationRequests(data.links.participation_requests.href);
-          }
-          if (data.links?.channels?.href) {
-            fetchChannels(data.links.channels.href);
-          }
-          if (data.links?.schedules?.href) {
-            fetchSchedules(data.links.schedules.href);
-          }
-          if (data.links?.whiteboards?.href) {
-            fetchWhiteboards(data.links.whiteboards.href);
+          if (data.links) {
+            // 연관 데이터가 있는 경우 가져오기
+            if (data.links?.tasks?.href) {
+              fetchTasks(data.links.tasks.href);
+            }
+            if (data.links?.milestones?.href) {
+              fetchMilestones(data.links.milestones.href);
+            }
+            if (data.links?.participation_requests?.href) {
+              fetchParticipationRequests(data.links.participation_requests.href);
+            }
+            if (data.links?.channels?.href) {
+              fetchChannels(data.links.channels.href);
+            }
+            if (data.links?.schedules?.href) {
+              fetchSchedules(data.links.schedules.href);
+            }
+            if (data.links?.whiteboards?.href) {
+              fetchWhiteboards(data.links.whiteboards.href);
+            }
           }
         } catch (error) {
           console.error("Error parsing project SSE data:", error);
@@ -200,40 +250,83 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode; projectId: s
 
   // 초기 프로젝트 데이터 가져오기
   useEffect(() => {
+    // Define a type-safe safeFetch function inside the effect
+    const safeFetch = async <T extends unknown[]>(url: string, setData: (data: T) => void, dataName: string): Promise<T | null> => {
+      try {
+        console.log(`Fetching ${dataName}...`);
+        const data = await fetchRelatedData<T>(url);
+        console.log(`Fetched ${dataName}:`, data);
+        const result = (Array.isArray(data) ? data : []) as unknown as T;
+        setData(result);
+        return result;
+      } catch (err) {
+        console.error(`Error fetching ${dataName}:`, err);
+        setData([] as unknown as T);
+        return null;
+      }
+    };
     const fetchInitialData = async () => {
       if (!projectId) return;
       
       setIsLoading(true);
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      
       try {
-        const projectData = await fetchRelatedData<Project>(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/projects/${projectId}`);
+        console.log('Fetching project data...');
+        const projectData = await fetchRelatedData<Project>(`${baseUrl}/api/v1/projects/${projectId}`);
+        console.log('Project data:', projectData);
         setProject(projectData);
 
-        if (projectData.links?.tasks?.href) {
-          await fetchTasks(projectData.links.tasks.href);
-        }
-        if (projectData.links?.milestones?.href) {
-          await fetchMilestones(projectData.links.milestones.href);
-        }
-        if (projectData.links?.participation_requests?.href) {
-          await fetchParticipationRequests(projectData.links.participation_requests.href);
-        }
-        if (projectData.links?.channels?.href) {
-          await fetchChannels(projectData.links.channels.href);
-        }
-        if (projectData.links?.schedules?.href) {
-          await fetchSchedules(projectData.links.schedules.href);
-        }
-        if (projectData.links?.whiteboards?.href) {
-          await fetchWhiteboards(projectData.links.whiteboards.href);
-        }
+        // Create an array of fetch promises for all related data
+        const fetchPromises = [
+          safeFetch<Task[]>(
+            `${baseUrl}/api/v1/projects/${projectId}/tasks`, 
+            setTasks, 
+            'tasks'
+          ),
+          safeFetch<MileStone[]>(
+            `${baseUrl}/api/v1/projects/${projectId}/milestones`, 
+            setMilestones, 
+            'milestones'
+          ),
+          safeFetch<ParticipationRequest[]>(
+            `${baseUrl}/api/v1/projects/${projectId}/participation_requests`, 
+            setParticipationRequests, 
+            'participation requests'
+          ),
+          safeFetch<Channel[]>(
+            `${baseUrl}/api/v1/projects/${projectId}/channels`, 
+            setChannels, 
+            'channels'
+          ),
+          safeFetch<Schedule[]>(
+            `${baseUrl}/api/v1/projects/${projectId}/schedules`, 
+            setSchedules, 
+            'schedules'
+          ),
+          safeFetch<WhiteBoard[]>(
+            `${baseUrl}/api/v1/projects/${projectId}/whiteboards`, 
+            setWhiteboards, 
+            'whiteboards'
+          )
+        ];
+        
+        // Wait for all fetches to complete
+        await Promise.all(fetchPromises);
+        console.log('All related data fetched successfully');
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to load project data'));
-        console.error("Error fetching initial project data:", err);
+        const error = err instanceof Error ? err : new Error('Failed to load project data');
+        console.error("Error in fetchInitialData:", error);
+        setError(error);
       } finally {
         setIsLoading(false);
       }
     };
 
+    // Add debug logging for environment variables
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+    console.log('Project ID:', projectId);
+    
     fetchInitialData();
   }, [projectId, fetchRelatedData, fetchTasks, fetchMilestones, fetchParticipationRequests, fetchChannels, fetchSchedules, fetchWhiteboards]);
 

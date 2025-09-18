@@ -31,9 +31,9 @@ const SkeletonTaskCard = () => (
 );
 
 export default function TasksPage() {
-  const { project } = useProject();
+  const { tasks } = useProject();
   const { isDark } = useTheme();
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [stateTasks, setStateTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSelectMilestoneModalOpen, setIsSelectMilestoneModalOpen] = useState(false);
@@ -46,14 +46,14 @@ export default function TasksPage() {
   }, []);
 
   useEffect(() => {
-    if (!project?.tasks) return;
+    if (!tasks) return;
 
     try {
-      setTasks(project.tasks);
+      setStateTasks(tasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
-  }, [project])
+  }, [tasks])
 
   // Listen for header search events
   useEffect(() => {
@@ -75,8 +75,8 @@ export default function TasksPage() {
   useEffect(() => {
     const selectedTaskId = localStorage.getItem('selectedTaskId');
 
-    if (selectedTaskId && tasks.length > 0) {
-      const taskToOpen = tasks.find(task => task.id === parseInt(selectedTaskId));
+    if (selectedTaskId && stateTasks.length > 0) {
+      const taskToOpen = stateTasks.find(task => task.id === parseInt(selectedTaskId));
 
       if (taskToOpen) {
         setSelectedTask(taskToOpen);
@@ -85,20 +85,20 @@ export default function TasksPage() {
 
       localStorage.removeItem('selectedTaskId');
     }
-  }, [tasks]);
+  }, [stateTasks]);
 
   // 메모이제이션을 통한 필터링 최적화
   const filteredTasks = useMemo(() => {
-    if (!searchQuery.trim()) return tasks;
+    if (!searchQuery.trim()) return stateTasks;
     
     const query = searchQuery.toLowerCase();
-    return tasks.filter(task => 
+    return stateTasks.filter(task => 
       task.title.toLowerCase().includes(query) ||
       task.description?.toLowerCase().includes(query) ||
       task.assignees?.some(assignee => assignee.name.toLowerCase().includes(query)) ||
       task.subtasks?.some(subtask => subtask.title.toLowerCase().includes(query))
     );
-  }, [tasks, searchQuery]);
+  }, [stateTasks, searchQuery]);
 
   // 메모이제이션을 통한 그룹화 최적화
   const groupedTasks = useMemo(() => ({
@@ -120,7 +120,7 @@ export default function TasksPage() {
 
   const moveTask = async (taskId: number, newStatus: Task['status']) => {
     if (newStatus === 'completed') {
-      const task = tasks.find(task => task.id === taskId);
+      const task = stateTasks.find(task => task.id === taskId);
       if (task?.subtasks && task.subtasks.length > 0) {
         const allSubtasksCompleted = task.subtasks.every(subtask => subtask.is_completed);
         if (!allSubtasksCompleted) {
@@ -130,7 +130,7 @@ export default function TasksPage() {
       }
     }
     await updateTaskStatus(taskId, newStatus);
-    setTasks(tasks.map(task =>
+    setStateTasks(stateTasks.map(task =>
       task.id === taskId ? { ...task, status: newStatus } : task
     ));
   };
