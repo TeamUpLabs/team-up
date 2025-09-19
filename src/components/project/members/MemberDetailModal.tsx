@@ -270,7 +270,7 @@ export default function MemberDetailModal({
               >
                 <p
                   onClick={() => handleTaskClick(task.id)}
-                  className="text-text-primary font-medium hover:text-blue-500 transition-colors"
+                  className={`text-text-primary font-medium hover:text-blue-500 transition-colors ${task.status == "completed" ? "line-through" : ""}`}
                 >
                   {task.title}
                 </p>
