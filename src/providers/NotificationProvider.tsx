@@ -43,7 +43,8 @@ export function NotificationProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { data } = useSWR(`${useAuthStore.getState().user?.links.self.href}`, fetchUserDetail);
+  const userHref = useAuthStore.getState().user?.links?.self?.href;
+  const { data } = useSWR(userHref ? userHref : null, fetchUserDetail);
   const user = data;
   const setNotificationAlert = useAuthStore((state) => state.setNotificationAlert);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -57,13 +58,25 @@ export function NotificationProvider({
     initialNotificationsHydrated.current = false;
     if (user?.id) {
       try {
-        const response = await server.get(`${user.links.notifications.href}/sse`);
         let initialNotifications: Notification[] = [];
-        if (response.status === 200 && Array.isArray(response.data)) {
-          initialNotifications = response.data;
+        
+        // Check if notifications href exists before making the request
+        if (user.links?.notifications?.href) {
+          try {
+            const response = await server.get(`${user.links.notifications.href}/sse`);
+            if (response.status === 200 && Array.isArray(response.data)) {
+              initialNotifications = response.data;
+            } else {
+              console.warn("Unexpected response format for notifications:", response);
+              initialNotifications = user.received_notifications || [];
+            }
+          } catch (error) {
+            console.warn("Failed to fetch notifications from SSE endpoint, using fallback:", error);
+            initialNotifications = user.received_notifications || [];
+          }
         } else {
+          console.warn("No notifications href available, using fallback data");
           initialNotifications = user.received_notifications || [];
-          console.warn("Fetched initial notifications from user.notification due to API issue or unexpected data.", response);
         }
 
         setNotifications(initialNotifications);
