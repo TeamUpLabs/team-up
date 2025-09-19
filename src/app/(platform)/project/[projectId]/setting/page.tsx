@@ -9,14 +9,14 @@ import DangerSettingTab from "@/components/project/setting/DangerSettingTab";
 import { ParticipationRequest } from "@/types/ParticipationRequest";
 
 export default function SettingsPage() {
-  const { project } = useProject();
+  const { project, additional_data } = useProject();
   const user = useAuthStore((state) => state.user);
   const [activeTab, setActiveTab] = useState("general");
 
-  const isLeader = project?.members.some((member) => member.user.id === user?.id && member.is_leader) || project?.owner.id === user?.id;
+  const isLeader = project?.members.some((member) => member.user.id === user?.id && member.role === "leader") || project?.owner.id === user?.id;
     
   // 참여 요청이 있는지 확인
-  const hasParticipationRequests = project?.participation_requests && project.participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length > 0;
+  const hasParticipationRequests = additional_data?.participation_requests && additional_data.participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length > 0;
 
   return (
     <div className="">
@@ -47,7 +47,7 @@ export default function SettingsPage() {
             <span className="absolute -top-1 -right-1 flex h-5 w-5">
               <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-100"></span>
               <span className="relative inline-flex rounded-full h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center">
-                {project.participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length}
+                {additional_data.participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length}
               </span>
             </span>
           )}
@@ -69,7 +69,7 @@ export default function SettingsPage() {
       )}
 
       {activeTab === "team" && project && (
-        <TeamSettingTab project={project} />
+        <TeamSettingTab project={project} additional_data={additional_data} />
       )}
 
       {activeTab === "danger" && isLeader && (

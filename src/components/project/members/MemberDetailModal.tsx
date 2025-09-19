@@ -37,7 +37,7 @@ export default function MemberDetailModal({
   isManager,
 }: MemberDetailModalProps) {
   const { user, collaboration_preference, tech_stacks, social_links } = useUser();
-  const { project, tasks } = useProject();
+  const { project, additional_data } = useProject();
   const router = useRouter();
   const params = useParams();
   const hydrated = useAuthHydration();
@@ -50,7 +50,7 @@ export default function MemberDetailModal({
   const handleTaskClick = (taskId: number) => {
     localStorage.setItem("selectedTaskId", taskId.toString());
     const projectId = params?.projectId ? String(params.projectId) : "default";
-    router.push(`/platform/${projectId}/tasks`);
+    router.push(`/project/${projectId}/tasks`);
     onClose();
   };
 
@@ -257,13 +257,13 @@ export default function MemberDetailModal({
 
       {/* Current Tasks Accordian */}
       <Accordion
-        title={`Current Tasks (${tasks?.filter(task => task.assignees?.some(assi => assi.id === member.id)).length || 0})`}
+        title={`Current Tasks (${additional_data.tasks?.filter(task => task.assignees?.some(assi => assi.id === member.id)).length || 0})`}
         icon={ClipboardClean}
         defaultOpen
       >
         <div className="space-y-2">
-          {tasks && tasks.length > 0 ? (
-            tasks.map((task, idx) => (
+          {additional_data.tasks && additional_data.tasks.length > 0 ? (
+            additional_data.tasks.map((task, idx) => (
               <div
                 key={idx}
                 className="p-3 bg-component-secondary-background border border-component-border rounded-lg cursor-pointer transition-colors"
@@ -310,13 +310,13 @@ export default function MemberDetailModal({
       </Accordion>
 
       {/* Languages Accordian */}
-      {/* <Accordion
-        title={`Languages (${member.languages && member.languages.length || 0})`}
+      <Accordion
+        title={`Languages (${userData?.languages && userData.languages.length || 0})`}
         icon={Language}
       >
         <div className="space-x-2">
-          {member.languages && member.languages.length > 0 ? (
-            member.languages.map((language: string, index: number) => (
+          {userData?.languages && userData.languages.length > 0 ? (
+            userData.languages.map((language: string, index: number) => (
               <Badge key={index} content={language} color="purple" fit />
             ))
           ) : (
@@ -325,7 +325,7 @@ export default function MemberDetailModal({
             </p>
           )}
         </div>
-      </Accordion> */}
+      </Accordion>
 
       {/* Social Links Accordian */}
       <Accordion

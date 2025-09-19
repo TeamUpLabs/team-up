@@ -1,9 +1,32 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { User } from "@/types/user/User";
 import { Notification } from "@/types/Notification";
 import { server } from '@/auth/server';
 import { logout } from "@/auth/authApi";
+import CryptoJS from 'crypto-js';
+
+// 암호화 키 (실제 프로덕션에서는 환경변수 등으로 관리해야 합니다)
+const ENCRYPTION_KEY = 'teamup-secure-key-2024';
+
+// 데이터 암호화 함수
+const encryptData = (data: User | null): string => {
+  if (!data) return '';
+  return CryptoJS.AES.encrypt(JSON.stringify(data), ENCRYPTION_KEY).toString();
+};
+
+// 데이터 복호화 함수
+const decryptData = (ciphertext: string): User | null => {
+  if (!ciphertext) return null;
+  try {
+    const bytes = CryptoJS.AES.decrypt(ciphertext, ENCRYPTION_KEY);
+    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  } catch (error) {
+    console.error('복호화 중 오류 발생:', error);
+    return null;
+  }
+};
+
 
 type AlertType = "success" | "error" | "info" | "warning";
 type NotificationAlertType = "info" | "message" | "task" | "milestone" | "chat" | "scout";
@@ -52,18 +75,38 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "teamup-auth",
+      storage: createJSONStorage(() => ({
+        getItem: async (name: string) => {
+          const item = sessionStorage.getItem(name);
+          if (!item) return null;
+          try {
+            const parsed = JSON.parse(item);
+            if (parsed.state?.user) {
+              parsed.state.user = decryptData(parsed.state.user);
+            }
+            return JSON.stringify(parsed);
+          } catch (error) {
+            console.error('Failed to parse storage item:', error);
+            return null;
+          }
+        },
+        setItem: async (name: string, value: string) => {
+          try {
+            const parsed = JSON.parse(value);
+            if (parsed.state?.user) {
+              parsed.state.user = encryptData(parsed.state.user);
+            }
+            sessionStorage.setItem(name, JSON.stringify(parsed));
+          } catch (error) {
+            console.error('Failed to save to storage:', error);
+          }
+        },
+        removeItem: (name: string) => sessionStorage.removeItem(name),
+      })),
       onRehydrateStorage: () => (state) => {
         if (state) {
           state.isInitialized = true;
         }
-      },
-      storage: {
-        getItem: (name) => {
-          const item = sessionStorage.getItem(name);
-          return item ? JSON.parse(item) : null;
-        },
-        setItem: (name, value) => sessionStorage.setItem(name, JSON.stringify(value)),
-        removeItem: (name) => sessionStorage.removeItem(name),
       },
     }
   )

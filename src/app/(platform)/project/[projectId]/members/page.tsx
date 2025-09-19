@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, Suspense, lazy, useMemo, useCallback } from "react";
-import { User } from "@/types/user/User";
+import { ProjectMember } from "@/types/Project";
 import { useProject } from "@/contexts/ProjectContext";
 import TabSlider from "@/components/ui/TabSlider";
 import { convertRoleName } from "@/utils/ConvertRoleName";
@@ -27,9 +27,9 @@ const SkeletonCard = () => (
 );
 
 export default function MembersPage() {
-  const { project } = useProject();
+  const { project, additional_data } = useProject();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedMember, setSelectedMember] = useState<User | null>(null);
+  const [selectedMember, setSelectedMember] = useState<ProjectMember | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isMounted = useRef(false);
   const [tab, setTab] = useState("전체");
@@ -71,7 +71,7 @@ export default function MembersPage() {
       );
 
       if (memberToOpen) {
-        setSelectedMember(memberToOpen.user);
+        setSelectedMember(memberToOpen);
         setIsModalOpen(true);
       }
 
@@ -79,7 +79,6 @@ export default function MembersPage() {
     }
   }, [project]);
 
-  // Listen for header search events
   useEffect(() => {
     const handleHeaderSearch = (event: Event) => {
       const customEvent = event as CustomEvent;
@@ -96,7 +95,6 @@ export default function MembersPage() {
     };
   }, [debouncedSetSearchQuery]);
 
-  // Set mounted flag
   useEffect(() => {
     isMounted.current = true;
     return () => {
@@ -108,35 +106,28 @@ export default function MembersPage() {
   const filteredMembers = useMemo(() => {
     return (project?.members ?? [])
       .filter((member) => {
-        // Filter by tab
         const matchesTab = 
           tab === '전체' || 
           (member.user.role === tab);
-        
-        // If there's no search query, just return tab matches
         if (!searchQuery.trim()) return matchesTab;
 
-        // Filter by search query
         const searchLower = searchQuery.toLowerCase();
         const matchesSearch = 
           member.user.name.toLowerCase().includes(searchLower) ||
           member.user.role.toLowerCase().includes(searchLower) ||
           member.user.email?.toLowerCase().includes(searchLower) ||
-          project?.tasks?.some(task => 
+          additional_data?.tasks?.some(task => 
             task.title.toLowerCase().includes(searchLower)
           );
 
         return matchesTab && matchesSearch;
       })
       .sort((a, b) => {
-        // Leader always comes first
         if (a.user.id === project?.owner.id) return -1;
         if (b.user.id === project?.owner.id) return 1;
-        
-        // Finally sort by name
         return a.user.name.localeCompare(b.user.name);
       });
-  }, [project?.members, tab, searchQuery, project?.owner?.id, project?.tasks]);
+  }, [project?.members, tab, searchQuery, project?.owner?.id, additional_data?.tasks]);
 
   // 메모이제이션을 통한 통계 계산 최적화
   const memberStats = useMemo(() => {
@@ -144,7 +135,7 @@ export default function MembersPage() {
     const activeMemberCount = project?.members?.filter(member => member.user.status === 'active')?.length ?? 0;
     const departments = project?.members?.map(member => member.user.role) ?? [];
     const avgTaskCount = project?.members?.length 
-      ? project.tasks?.length / project.members.length 
+      ? additional_data?.tasks?.length / project.members.length 
       : 0;
     
     return {
@@ -153,9 +144,9 @@ export default function MembersPage() {
       departments,
       avgTaskCount
     };
-  }, [project?.members, project?.tasks]);
+  }, [project?.members, additional_data?.tasks]);
 
-  const handleMemberClick = (member: User) => {
+  const handleMemberClick = (member: ProjectMember) => {
     setSelectedMember(member);
     setIsModalOpen(true);
   };
@@ -202,11 +193,11 @@ export default function MembersPage() {
           <Suspense key={member.user.id} fallback={<SkeletonCard />}>
             <MemberCard
               member={member.user}
-              isLeader={member.is_leader || project?.owner.id === member.user.id}
+              isLeader={member.role === "leader" || project?.owner.id === member.user.id}
               isManager={
-                project?.members.some((manager) => manager.is_manager) || project?.owner.id === member.user.id
+                project?.members.some((manager) => manager.role === "manager") || project?.owner.id === member.user.id
               }
-              onClick={() => handleMemberClick(member.user)}
+              onClick={() => handleMemberClick(member)}
             />
           </Suspense>
         ))}
@@ -215,12 +206,12 @@ export default function MembersPage() {
       <Suspense fallback={<LoadingSpinner />}>
         {selectedMember && (
           <MemberDetailModal
-            member={selectedMember}
+            member={selectedMember.user}
             isOpen={isModalOpen}
             onClose={handleCloseModal}
-            isLeader={project?.members.some((member) => member.is_leader) || project?.owner.id === selectedMember.id}
+            isLeader={project?.members.some((member) => member.role === "leader") || project?.owner.id === selectedMember.user.id}
             isManager={
-              project?.members.some((manager) => manager.is_manager) || project?.owner.id === selectedMember.id
+              project?.members.some((manager) => manager.role === "manager") || project?.owner.id === selectedMember.user.id
             }
           />
         )}

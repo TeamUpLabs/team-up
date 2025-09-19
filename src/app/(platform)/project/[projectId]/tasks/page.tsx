@@ -31,7 +31,7 @@ const SkeletonTaskCard = () => (
 );
 
 export default function TasksPage() {
-  const { tasks } = useProject();
+  const { project, additional_data } = useProject();
   const { isDark } = useTheme();
   const [stateTasks, setStateTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -46,14 +46,14 @@ export default function TasksPage() {
   }, []);
 
   useEffect(() => {
-    if (!tasks) return;
+    if (!additional_data.tasks) return;
 
     try {
-      setStateTasks(tasks);
+      setStateTasks(additional_data.tasks);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
-  }, [tasks])
+  }, [additional_data.tasks])
 
   // Listen for header search events
   useEffect(() => {
@@ -129,7 +129,8 @@ export default function TasksPage() {
         }
       }
     }
-    await updateTaskStatus(taskId, newStatus);
+    if (!project) return;
+    await updateTaskStatus(project.id, taskId, newStatus);
     setStateTasks(stateTasks.map(task =>
       task.id === taskId ? { ...task, status: newStatus } : task
     ));

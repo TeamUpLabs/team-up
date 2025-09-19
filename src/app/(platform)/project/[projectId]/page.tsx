@@ -21,14 +21,13 @@ const SkeletonCard = () => (
 );
 
 export default function ProjectPage() {
-  const { project, tasks, milestones, schedules, whiteboards, isLoading } = useProject();
-  
+  const { project, additional_data, isLoading } = useProject();
   // 메모이제이션을 통한 계산 최적화
   const projectStats = useMemo(() => {
     if (!project) return null;
     
-    const activeMilestoneCount = milestones?.filter(milestone => milestone.status !== "completed").length || 0;
-    const activeTaskCount = tasks?.filter(task => task.status !== "completed").length || 0;
+    const activeMilestoneCount = additional_data.milestones?.filter(milestone => milestone.status !== "completed").length || 0;
+    const activeTaskCount = additional_data.tasks?.filter(task => task.status !== "completed").length || 0;
     const totalMemberCount = project.members?.length || 0;
     const activeMemberCount = project.members?.filter(member => member.user.status === "active").length || 0;
     
@@ -38,7 +37,7 @@ export default function ProjectPage() {
       totalMemberCount,
       activeMemberCount,
     };
-  }, [project, milestones, tasks]);
+  }, [project, additional_data]);
 
   // Provide default empty values when project is loading
   const projectData = project || blankProject;
@@ -86,7 +85,7 @@ export default function ProjectPage() {
         </Suspense>
         <Suspense fallback={<SkeletonCard />}>
           <CompletionRateCard 
-            tasks={tasks || []} 
+            tasks={additional_data.tasks || []} 
           />
         </Suspense>
       </div>
@@ -94,17 +93,17 @@ export default function ProjectPage() {
         <Suspense fallback={<SkeletonCard />}>
           <TeamPerformance 
             project={projectData}
-            tasks={tasks || []}
+            tasks={additional_data.tasks || []}
             className="md:col-span-2" 
             isLoading={isLoading}
           />
         </Suspense>
         <Suspense fallback={<SkeletonCard />}>
           <WeeklyChart 
-            tasks={tasks || []} 
-            milestones={milestones || []} 
-            schedules={schedules || []}
-            whiteboards={whiteboards || []}
+            tasks={additional_data.tasks || []} 
+            milestones={additional_data.milestones || []} 
+            schedules={additional_data.schedules || []}
+            whiteboards={additional_data.whiteboards || []}
           />
         </Suspense>
         <Suspense fallback={<SkeletonCard />}>

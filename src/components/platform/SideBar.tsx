@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useState } from "react";
 import React from "react";
 import { ChevronDown } from "flowbite-react-icons/outline";
-import { useProject } from "@/contexts/ProjectContext";
+import { ProjectContext, type ProjectContextType } from "@/contexts/ProjectContext";
 import CreateChannelButton from "@/components/project/chat/ChannelCreateBtn";
 import { useAuthStore } from "@/auth/authStore";
 import { ParticipationRequest } from "@/types/ParticipationRequest";
@@ -32,7 +32,16 @@ export default function SideBar({
   navItems,
 }: SidebarProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const { project, participation_requests, channels } = useProject();
+  const projectContext = React.useContext<ProjectContextType | undefined>(ProjectContext);
+  const project = projectContext?.project || null;
+  const additional_data = projectContext?.additional_data || {
+    tasks: [],
+    milestones: [],
+    participation_requests: [],
+    channels: [],
+    schedules: [],
+    whiteboards: []
+  };
   const user = useAuthStore((state) => state.user);
 
   return (
@@ -84,7 +93,7 @@ export default function SideBar({
                   </h3>
                   <ul className="space-y-1">
                     {items.map((item) => {
-                      const notificationCount = item.label === '설정' ? participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length || 0 : 0;
+                      const notificationCount = item.label === '설정' ? additional_data.participation_requests.filter((request: ParticipationRequest) => request.status === "pending").length || 0 : 0;
 
                       return (
                         <li key={item.href}>
@@ -111,7 +120,7 @@ export default function SideBar({
                                 <div className="mt-2">
                                   <CreateChannelButton />
                                   <div className="mt-2 ml-8 space-y-1">
-                                    {channels
+                                    {additional_data.channels
                                       ?.filter((channel) => channel.members.map((member) => member.id).includes(user?.id || 0))
                                       .map((channel) => (
                                         <Link

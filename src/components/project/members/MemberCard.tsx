@@ -1,4 +1,3 @@
-import { User } from "@/types/user/User";
 import Badge, { BadgeColor } from "@/components/ui/Badge";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,9 +5,10 @@ import { faBolt, faStar, faShieldAlt, faUser } from "@fortawesome/free-solid-svg
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { useProject } from "@/contexts/ProjectContext";
 import { convertRoleName } from "@/utils/ConvertRoleName";
+import { UserBrief } from "@/types/brief/Userbrief";
 
 interface MemberCardProps {
-  member: User;
+  member: UserBrief;
   isLeader: boolean;
   isManager: boolean;
   isExplore?: boolean;
@@ -22,11 +22,16 @@ export default function MemberCard({
   isExplore,
   onClick,
 }: MemberCardProps) {
-  const { project } = useProject();
+  const { additional_data } = useProject();
 
   const getContributionLevel = () => {
-    const milestoneCount = project?.milestones?.filter((milestone) => milestone.assignees.some((assi) => assi.id === member.id)).length || 0;
-    const taskCount = project?.tasks?.filter((task) => task.assignees.some((assi) => assi.id === member.id)).length || 0;
+    const milestoneCount = additional_data?.milestones?.filter(
+      (milestone) => milestone.assignees?.some((assi) => assi?.id === member?.id) ?? false
+    ).length || 0;
+    
+    const taskCount = additional_data?.tasks?.filter(
+      (task) => task.assignees?.some((assi) => assi?.id === member?.id) ?? false
+    ).length || 0;
     const contributionScore = (milestoneCount * 10) + (taskCount * 15);
 
     if (contributionScore > 80) return { level: "상위 기여자", class: "purple" };
@@ -57,7 +62,7 @@ export default function MemberCard({
     };
   };
 
-  const statusInfo = getStatusInfo(member.status);
+  const statusInfo = getStatusInfo(member.status || "inactive");
   const roleInfo = getRoleInfo();
   const contributionInfo = getContributionLevel();
 
@@ -137,40 +142,21 @@ export default function MemberCard({
             />
           )}
         </div>
-
-        <div>
-          <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3 flex items-center">
-            <span className="mr-2">기술 스택</span>
-            <span className="h-px flex-grow bg-component-border"></span>
-          </h4>
-
-          {member.tech_stacks && member.tech_stacks.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {member.tech_stacks.map((skill, idx) => (
-                <Badge
-                  key={idx}
-                  content={skill.tech}
-                  color="blue"
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-text-secondary italic">
-              등록된 기술 스택이 없습니다.
-            </p>
-          )}
-        </div>
       </div>
 
       <div className="mt-auto border-t border-component-border bg-component-secondary-background p-4 flex justify-between items-center">
         <div className="flex items-center space-x-4 text-xs text-text-secondary">
           <div title="참여 프로젝트 수" className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-blue-400"></span>
-            <span>{project?.milestones?.filter((milestone) => milestone.assignees.some((assi) => assi.id === member.id)).length || 0} 마일스톤</span>
+            <span>{additional_data?.milestones?.filter((milestone) => 
+              milestone.assignees?.some((assi) => assi?.id === member?.id)
+            ).length || 0} 마일스톤</span>
           </div>
           <div title="진행중인 태스크" className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-green-400"></span>
-            <span>{project?.tasks?.filter((task) => task.assignees.some((assi) => assi.id === member.id)).length || 0} 작업</span>
+            <span>{additional_data?.tasks?.filter((task) => 
+              task.assignees?.some((assi) => assi?.id === member?.id)
+            ).length || 0} 작업</span>
           </div>
         </div>
         <div className="text-xs text-text-secondary font-medium hover:text-text-primary">상세보기</div>

@@ -26,6 +26,12 @@ const blankResourceLink: ResourceLink = {
   title: ""
 }
 
+export interface ProjectMember {
+  user: UserBrief;
+  role: string;
+  joined_at: string;
+}
+
 export interface Project extends Partial<ResourceLinksMap> {
   id: string;
   title: string;
@@ -43,11 +49,7 @@ export interface Project extends Partial<ResourceLinksMap> {
   github_url?: string;
   completed_at: string;
   owner: UserBrief
-  members: {
-    user: UserBrief;
-    role: string;
-    joined_at: string;
-  }[];
+  members: ProjectMember[];
   links?: {
     tasks: ResourceLink;
     milestones: ResourceLink;

@@ -12,7 +12,7 @@ import { server } from "@/auth/server";
 import { useAuthStore } from "@/auth/authStore";
 import { AxiosError } from "axios";
 
-type AdditionalData = {
+export type AdditionalData = {
   tasks: Task[];
   milestones: MileStone[];
   participation_requests: ParticipationRequest[];
@@ -21,7 +21,7 @@ type AdditionalData = {
   whiteboards: WhiteBoard[];
 };
 
-type ProjectContextType = {
+export type ProjectContextType = {
   project: Project | null;
   additional_data: AdditionalData;
   isLoading: boolean;
@@ -39,7 +39,7 @@ const defaultAdditionalData: AdditionalData = {
   whiteboards: []
 };
 
-const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
+export const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
 export const useProject = (): ProjectContextType => {
   const context = useContext(ProjectContext);

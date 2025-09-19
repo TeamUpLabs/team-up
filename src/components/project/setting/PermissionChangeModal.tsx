@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserShield, faUser, faCheck } from '@fortawesome/free-solid-svg-icons';
-import { User } from '@/types/user/User';
+import { ProjectMember } from '@/types/Project';
 import { Project } from '@/types/Project';
 import ModalTemplete from '@/components/ModalTemplete';
 import CancelBtn from '@/components/ui/button/CancelBtn';
@@ -10,7 +10,7 @@ import { useAuthStore } from '@/auth/authStore';
 import { useState } from 'react';
 
 interface PermissionChangeModalProps {
-  selectedMember: User;
+  selectedMember: ProjectMember;
   isOpen: boolean;
   onClose: () => void;
   setShowRoleModal: (show: boolean) => void;
@@ -21,9 +21,9 @@ interface PermissionChangeModalProps {
 export default function PermissionChangeModal({ selectedMember, isOpen, onClose, setShowRoleModal, roleDescriptions, project }: PermissionChangeModalProps) {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [selectedRole, setSelectedRole] = useState<string>(
-    project.members.find((member) => member.user.id === selectedMember.id && member.is_leader)
+    project.members.find((member) => member.user.id === selectedMember.user.id && member.role === "leader")
       ? "leader"
-      : project.members.some((member) => member.user.id === selectedMember.id && member.is_manager)
+      : project.members.some((member) => member.user.id === selectedMember.user.id && member.role === "manager")
       ? "manager"
       : "member"
   );
@@ -34,13 +34,13 @@ export default function PermissionChangeModal({ selectedMember, isOpen, onClose,
       try {
         await updateProjectMemberPermission(
           project.id,
-          selectedMember.id,
+          selectedMember.user.id,
           selectedRole
         );
         useAuthStore
           .getState()
           .setAlert(
-            `${selectedMember.name}님의 권한이 ${
+            `${selectedMember.user.name}님의 권한이 ${
               selectedRole === "manager" ? "관리자" : "멤버"
             }로 변경되었습니다.`,
             "success"
@@ -62,7 +62,7 @@ export default function PermissionChangeModal({ selectedMember, isOpen, onClose,
   const header = (
     <div className="flex flex-col space-y-1">
       <h3 className="text-xl font-bold text-text-primary">
-        권한 변경: {selectedMember.name}
+        권한 변경: {selectedMember.user.name}
       </h3>
       <p className="text-sm text-point-color-indigo mt-0.5">
         권한을 변경하면 팀원의 프로젝트 접근 권한이 변경됩니다.

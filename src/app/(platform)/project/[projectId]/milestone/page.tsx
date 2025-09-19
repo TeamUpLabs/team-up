@@ -27,7 +27,7 @@ const SkeletonCard = () => (
 );
 
 export default function MilestonePage() {
-  const { project } = useProject();
+  const { additional_data } = useProject();
   const { isDark } = useTheme();
   const [tab, setTab] = useState('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -38,21 +38,21 @@ export default function MilestonePage() {
   const milestoneTabs = useMemo(() => ({
     'all': {
       label: '전체',
-      count: project?.milestones?.length || 0
+      count: additional_data?.milestones?.length || 0
     },
     'not_started': {
       label: '시작 전',
-      count: project?.milestones?.filter(milestone => milestone.status === 'not_started').length || 0
+      count: additional_data?.milestones?.filter(milestone => milestone.status === 'not_started').length || 0
     },
     'in_progress': {
       label: '진행 중',
-      count: project?.milestones?.filter(milestone => milestone.status === 'in_progress').length || 0
+      count: additional_data?.milestones?.filter(milestone => milestone.status === 'in_progress').length || 0
     },
     'completed': {
       label: '완료됨',
-      count: project?.milestones?.filter(milestone => milestone.status === 'completed').length || 0
+      count: additional_data?.milestones?.filter(milestone => milestone.status === 'completed').length || 0
     }
-  }), [project?.milestones]);
+  }), [additional_data?.milestones]);
 
   // 디바운스된 검색 함수
   const debouncedSetSearchQuery = useCallback((value: string) => {
@@ -79,7 +79,7 @@ export default function MilestonePage() {
 
   // 메모이제이션을 통한 필터링 최적화
   const filteredMilestones = useMemo(() => {
-    return project?.milestones.filter(milestone => {
+    return additional_data?.milestones.filter(milestone => {
       const matchesTab = 
         tab === 'all' || 
         (milestone.status === tab);
@@ -96,12 +96,12 @@ export default function MilestonePage() {
 
       return matchesTab && matchesSearch;
     }) ?? [];
-  }, [project?.milestones, tab, searchQuery]);
+  }, [additional_data?.milestones, tab, searchQuery]);
 
   useEffect(() => {
     const selectedMilestoneId = localStorage.getItem('selectedMilestoneId');
-    if (selectedMilestoneId && project?.milestones) {
-      const milestone = project.milestones.find(
+    if (selectedMilestoneId && additional_data?.milestones) {
+      const milestone = additional_data.milestones.find(
         m => m.id === parseInt(selectedMilestoneId)
       );
       if (milestone) {
@@ -110,7 +110,7 @@ export default function MilestonePage() {
         localStorage.removeItem('selectedMilestoneId');
       }
     }
-  }, [project]);
+  }, [additional_data]);
 
   return (
     <div className="flex flex-col gap-4">

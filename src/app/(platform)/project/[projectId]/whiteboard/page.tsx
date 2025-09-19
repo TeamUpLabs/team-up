@@ -18,7 +18,7 @@ const LoadingSpinner = () => (
 );
 
 export default function WhiteboardPage() {
-  const { project } = useProject();
+  const { additional_data } = useProject();
   const { isDark } = useTheme();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,15 +48,15 @@ export default function WhiteboardPage() {
 
 
   const filteredWhiteboards = useMemo(() => {
-    if (!searchQuery.trim()) return project?.whiteboards || [];
+    if (!searchQuery.trim()) return additional_data?.whiteboards || [];
 
     const searchLower = searchQuery.toLowerCase();
-    return project?.whiteboards?.filter((whiteboard) =>
+    return additional_data?.whiteboards?.filter((whiteboard) =>
       whiteboard.title.toLowerCase().includes(searchLower) ||
       whiteboard.documents[0].tags?.some(tag => tag.toLowerCase().includes(searchLower)) ||
       whiteboard.creator.name.toLowerCase().includes(searchLower)
     ) || [];
-  }, [project?.whiteboards, searchQuery]);
+  }, [additional_data?.whiteboards, searchQuery]);
 
   return (
     <div className="flex flex-col gap-4">

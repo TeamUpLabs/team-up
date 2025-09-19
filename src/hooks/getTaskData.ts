@@ -6,7 +6,7 @@ export const createTask = async (task: TaskCreateFormData) => {
   try {
     const token = useAuthStore.getState().token;
     
-    const res = await server.post(`/tasks`, {
+    const res = await server.post(`/api/v1/tasks`, {
       project_id: task.project_id,
       milestone_id: task.milestone_id,
       title: task.title,
@@ -37,7 +37,7 @@ export const createTask = async (task: TaskCreateFormData) => {
 export const deleteTask = async (taskId: number) => {
   try {
     const token = useAuthStore.getState().token;
-    const res = await server.delete(`/tasks/${taskId}`, {
+    const res = await server.delete(`/api/v1/tasks/${taskId}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
@@ -53,10 +53,10 @@ export const deleteTask = async (taskId: number) => {
   }
 }
 
-export const updateTaskStatus = async (task_id: number, status: string) => {
+export const updateTaskStatus = async (project_id: string, task_id: number, status: string) => {
   try {
     const token = useAuthStore.getState().token;
-    const res = await server.put(`/tasks/${task_id}`, { status: status }, {
+    const res = await server.put(`/api/v1/projects/${project_id}/tasks/${task_id}`, { status: status }, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
@@ -75,7 +75,7 @@ export const updateTaskStatus = async (task_id: number, status: string) => {
 export const updateTask = async (task_id: number, task: TaskUpdateFormData) => {
   try {
     const token = useAuthStore.getState().token;
-    const res = await server.put(`/tasks/${task_id}`, task, {
+    const res = await server.put(`/api/v1/tasks/${task_id}`, task, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
@@ -94,7 +94,7 @@ export const updateTask = async (task_id: number, task: TaskUpdateFormData) => {
 export const createSubtask = async (task_id: number, subtask: SubTaskCreateFormData) => {
   try {
     const token = useAuthStore.getState().token;
-    const res = await server.post(`/tasks/${task_id}/subtasks`, subtask, {
+    const res = await server.post(`/api/v1/tasks/${task_id}/subtasks`, subtask, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
@@ -113,7 +113,7 @@ export const createSubtask = async (task_id: number, subtask: SubTaskCreateFormD
 export const updateSubtask = async (task_id: number, subtask: SubTaskUpdateFormData) => {
   try {
     const token = useAuthStore.getState().token;
-    const res = await server.put(`/tasks/${task_id}/subtasks/${subtask.id}`, subtask, {
+    const res = await server.put(`/api/v1/tasks/${task_id}/subtasks/${subtask.id}`, subtask, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
@@ -132,7 +132,7 @@ export const updateSubtask = async (task_id: number, subtask: SubTaskUpdateFormD
 export const deleteSubtask = async (task_id: number, subtask_id: number) => { 
   try {
     const token = useAuthStore.getState().token;
-    const res = await server.delete(`/tasks/${task_id}/subtasks/${subtask_id}`, {
+    const res = await server.delete(`/api/v1/tasks/${task_id}/subtasks/${subtask_id}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },  
@@ -151,7 +151,7 @@ export const deleteSubtask = async (task_id: number, subtask_id: number) => {
 export const addComment = async (project_id: string, task_id: number, comment: CommentCreateFormData) => {
   try {
     const token = useAuthStore.getState().token;
-    const res = await server.post(`/tasks/${task_id}/comments`, comment, {
+    const res = await server.post(`/api/v1/tasks/${task_id}/comments`, comment, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
@@ -170,7 +170,7 @@ export const addComment = async (project_id: string, task_id: number, comment: C
 export const deleteComment = async (task_id: number, comment_id: number) => {
   try {
     const token = useAuthStore.getState().token;
-    const res = await server.delete(`/tasks/${task_id}/comments/${comment_id}`, {
+    const res = await server.delete(`/api/v1/tasks/${task_id}/comments/${comment_id}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },

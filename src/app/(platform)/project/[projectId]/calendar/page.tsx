@@ -38,7 +38,7 @@ const SkeletonCalendar = () => (
 );
 
 export default function CalendarPage() {
-  const { tasks, milestones, schedules } = useProject();
+  const { additional_data } = useProject();
   const { isDark } = useTheme();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -65,14 +65,14 @@ export default function CalendarPage() {
 
   // 메모이제이션을 통한 일정 필터링 최적화
   const scheduleData = useMemo(() => {
-    const meetings = schedules?.filter(schedule => schedule.type === 'meeting') || [];
-    const events = schedules?.filter(schedule => schedule.type === 'event') || [];
+    const meetings = additional_data.schedules?.filter(schedule => schedule.type === 'meeting') || [];
+    const events = additional_data.schedules?.filter(schedule => schedule.type === 'event') || [];
     
     return {
       meetings,
       events
     };
-  }, [schedules]);
+  }, [additional_data.schedules]);
 
   const previousMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)));
   const nextMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)));
@@ -80,8 +80,8 @@ export default function CalendarPage() {
   useEffect(() => {
     const selectedScheduleId = localStorage.getItem('selectedScheduleId');
 
-    if (selectedScheduleId && schedules?.length) {
-      const scheduleToOpen = schedules?.find(schedule => schedule.id === parseInt(selectedScheduleId));
+    if (selectedScheduleId && additional_data.schedules?.length) {
+      const scheduleToOpen = additional_data.schedules?.find(schedule => schedule.id === parseInt(selectedScheduleId));
 
       if (scheduleToOpen) {
         setSelectedSchedule(scheduleToOpen);
@@ -90,7 +90,7 @@ export default function CalendarPage() {
 
       localStorage.removeItem('selectedScheduleId');
     }
-  }, [schedules]);
+  }, [additional_data.schedules]);
 
   const handleSelectTask = (task: Task) => {
     setSelectedTask(task);
@@ -130,8 +130,8 @@ export default function CalendarPage() {
       <Suspense fallback={<SkeletonCalendar />}>
         <Calendar
           currentDate={currentDate}
-          tasks={tasks}
-          milestones={milestones}
+          tasks={additional_data.tasks}
+          milestones={additional_data.milestones}
           meetings={scheduleData.meetings}
           events={scheduleData.events}
           days={calendarData.days}
@@ -145,10 +145,10 @@ export default function CalendarPage() {
 
       <Suspense fallback={<LoadingSpinner />}>
         <ScheduleStatus
-          tasks={tasks}
+          tasks={additional_data.tasks}
           meetings={scheduleData.meetings}
           events={scheduleData.events}
-          milestones={milestones}
+          milestones={additional_data.milestones}
         />
       </Suspense>
 

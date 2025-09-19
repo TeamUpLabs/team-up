@@ -1,14 +1,13 @@
 "use client";
 
 import ModalTemplete from "@/components/ModalTemplete";
-import { blankUserBrief } from "@/types/user/User";
+import { blankUserBrief } from "@/types/brief/Userbrief";
 import { WhiteBoard, CommentCreateFormData } from "@/types/WhiteBoard";
 import { useState, useCallback, useEffect } from "react";
 import { Lightbulb, Eye, Heart, MessageCircle, Download } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash, faCircleArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { useAuthStore } from "@/auth/authStore";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import Accordion from "@/components/ui/Accordion";
@@ -22,6 +21,8 @@ import { formatFileSize } from "@/utils/fileSize";
 import { useProject } from "@/contexts/ProjectContext";
 import { addComment, deleteComment, updateIdea, likeIdea, updateViews, deleteWhiteBoard } from "@/hooks/getWhiteBoardData";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
+import { useAuthStore } from "@/auth/authStore";
+import { blankUser } from "@/types/user/User";
 
 interface WhiteboardModalProps {
   isOpen: boolean;
@@ -45,7 +46,8 @@ export default function WhiteboardModal({
   >("idle");
   const [commentSubmitStatus, setCommentSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
-  >("idle");  const { project } = useProject();
+  >("idle");  
+  const { project } = useProject();
 
   // Update views when modal opens
   useEffect(() => {
@@ -121,7 +123,7 @@ export default function WhiteboardModal({
 
     const newComment: CommentCreateFormData = {
       content: commentContent,
-      creator: user ? user : blankUserBrief,
+      creator: user ? user : blankUser,
     };
 
     setCommentSubmitStatus("submitting");
@@ -288,16 +290,16 @@ export default function WhiteboardModal({
         )}
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-1 text-text-secondary text-xs">
-            <Heart onClick={handleLike} className={`w-4 h-4 hover:scale-115 transition-transform duration-200 cursor-pointer hover:text-red-500 ${ideaData.liked_by_users.some((user) => user.id === (user ? user.id : blankUserBrief.id)) ? "text-red-500 fill-red-500" : ""}`} />
-            <span>{ideaData.likes || 0}</span>
+            <Heart onClick={handleLike} className={`w-4 h-4 hover:scale-115 transition-transform duration-200 cursor-pointer hover:text-red-500`} />
+            <span>{0}</span>
           </div>
           <div className="flex items-center space-x-1 text-text-secondary text-xs">
             <MessageCircle className="w-3.5 h-3.5" />
-            <span>{ideaData.comments?.length || 0}</span>
+            <span>{0}</span>
           </div>
           <div className="flex items-center space-x-1 text-text-secondary text-xs">
             <Eye className="w-4 h-4" />
-            <span>{ideaData.views || 0}</span>
+            <span>{0}</span>
           </div>
         </div>
       </div>

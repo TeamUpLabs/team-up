@@ -36,7 +36,7 @@ interface MilestoneModalProps {
 export default function MilestoneModal({ milestone, isOpen, onClose }: MilestoneModalProps) {
   const user = useAuthStore.getState().user;
   const params = useParams();
-  const { project } = useProject();
+  const { project, additional_data } = useProject();
   const router = useRouter();
   const [milestoneData, setMilestoneData] = useState<MileStone>(milestone);
   const [isEditing, setIsEditing] = useState<string>("none");
@@ -85,7 +85,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     localStorage.setItem('selectedAssiId', assiId.toString());
 
     const projectId = params?.projectId ? String(params.projectId) : 'default';
-    router.push(`/platform/${projectId}/members`);
+    router.push(`/project/${projectId}/members`);
 
     onClose();
   };
@@ -94,7 +94,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
     localStorage.setItem('selectedTaskId', taskId.toString());
 
     const projectId = params?.projectId ? String(params.projectId) : 'default';
-    router.push(`/platform/${projectId}/tasks`);
+    router.push(`/project/${projectId}/tasks`);
 
     onClose();
   };
@@ -583,7 +583,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                   </div>
                   <div className="ml-8 mt-2">
                     {
-                      (project?.tasks.filter(proj_task => proj_task.id === task.id).map(proj_task => proj_task.subtasks).flat() ?? []).map((sub, idx) => (
+                      (additional_data?.tasks.filter(proj_task => proj_task.id === task.id).map(proj_task => proj_task.subtasks).flat() ?? []).map((sub, idx) => (
                         <div key={idx} className='space-x-2'>
                           <input
                             type="checkbox"

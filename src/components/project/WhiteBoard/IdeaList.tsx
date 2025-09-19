@@ -13,7 +13,7 @@ import {
 import { summarizeMarkdown } from "@/utils/summarizeMarkdown";
 import { Suspense, useState } from "react";
 import WhiteboardModal from "@/components/project/WhiteBoard/WhiteboardModal";
-import { blankUserBrief } from "@/types/user/User";
+import { blankUserBrief } from "@/types/brief/Userbrief";
 
 interface IdeaListProps {
   idea: WhiteBoard;
@@ -126,16 +126,16 @@ export default function IdeaList({ idea }: IdeaListProps) {
 
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1 text-text-secondary text-xs">
-                <Heart className={`w-3.5 h-3.5 ${idea.liked_by_users.some((user) => user.id === (user ? user.id : blankUserBrief.id)) ? "text-red-500 fill-red-500" : ""}`} />
-                <span>{idea.likes || 0}</span>
+                <Heart className={`w-3.5 h-3.5`} />
+                <span>{0}</span>
               </div>
               <div className="flex items-center space-x-1 text-text-secondary text-xs">
                 <MessageCircle className="w-3.5 h-3.5" />
-                <span>{idea.comments?.length || 0}</span>
+                <span>{0}</span>
               </div>
               <div className="flex items-center space-x-1 text-text-secondary text-xs">
                 <Eye className="w-3.5 h-3.5" />
-                <span>{idea.views || 0}</span>
+                <span>{0}</span>
               </div>
             </div>
           </div>

@@ -63,7 +63,7 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
-  const { project } = useProject();
+  const { project, additional_data } = useProject();
   const user = useAuthStore.getState().user;
   const router = useRouter();
   const params = useParams();
@@ -139,7 +139,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     localStorage.setItem("selectedAssiId", assiId.toString());
 
     const projectId = params?.projectId ? String(params.projectId) : "default";
-    router.push(`/platform/${projectId}/members`);
+    router.push(`/project/${projectId}/members`);
 
     onClose();
   };
@@ -148,7 +148,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     localStorage.setItem("selectedMilestoneId", milestoneId.toString());
 
     const projectId = params?.projectId ? String(params.projectId) : "default";
-    router.push(`/platform/${projectId}/milestone`);
+    router.push(`/project/${projectId}/milestone`);
 
     onClose();
   };
@@ -432,7 +432,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
           {taskData?.milestone_id ? (
             <Badge
               content={
-                project?.milestones?.find(
+                additional_data?.milestones?.find(
                   (milestone) => milestone.id === taskData?.milestone_id
                 )?.title
               }
@@ -898,7 +898,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {project?.milestones
+                {additional_data?.milestones
                   ?.find((milestone) => taskData.milestone_id === milestone.id)
                   ?.assignees?.map((member) => {
                     const isSelected = taskData.assignees?.some(
