@@ -23,7 +23,7 @@ export default function ExploreProject() {
   }, [searchQuery]);
 
   const { data: projects, error, isLoading } = useSWR<Project[]>(
-    hydrated && user?.id ? `${user.links.projects.exclude_me?.href}` : null,
+    hydrated && user?.id ? `/api/v1/projects/exclude?user_id=${user.id}` : null,
     fetcher
   );
 

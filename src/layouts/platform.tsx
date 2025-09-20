@@ -35,7 +35,7 @@ function PlatformContent() {
   }, []);
 
   const { data: projects, error, isLoading } = useSWR(
-    hydrated && user?.id ? `${user.links.projects.my?.href}` : null,
+    hydrated && user?.id ? `/api/v1/projects?user_id=${user.id}` : null,
     fetcher,
     {
       revalidateOnFocus: false,

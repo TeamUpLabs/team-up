@@ -179,7 +179,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const handleSave = async () => {
     setSubmitStatus("submitting");
     try {
-      await updateTask(task.id, {
+      await updateTask(task.project_id, task.id, {
         title: taskData.title,
         description: taskData.description,
         estimated_hours: taskData.estimated_hours,

@@ -72,10 +72,10 @@ export const updateTaskStatus = async (project_id: string, task_id: number, stat
   }
 }
 
-export const updateTask = async (task_id: number, task: TaskUpdateFormData) => {
+export const updateTask = async (project_id: string, task_id: number, task: TaskUpdateFormData) => {
   try {
     const token = useAuthStore.getState().token;
-    const res = await server.put(`/api/v1/tasks/${task_id}`, task, {
+    const res = await server.put(`/api/v1/projects/${project_id}/tasks/${task_id}`, task, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },

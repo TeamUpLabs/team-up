@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { User } from "@/types/user/User";
+import { UserBrief } from "@/types/brief/Userbrief";
 import { Notification } from "@/types/Notification";
 import { server } from '@/auth/server';
 import { logout } from "@/auth/authApi";
@@ -10,13 +10,13 @@ import CryptoJS from 'crypto-js';
 const ENCRYPTION_KEY = 'teamup-secure-key-2024';
 
 // 데이터 암호화 함수
-const encryptData = (data: User | null): string => {
+const encryptData = (data: UserBrief | null): string => {
   if (!data) return '';
   return CryptoJS.AES.encrypt(JSON.stringify(data), ENCRYPTION_KEY).toString();
 };
 
 // 데이터 복호화 함수
-const decryptData = (ciphertext: string): User | null => {
+const decryptData = (ciphertext: string): UserBrief | null => {
   if (!ciphertext) return null;
   try {
     const bytes = CryptoJS.AES.decrypt(ciphertext, ENCRYPTION_KEY);
@@ -33,13 +33,13 @@ type NotificationAlertType = "info" | "message" | "task" | "milestone" | "chat" 
 
 type AuthState = {
   token: string | null;
-  user: User | null;
+  user: UserBrief | null;
   alert: { message: string; type: AlertType } | null;
   confirm: { message: string; onConfirm?: () => void } | null;
   notificationAlert: { message: Notification; type: NotificationAlertType } | null;
   isInitialized: boolean;
   setToken: (token: string) => void;
-  setUser: (user: User) => void;
+  setUser: (user: UserBrief) => void;
   setAlert: (message: string, type: AlertType) => void;
   setConfirm: (message: string, onConfirm?: () => void) => void;
   setNotificationAlert: (message: Notification, type: NotificationAlertType) => void;
@@ -60,7 +60,7 @@ export const useAuthStore = create<AuthState>()(
       confirm: null,
       notificationAlert: null,
       setToken: (token: string) => set({ token }),
-      setUser: (user: User) => set({ user }),
+      setUser: (user: UserBrief) => set({ user }),
       setAlert: (message: string, type: AlertType) => set({ alert: { message, type } }),
       setConfirm: (message: string, onConfirm?: () => void) => set({ confirm: { message, onConfirm } }),
       setNotificationAlert: (message: Notification, type: NotificationAlertType) => set({ notificationAlert: { message, type } }),
