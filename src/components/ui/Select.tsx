@@ -32,6 +32,7 @@ interface SelectProps {
   clearable?: boolean;
   className?: string;
   dropDownClassName?: string;
+  buttonClassName?: string;
   maxHeight?: number;
   renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode;
   renderValue?: (value: string | string[]) => React.ReactNode;
@@ -57,6 +58,7 @@ export default function Select({
   clearable = false,
   className = "",
   dropDownClassName = "",
+  buttonClassName = "",
   maxHeight = 200,
   renderOption,
   renderValue,
@@ -337,6 +339,7 @@ export default function Select({
             px-3 py-2 w-full focus:outline-none focus:ring-0 text-left
             ${likeBadge ? "" : "text-text-primary"}
             ${disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer"}
+            ${buttonClassName}
         `}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
