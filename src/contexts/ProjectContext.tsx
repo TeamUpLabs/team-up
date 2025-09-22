@@ -28,6 +28,14 @@ export type ProjectContextType = {
   error: Error | null;
   refetchProject: () => Promise<Project | undefined>;
   refetchAdditionalData: () => Promise<Partial<AdditionalData> | undefined>;
+  // Update functions
+  updateTaskInContext: (updatedTask: Task) => void;
+  addTaskInContext: (newTask: Task) => void;
+  deleteTaskInContext: (taskId: number) => void;
+  // Add similar functions for other data types as needed
+  updateMilestoneInContext: (updatedMilestone: MileStone) => void;
+  addMilestoneInContext: (newMilestone: MileStone) => void;
+  deleteMilestoneInContext: (milestoneId: number) => void;
 };
 
 const defaultAdditionalData: AdditionalData = {
@@ -111,8 +119,7 @@ const useProjectFetcher = (projectId: string, token: string | null) => {
   };
 };
 
-const useAdditionalDataFetcher = (project: Project | null, token: string | null) => {
-  const [additionalData, setAdditionalData] = useState<AdditionalData>(defaultAdditionalData);
+const useAdditionalDataFetcher = (project: Project | null, token: string | null, setAdditionalData: React.Dispatch<React.SetStateAction<AdditionalData>>) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -164,7 +171,7 @@ const useAdditionalDataFetcher = (project: Project | null, token: string | null)
     } finally {
       setIsLoading(false);
     }
-  }, [token]);
+  }, [token, setAdditionalData]);
 
   const refetchAdditionalData = useCallback(async (): Promise<Partial<AdditionalData> | undefined> => {
     if (!project) return undefined;
@@ -193,7 +200,7 @@ const useAdditionalDataFetcher = (project: Project | null, token: string | null)
     } finally {
       setIsLoading(false);
     }
-  }, [fetchResourceData, project]);
+  }, [fetchResourceData, project, setAdditionalData]);
 
   // Memoize the fetch function to prevent unnecessary re-renders
   const memoizedFetchResourceData = useCallback((projectData: Project | null) => {
@@ -222,7 +229,6 @@ const useAdditionalDataFetcher = (project: Project | null, token: string | null)
   }, [project, memoizedFetchResourceData, token]);
 
   return {
-    additionalData,
     isLoading,
     error,
     refetchAdditionalData
@@ -234,6 +240,7 @@ export const ProjectProvider: React.FC<{
   projectId: string
 }> = ({ children, projectId }) => {
   const token = useAuthStore(state => state.token);
+  const [additionalData, setAdditionalData] = useState<AdditionalData>(defaultAdditionalData);
 
   const {
     project,
@@ -243,11 +250,57 @@ export const ProjectProvider: React.FC<{
   } = useProjectFetcher(projectId, token);
 
   const {
-    additionalData,
     isLoading: isAdditionalDataLoading,
     error: additionalDataError,
     refetchAdditionalData
-  } = useAdditionalDataFetcher(project, token);
+  } = useAdditionalDataFetcher(project, token, setAdditionalData);
+
+  // Update functions
+  const updateTaskInContext = useCallback((updatedTask: Task) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      tasks: prev.tasks.map(task => 
+        task.id === updatedTask.id ? updatedTask : task
+      )
+    }));
+  }, []);
+
+  const addTaskInContext = useCallback((newTask: Task) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      tasks: [...prev.tasks, newTask]
+    }));
+  }, []);
+
+  const deleteTaskInContext = useCallback((taskId: number) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      tasks: prev.tasks.filter(task => task.id !== taskId)
+    }));
+  }, []);
+
+  const updateMilestoneInContext = useCallback((updatedMilestone: MileStone) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      milestones: prev.milestones.map(milestone => 
+        milestone.id === updatedMilestone.id ? updatedMilestone : milestone
+      )
+    }));
+  }, []);
+
+  const addMilestoneInContext = useCallback((newMilestone: MileStone) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      milestones: [...prev.milestones, newMilestone]
+    }));
+  }, []);
+
+  const deleteMilestoneInContext = useCallback((milestoneId: number) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      milestones: prev.milestones.filter(milestone => milestone.id !== milestoneId)
+    }));
+  }, []);
 
   const value = useMemo(() => ({
     project,
@@ -255,7 +308,14 @@ export const ProjectProvider: React.FC<{
     isLoading: isProjectLoading || isAdditionalDataLoading,
     error: projectError || additionalDataError,
     refetchProject,
-    refetchAdditionalData
+    refetchAdditionalData,
+    // Update functions
+    updateTaskInContext,
+    addTaskInContext,
+    deleteTaskInContext,
+    updateMilestoneInContext,
+    addMilestoneInContext,
+    deleteMilestoneInContext,
   }) as ProjectContextType, [
     project,
     additionalData,
@@ -264,7 +324,13 @@ export const ProjectProvider: React.FC<{
     projectError,
     additionalDataError,
     refetchProject,
-    refetchAdditionalData
+    refetchAdditionalData,
+    updateTaskInContext,
+    addTaskInContext,
+    deleteTaskInContext,
+    updateMilestoneInContext,
+    addMilestoneInContext,
+    deleteMilestoneInContext,
   ]);
 
   // SSE connection setup
