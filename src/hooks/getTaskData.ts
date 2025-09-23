@@ -81,14 +81,9 @@ export const updateTask = async (project_id: string, task_id: number, task: Task
   }
 }
 
-export const createSubtask = async (task_id: number, subtask: SubTaskCreateFormData) => {
+export const createSubtask = async (project_id: string, task_id: number, subtask: SubTaskCreateFormData) => {
   try {
-    const token = useAuthStore.getState().token;
-    const res = await server.post(`/api/v1/tasks/${task_id}/subtasks`, subtask, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const res = await server.post(`/api/v1/projects/${project_id}/tasks/${task_id}/subtasks`, subtask);
     if (res.status === 201) {
       return res.data;
     } else {
@@ -100,14 +95,9 @@ export const createSubtask = async (task_id: number, subtask: SubTaskCreateFormD
   }
 }
 
-export const updateSubtask = async (task_id: number, subtask: SubTaskUpdateFormData) => {
+export const updateSubtask = async (project_id: string, task_id: number, subtask: SubTaskUpdateFormData) => {
   try {
-    const token = useAuthStore.getState().token;
-    const res = await server.put(`/api/v1/tasks/${task_id}/subtasks/${subtask.id}`, subtask, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const res = await server.put(`/api/v1/projects/${project_id}/tasks/${task_id}/subtasks/${subtask.id}`, subtask);
     if (res.status === 200) {
       return res.data;
     } else {
@@ -119,14 +109,9 @@ export const updateSubtask = async (task_id: number, subtask: SubTaskUpdateFormD
   }
 }
 
-export const deleteSubtask = async (task_id: number, subtask_id: number) => { 
+export const deleteSubtask = async (project_id: string, task_id: number, subtask_id: number) => { 
   try {
-    const token = useAuthStore.getState().token;
-    const res = await server.delete(`/api/v1/tasks/${task_id}/subtasks/${subtask_id}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },  
-    });
+    const res = await server.delete(`/api/v1/projects/${project_id}/tasks/${task_id}/subtasks/${subtask_id}`);
     if (res.status === 204) {
       return res.data;
     } else {

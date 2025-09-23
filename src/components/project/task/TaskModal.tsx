@@ -99,12 +99,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
   const handleSubtaskToggle = async (index: number) => {
     if (taskData.status === "completed") {
-      useAuthStore
-        .getState()
-        .setAlert(
-          "완료된 작업은 수정할 수 없습니다. 취소 후 수정해주세요.",
-          "error"
-        );
+      useAuthStore.getState().setAlert("완료된 작업은 수정할 수 없습니다. 취소 후 수정해주세요.", "error");
       return;
     }
     try {
@@ -115,24 +110,18 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         return subtask;
       });
 
-      await updateSubtask(
-        task.id,
-        {
+      await updateSubtask(project?.id || "", task.id, {
           id: updatedSubtasks[index].id,
+          title: updatedSubtasks[index].title,
           is_completed: updatedSubtasks[index].is_completed,
-        }
-      );
+        });
       
-      // Update the task data with the updated subtasks
       const updatedTask = {
         ...taskData,
         subtasks: updatedSubtasks
       };
       
-      // Update the task in the context
       updateTaskInContext(updatedTask);
-      
-      // Also update the local state
       setTaskData(updatedTask);
     } catch (error) {
       console.error("Error updating subtask:", error);
@@ -189,6 +178,18 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
 
   const handleSave = async () => {
     setSubmitStatus("submitting");
+    console.log({
+      title: taskData.title,
+        description: taskData.description,
+        estimated_hours: taskData.estimated_hours,
+        actual_hours: taskData.actual_hours,
+        assignee_ids: taskData.assignees?.map((a) => a.id) ?? [],
+        due_date: taskData.due_date ?? "",
+        start_date: taskData.start_date ?? "",
+        milestone_id: taskData.milestone_id,
+        priority: taskData.priority,
+        status: taskData.status,
+    })
     try {
       const updatedTask = await updateTask(task.project_id, task.id, {
         title: taskData.title,
@@ -203,7 +204,6 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         status: taskData.status,
       });
 
-      // Update the task in the context
       updateTaskInContext(updatedTask);
 
       useAuthStore.getState().setAlert("작업 수정에 성공했습니다.", "success");
@@ -270,20 +270,14 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     const updatedSubtasks = taskData.subtasks.filter((_, i) => i !== index);
 
     try {
-      await deleteSubtask(task.id, subtaskId);
-      
-      // Create the updated task with the subtask removed
+      await deleteSubtask(project?.id || "", task.id, subtaskId);
       const updatedTask = {
         ...taskData,
         subtasks: updatedSubtasks
       };
-      
-      // Update the task in the context
       updateTaskInContext(updatedTask);
-      
-      // Also update the local state
       setTaskData(updatedTask);
-      
+
       useAuthStore.getState().setAlert("하위 작업이 성공적으로 삭제되었습니다.", "success");
     } catch (error) {
       console.error("Error deleting subtask:", error);
@@ -300,10 +294,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     }
     const newSubtaskData: SubTaskCreateFormData = {
       title: newSubtask,
-      task_id: task.id,
+      is_completed: false,
     };
     try {
-      const res = await createSubtask(task.id, newSubtaskData);
+      const res = await createSubtask(project?.id || "", task.id, newSubtaskData);
       const updatedTask = {
         ...taskData,
         subtasks: [
