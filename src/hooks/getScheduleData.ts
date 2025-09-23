@@ -18,7 +18,7 @@ export const createSchedule = async (project_id: string, formData: ScheduleCreat
 
 export const getScheduleByProject = async (project_id: string) => {
   try {
-    const res = await server.get(`/projects/${project_id}/schedules`, {
+    const res = await server.get(`/api/v1/projects/${project_id}/schedules`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -37,7 +37,7 @@ export const getScheduleByProject = async (project_id: string) => {
 
 export const updateSchedule = async (project_id: string, schedule_id: number, formData: ScheduleUpdateFormData) => {
   try {
-    const res = await server.put(`/projects/${project_id}/schedules/${schedule_id}`, formData, {
+    const res = await server.put(`/api/v1/projects/${project_id}/schedules/${schedule_id}`, formData, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -56,13 +56,13 @@ export const updateSchedule = async (project_id: string, schedule_id: number, fo
 
 export const deleteSchedule = async (project_id: string, schedule_id: number) => {
   try {
-    const res = await server.delete(`/projects/${project_id}/schedules/${schedule_id}`, {
+    const res = await server.delete(`/api/v1/projects/${project_id}/schedules/${schedule_id}`, {
       headers: {
         "Content-Type": "application/json",
       },
     });
 
-    if (res.status === 200) {
+    if (res.status === 204) {
       return res.data;
     } else {
       throw new Error("Failed to delete schedule");

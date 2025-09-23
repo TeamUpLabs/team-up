@@ -35,7 +35,8 @@ interface ScheduleModalProps {
 }
 
 export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleModalProps) {
-  const user = useAuthStore.getState().user;  const { project } = useProject();
+  const user = useAuthStore.getState().user;  
+  const { project, updateScheduleInContext, deleteScheduleInContext } = useProject();
   const params = useParams();
   const router = useRouter();
   const [isEditing, setIsEditing] = useState<string>("none");
@@ -82,7 +83,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
     localStorage.setItem('selectedAssiId', assiId.toString());
 
     const projectId = params?.projectId ? String(params.projectId) : 'default';
-    router.push(`/platform/${projectId}/members`);
+    router.push(`/project/${projectId}/members`);
 
     onClose();
   };
@@ -90,7 +91,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
   const handleSave = async () => {
     setSubmitStatus('submitting');
     try {
-      await updateSchedule(project?.id ? String(project.id) : "0", schedule.id, {
+      const res = await updateSchedule(project?.id ? String(project.id) : "0", schedule.id, {
         ...scheduleData,
         title: scheduleData.title ?? "",
         description: scheduleData.description ?? "",
@@ -103,8 +104,9 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
         memo: scheduleData.memo ?? "",
       });
 
-      useAuthStore.getState().setAlert("스케줄 수정에 성공했습니다.", "success");
       setSubmitStatus('success');
+      updateScheduleInContext(res);
+      useAuthStore.getState().setAlert("스케줄 수정에 성공했습니다.", "success");
       setTimeout(() => {
         onClose();
       }, 1000);
@@ -122,6 +124,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
     useAuthStore.getState().setConfirm("스케줄을 삭제하시겠습니까?", async () => {
       try {
         await deleteSchedule(project?.id ?? "", schedule.id);
+        deleteScheduleInContext(schedule.id);
         useAuthStore.getState().setAlert("스케줄 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
         onClose();
