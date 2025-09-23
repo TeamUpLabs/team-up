@@ -36,7 +36,7 @@ interface MilestoneModalProps {
 export default function MilestoneModal({ milestone, isOpen, onClose }: MilestoneModalProps) {
   const user = useAuthStore.getState().user;
   const params = useParams();
-  const { project, additional_data } = useProject();
+  const { project, additional_data, updateMilestoneInContext, deleteMilestoneInContext } = useProject();
   const router = useRouter();
   const [milestoneData, setMilestoneData] = useState<MileStone>(milestone);
   const [isEditing, setIsEditing] = useState<string>("none");
@@ -139,7 +139,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const handleDelete = () => {
     useAuthStore.getState().setConfirm("마일스톤을 삭제하시겠습니까?", async () => {
       try {
-        await deleteMilestone(milestone.id);
+        await deleteMilestone(project?.id || "", milestone.id);
+        deleteMilestoneInContext(milestone.id);
         useAuthStore.getState().setAlert("마일스톤 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
         onClose();
@@ -179,7 +180,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
   const handleSaveEdit = async () => {
     setSubmitStatus('submitting');
     try {
-      await updateMilestone(milestone.id, {
+      const updatedMilestone = await updateMilestone(project?.id || "", milestone.id, {
         title: milestoneData.title,
         description: milestoneData.description,
         status: milestoneData.status,
@@ -192,6 +193,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
       });
       useAuthStore.getState().setAlert("마일스톤이 성공적으로 수정되었습니다.", "success");
       setSubmitStatus('success');
+      updateMilestoneInContext(updatedMilestone);
       setIsEditing("none");
     } catch (error) {
       console.error("Error updating milestone:", error);
@@ -292,7 +294,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               value={milestoneData.status}
               onChange={(value) => handleSelectChange("status", value as string)}
               color={getStatusColorName(milestoneData.status)}
-              className="!px-2 !py-0.5 !rounded-full !text-sm"
+              className="!rounded-full !text-sm"
+              buttonClassName="!px-2 !py-0.5"
               autoWidth
               isHoverEffect={false}
               likeBadge={true}
@@ -325,7 +328,8 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
               value={milestoneData.priority}
               onChange={(value) => handleSelectChange("priority", value as string)}
               color={getPriorityColorName(milestoneData.priority.toLowerCase())}
-              className="!px-2 !py-0.5 !rounded-full !text-sm"
+              className="!rounded-full !text-sm"
+              buttonClassName="!px-2 !py-0.5"
               autoWidth
               isHoverEffect={false}
               likeBadge={true}
