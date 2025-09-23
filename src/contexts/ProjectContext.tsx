@@ -36,6 +36,11 @@ export type ProjectContextType = {
   updateMilestoneInContext: (updatedMilestone: MileStone) => void;
   addMilestoneInContext: (newMilestone: MileStone) => void;
   deleteMilestoneInContext: (milestoneId: number) => void;
+
+  // Schedule functions
+  addScheduleInContext: (newSchedule: Schedule) => void;
+  updateScheduleInContext: (updatedSchedule: Schedule) => void;
+  deleteScheduleInContext: (scheduleId: number) => void;
 };
 
 const defaultAdditionalData: AdditionalData = {
@@ -308,6 +313,29 @@ export const ProjectProvider: React.FC<{
     }));
   }, []);
 
+  const updateScheduleInContext = useCallback((updatedSchedule: Schedule) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      schedules: prev.schedules.map(schedule => 
+        schedule.id === updatedSchedule.id ? updatedSchedule : schedule
+      )
+    }));
+  }, []);
+
+  const addScheduleInContext = useCallback((newSchedule: Schedule) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      schedules: [...prev.schedules, newSchedule]
+    }));
+  }, []);
+
+  const deleteScheduleInContext = useCallback((scheduleId: number) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      schedules: prev.schedules.filter(schedule => schedule.id !== scheduleId)
+    }));
+  }, []);
+
   const value = useMemo(() => ({
     project,
     additional_data: additionalData,
@@ -322,6 +350,9 @@ export const ProjectProvider: React.FC<{
     updateMilestoneInContext,
     addMilestoneInContext,
     deleteMilestoneInContext,
+    updateScheduleInContext,
+    addScheduleInContext,
+    deleteScheduleInContext,
   }) as ProjectContextType, [
     project,
     additionalData,
@@ -337,6 +368,9 @@ export const ProjectProvider: React.FC<{
     updateMilestoneInContext,
     addMilestoneInContext,
     deleteMilestoneInContext,
+    updateScheduleInContext,
+    addScheduleInContext,
+    deleteScheduleInContext,
   ]);
 
   // SSE connection setup

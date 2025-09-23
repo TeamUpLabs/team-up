@@ -44,8 +44,8 @@ export default function ScheduleCreateModal({
   isOpen,
   onClose,
 }: ScheduleCreateModalProps) {
-  const user = useAuthStore((state) => state.user);
-  const { project } = useProject();
+  const user = useAuthStore.getState().user;
+  const { project, addScheduleInContext } = useProject();
   const [step, setStep] = useState(1);
 
   const totalSteps = 6
@@ -116,7 +116,7 @@ export default function ScheduleCreateModal({
     if (project?.id) {
       setSubmitStatus('submitting');
       try {
-        await createSchedule(project.id, {
+        const res = await createSchedule(project.id, {
           ...formData,
           status: "not_started",
           created_by: user?.id || 0,
@@ -125,6 +125,7 @@ export default function ScheduleCreateModal({
           assignee_ids: formData.assignee_ids.map((id) => id as number),
         });
         setSubmitStatus('success');
+        addScheduleInContext(res);
         useAuthStore.getState().setAlert("일정이 성공적으로 생성되었습니다.", "success");
       } catch (error) {
         console.error("Failed to create schedule:", error);

@@ -1,16 +1,9 @@
 import { server } from "@/auth/server";
 import { ScheduleCreateFormData, ScheduleUpdateFormData } from "@/types/Schedule";
-import { useAuthStore } from "@/auth/authStore";
 
 export const createSchedule = async (project_id: string, formData: ScheduleCreateFormData) => {
   try {
-    const token = useAuthStore.getState().token;
-    const res = await server.post(`/projects/${project_id}/schedules`, formData, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token || ""}`,
-      },
-    });
+    const res = await server.post(`/api/v1/projects/${project_id}/schedules`, formData);
 
     if (res.status === 200) {
       return res.data;
