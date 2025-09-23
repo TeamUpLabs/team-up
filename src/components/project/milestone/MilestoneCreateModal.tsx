@@ -39,7 +39,7 @@ export default function MilestoneCreateModal({
   const stepIcons = [InfoCircle, CalendarWeek, Star, Tag, Users]
   const stepTitles = ["Basic Info", "Timeline", "Status & Priority", "Tags & Labels", "Assignee"]
 
-  const { project } = useProject();
+  const { project, addMilestoneInContext } = useProject();
   const user = useAuthStore((state) => state.user);
   const [formData, setFormData] = useState<MilestoneCreateFormData>(blankMilestoneCreateFormData);
   const [tagsInput, setTagsInput] = useState("");
@@ -96,12 +96,13 @@ export default function MilestoneCreateModal({
     if (project?.id) {
       setSubmitStatus('submitting');
       try {
-        await createMilestone({
+        const milestone = await createMilestone(project.id, {
           ...formData,
           project_id: project.id,
           created_by: user?.id || 0,
         });
         setSubmitStatus('success');
+        addMilestoneInContext(milestone);
         useAuthStore.getState().setAlert("마일스톤이 성공적으로 생성되었습니다.", "success");
       } catch (error) {
         console.error(error);

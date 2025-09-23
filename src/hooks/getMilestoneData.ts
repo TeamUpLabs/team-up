@@ -3,15 +3,9 @@ import { MilestoneCreateFormData, MilestoneUpdateFormData } from "@/types/MileSt
 import { useAuthStore } from "@/auth/authStore";
 
 
-export const createMilestone = async (milestone: MilestoneCreateFormData) => {
+export const createMilestone = async (project_id: string, milestone: MilestoneCreateFormData) => {
   try {
-    const token = useAuthStore.getState().token;
-    const res = await server.post(`/milestones`, milestone, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    });
+    const res = await server.post(`/api/v1/projects/${project_id}/milestones`, milestone);
     if (res.status === 201) {
       return res.data;
     } else {
