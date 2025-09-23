@@ -1,4 +1,4 @@
-import { UserBrief } from "@/types/user/User";
+import { UserBrief } from "@/types/brief/Userbrief";
 import Image from "next/image";
 import { useProject } from "@/contexts/ProjectContext";
 import { Check } from "flowbite-react-icons/outline";
@@ -22,16 +22,16 @@ export default function AssigneeSelect({
   className,
   label
 }: AssigneeSelectProps) {
-  const { project } = useProject();
+  const { project, additional_data } = useProject();
 
   const getRoleInfo = (assignee_id: number): { text: string; color: BadgeColor } => {
-    if (project?.members.find((member) => member.user.id === assignee_id)?.is_leader) {
+    if (project?.members.find((member) => member.user.id === assignee_id)?.role == "leader") {
       return {
         text: "리더",
         color: "yellow"
       } as const;
     }
-    if (project?.members.find((member) => member.user.id === assignee_id)?.is_manager) {
+    if (project?.members.find((member) => member.user.id === assignee_id)?.role == "manager") {
       return {
         text: "관리자",
         color: "blue"
@@ -107,8 +107,8 @@ export default function AssigneeSelect({
               <span className="text-text-secondary text-sm">{member.role}</span>
               <Badge
                 className="!px-2 !py-1 !rounded-full !text-xs !font-medium"
-                color={getWorkloadColor(project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)}
-                content={`${getWorkloadText(project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)} (${project?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0}개 작업)`}
+                color={getWorkloadColor(additional_data?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)}
+                content={`${getWorkloadText(additional_data?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)} (${additional_data?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0}개 작업)`}
               />
             </div>
           )

@@ -4,24 +4,18 @@ import { useAuthStore } from "@/auth/authStore";
 
 export const createTask = async (task: TaskCreateFormData) => {
   try {
-    const token = useAuthStore.getState().token;
-    
-    const res = await server.post(`/api/v1/tasks`, {
-      project_id: task.project_id,
-      milestone_id: task.milestone_id,
+    const res = await server.post(`/api/v1/projects/${task.project_id}/tasks`, {
       title: task.title,
       description: task.description,
       status: task.status,
+      priority: task.priority,
       start_date: task.start_date,
       due_date: task.due_date,
+      project_id: task.project_id,
+      milestone_id: task.milestone_id,
       assignee_ids: task.assignee_ids,
-      priority: task.priority,
-      subtasks: task.subtasks,
       created_by: task.created_by,
-    }, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      subtasks: task.subtasks,
     });
     if (res.status === 201) {
       return res.data;
@@ -36,11 +30,7 @@ export const createTask = async (task: TaskCreateFormData) => {
 
 export const deleteTask = async (taskId: number) => {
   try {
-    const token = useAuthStore.getState().token;
-    const res = await server.delete(`/api/v1/tasks/${taskId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+    const res = await server.delete(`/api/v1/projects/${taskId}`, {
     });
     if (res.status === 204) {
       return res.data;

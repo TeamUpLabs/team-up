@@ -48,7 +48,7 @@ export default function TaskCreateModal({
     "Assignee",
   ];
 
-  const { project } = useProject();
+  const { project, additional_data, addTaskInContext } = useProject();
   const [formData, setFormData] = useState<TaskCreateFormData>(
     blankTaskCreateFormData
   );
@@ -147,29 +147,10 @@ export default function TaskCreateModal({
       return;
     }
 
-    console.log("formData", {
-      ...formData,
-      project_id: project.id,
-      milestone_id: milestone_id ?? null,
-      created_by: useAuthStore.getState().user?.id || 0,
-      estimated_hours: Math.floor(
-        (formData.due_date
-          ? new Date(formData.due_date).getTime() -
-          new Date(formData.start_date).getTime()
-          : 0) /
-        (24 * 60 * 60 * 1000)
-      ),
-      subtasks: formData.subtasks.map((subtask) => ({
-        title: subtask.title,
-        is_completed: false,
-      })),
-      assignee_ids: formData.assignee_ids,
-    });
-
     if (project?.id) {
       setSubmitStatus("submitting");
       try {
-        await createTask({
+        const task = await createTask({
           ...formData,
           project_id: project.id,
           milestone_id: milestone_id ?? 0,
@@ -188,6 +169,7 @@ export default function TaskCreateModal({
           assignee_ids: formData.assignee_ids,
         });
         setSubmitStatus("success");
+        addTaskInContext(task);
         useAuthStore
           .getState()
           .setAlert("작업이 성공적으로 생성되었습니다.", "success");
@@ -435,7 +417,7 @@ export default function TaskCreateModal({
                       minDate={
                         milestone_id
                           ? parseStringToDate(
-                            project?.milestones.find(
+                            additional_data?.milestones.find(
                               (milestone) => milestone.id === milestone_id
                             )?.start_date || ""
                           )
@@ -444,7 +426,7 @@ export default function TaskCreateModal({
                       maxDate={
                         milestone_id
                           ? parseStringToDate(
-                            project?.milestones.find(
+                            additional_data?.milestones.find(
                               (milestone) => milestone.id === milestone_id
                             )?.due_date || ""
                           )
@@ -471,7 +453,7 @@ export default function TaskCreateModal({
                       maxDate={
                         milestone_id
                           ? parseStringToDate(
-                            project?.milestones.find(
+                            additional_data?.milestones.find(
                               (milestone) => milestone.id === milestone_id
                             )?.due_date || ""
                           )
@@ -595,7 +577,7 @@ export default function TaskCreateModal({
                   <AssigneeSelect
                     selectedAssignee={formData.assignee_ids}
                     assignee={
-                      project?.milestones?.find(
+                      additional_data?.milestones?.find(
                         (milestone) => formData.milestone_id === milestone.id
                       )?.assignees ||
                       project?.members?.map((member) => member.user) ||
