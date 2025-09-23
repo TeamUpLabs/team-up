@@ -355,7 +355,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
     setCommentSubmitStatus("submitting");
 
     try {
-      await addComment(
+      const res = await addComment(
         project?.id ? String(project.id) : "0",
         task.id,
         newComment
@@ -371,11 +371,11 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         comments: [
           ...prev.comments,
           {
-            id: Date.now(),
-            content: newComment.content,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            created_by: newComment.created_by,
+            id: res.id,
+            content: res.content,
+            created_at: res.created_at,
+            updated_at: res.updated_at,
+            created_by: res.created_by,
             creator: user ? user : blankUserBrief,
           },
         ],
@@ -395,7 +395,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         .getState()
         .setConfirm("댓글을 삭제하시겠습니까?", async () => {
           try {
-            await deleteComment(task.id, commentId);
+            await deleteComment(project?.id || "", task.id, commentId);
             useAuthStore
               .getState()
               .setAlert("댓글이 성공적으로 삭제되었습니다.", "success");

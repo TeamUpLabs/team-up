@@ -125,12 +125,7 @@ export const deleteSubtask = async (project_id: string, task_id: number, subtask
 
 export const addComment = async (project_id: string, task_id: number, comment: CommentCreateFormData) => {
   try {
-    const token = useAuthStore.getState().token;
-    const res = await server.post(`/api/v1/tasks/${task_id}/comments`, comment, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const res = await server.post(`/api/v1/projects/${project_id}/tasks/${task_id}/comments`, comment);
     if (res.status === 201) {
       return res.data;
     } else {
@@ -142,14 +137,9 @@ export const addComment = async (project_id: string, task_id: number, comment: C
   }
 }
 
-export const deleteComment = async (task_id: number, comment_id: number) => {
+export const deleteComment = async (project_id: string, task_id: number, comment_id: number) => {
   try {
-    const token = useAuthStore.getState().token;
-    const res = await server.delete(`/api/v1/tasks/${task_id}/comments/${comment_id}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const res = await server.delete(`/api/v1/projects/${project_id}/tasks/${task_id}/comments/${comment_id}`);
     if (res.status === 204) {
       return res.data;
     } else {
