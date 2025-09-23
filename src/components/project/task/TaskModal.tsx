@@ -245,7 +245,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
         await deleteTask(project?.id || "", task.id);
         useAuthStore.getState().setAlert("작업 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
-        deleteTaskInContext(task.id);
+        deleteTaskInContext(task.milestone_id, task.id);
         setTimeout(() => {
           onClose();
         }, 1000);

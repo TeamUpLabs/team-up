@@ -31,7 +31,7 @@ export type ProjectContextType = {
   // Update functions
   updateTaskInContext: (updatedTask: Task) => void;
   addTaskInContext: (newTask: Task) => void;
-  deleteTaskInContext: (taskId: number) => void;
+  deleteTaskInContext: (milestone_id: number, task_id: number) => void;
   // Add similar functions for other data types as needed
   updateMilestoneInContext: (updatedMilestone: MileStone) => void;
   addMilestoneInContext: (newMilestone: MileStone) => void;
@@ -268,14 +268,20 @@ export const ProjectProvider: React.FC<{
   const addTaskInContext = useCallback((newTask: Task) => {
     setAdditionalData(prev => ({
       ...prev,
-      tasks: [...prev.tasks, newTask]
+      tasks: [...prev.tasks, newTask],
+      milestones: prev.milestones.map(milestone => 
+        milestone.id === newTask.milestone_id ? {...milestone, tasks: [...milestone.tasks, newTask]} : milestone
+      )
     }));
   }, []);
 
-  const deleteTaskInContext = useCallback((taskId: number) => {
+  const deleteTaskInContext = useCallback((milestone_id: number, task_id: number) => {
     setAdditionalData(prev => ({
       ...prev,
-      tasks: prev.tasks.filter(task => task.id !== taskId)
+      tasks: prev.tasks.filter(task => task.id !== task_id),
+      milestones: prev.milestones.map(milestone => 
+        milestone.id === milestone_id ? {...milestone, tasks: [...milestone.tasks.filter(task => task.id !== task_id)]} : milestone
+      )
     }));
   }, []);
 
