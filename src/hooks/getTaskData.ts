@@ -28,9 +28,9 @@ export const createTask = async (task: TaskCreateFormData) => {
   }
 }
 
-export const deleteTask = async (taskId: number) => {
+export const deleteTask = async (project_id: string, task_id: number) => {
   try {
-    const res = await server.delete(`/api/v1/projects/${taskId}`, {
+    const res = await server.delete(`/api/v1/projects/${project_id}/tasks/${task_id}`, {
     });
     if (res.status === 204) {
       return res.data;

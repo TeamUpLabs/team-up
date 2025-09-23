@@ -63,7 +63,7 @@ interface TaskModalProps {
 }
 
 export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
-  const { project, additional_data, updateTaskInContext } = useProject();
+  const { project, additional_data, updateTaskInContext, deleteTaskInContext } = useProject();
   const user = useAuthStore.getState().user;
   const router = useRouter();
   const params = useParams();
@@ -242,9 +242,10 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
   const handleDelete = () => {
     useAuthStore.getState().setConfirm("작업을 삭제하시겠습니까?", async () => {
       try {
-        await deleteTask(task.id);
+        await deleteTask(project?.id || "", task.id);
         useAuthStore.getState().setAlert("작업 삭제에 성공했습니다.", "success");
         useAuthStore.getState().clearConfirm();
+        deleteTaskInContext(task.id);
         setTimeout(() => {
           onClose();
         }, 1000);
