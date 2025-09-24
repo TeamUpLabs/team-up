@@ -301,7 +301,7 @@ const ExtraInfoPage = () => {
       ...partialUser,
     });
     if (step - 2 === 5) {
-      const res = await server.post(`/users/oauth`, {
+      const res = await server.post(`/api/v1/user/oauth/additional-info`, {
         ...formData,
         ...partialUser,
       });
