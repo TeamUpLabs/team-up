@@ -208,15 +208,15 @@ export const blankProjectFormData: ProjectFormData = {
   updated_at: "",
 }
 
-// export interface ProjectUpdateData {
-//   title: string;
-//   description: string;
-//   status: string;
-//   visibility: string;
-//   team_size: number;
-//   start_date: string;
-//   end_date: string;
-//   tags: string[];
-//   project_type: string;
-//   location: string;
-// }
+export interface ProjectUpdateData {
+  title: string;
+  description: string;
+  status: string;
+  visibility: string;
+  team_size: number;
+  start_date: string;
+  end_date: string;
+  tags: string[];
+  project_type: string;
+  location: string;
+}

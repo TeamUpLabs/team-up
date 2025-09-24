@@ -3,124 +3,6 @@ import { getCurrentKoreanTime } from "@/utils/dateUtils";
 import { useAuthStore } from "@/auth/authStore";
 import { ProjectFormData, ProjectUpdateData } from "@/types/Project";
 
-export const getAllProjects = async () => {
-  try {
-    const res = await server.get(`/projects`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (res.status === 200) {
-      return res.data;
-    } else {
-      throw new Error("Failed to fetch project data");
-    }
-  } catch (error) {
-    console.error("Error fetching project data:", error);
-    throw error;
-  }
-};
-
-export const getProjectsByUser = async () => {
-  try {
-    const token = useAuthStore.getState().token;
-    const user = useAuthStore.getState().user;
-    const res = await server.get(`/users/${user?.id}/projects`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-    });
-
-    if (res.status === 200) {
-      return res.data;
-    } else {
-      throw new Error("Failed to fetch project data");
-    }
-  } catch (error) {
-    console.error("Error fetching project data:", error);
-    throw error;
-  }
-};
-
-export const getProjectsByUserId = async (user_id: number) => {
-  try {
-    const res = await server.get(`/users/${user_id}/projects`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (res.status === 200) {
-      return res.data;
-    } else {
-      throw new Error("Failed to fetch project data");
-    }
-  } catch (error) {
-    console.error("Error fetching project data:", error);
-    throw error;
-  }
-}
-
-export const getProjectById = async (project_id: string) => {
-  try {
-    const res = await server.get(`/projects/${project_id}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (res.status === 200) {
-      return res.data;
-    } else {
-      throw new Error("Failed to fetch project data");
-    }
-  } catch (error) {
-    console.error("Error fetching project data:", error);
-    throw error;
-  }
-};
-
-
-export const getAllProjectsExceptMyProject = async (member_id: number) => {
-  try {
-    const res = await server.get(`/projects/exclude/${member_id}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (res.status === 200) {
-      return res.data;
-    } else {
-      throw new Error("Failed to fetch project data");
-    }
-  } catch (error) {
-    console.error("Error fetching filtered project data:", error);
-    throw error;
-  }
-};
-
-export const getMemberByProject = async (project_id: string) => {
-  try {
-    const res = await server.get(`/projects/${project_id}/members`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (res.status === 200) {
-      return res.data;
-    } else {
-      throw new Error("Failed to fetch project data");
-    }
-  } catch (error) {
-    console.error("Error fetching filtered project data:", error);
-    throw error;
-  }
-}
-
 export const generateProjectId = async (): Promise<string> => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let result = '';
@@ -130,7 +12,7 @@ export const generateProjectId = async (): Promise<string> => {
     result += characters.charAt(randomIndex);
   }
 
-  const res = await server.get(`/projects/ids`);
+  const res = await server.get(`/api/v1/projects/ids`);
   const data = res.data;
   if (data.includes(result)) {
     return generateProjectId();
@@ -145,7 +27,7 @@ export const createProject = async (formData: ProjectFormData) => {
     const token = useAuthStore.getState().token;
     const projectId = await generateProjectId();
 
-    const res = await server.post('/projects', {
+    const res = await server.post('/api/v1/projects', {
       id: projectId,
       title: formData.title,
       description: formData.description,
@@ -180,7 +62,7 @@ export const createProject = async (formData: ProjectFormData) => {
 
 export const deleteProject = async (project_id: string, token: string) => {
   try {
-    const res = await server.delete(`/projects/${project_id}`, {
+    const res = await server.delete(`/api/v1/projects/${project_id}`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -202,7 +84,7 @@ export const updateProject = async (project_id: string, formData: ProjectUpdateD
   try {
     const token = useAuthStore.getState().token;
 
-    const res = await server.put(`/projects/${project_id}`, {
+    const res = await server.put(`/api/v1/projects/${project_id}`, {
       ...formData,
       team_size: Number(formData.team_size),
     }, {
@@ -225,7 +107,7 @@ export const updateProject = async (project_id: string, formData: ProjectUpdateD
 
 export const updateProjectMemberPermission = async (project_id: string, member_id: number, permission: string) => {
   try {
-    const res = await server.put(`/projects/${project_id}/member/${member_id}?permission=${permission}`, {
+    const res = await server.put(`/api/v1/projects/${project_id}/member/${member_id}?permission=${permission}`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -244,7 +126,7 @@ export const updateProjectMemberPermission = async (project_id: string, member_i
 
 export const allowParticipationRequest = async (request_id: number) => {
   try {
-    const res = await server.put(`/participation-requests/${request_id}`, {
+    const res = await server.put(`/api/v1/participation-requests/${request_id}`, {
       status: "accepted",
       processed_at: getCurrentKoreanTime(),
     }, {
@@ -266,7 +148,7 @@ export const allowParticipationRequest = async (request_id: number) => {
 
 export const rejectParticipationRequest = async (request_id: number) => {
   try {
-    const res = await server.put(`/participation-requests/${request_id}`, {
+    const res = await server.put(`/api/v1/participation-requests/${request_id}`, {
       status: "rejected",
       processed_at: getCurrentKoreanTime(),
       headers: {
@@ -287,7 +169,7 @@ export const rejectParticipationRequest = async (request_id: number) => {
 
 export const kickOutMemberFromProject = async (project_id: string, member_id: number) => {
   try {
-    const res = await server.put(`/projects/${project_id}/member/${member_id}/kick`, {
+    const res = await server.put(`/api/v1/projects/${project_id}/member/${member_id}/kick`, {
       headers: {
         'Content-Type': 'application/json',
       },
