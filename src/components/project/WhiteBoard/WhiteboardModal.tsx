@@ -39,12 +39,8 @@ export default function WhiteboardModal({
   const [isComposing, setIsComposing] = useState(false);
   const [isEditing, setIsEditing] = useState("none");
   const [editorMode, setEditorMode] = useState<"write" | "preview">("preview");
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "submitting" | "success" | "error"
-  >("idle");
-  const [commentSubmitStatus, setCommentSubmitStatus] = useState<
-    "idle" | "submitting" | "success" | "error"
-  >("idle");  
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [commentSubmitStatus, setCommentSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");  
   const { project, updateWhiteBoardInContext, updateWhiteBoardCommentInContext, deleteWhiteBoardInContext } = useProject();
   const [hasUpdatedViews, setHasUpdatedViews] = useState(false);
 
@@ -77,9 +73,7 @@ export default function WhiteboardModal({
   }, [ideaData, hasUpdatedViews, updateWhiteBoardInContext]);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setIdeaData({ ...ideaData, [name]: value });
