@@ -18,13 +18,12 @@ export default function WhiteboardCreateModal({
   isOpen,
   onClose,
 }: WhiteboardCreateModalProps) {
-  const { project } = useProject();
+  const { project, addWhiteBoardInContext } = useProject();
   const user = useAuthStore.getState().user;
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [whiteBoardData, setWhiteBoardData] = useState(blankWhiteBoardCreateFormData);
 
   const handleSubmit = async () => {
-    // Form validation
     if (!whiteBoardData.title.trim()) {
       useAuthStore.getState().setAlert("화이트보드 제목을 입력해주세요.", "error");
       return;
@@ -37,14 +36,14 @@ export default function WhiteboardCreateModal({
 
     try {
       setSubmitStatus('submitting');
-      await createWhiteBoard({
+      const res = await createWhiteBoard(project?.id || "", {
         ...whiteBoardData,
         type: "document",
-        project_id: project?.id || "",
         created_by: user?.id || 0,
         updated_by: user?.id || 0
       });
       setSubmitStatus('success');
+      addWhiteBoardInContext(res);
       useAuthStore.getState().setAlert("화이트보드가 성공적으로 생성되었습니다.", "success");
     } catch (error) {
       console.error(error);
@@ -57,7 +56,6 @@ export default function WhiteboardCreateModal({
         setSubmitStatus('idle');
       }, 1000);
     }
-
   }
   const modalHeader = (
     <div className="flex items-center space-x-3">

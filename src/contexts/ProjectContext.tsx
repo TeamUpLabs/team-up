@@ -7,7 +7,7 @@ import { MileStone } from "@/types/MileStone";
 import { ParticipationRequest } from "@/types/ParticipationRequest";
 import { Channel } from "@/types/Channel";
 import { Schedule } from "@/types/Schedule";
-import { WhiteBoard } from "@/types/WhiteBoard";
+import { WhiteBoard, Comment as WhiteboardComment } from "@/types/WhiteBoard";
 import { server } from "@/auth/server";
 import { useAuthStore } from "@/auth/authStore";
 import { AxiosError } from "axios";
@@ -41,6 +41,12 @@ export type ProjectContextType = {
   addScheduleInContext: (newSchedule: Schedule) => void;
   updateScheduleInContext: (updatedSchedule: Schedule) => void;
   deleteScheduleInContext: (scheduleId: number) => void;
+
+  // WhiteBoard functions
+  addWhiteBoardInContext: (newWhiteBoard: WhiteBoard) => void;
+  updateWhiteBoardInContext: (updatedWhiteBoard: WhiteBoard) => void;
+  updateWhiteBoardCommentInContext: (whiteboard_id: number, updatedComment: WhiteboardComment) => void;
+  deleteWhiteBoardInContext: (whiteboardId: number) => void;
 };
 
 const defaultAdditionalData: AdditionalData = {
@@ -336,6 +342,63 @@ export const ProjectProvider: React.FC<{
     }));
   }, []);
 
+  const updateWhiteBoardInContext = useCallback((updatedWhiteBoard: WhiteBoard) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      whiteboards: prev.whiteboards.map(whiteboard => 
+        whiteboard.id === updatedWhiteBoard.id ? updatedWhiteBoard : whiteboard
+      )
+    }));
+  }, []);
+
+  const updateWhiteBoardCommentInContext = useCallback((whiteboard_id: number, updatedComment: WhiteboardComment) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      whiteboards: prev.whiteboards.map(whiteboard => {
+        if (whiteboard.id === whiteboard_id) {
+          const commentExists = whiteboard.reactions.comments.comments.some(
+            comment => comment.id === updatedComment.id
+          );
+          
+          let updatedComments;
+          if (commentExists) {
+            updatedComments = whiteboard.reactions.comments.comments.map(comment => 
+              comment.id === updatedComment.id ? updatedComment : comment
+            );
+          } else {
+            updatedComments = [...whiteboard.reactions.comments.comments, updatedComment];
+          }
+          
+          return {
+            ...whiteboard,
+            reactions: {
+              ...whiteboard.reactions,
+              comments: {
+                count: updatedComments.length,
+                comments: updatedComments
+              }
+            }
+          };
+        }
+        return whiteboard;
+      })
+    }));
+  }, []);
+
+  const addWhiteBoardInContext = useCallback((newWhiteBoard: WhiteBoard) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      whiteboards: [...prev.whiteboards, newWhiteBoard]
+    }));
+  }, []);
+
+  const deleteWhiteBoardInContext = useCallback((whiteboardId: number) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      whiteboards: prev.whiteboards.filter(whiteboard => whiteboard.id !== whiteboardId)
+    }));
+  }, []);
+
   const value = useMemo(() => ({
     project,
     additional_data: additionalData,
@@ -353,6 +416,10 @@ export const ProjectProvider: React.FC<{
     updateScheduleInContext,
     addScheduleInContext,
     deleteScheduleInContext,
+    updateWhiteBoardInContext,
+    updateWhiteBoardCommentInContext,
+    addWhiteBoardInContext,
+    deleteWhiteBoardInContext,
   }) as ProjectContextType, [
     project,
     additionalData,
@@ -371,6 +438,10 @@ export const ProjectProvider: React.FC<{
     updateScheduleInContext,
     addScheduleInContext,
     deleteScheduleInContext,
+    updateWhiteBoardInContext,
+    updateWhiteBoardCommentInContext,
+    addWhiteBoardInContext,
+    deleteWhiteBoardInContext,
   ]);
 
   // SSE connection setup

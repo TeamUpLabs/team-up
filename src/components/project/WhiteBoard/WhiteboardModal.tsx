@@ -1,7 +1,6 @@
 "use client";
 
 import ModalTemplete from "@/components/ModalTemplete";
-import { blankUserBrief } from "@/types/brief/Userbrief";
 import { WhiteBoard, CommentCreateFormData } from "@/types/WhiteBoard";
 import { useState, useCallback, useEffect } from "react";
 import { Lightbulb, Eye, Heart, MessageCircle, Download } from "lucide-react";
@@ -22,7 +21,6 @@ import { useProject } from "@/contexts/ProjectContext";
 import { addComment, deleteComment, updateIdea, likeIdea, updateViews, deleteWhiteBoard } from "@/hooks/getWhiteBoardData";
 import DeleteBtn from "@/components/ui/button/DeleteBtn";
 import { useAuthStore } from "@/auth/authStore";
-import { blankUser } from "@/types/user/User";
 
 interface WhiteboardModalProps {
   isOpen: boolean;
@@ -47,24 +45,36 @@ export default function WhiteboardModal({
   const [commentSubmitStatus, setCommentSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");  
-  const { project } = useProject();
+  const { project, updateWhiteBoardInContext, updateWhiteBoardCommentInContext } = useProject();
+  const [hasUpdatedViews, setHasUpdatedViews] = useState(false);
 
-  // Update views when modal opens
   useEffect(() => {
-    if (isOpen && ideaData.id) {
-      updateViews(ideaData.id)
-        .then(() => {
-          // Update local state to reflect the new view count
+    if (isOpen && ideaData.id && project?.id && !hasUpdatedViews) {
+      const updateViewCount = async () => {
+        try {
+          await updateViews(project.id, ideaData.id);
           setIdeaData(prev => ({
             ...prev,
-            views: prev.views + 1
+            reactions: {
+              ...prev.reactions,
+              views: prev.reactions.views + 1
+            }
           }));
-        })
-        .catch(error => {
+          setHasUpdatedViews(true);
+        } catch (error) {
           console.error("Failed to update views:", error);
-        });
+        }
+      };
+      
+      updateViewCount();
     }
-  }, [isOpen, ideaData.id]);
+  }, [isOpen, ideaData.id, project?.id, hasUpdatedViews]);
+
+  useEffect(() => {
+    if (hasUpdatedViews) {
+      updateWhiteBoardInContext(ideaData);
+    }
+  }, [ideaData, hasUpdatedViews, updateWhiteBoardInContext]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -111,9 +121,7 @@ export default function WhiteboardModal({
   const handleCommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    const commentInput = form.elements.namedItem(
-      "comment"
-    ) as HTMLTextAreaElement;
+    const commentInput = form.elements.namedItem("comment") as HTMLTextAreaElement;
     const commentContent = commentInput.value.trim();
 
     if (commentContent === "") {
@@ -123,33 +131,49 @@ export default function WhiteboardModal({
 
     const newComment: CommentCreateFormData = {
       content: commentContent,
-      creator: user ? user : blankUser,
+      created_by: user?.id || 0,
     };
 
     setCommentSubmitStatus("submitting");
+    
+    if (!project?.id) {
+      useAuthStore.getState().setAlert("프로젝트 ID가 없습니다.", "error");
+      return;
+    }
 
     try {
       const data = await addComment(
+        project?.id,
         ideaData.id,
         newComment
       );
       setCommentSubmitStatus("success");
+      updateWhiteBoardCommentInContext(ideaData.id, data);
+
+      setIdeaData((prev) => ({
+        ...prev,
+        reactions: {
+          ...prev.reactions,
+          comments: {
+            ...prev.reactions.comments,
+            comments: [
+              ...(prev.reactions.comments?.comments || []),
+              {
+                id: data.id,
+                content: data.content,
+                creator: data.creator,
+                created_at: data.created_at,
+                updated_at: data.updated_at,
+              },
+            ],
+            count: (prev.reactions.comments?.count || 0) + 1,
+          },
+        },
+      }));
+
       useAuthStore.getState().setAlert("댓글이 성공적으로 추가되었습니다.", "success");
 
       commentInput.value = "";
-      setIdeaData((prev) => ({
-        ...prev,
-        comments: [
-          ...prev.comments,
-          {
-            id: data.id,
-            content: data.content,
-            creator: data.creator,
-            created_at: data.created_at,
-            updated_at: data.updated_at,
-          },
-        ],
-      }));
     } catch (error) {
       console.error("Error adding comment:", error);
       setCommentSubmitStatus("error");
@@ -161,15 +185,27 @@ export default function WhiteboardModal({
 
   const handleDeleteComment = async (commentId: number) => {
     try {
+      if (!project?.id) {
+        useAuthStore.getState().setAlert("프로젝트 ID가 없습니다.", "error");
+        return;
+      }
       useAuthStore.getState().setConfirm("댓글을 삭제하시겠습니까?", async () => {
           try {
-            await deleteComment(ideaData.id, commentId);
+            const data = await deleteComment(project?.id, ideaData.id, commentId);
+            updateWhiteBoardInContext(data);
             useAuthStore.getState().setAlert("댓글이 성공적으로 삭제되었습니다.", "success");
             setIdeaData((prev) => ({
               ...prev,
-              comments: prev.comments.filter(
-                (comment) => comment.id !== commentId
-              ),
+              reactions: {
+                ...prev.reactions,
+                comments: {
+                  ...prev.reactions.comments,
+                  count: prev.reactions.comments.count - 1,
+                  comments: prev.reactions.comments.comments.filter(
+                    (comment) => comment.id !== commentId
+                  ),
+                },
+              },
             }));
           } catch (error) {
             console.error("Error deleting comment:", error);
@@ -184,7 +220,12 @@ export default function WhiteboardModal({
 
   const handleUpdateIdea = async () => {
     try {
-      await updateIdea(
+      if (!project?.id) {
+        useAuthStore.getState().setAlert("프로젝트 ID가 없습니다.", "error");
+        return;
+      }
+      const data = await updateIdea(
+        project?.id,
         ideaData.id,
         {
           title: ideaData.title,
@@ -194,6 +235,7 @@ export default function WhiteboardModal({
         }
       );
       setSubmitStatus("success");
+      updateWhiteBoardInContext(data);
       useAuthStore.getState().setAlert("아이디어가 성공적으로 수정되었습니다.", "success");
       onClose();
     } catch (error) {
@@ -210,13 +252,22 @@ export default function WhiteboardModal({
 
   const handleLike = async () => {
     try {
-      const data = await likeIdea(ideaData.id);
+      if (!project?.id) {
+        useAuthStore.getState().setAlert("프로젝트 ID가 없습니다.", "error");
+        return;
+      }
+      const data = await likeIdea(project?.id, ideaData.id);
       setIdeaData((prev) => ({
         ...prev,
-        likes: data.likes,
-        liked_by_users: data.liked_by_users,
+        reactions: {
+          ...prev.reactions,
+          likes: {
+            count: data.reactions.likes.count,
+            users: data.reactions.likes.users,
+          },
+        },
       }));
-      console.log(data.liked_by_users);
+      updateWhiteBoardInContext(data);
     } catch (error) {
       console.error("Error liking idea:", error);
       useAuthStore.getState().setAlert("아이디어 좋아요에 실패했습니다.", "error");
@@ -225,9 +276,13 @@ export default function WhiteboardModal({
 
   const handleDeleteIdea = async () => {
     try {
+      if (!project?.id) {
+        useAuthStore.getState().setAlert("프로젝트 ID가 없습니다.", "error");
+        return;
+      }
       useAuthStore.getState().setConfirm("아이디어를 삭제하시겠습니까?", async () => {
         try {
-          await deleteWhiteBoard(ideaData.id);
+          await deleteWhiteBoard(project?.id, ideaData.id);
           useAuthStore.getState().setAlert("아이디어가 성공적으로 삭제되었습니다.", "success");
           onClose();
         } catch (error) {
@@ -290,16 +345,16 @@ export default function WhiteboardModal({
         )}
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-1 text-text-secondary text-xs">
-            <Heart onClick={handleLike} className={`w-4 h-4 hover:scale-115 transition-transform duration-200 cursor-pointer hover:text-red-500`} />
-            <span>{0}</span>
+            <Heart onClick={handleLike} className={`w-4 h-4 hover:scale-115 transition-transform duration-200 cursor-pointer hover:text-red-500 ${ideaData.reactions.likes.users.some(user => user.id === user?.id) ? "text-red-500 fill-red-500" : ""}`} />
+            <span>{ideaData.reactions.likes.count || 0}</span>
           </div>
           <div className="flex items-center space-x-1 text-text-secondary text-xs">
             <MessageCircle className="w-3.5 h-3.5" />
-            <span>{0}</span>
+            <span>{ideaData.reactions.comments.count || 0}</span>
           </div>
           <div className="flex items-center space-x-1 text-text-secondary text-xs">
             <Eye className="w-4 h-4" />
-            <span>{0}</span>
+            <span>{ideaData.reactions.views || 0}</span>
           </div>
         </div>
       </div>
@@ -359,7 +414,8 @@ export default function WhiteboardModal({
                 ]}
                 value={ideaData.type}
                 onChange={(value) => handleSelectChange("type", value)}
-                className="!px-2 !py-0.5 !rounded-full !text-sm"
+                className="!rounded-full !text-sm"
+                buttonClassName="!px-2 !py-0.5"
                 likeBadge={true}
                 autoWidth
                 color="violet"
@@ -589,12 +645,12 @@ export default function WhiteboardModal({
       </Accordion>
 
       <Accordion
-        title={`댓글 (${ideaData.comments && ideaData.comments.length || 0})`}
+        title={`댓글 (${ideaData.reactions.comments.count})`}
         icon={MessageDots}
       >
         <div className="flex flex-col gap-2">
-          {ideaData?.comments && ideaData?.comments.length > 0 ? (
-            ideaData?.comments?.map((comment, index) => (
+          {ideaData?.reactions?.comments?.comments && ideaData?.reactions?.comments?.comments.length > 0 ? (
+            ideaData?.reactions?.comments?.comments?.map((comment, index) => (
               <div
                 key={index}
                 className="bg-component-secondary-background p-4 rounded-md border border-component-border hover:border-component-border-hover transition-all duration-200"

@@ -2,9 +2,9 @@ import { server } from "@/auth/server";
 import { WhiteBoardCreateFormData, CommentCreateFormData, WhiteBoardUpdateFormData } from "@/types/WhiteBoard";
 import { useAuthStore } from "@/auth/authStore";
 
-export const createWhiteBoard = async (whiteBoardData: WhiteBoardCreateFormData) => {
+export const createWhiteBoard = async (project_id: string, whiteBoardData: WhiteBoardCreateFormData) => {
     try {
-        const res = await server.post("/whiteboards", whiteBoardData, {
+        const res = await server.post(`/api/v1/projects/${project_id}/whiteboards`, whiteBoardData, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -16,9 +16,9 @@ export const createWhiteBoard = async (whiteBoardData: WhiteBoardCreateFormData)
     }
 };
 
-export const addComment = async (whiteboard_id: number, comment: CommentCreateFormData) => {
+export const addComment = async (project_id: string, whiteboard_id: number, comment: CommentCreateFormData) => {
     try {
-        const res = await server.post(`/whiteboards/${whiteboard_id}/comments`, comment, {
+        const res = await server.post(`/api/v1/projects/${project_id}/whiteboards/${whiteboard_id}/comments`, comment, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -30,9 +30,9 @@ export const addComment = async (whiteboard_id: number, comment: CommentCreateFo
     }
 };
 
-export const deleteComment = async (whiteboard_id: number, comment_id: number) => {
+export const deleteComment = async (project_id: string, whiteboard_id: number, comment_id: number) => {
     try {
-        const res = await server.delete(`/whiteboards/${whiteboard_id}/comments/${comment_id}`, {
+        const res = await server.delete(`/api/v1/projects/${project_id}/whiteboards/${whiteboard_id}/comments/${comment_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -44,13 +44,13 @@ export const deleteComment = async (whiteboard_id: number, comment_id: number) =
     }
 };
 
-export const updateIdea = async (whiteboard_id: number, idea: WhiteBoardUpdateFormData) => {
+export const updateIdea = async (project_id: string, whiteboard_id: number, idea: WhiteBoardUpdateFormData) => {
     try {
         const token = useAuthStore.getState().token;
         if (!token) {
             throw new Error("No authentication token found");
         }
-        const res = await server.put(`/whiteboards/${whiteboard_id}`, {
+        const res = await server.put(`/api/v1/projects/${project_id}/whiteboards/${whiteboard_id}`, {
           title: idea.title,
           content: idea.content,
           tag: idea.tag,
@@ -68,14 +68,14 @@ export const updateIdea = async (whiteboard_id: number, idea: WhiteBoardUpdateFo
     }
 };
 
-export const likeIdea = async (whiteboard_id: number) => {
+export const likeIdea = async (project_id: string, whiteboard_id: number) => {
     try {
         const token = useAuthStore.getState().token;
         if (!token) {
             throw new Error("No authentication token found");
         }
         
-        const res = await server.put(`/whiteboards/${whiteboard_id}/like`, 
+        const res = await server.put(`/api/v1/projects/${project_id}/whiteboards/${whiteboard_id}/like`, 
             {},
             {
                 headers: {
@@ -96,9 +96,9 @@ export const likeIdea = async (whiteboard_id: number) => {
     }
 };
 
-export const updateViews = async (whiteboard_id: number) => {
+export const updateViews = async (project_id: string, whiteboard_id: number) => {
     try {
-        const res = await server.put(`/whiteboards/${whiteboard_id}/view`, {
+        const res = await server.put(`/api/v1/projects/${project_id}/whiteboards/${whiteboard_id}/view`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -111,9 +111,9 @@ export const updateViews = async (whiteboard_id: number) => {
 };
     
 
-export const deleteWhiteBoard = async (whiteboard_id: number) => {
+export const deleteWhiteBoard = async (project_id: string, whiteboard_id: number) => {
     try {
-        const res = await server.delete(`/whiteboards/${whiteboard_id}`, {
+        const res = await server.delete(`/api/v1/projects/${project_id}/whiteboards/${whiteboard_id}`, {
             headers: {
                 "Content-Type": "application/json",
             },

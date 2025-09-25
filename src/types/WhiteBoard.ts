@@ -1,5 +1,4 @@
 import { UserBrief, blankUserBrief } from "@/types/brief/Userbrief";
-import { User } from "@/types/user/User";
 
 export interface WhiteBoardCreateFormData {
   type: string;
@@ -47,7 +46,7 @@ export interface Comment {
 
 export interface CommentCreateFormData {
   content: string;
-  creator: User;
+  created_by: number;
 }
 
 export interface WhiteBoardDocument {
@@ -68,6 +67,18 @@ export interface WhiteBoard {
   updated_at: string;
   creator: UserBrief;
   updater: UserBrief;
+
+  reactions: {
+      "likes": {
+        count: number;
+        users: UserBrief[];
+      },
+      "views": number,
+      "comments": {
+        count: number;
+        comments: Comment[];
+      }
+    }
 }
 
 export const blankWhiteBoard: WhiteBoard = {
@@ -80,6 +91,18 @@ export const blankWhiteBoard: WhiteBoard = {
   updated_at: "",
   creator: blankUserBrief,
   updater: blankUserBrief,
+
+  reactions: {
+    likes: {
+      count: 0,
+      users: [],
+    },
+    views: 0,
+    comments: {
+      count: 0,
+      comments: [],
+    }
+  }
 };
 
 export interface WhiteBoardUpdateFormData {
