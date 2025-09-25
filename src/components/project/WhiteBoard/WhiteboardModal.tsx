@@ -45,7 +45,7 @@ export default function WhiteboardModal({
   const [commentSubmitStatus, setCommentSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");  
-  const { project, updateWhiteBoardInContext, updateWhiteBoardCommentInContext } = useProject();
+  const { project, updateWhiteBoardInContext, updateWhiteBoardCommentInContext, deleteWhiteBoardInContext } = useProject();
   const [hasUpdatedViews, setHasUpdatedViews] = useState(false);
 
   useEffect(() => {
@@ -283,6 +283,7 @@ export default function WhiteboardModal({
       useAuthStore.getState().setConfirm("아이디어를 삭제하시겠습니까?", async () => {
         try {
           await deleteWhiteBoard(project?.id, ideaData.id);
+          deleteWhiteBoardInContext(ideaData.id);
           useAuthStore.getState().setAlert("아이디어가 성공적으로 삭제되었습니다.", "success");
           onClose();
         } catch (error) {
