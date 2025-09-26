@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Chat, ChatCreateForm } from '@/types/Chat';
 import { useAuthStore } from '@/auth/authStore';
+import { server } from '@/auth/server';
 
 const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -50,11 +51,12 @@ export const useWebSocket = (projectId: string, channelId: string) => {
         isConnectingRef.current = false;
         return;
       }
-
+      
+      const token = useAuthStore.getState().token;
       const socketProtocol = SERVER_URL?.startsWith('https://') ? 'wss' : 'ws';
 
       console.log(`채널 ${channelId}에 웹소켓 연결 시도...`);
-      const ws = new WebSocket(`${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/api/chats/ws?project_id=${projectId}&channel_id=${channelId}&user_id=${user.id}`);
+      const ws = new WebSocket(`${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/api/v1/projects/${projectId}/chats/ws?channel_id=${channelId}&user_id=${user.id}&access_token=${token}`);
       
       // 이벤트 리스너 등록 전에 소켓 참조 저장
       socketRef.current = ws;
@@ -197,10 +199,8 @@ export const useWebSocket = (projectId: string, channelId: string) => {
     const fetchChatHistory = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${SERVER_URL}/api/chats/channel/${channelId}`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
-        const history = await response.json() as Chat[];
+        const response = await server.get(`/api/v1/projects/${projectId}/channels/${channelId}/chats`);
+        const history = response.data as Chat[];
         
         // 중복 제거 및 메시지 ID 캐싱
         messageIdsRef.current.clear();

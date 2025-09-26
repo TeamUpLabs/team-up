@@ -1,7 +1,6 @@
 import { Channel } from "@/types/Channel";
-import { UserBrief } from "@/types/user/User";
+import { UserBrief, blankUserBrief } from "@/types/brief/Userbrief";
 import { blankChannel } from "@/types/Channel";
-import { blankUser } from "@/types/user/User";
 
 export interface ChatCreateForm {
   project_id: string;
@@ -35,5 +34,5 @@ export const blankChat: Chat = {
   message: "",
   timestamp: "",
   channel: blankChannel,
-  user: blankUser,
+  user: blankUserBrief,
 };
