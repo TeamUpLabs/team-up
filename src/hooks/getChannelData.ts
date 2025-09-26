@@ -12,7 +12,7 @@ const generateId = (length = 8): string => {
 
 export const createChannel = async (formData: ChannelCreateForm) => {
   try {
-    const res = await server.post(`/channels`, {
+    const res = await server.post(`/api/v1/projects/${formData.project_id}/channels`, {
       ...formData,
       channel_id: generateId(),
     });
@@ -29,7 +29,7 @@ export const createChannel = async (formData: ChannelCreateForm) => {
 
 export const getChannel = async (project_id: string, channel_id: string) => {
   try {
-    const res = await server.get(`/project/${project_id}/channel/${channel_id}`);
+    const res = await server.get(`/api/v1/projects/${project_id}/channels/${channel_id}`);
     if (res.status === 200) {
       return res.data;
     } else {
@@ -41,9 +41,9 @@ export const getChannel = async (project_id: string, channel_id: string) => {
   }
 };
 
-export const updateChannel = async (channel_id: string, channelData: ChannelUpdateForm) => {
+export const updateChannel = async (project_id: string, channel_id: string, channelData: ChannelUpdateForm) => {
   try {
-    const res = await server.put(`/channels/${channel_id}`, channelData);
+    const res = await server.put(`/api/v1/projects/${project_id}/channels/${channel_id}`, channelData);
     if (res.status === 200) {
       return res.data;
     } else {
@@ -55,9 +55,9 @@ export const updateChannel = async (channel_id: string, channelData: ChannelUpda
   }
 };
 
-export const deleteChannel = async (channel_id: string) => {
+export const deleteChannel = async (project_id: string, channel_id: string) => {
   try {
-    const res = await server.delete(`/channels/${channel_id}`);
+    const res = await server.delete(`/api/v1/projects/${project_id}/channels/${channel_id}`);
     if (res.status === 200) {
       return res.data;
     } else {

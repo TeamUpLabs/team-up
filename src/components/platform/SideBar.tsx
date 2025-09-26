@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useState } from "react";
 import React from "react";
 import { ChevronDown } from "flowbite-react-icons/outline";
-import { ProjectContext, type ProjectContextType } from "@/contexts/ProjectContext";
+import { useProject } from "@/contexts/ProjectContext";
 import CreateChannelButton from "@/components/project/chat/ChannelCreateBtn";
 import { useAuthStore } from "@/auth/authStore";
 import { ParticipationRequest } from "@/types/ParticipationRequest";
@@ -32,16 +32,7 @@ export default function SideBar({
   navItems,
 }: SidebarProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const projectContext = React.useContext<ProjectContextType | undefined>(ProjectContext);
-  const project = projectContext?.project || null;
-  const additional_data = projectContext?.additional_data || {
-    tasks: [],
-    milestones: [],
-    participation_requests: [],
-    channels: [],
-    schedules: [],
-    whiteboards: []
-  };
+  const { project, additional_data, isLoading } = useProject();
   const user = useAuthStore((state) => state.user);
 
   return (
@@ -120,9 +111,38 @@ export default function SideBar({
                                 <div className="mt-2">
                                   <CreateChannelButton />
                                   <div className="mt-2 ml-8 space-y-1">
-                                    {additional_data.channels
-                                      ?.filter((channel) => channel.members.map((member) => member.id).includes(user?.id || 0))
-                                      .map((channel) => (
+                                    {(() => {
+                                      if (isLoading) {
+                                        return (
+                                          <div className="text-xs text-text-secondary px-2 py-1">
+                                            채널 불러오는 중...
+                                          </div>
+                                        );
+                                      }
+
+                                      // 사용자 정보가 아직 준비되지 않은 경우 안내
+                                      if (!user?.id) {
+                                        return (
+                                          <div className="text-xs text-text-secondary px-2 py-1">
+                                            사용자 정보를 불러오는 중입니다...
+                                          </div>
+                                        );
+                                      }
+
+                                      const channels = additional_data.channels || [];
+                                      const myChannels = channels.filter((channel) =>
+                                        channel.members.map((member) => member.user.id).includes(user.id)
+                                      );
+
+                                      if (myChannels.length === 0) {
+                                        return (
+                                          <div className="text-xs text-text-secondary px-2 py-1">
+                                            가입된 채널이 없습니다. 채널을 생성하거나 초대를 받아보세요.
+                                          </div>
+                                        );
+                                      }
+
+                                      return myChannels.map((channel) => (
                                         <Link
                                           key={channel.channel_id}
                                           href={`/project/${titleHref.split('/').pop()}/chat?project_id=${project?.id}&channel=${channel.channel_id}`}
@@ -130,7 +150,8 @@ export default function SideBar({
                                         >
                                           # {channel.name}
                                         </Link>
-                                      ))}
+                                      ));
+                                    })()}
                                   </div>
                                 </div>
                               )}

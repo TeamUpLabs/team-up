@@ -1,4 +1,4 @@
-import { UserBrief } from "@/types/user/User";
+import { UserBrief } from "@/types/brief/Userbrief";
 
 export interface ChannelCreateForm {
   name: string;
@@ -49,7 +49,20 @@ export interface Channel {
   created_by: number;
   updated_by: number;
 
-  members: UserBrief[];
+  member_count: number;
+  members: {
+    user: UserBrief;
+    role: string;
+    joined_at: string;
+  }[];
+
+  chats: {
+    self: {
+      href: string;
+      method: string;
+      title: string;
+    }
+  }
 }
 
 export const blankChannel: Channel = {
@@ -61,7 +74,15 @@ export const blankChannel: Channel = {
   created_at: "",
   updated_at: "",
   created_by: 0,
-  updated_by: 0,
+  updated_by: 0,  
+  member_count: 0,
   members: [],
+  chats: {
+    self: {
+      href: "",
+      method: "",
+      title: ""
+    }
+  }
 };
   
