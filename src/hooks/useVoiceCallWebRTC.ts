@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useProject } from '@/contexts/ProjectContext';
+import { useAuthStore } from '@/auth/authStore';
 
 interface UseVoiceCallWebRTCProps {
   channel_id: string;
@@ -101,8 +102,9 @@ const useVoiceCallWebRTC = ({ channel_id, user_id, project_id }: UseVoiceCallWeb
   }, [peers]);
 
   const connectSignalingServer = () => {
+    const token = useAuthStore.getState().token;
     const socketProtocol = SERVER_URL?.startsWith('https://') ? 'wss' : 'ws';
-    const serverUrl = `${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/api/voice-call/ws?project_id=${project_id}&channel_id=${channel_id}&user_id=${user_id}`;
+    const serverUrl = `${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/api/v1/projects/${project_id}/voice-calls/ws?channel_id=${channel_id}&user_id=${user_id}&access_token=${token}`;
     
     console.log(`Connecting to signaling server for voice call at ${serverUrl}`);
     socketRef.current = new WebSocket(serverUrl);
