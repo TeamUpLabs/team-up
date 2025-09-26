@@ -23,7 +23,7 @@ import Badge from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { Search } from "lucide-react";
 import { convertRoleName } from "@/utils/ConvertRoleName";
-import { AdditionalData } from "@/contexts/ProjectContext";
+import { AdditionalData, useProject } from "@/contexts/ProjectContext";
 import { useUser } from "@/contexts/UserContext";
 
 interface TeamSettingTabProps {
@@ -38,6 +38,7 @@ export default function TeamSettingTab({ project, additional_data }: TeamSetting
   const [selectedMember, setSelectedMember] = useState<ProjectMember | null>(null);
   const [isCurrentUserLeaderOrManager, setIsCurrentUserLeaderOrManager] = useState(false);
   const { user } = useUser();
+  const { refetchProject } = useProject();
 
   // Check if current user is leader or manager
   useEffect(() => {
@@ -120,6 +121,7 @@ export default function TeamSettingTab({ project, additional_data }: TeamSetting
           await allowParticipationRequest(project.id, request.id);
           useAuthStore.getState().setAlert(`${request.user.name}님의 참여 요청이 승인되었습니다.`, "success");
           useAuthStore.getState().clearConfirm();
+          refetchProject();
         });
     } catch (error) {
       useAuthStore.getState().setAlert("참여 요청 승인에 실패했습니다.", "error");
@@ -137,6 +139,7 @@ export default function TeamSettingTab({ project, additional_data }: TeamSetting
           await rejectParticipationRequest(project.id, request.id);
           useAuthStore.getState().setAlert(`${request.user.name}님의 참여 요청이 거절되었습니다.`, "info");
           useAuthStore.getState().clearConfirm();
+          refetchProject();
         });
     } catch (error) {
       useAuthStore.getState().setAlert("참여 요청 거절에 실패했습니다.", "error");
