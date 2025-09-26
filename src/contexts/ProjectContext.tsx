@@ -130,7 +130,7 @@ const useProjectFetcher = (projectId: string, token: string | null) => {
   };
 };
 
-const useAdditionalDataFetcher = (project: Project | null, token: string | null, setAdditionalData: React.Dispatch<React.SetStateAction<AdditionalData>>) => {
+export const useAdditionalDataFetcher = (project: Project | null, token: string | null, setAdditionalData: React.Dispatch<React.SetStateAction<AdditionalData>>) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 

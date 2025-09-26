@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useState } from "react";
 import React from "react";
 import { ChevronDown } from "flowbite-react-icons/outline";
-import { useProject } from "@/contexts/ProjectContext";
+import { ProjectContext, type ProjectContextType } from "@/contexts/ProjectContext";
 import CreateChannelButton from "@/components/project/chat/ChannelCreateBtn";
 import { useAuthStore } from "@/auth/authStore";
 import { ParticipationRequest } from "@/types/ParticipationRequest";
@@ -32,7 +32,17 @@ export default function SideBar({
   navItems,
 }: SidebarProps) {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const { project, additional_data, isLoading } = useProject();
+  const projectContext = React.useContext<ProjectContextType | undefined>(ProjectContext);
+  const project = projectContext?.project || null;
+  const additional_data = projectContext?.additional_data || {
+    tasks: [],
+    milestones: [],
+    participation_requests: [],
+    channels: [],
+    schedules: [],
+    whiteboards: []
+  };
+  const isLoading = projectContext?.isLoading ?? false;
   const user = useAuthStore((state) => state.user);
 
   return (
@@ -145,7 +155,7 @@ export default function SideBar({
                                       return myChannels.map((channel) => (
                                         <Link
                                           key={channel.channel_id}
-                                          href={`/project/${titleHref.split('/').pop()}/chat?project_id=${project?.id}&channel=${channel.channel_id}`}
+                                          href={`/project/${titleHref.split('/').pop()}/chat?channel=${channel.channel_id}`}
                                           className="block text-sm text-text-secondary hover:text-text-primary px-2 py-1 rounded hover:bg-component-hover-background"
                                         >
                                           # {channel.name}

@@ -4,13 +4,16 @@ import { useAuthStore } from "@/auth/authStore";
 import { sendParticipationRequest, cancelParticipationRequest } from "@/hooks/getMemberData";
 import Badge from "@/components/ui/Badge";
 import { Clock, Users } from "flowbite-react-icons/outline";
+import { AdditionalData } from "@/contexts/ProjectContext";
 
 interface ProjectCardProps {
   project: Project;
+  additional_data: AdditionalData;
   isExplore?: boolean;
 }
 
-export default function ProjectCard({ project, isExplore }: ProjectCardProps) {  const user = useAuthStore((state) => state.user);
+export default function ProjectCard({ project, additional_data, isExplore }: ProjectCardProps) {  
+  const user = useAuthStore((state) => state.user);
     
   const statusColor = project.status === "planning" ? "indigo" : project.status === "in_progress" ? "blue" : project.status === "completed" ? "green" : "gray";
   const statusLabel = project.status === "planning" ? "모집중" : project.status === "in_progress" ? "진행중" : project.status === "completed" ? "완료" : "보류";
@@ -61,7 +64,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) { 
       </div>
       <div className="flex justify-end">
         {isExplore ? (
-          project.participation_requests && project.participation_requests.some(request => request.sender_id === user?.id && request.status === "pending") ? (
+          additional_data?.participation_requests && additional_data.participation_requests.some(request => request.user.id === user?.id && request.status === "pending") ? (
             <button
               onClick={() => {
                 if (!user) {
@@ -70,7 +73,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) { 
                 }
                 useAuthStore.getState().setConfirm("참여 요청을 취소하시겠습니까?", async () => {
                   try {
-                    await cancelParticipationRequest(project.participation_requests.find(request => request.sender_id === user?.id)?.id || 0);
+                    await cancelParticipationRequest(project.id, additional_data.participation_requests.find(request => request.user.id === user?.id)?.id || 0);
                     useAuthStore.getState().setAlert("참여 요청이 취소되었습니다.", "success");
                     useAuthStore.getState().clearConfirm();
                     window.location.reload();
@@ -95,7 +98,7 @@ export default function ProjectCard({ project, isExplore }: ProjectCardProps) { 
                 }
                 useAuthStore.getState().setConfirm("참여 요청하시겠습니까?", async () => {
                   try {
-                    await sendParticipationRequest(project.id, user?.id || 0, project.members.find(member => member.is_leader || member.is_manager)?.user.id || 0);
+                    await sendParticipationRequest(project.id, user?.id || 0);
                     useAuthStore.getState().setAlert("참여 요청이 완료되었습니다.", "success");
                     useAuthStore.getState().clearConfirm();
                     window.location.reload();

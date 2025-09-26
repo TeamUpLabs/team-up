@@ -84,16 +84,15 @@ export const rejectScout = async (member_id: number, notification_id: number) =>
   }
 }
 
-export const sendParticipationRequest = async (project_id: string, user_id: number, receiver_id: number) => {
+export const sendParticipationRequest = async (project_id: string, user_id: number) => {
   try {
-    const res = await server.post(`/participation-requests`, {
+    const res = await server.post(`/api/v1/projects/${project_id}/participation_requests`, {
       project_id: project_id,
-      sender_id: user_id,
-      receiver_id: receiver_id,
+      user_id: user_id,
       request_type: "request",
       message: "해당 프로젝트에 참여하고 싶습니다!",
     });
-    if (res.status === 200) {
+    if (res.status === 201) {
       return res.data;
     } else {
       throw new Error("Failed to send participation request");
@@ -104,9 +103,9 @@ export const sendParticipationRequest = async (project_id: string, user_id: numb
   }
 }
 
-export const cancelParticipationRequest = async (request_id: number) => {
+export const cancelParticipationRequest = async (project_id: string, request_id: number) => {
   try {
-    const res = await server.put(`/participation-requests/${request_id}/cancel`, {
+    const res = await server.put(`/api/v1/projects/${project_id}/participation_requests/${request_id}/cancel`, {
       headers: {
         'Content-Type': 'application/json',
       },

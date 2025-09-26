@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useParams } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { ChatCreateForm } from '@/types/Chat';
@@ -10,15 +10,14 @@ import MessageList from '@/components/project/chat/MessageList';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useProject } from '@/contexts/ProjectContext';
 
-
 export default function ChatPage() {
-  const { project } = useProject();
+  const { additional_data } = useProject();
   const [message, setMessage] = useState('');
   const searchParams = useSearchParams();
-  const project_id = searchParams?.get('project_id');
+  const { projectId } = useParams<{ projectId: string }>();
   const channel_id = searchParams?.get('channel') || 'general';
-  const channel = project?.channels?.find((c) => c.channel_id === channel_id);
-  const { messages, sendMessage, isConnected } = useWebSocket(project_id!, channel_id);
+  const channel = additional_data?.channels?.find((c) => c.channel_id === channel_id);
+  const { messages, sendMessage, isConnected } = useWebSocket(projectId, channel_id);
   const [searchQuery, setSearchQuery] = useState("");
   const isMounted = useRef(false);
 
@@ -41,7 +40,6 @@ export default function ChatPage() {
     };
   }, [searchQuery]);
 
-  // Set mounted flag
   useEffect(() => {
     isMounted.current = true;
     return () => {
@@ -53,7 +51,7 @@ export default function ChatPage() {
     e.preventDefault();
     if (message.trim() && sendMessage && isConnected) {
       const chat: ChatCreateForm = {
-        project_id: project_id!,
+        project_id: projectId,
         channel_id: channel_id,
         message: message,
       };

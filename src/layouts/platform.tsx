@@ -7,6 +7,7 @@ import { Project } from "@/types/Project";
 import { useSearchParams } from "next/navigation";
 import { fetcher } from "@/auth/server";
 import useSWR from "swr";
+import { AdditionalData } from "@/contexts/ProjectContext";
 
 // 지연 로딩을 위한 컴포넌트들
 const ProjectCard = lazy(() => import("@/components/platform/ProjectCard"));
@@ -26,6 +27,14 @@ function PlatformContent() {
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [additionalData] = useState<AdditionalData>({
+    tasks: [],
+    milestones: [],
+    participation_requests: [],
+    channels: [],
+    schedules: [],
+    whiteboards: [],
+  });
 
   const user = useAuthStore((state) => state.user);
   const hydrated = useAuthHydration();
@@ -96,7 +105,7 @@ function PlatformContent() {
     <div className="mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
         {filteredProjects.map((project: Project) => (
-          <ProjectCard key={project.id} project={project} isExplore={false} />
+          <ProjectCard key={project.id} project={project} additional_data={additionalData} isExplore={false} />
         ))}
         <div className="bg-component-background rounded-lg p-6 border border-dashed border-gray-700/50 flex flex-col">
           <div className="flex-1 flex items-center justify-center min-h-[12rem]">

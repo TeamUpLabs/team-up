@@ -6,6 +6,7 @@ import { useAuthStore } from "@/auth/authStore";
 import useAuthHydration from "@/hooks/useAuthHydration";
 import { fetcher } from "@/auth/server";
 import { Project } from "@/types/Project";
+import { type AdditionalData } from "@/contexts/ProjectContext";
 
 // Lazy load ProjectCard
 const ProjectCard = lazy(() => import("@/components/platform/ProjectCard"));
@@ -15,6 +16,14 @@ export default function ExploreProject() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const user = useAuthStore((state) => state.user);
   const hydrated = useAuthHydration();
+  const [additionalData] = useState<AdditionalData>({
+    tasks: [],
+    milestones: [],
+    participation_requests: [],
+    channels: [],
+    schedules: [],
+    whiteboards: [],
+  });
 
   // Debounce search input (type-safe for string)
   useEffect(() => {
@@ -58,8 +67,11 @@ export default function ExploreProject() {
     );
   }, [projects, debouncedQuery]);
 
-  // Show loading state consistently on both server and client
-  if (!hydrated || isLoading) {
+  // Ensure consistent server/client markup until hydration + user readiness
+  const isReady = hydrated && !!user?.id;
+
+  // Show loading state consistently on both server and client until ready
+  if (!isReady || isLoading) {
     return (
       <div className="mx-auto">
         <div className="text-center text-text-secondary p-8">로딩 중...</div>
@@ -71,7 +83,7 @@ export default function ExploreProject() {
   }
   return (
     <div className="mx-auto">
-      {filteredProjects.length === 0 ? (
+      {projects && filteredProjects.length === 0 ? (
         <div className="text-center text-text-secondary p-8 bg-component-background border border-component-border rounded-lg">
           검색 결과가 없습니다.
         </div>
@@ -79,7 +91,7 @@ export default function ExploreProject() {
         <Suspense fallback={<div className="text-center text-text-secondary p-8">로딩 중...</div>}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
             {filteredProjects.map((project: Project) => (
-              <ProjectCard key={project.id} project={project} isExplore={true} />
+              <ProjectCard key={project.id} project={project} additional_data={additionalData} isExplore={true} />
             ))}
           </div>
         </Suspense>

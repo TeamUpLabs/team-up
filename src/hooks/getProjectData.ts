@@ -124,16 +124,9 @@ export const updateProjectMemberPermission = async (project_id: string, member_i
   }
 }
 
-export const allowParticipationRequest = async (request_id: number) => {
+export const allowParticipationRequest = async (project_id: string, request_id: number) => {
   try {
-    const res = await server.put(`/api/v1/participation-requests/${request_id}`, {
-      status: "accepted",
-      processed_at: getCurrentKoreanTime(),
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const res = await server.put(`/api/v1/projects/${project_id}/participation_requests/accept/${request_id}`);
 
     if (res.status === 200) {
       return res.data;
@@ -146,15 +139,9 @@ export const allowParticipationRequest = async (request_id: number) => {
   }
 }
 
-export const rejectParticipationRequest = async (request_id: number) => {
+export const rejectParticipationRequest = async (project_id: string, request_id: number) => {
   try {
-    const res = await server.put(`/api/v1/participation-requests/${request_id}`, {
-      status: "rejected",
-      processed_at: getCurrentKoreanTime(),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const res = await server.put(`/api/v1/projects/${project_id}/participation_requests/reject/${request_id}`);
 
     if (res.status === 200) {
       return res.data;

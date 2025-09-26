@@ -117,7 +117,7 @@ export default function TeamSettingTab({ project, additional_data }: TeamSetting
               );
             return;
           }
-          await allowParticipationRequest(request.id);
+          await allowParticipationRequest(project.id, request.id);
           useAuthStore.getState().setAlert(`${request.user.name}님의 참여 요청이 승인되었습니다.`, "success");
           useAuthStore.getState().clearConfirm();
         });
@@ -134,7 +134,7 @@ export default function TeamSettingTab({ project, additional_data }: TeamSetting
     }
     try {
       useAuthStore.getState().setConfirm(`${request.user.name}님의 참여 요청을 거절하시겠습니까?`, async () => {
-          await rejectParticipationRequest(request.id);
+          await rejectParticipationRequest(project.id, request.id);
           useAuthStore.getState().setAlert(`${request.user.name}님의 참여 요청이 거절되었습니다.`, "info");
           useAuthStore.getState().clearConfirm();
         });
