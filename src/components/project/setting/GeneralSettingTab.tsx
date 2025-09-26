@@ -152,7 +152,7 @@ export default function GeneralSettingTab({ project }: GeneralSettingTabProps) {
   };
 
   const handleEdit = (field: string) => {
-    if (project.members.some((m) => m.user.id === user?.id && m.is_leader)) {
+    if (project.members.some((m) => m.user.id === user?.id && (m.role === "leader" || m.role === "manager"))) {
       setIsEditing(field);
       if (field !== "none") {
         useAuthStore.getState().setAlert("편집 모드로 전환되었습니다.", "info");
