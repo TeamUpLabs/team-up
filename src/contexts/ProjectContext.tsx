@@ -47,6 +47,11 @@ export type ProjectContextType = {
   updateWhiteBoardInContext: (updatedWhiteBoard: WhiteBoard) => void;
   updateWhiteBoardCommentInContext: (whiteboard_id: number, updatedComment: WhiteboardComment) => void;
   deleteWhiteBoardInContext: (whiteboardId: number) => void;
+
+  // Channel functions
+  addChannelInContext: (newChannel: Channel) => void;
+  updateChannelInContext: (updatedChannel: Channel) => void;
+  deleteChannelInContext: (channelId: string) => void;
 };
 
 const defaultAdditionalData: AdditionalData = {
@@ -399,6 +404,29 @@ export const ProjectProvider: React.FC<{
     }));
   }, []);
 
+  const addChannelInContext = useCallback((newChannel: Channel) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      channels: [...prev.channels, newChannel]
+    }));
+  }, []);
+
+  const updateChannelInContext = useCallback((updatedChannel: Channel) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      channels: prev.channels.map(channel => 
+        channel.channel_id === updatedChannel.channel_id ? updatedChannel : channel
+      )
+    }));
+  }, []);
+
+  const deleteChannelInContext = useCallback((channelId: string) => {
+    setAdditionalData(prev => ({
+      ...prev,
+      channels: prev.channels.filter(channel => channel.channel_id !== channelId)
+    }));
+  }, []);
+
   const value = useMemo(() => ({
     project,
     additional_data: additionalData,
@@ -420,6 +448,9 @@ export const ProjectProvider: React.FC<{
     updateWhiteBoardCommentInContext,
     addWhiteBoardInContext,
     deleteWhiteBoardInContext,
+    addChannelInContext,
+    updateChannelInContext,
+    deleteChannelInContext,
   }) as ProjectContextType, [
     project,
     additionalData,
@@ -442,6 +473,9 @@ export const ProjectProvider: React.FC<{
     updateWhiteBoardCommentInContext,
     addWhiteBoardInContext,
     deleteWhiteBoardInContext,
+    addChannelInContext,
+    updateChannelInContext,
+    deleteChannelInContext,
   ]);
 
   // SSE connection setup

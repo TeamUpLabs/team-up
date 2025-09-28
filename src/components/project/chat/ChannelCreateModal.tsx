@@ -17,7 +17,7 @@ interface ChannelCreateModalProps {
 }
 
 export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateModalProps) {
-  const { project } = useProject();
+  const { project, addChannelInContext } = useProject();
   const user = useAuthStore((state) => state.user);
   const [formData, setFormData] = useState(blankChannelCreateForm);
   const [error, setError] = useState<string | null>(null);
@@ -72,7 +72,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
     if (project?.id) {
       setSubmitStatus('submitting');
       try {
-        await createChannel({
+        const data = await createChannel({
           ...formData,
           project_id: project.id,
           member_ids: formData.member_ids,
@@ -80,6 +80,7 @@ export default function ChannelCreateModal({ isOpen, onClose }: ChannelCreateMod
           updated_by: user?.id || 0,
         });
         setSubmitStatus('success');
+        addChannelInContext(data);
         useAuthStore.getState().setAlert("채널이 성공적으로 생성되었습니다.", "success");
       } catch (error) {
         console.error("Failed to create channel:", error);
