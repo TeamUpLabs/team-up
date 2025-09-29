@@ -1,5 +1,5 @@
 import ModalTemplete from "@/components/ModalTemplete";
-import { UserBrief } from "@/types/user/User";
+import { UserBrief } from "@/types/brief/Userbrief";
 import Image from "next/image";
 import { FollowProvider, useFollow } from "@/contexts/FollowContext";
 import { Check, UserPlus } from "lucide-react";
