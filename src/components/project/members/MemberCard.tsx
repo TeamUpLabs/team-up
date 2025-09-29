@@ -5,10 +5,16 @@ import { faBolt, faStar, faShieldAlt, faUser } from "@fortawesome/free-solid-svg
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { useProject } from "@/contexts/ProjectContext";
 import { convertRoleName } from "@/utils/ConvertRoleName";
-import { UserBrief } from "@/types/brief/Userbrief";
+import { User } from '@/types/user/User';
+import { MileStone } from '@/types/MileStone';
+import { Task } from '@/types/Task';
 
+type AdditionalData = {
+  milestones: MileStone[];
+  tasks: Task[];
+};
 interface MemberCardProps {
-  member: UserBrief;
+  member: User;
   isLeader: boolean;
   isManager: boolean;
   isExplore?: boolean;
@@ -22,16 +28,33 @@ export default function MemberCard({
   isExplore,
   onClick,
 }: MemberCardProps) {
-  const { additional_data } = useProject();
+  // Safely use useProject, but provide default values if not available
+  const defaultAdditionalData: AdditionalData = { milestones: [], tasks: [] };
+  let additional_data = defaultAdditionalData;
+  
+  try {
+    const projectContext = useProject();
+    additional_data = projectContext.additional_data || defaultAdditionalData;
+  } catch {
+    // If useProject throws an error, we're not in a ProjectProvider context
+    // Continue with default values
+    console.debug('Project context not available, using default values for MemberCard');
+  }
 
   const getContributionLevel = () => {
-    const milestoneCount = additional_data?.milestones?.filter(
+    // If we don't have project data, don't show contribution level
+    if (!additional_data || !additional_data.milestones || !additional_data.tasks) {
+      return { level: "", class: "" };
+    }
+    
+    const milestoneCount = additional_data.milestones.filter(
       (milestone) => milestone.assignees?.some((assi) => assi?.id === member?.id) ?? false
     ).length || 0;
     
-    const taskCount = additional_data?.tasks?.filter(
+    const taskCount = additional_data.tasks.filter(
       (task) => task.assignees?.some((assi) => assi?.id === member?.id) ?? false
     ).length || 0;
+    
     const contributionScore = (milestoneCount * 10) + (taskCount * 15);
 
     if (contributionScore > 80) return { level: "상위 기여자", class: "purple" };

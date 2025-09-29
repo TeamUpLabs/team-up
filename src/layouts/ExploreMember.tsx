@@ -12,7 +12,7 @@ import useAuthHydration from "@/hooks/useAuthHydration";
 const MemberCard = lazy(() => import("@/components/project/members/MemberCard"));
 
 export default function ExploreMember() {
-    const user = useAuthStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
   const hydrated = useAuthHydration();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -45,9 +45,12 @@ export default function ExploreMember() {
 
   // Debounce search input (type-safe for string)
   useEffect(() => {
-    const handler = setTimeout(() => setDebouncedQuery(searchQuery), 300);
-    return () => clearTimeout(handler);
-  }, [searchQuery]);
+    // Only set debounced query on client after hydration
+    if (hydrated) {
+      const handler = setTimeout(() => setDebouncedQuery(searchQuery), 300);
+      return () => clearTimeout(handler);
+    }
+  }, [searchQuery, hydrated]);
 
   // Memoize filtered users
   const filteredUsers = useMemo(() => {
@@ -73,13 +76,13 @@ export default function ExploreMember() {
     setIsModalOpen(false);
   };
 
-  if (!hydrated) return <div className="text-center text-text-secondary p-8">로딩 중...</div>;
-  if (error) return <div className="text-center text-red-500 p-8">멤버 목록을 가져오는 데 실패했습니다.</div>;
-
+  // Always render the same structure, just conditionally show content
   return (
     <div className="mx-auto">
-      {isLoading ? (
+      {!hydrated || isLoading ? (
         <div className="text-center text-text-secondary p-8">로딩 중...</div>
+      ) : error ? (
+        <div className="text-center text-red-500 p-8">멤버 목록을 가져오는 데 실패했습니다.</div>
       ) : filteredUsers.length === 0 ? (
         <div className="text-center text-text-secondary p-8 bg-component-background border border-component-border rounded-lg">
           검색 결과가 없습니다.
