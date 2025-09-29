@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useProject } from "@/contexts/ProjectContext";
 import GithubRepoCreate from "@/layouts/GithubRepoCreate";
-import { useAuthStore } from "@/auth/authStore";
 import RepoCard from "@/components/project/github/RepoCard";
 import IssueCountCard from "@/components/project/github/IssueCountCard";
 import PRCountCard from "@/components/project/github/PRCountCard";
@@ -24,20 +23,13 @@ import PRTracker from "@/components/project/github/pr/PRTracker";
 import CommitTracker from "@/components/project/github/commit/CommitTracker";
 import OrgTracker from "@/components/project/github/org/OrgTracker";
 import AnalyticsTracker from "@/components/project/github/analytics/AnalyticsTracker";
-import useSWR from "swr";
-import useAuthHydration from "@/hooks/useAuthHydration";
-import { fetcher } from "@/auth/server";
 import { User } from "@/types/user/User";
+import { useUser } from "@/contexts/UserContext";
 
 export default function GithubPage() {
   const { project } = useProject();
-  const hydrated = useAuthHydration();
-  const token = useAuthStore((state) => state.token);
+  const { user } = useUser();
 
-  const { data: user } = useSWR<User>(
-    hydrated && token ? `/users/me` : null,
-    (url: string) => fetcher(url, token || undefined)
-  );
   const [repoData, setRepoData] = useState<RepoData | null>(null);
   const [prData, setPrData] = useState<PrData[]>([]);
   const [commitData, setCommitData] = useState<CommitData[]>([]);
@@ -58,7 +50,7 @@ export default function GithubPage() {
 
   const fetchAllData = useCallback(async (org: string, repo: string) => {
     if (project?.github_url && user) {
-      const { repoData, commitData, prData, issueData, githubUser, orgData } = await fetchAllGithubData(org, repo, user.auth_provider_id, user.auth_provider_access_token);
+      const { repoData, commitData, prData, issueData, githubUser, orgData } = await fetchAllGithubData(org, repo, user.auth.provider_id, user.auth.provider_access_token);
       setRepoData(repoData);
       setCommitData(commitData);
       setPrData(prData);

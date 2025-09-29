@@ -8,36 +8,24 @@ import { useProject } from "@/contexts/ProjectContext";
 import { Github } from "flowbite-react-icons/solid";
 import { Globe, Lock } from "flowbite-react-icons/outline";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
-import useAuthHydration from "@/hooks/useAuthHydration";
-import { fetcher } from "@/auth/server";
-import { User } from "@/types/user/User";
-import useSWR from "swr";
+import { useUser } from "@/contexts/UserContext";
 
 interface CreateRepositoryData {
   repo_name: string;
   repo_description: string;
-  isPrivate: boolean;
+  is_private: boolean;
 }
 
 export default function GithubRepoCreate() {
-  const token = useAuthStore((state) => state.token);
-  const hydrated = useAuthHydration();
   const { project } = useProject();
+  const { user, isLoading } = useUser();
   const [formData, setFormData] = useState<CreateRepositoryData>({
     repo_name: "",
     repo_description: "",
-    isPrivate: false,
+    is_private: false,
   });
   const [errors, setErrors] = useState<Partial<CreateRepositoryData>>({})
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const { data: user, error, isLoading } = useSWR<User>(
-    hydrated && token ? `/users/me` : null,
-    (url: string) => fetcher(url, token || undefined)
-  );
-
-  if (error) {
-    return <div className="text-center text-text-secondary p-8">프로필 정보를 가져오는 데 실패했습니다.</div>;
-  }
 
   if (isLoading) {
     return <div className="text-center text-text-secondary p-8">로딩 중...</div>;
@@ -83,7 +71,7 @@ export default function GithubRepoCreate() {
   const handleConnect = async () => {
     if (!project?.id) return;
 
-    if (user?.auth_provider !== "github") {
+    if (user?.auth.provider !== "github") {
       useAuthStore.getState().setAlert("Github 계정이 연동되지 않았습니다. 계정 연동 후 다시 시도해주세요.", "error");
       return;
     }
@@ -93,18 +81,18 @@ export default function GithubRepoCreate() {
     }
 
     setSubmitStatus('submitting');
+    console.log({...formData, github_access_token: user?.auth.provider === "github" ? user?.auth.provider_access_token : null})
     try {
-      const res = await server.post(`/projects/${project?.id}/github/org/create-repo`, {
+      const res = await server.post(`/api/v1/projects/${project?.id}/github/create-repo`, JSON.stringify({
         ...formData,
-        github_access_token: user?.auth_provider === "github" ? user?.auth_provider_access_token : null,
-      }, {
+        github_access_token: user?.auth.provider === "github" ? user?.auth.provider_access_token : null,
+      }), {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user?.auth_provider === "github" ? user?.auth_provider_access_token : null}`,
         },
       })
 
-      if (res.status === 200) {
+      if (res.status === 201) {
         setSubmitStatus('success');
         useAuthStore.getState().setAlert("레포지터리 생성 완료", "success");
         setTimeout(() => {
@@ -182,7 +170,7 @@ export default function GithubRepoCreate() {
             저장소 공개 설정
           </label>
           <div className="space-y-2">
-            <div className={`flex items-center justify-between p-4 border border-component-border rounded-lg transition-all duration-200 ${!formData.isPrivate ? "border-green-500" : ""}`}>
+            <div className={`flex items-center justify-between p-4 border border-component-border rounded-lg transition-all duration-200 ${!formData.is_private ? "border-green-500" : ""}`}>
               <div className="flex items-center gap-3">
                 <Globe className="w-7 h-7 text-green-600" />
                 <div className="flex flex-col">
@@ -195,14 +183,14 @@ export default function GithubRepoCreate() {
                   type="checkbox"
                   name="isPrivate"
                   className="sr-only peer"
-                  checked={!formData.isPrivate}
-                  onChange={() => handleChange("isPrivate", false)}
+                  checked={!formData.is_private}
+                  onChange={() => handleChange("is_private", false)}
                 />
                 <div className="w-11 h-6 bg-component-tertiary-background rounded-full peer peer-checked:bg-point-color-indigo peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
               </label>
             </div>
 
-            <div className={`flex items-center justify-between p-4 border border-component-border rounded-lg transition-all duration-200 ${formData.isPrivate ? "border-orange-500" : ""}`}>
+            <div className={`flex items-center justify-between p-4 border border-component-border rounded-lg transition-all duration-200 ${formData.is_private ? "border-orange-500" : ""}`}>
               <div className="flex items-center gap-3">
                 <Lock className="w-7 h-7 text-orange-600" />
                 <div className="flex flex-col">
@@ -215,8 +203,8 @@ export default function GithubRepoCreate() {
                   type="checkbox"
                   name="isPrivate"
                   className="sr-only peer"
-                  checked={formData.isPrivate}
-                  onChange={() => handleChange("isPrivate", true)}
+                  checked={formData.is_private}
+                  onChange={() => handleChange("is_private", true)}
                 />
                 <div className="w-11 h-6 bg-component-tertiary-background rounded-full peer peer-checked:bg-point-color-indigo peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
               </label>
@@ -242,7 +230,7 @@ export default function GithubRepoCreate() {
             </Link>
             <span>/</span>
             <span className="font-medium text-text-primary">{formData.repo_name || "repository-name"}</span>
-            {formData.isPrivate ? (
+            {formData.is_private ? (
               <Lock className="text-orange-600" />
             ) : (
               <Globe className="text-green-600" />
