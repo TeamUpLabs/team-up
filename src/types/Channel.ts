@@ -27,6 +27,7 @@ export interface ChannelUpdateForm {
   description: string;
   is_public: boolean;
   member_ids: number[];
+  updated_by: number;
 }
 
 export const blankChannelUpdateForm: ChannelUpdateForm = {
@@ -34,6 +35,7 @@ export const blankChannelUpdateForm: ChannelUpdateForm = {
   description: "",
   is_public: true,
   member_ids: [],
+  updated_by: 0,
 }
 
 export interface Channel {

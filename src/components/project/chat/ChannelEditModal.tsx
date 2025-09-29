@@ -18,13 +18,15 @@ interface ChannelEditModalProps {
 }
 
 export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEditModalProps) {
-  const { project } = useProject();
+  const { project, updateChannelInContext } = useProject();
+  const user = useAuthStore.getState().user;
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: channel.name,
     description: channel.description,
     is_public: channel.is_public,
-    member_ids: channel.members.map((member) => member.id),
+    member_ids: channel.members.map((member) => member.user.id),
+    updated_by: user?.id || 0
   });
   const [error, setError] = useState<string | null>(null);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -51,10 +53,10 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
 
     try {
       setSubmitStatus('submitting');
-      await updateChannel(channel.channel_id, formData);
+      const data = await updateChannel(project.id, channel.channel_id, formData);
       useAuthStore.getState().setAlert("채널이 성공적으로 수정되었습니다.", "success");
       setSubmitStatus('success');
-
+      updateChannelInContext(data);
       setTimeout(() => {
         onClose();
       }, 1000);
@@ -72,11 +74,15 @@ export default function ChannelEditModal({ isOpen, onClose, channel }: ChannelEd
   };
 
   const handleDelete = () => {
+    if (!project?.id) {
+      useAuthStore.getState().setAlert("프로젝트 정보를 찾을 수 없습니다. 페이지를 새로고침하거나 문제가 지속되면 관리자에게 문의해주세요.", "error")
+      return;
+    }
     useAuthStore.getState().setConfirm("채널을 삭제하시겠습니까?", async () => {
       try {
-        await deleteChannel(channel.channel_id);
+        await deleteChannel(project.id, channel.channel_id);
         useAuthStore.getState().setAlert("채널이 성공적으로 삭제되었습니다.", "success");
-        router.push(`/platform/${channel.project_id}`)
+        router.push(`/platform/${project.id}`)
         setTimeout(() => {
           onClose();
         }, 1000);
