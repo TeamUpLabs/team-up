@@ -44,7 +44,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, searchQuery }) => {
             <div className="flex items-start gap-2">
               {!isCurrentUser && (
                 <Image
-                  src={msg.user?.profile_image || ''}
+                  src={msg.user?.profile_image || '/DefaultProfile.jpg'}
                   alt={msg.user?.name || ''}
                   width={48}
                   height={48}

@@ -192,7 +192,7 @@ export const useWebSocket = (projectId: string, channelId: string) => {
       }
       return null;
     }
-  }, [channelId]);
+  }, [channelId, projectId]);
 
   // 초기 채팅 히스토리 로딩
   useEffect(() => {
@@ -229,7 +229,7 @@ export const useWebSocket = (projectId: string, channelId: string) => {
       // 컴포넌트 언마운트 시 플래그 설정
       isUnmountedRef.current = true;
     };
-  }, [channelId]);
+  }, [channelId, projectId]);
 
   // 웹소켓 연결 관리 - 최초 한 번만 실행되어야 함
   useEffect(() => {
