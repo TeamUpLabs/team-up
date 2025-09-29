@@ -131,7 +131,7 @@ const useWebRTC = ({ channel_id, user_id, project_id }: UseWebRTCProps) => {
 
   const connectSignalingServer = () => {
     const socketProtocol = SERVER_URL?.startsWith('https://') ? 'wss' : 'ws';
-    const serverUrl = `${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/api/video-call/ws?project_id=${project_id}&channel_id=${channel_id}&user_id=${user_id}`;
+    const serverUrl = `${socketProtocol}://${SERVER_URL?.replace('http://', '').replace('https://', '')}/api/v1/projects/${project_id}/video-calls/ws?channel_id=${channel_id}&user_id=${user_id}`;
     
     console.log(`Connecting to signaling server at ${serverUrl}`);
     socketRef.current = new WebSocket(serverUrl);
