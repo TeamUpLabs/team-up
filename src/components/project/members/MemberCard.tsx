@@ -6,6 +6,7 @@ import { getStatusInfo } from "@/utils/getStatusColor";
 import { useProject } from "@/contexts/ProjectContext";
 import { convertRoleName } from "@/utils/ConvertRoleName";
 import { User } from '@/types/user/User';
+import { UserBrief } from '@/types/brief/Userbrief';
 import { MileStone } from '@/types/MileStone';
 import { Task } from '@/types/Task';
 
@@ -14,7 +15,7 @@ type AdditionalData = {
   tasks: Task[];
 };
 interface MemberCardProps {
-  member: User;
+  member: User | UserBrief;
   isLeader: boolean;
   isManager: boolean;
   isExplore?: boolean;
