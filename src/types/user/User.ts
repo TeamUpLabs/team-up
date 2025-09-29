@@ -18,11 +18,6 @@ export interface ParticipationRequest {
     processed_at: string;
 }
 
-export interface TechStack {
-    tech: string;
-    // Add other properties if they exist in the tech stack objects
-}
-
 export interface User {
     id: number;
     name: string;
@@ -32,7 +27,6 @@ export interface User {
     status: string;
     bio: string;
     languages: string[];
-    tech_stacks?: TechStack[];  // Add this line
     phone: string;
     birth_date: string;
     last_login: string;
