@@ -13,6 +13,11 @@ import { Github, Linkedin, Twitter, Facebook, Instagram } from "flowbite-react-i
 import Accordion from '@/components/ui/Accordion';
 import { formatRelativeTime } from '@/utils/dateUtils';
 import Link from 'next/link';
+import { fetcher } from '@/auth/server';
+import useSWR from 'swr';
+import { CollaborationPreference } from '@/types/user/CollaborationPreference';
+import { TechStack } from '@/types/user/TechStack';
+import { SocialLink } from '@/types/user/SocialLink';
 
 interface MemberScoutDetailModalProps {
   member: User;
@@ -22,6 +27,21 @@ interface MemberScoutDetailModalProps {
 
 export default function MemberScoutDetailModal({ member, isOpen, onClose }: MemberScoutDetailModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { data: collaboration_preference } = useSWR<CollaborationPreference>(
+    `${member.links.collaboration_preferences.href}`,
+    fetcher
+  );
+
+  const { data: tech_stacks } = useSWR<TechStack[]>(
+    `${member.links.tech_stacks.href}`,
+    fetcher
+  );
+
+  const { data: social_links } = useSWR<SocialLink[]>(
+    `${member.links.social_links.href}`,
+    fetcher
+  );
 
   // 숫자 형식의 시간을 HH:MM 형식으로 변환
   const formatTimeFromNumber = (timeNumber: string | number): string => {
@@ -134,7 +154,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
         icon={Clock}
       >
         <div className="space-y-2">
-          {member.collaboration_preference.available_time_zone ? (
+          {collaboration_preference?.available_time_zone ? (
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
                 <div className="flex items-center gap-2">
@@ -142,15 +162,15 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
                   <h4 className="font-medium">Timezone</h4>
                 </div>
                 <p className="text-muted-foreground">
-                  {member.collaboration_preference.available_time_zone === "Asia/Seoul"
+                  {collaboration_preference?.available_time_zone === "Asia/Seoul"
                     ? "한국 표준시 (KST)"
-                    : member.collaboration_preference.available_time_zone === "UTC"
+                    : collaboration_preference?.available_time_zone === "UTC"
                       ? "세계 표준시 (UTC)"
-                      : member.collaboration_preference.available_time_zone === "America/New_York"
+                      : collaboration_preference?.available_time_zone === "America/New_York"
                         ? "동부 표준시 (EST)"
-                        : member.collaboration_preference.available_time_zone === "America/Los_Angeles"
+                        : collaboration_preference?.available_time_zone === "America/Los_Angeles"
                           ? "태평양 표준시 (PST)"
-                          : member.collaboration_preference.available_time_zone}
+                          : collaboration_preference?.available_time_zone}
                 </p>
               </div>
               <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
@@ -159,7 +179,7 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
                   <h4 className="font-medium">Time</h4>
                 </div>
                 <p className="text-muted-foreground">
-                  {formatTimeFromNumber(member.collaboration_preference.work_hours_start)} - {formatTimeFromNumber(member.collaboration_preference.work_hours_end)}
+                  {formatTimeFromNumber(collaboration_preference?.work_hours_start)} - {formatTimeFromNumber(collaboration_preference?.work_hours_end)}
                 </p>
               </div>
             </div>
@@ -173,12 +193,12 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
 
       {/* Skills Accordian */}
       <Accordion
-        title={`Skills (${member.tech_stacks && member.tech_stacks.length || 0})`}
+        title={`Skills (${tech_stacks && tech_stacks.length || 0})`}
         icon={ShieldCheck}
       >
         <div className="space-x-2">
-          {member.tech_stacks && member.tech_stacks.length > 0 ? (
-            member.tech_stacks.map((skill, index) => (
+          {tech_stacks && tech_stacks.length > 0 ? (
+            tech_stacks.map((skill, index) => (
               <Badge key={index} content={skill.tech} color="blue" />
             ))
           ) : (
@@ -209,12 +229,12 @@ export default function MemberScoutDetailModal({ member, isOpen, onClose }: Memb
 
       {/* Social Links Accordian */}
       <Accordion
-        title={`Social Links (${member.social_links && member.social_links.length || 0})`}
+        title={`Social Links (${social_links && social_links.length || 0})`}
         icon={LinkIcon}
       >
         <div className="flex flex-wrap gap-2">
-          {member.social_links && member.social_links.length > 0 ? (
-            member.social_links.map((link, index) => (
+          {social_links && social_links.length > 0 ? (
+            social_links.map((link, index) => (
               <Link
                 key={index}
                 href={link.url}
