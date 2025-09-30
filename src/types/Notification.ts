@@ -12,3 +12,16 @@ export interface Notification {
     project_id: string;
     result: string;
 }
+
+export const blankNotification: Notification = {
+    id: 0,
+    title: "",
+    message: "",
+    timestamp: "",
+    is_read: false,
+    type: "info",
+    sender_id: 0,
+    receiver_id: 0,
+    project_id: "",
+    result: "",
+};

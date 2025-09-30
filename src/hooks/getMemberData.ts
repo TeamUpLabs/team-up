@@ -124,7 +124,7 @@ export const cancelParticipationRequest = async (project_id: string, request_id:
 export const updateUserProfile = async (memberData: UpdateUserProfileData) => {
   try {
     const token = useAuthStore.getState().token;
-    const res = await server.put(`/users/me`, memberData, {
+    const res = await server.put(`/api/v1/users/me`, memberData, {
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",

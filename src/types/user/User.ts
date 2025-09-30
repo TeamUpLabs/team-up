@@ -1,3 +1,9 @@
+import { CollaborationPreference } from "@/types/user/CollaborationPreference";
+import { TechStack } from "@/types/user/TechStack";
+import { Interest } from "@/types/user/Interest";
+import { SocialLink } from "@/types/user/SocialLink";
+import { UserBrief } from "@/types/brief/Userbrief";
+
 export interface NotificationSetting {
     emailEnable: number;
     taskNotification: number;
@@ -36,6 +42,9 @@ export interface User {
       provider_access_token: string;
     };
     notification_settings: NotificationSetting;
+    following: UserBrief[];
+    followers: UserBrief[];
+
     links: {
       self: {
         href: string;
@@ -119,6 +128,10 @@ export const blankUser: User = {
         pushNotification: 1,
         securityNotification: 1,
     },
+
+    following: [],
+    followers: [],
+
     links: {
       self: {
         href: "",
@@ -260,21 +273,21 @@ export const blankUser: User = {
 //     liked_posts: [],
 // }
 
-// export interface UpdateUserProfileData {
-//     name?: string;
-//     email?: string;
-//     password?: string;
-//     profile_image?: string;
-//     role?: string;
-//     status?: string;
-//     bio?: string;
-//     languages?: string[];
-//     phone?: string;
-//     birth_date?: string;
-//     last_login?: string;
-//     notification_settings?: NotificationSetting;
-//     collaboration_preference?: CollaborationPreference;
-//     tech_stacks?: TechStack[];
-//     interests?: Interest[];
-//     social_links?: SocialLink[];
-// }
+export interface UpdateUserProfileData {
+    name?: string;
+    email?: string;
+    password?: string;
+    profile_image?: string;
+    role?: string;
+    status?: string;
+    bio?: string;
+    languages?: string[];
+    phone?: string;
+    birth_date?: string;
+    last_login?: string;
+    notification_settings?: NotificationSetting;
+    collaboration_preference?: CollaborationPreference;
+    tech_stacks?: TechStack[];
+    interests?: Interest[];
+    social_links?: SocialLink[];
+}

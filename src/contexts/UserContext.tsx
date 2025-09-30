@@ -13,19 +13,23 @@ import { SocialLink } from '@/types/user/SocialLink';
 import { Notification } from '@/types/Notification';
 import { Session } from '@/types/user/Session';
 
+export interface IntegratedUser extends User {
+  collaboration_preference?: CollaborationPreference;
+  tech_stacks?: TechStack[];
+  interests?: Interest[];
+  social_links?: SocialLink[];
+  notifications?: Notification[];
+  sessions?: Session[];
+}
+
 interface UserContextType {
-  user: User | null;
-  collaboration_preference: CollaborationPreference | null;
-  tech_stacks: TechStack[] | null;
-  interests: Interest[] | null;
-  social_links: SocialLink[] | null;
-  notifications: Notification[] | null;
-  sessions: Session[] | null;
+  user: IntegratedUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (userData: User) => void;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
+  setUser: React.Dispatch<React.SetStateAction<IntegratedUser | null>>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -35,14 +39,9 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [collaboration_preference, setCollaborationPreference] = useState<CollaborationPreference | null>(null);
-  const [tech_stacks, setTechStacks] = useState<TechStack[] | null>(null);
-  const [interests, setInterests] = useState<Interest[] | null>(null);
-  const [social_links, setSocialLinks] = useState<SocialLink[] | null>(null);
-  const [notifications, setNotifications] = useState<Notification[] | null>(null);
-  const [sessions, setSessions] = useState<Session[] | null>(null);
+  const [user, setUser] = useState<IntegratedUser | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loadedData, setLoadedData] = useState<Set<string>>(new Set());
   const router = useRouter();
   const token = useAuthStore.getState().token;
 
@@ -72,97 +71,96 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   }, [token]);
 
   const fetchCollaborationPreference = useCallback(async () => {
-    if (!user?.links?.collaboration_preferences?.href) {
-      console.log('No collaboration preferences link available');
+    if (!user?.links?.collaboration_preferences?.href || loadedData.has('collaboration_preference')) {
       return;
     }
     try {
       const url = user.links.collaboration_preferences.href;
       const res = await fetchRelatedData<CollaborationPreference>(url);
-      setCollaborationPreference(res);
+      setUser(prev => ({ ...prev!, collaboration_preference: res }));
+      setLoadedData(prev => new Set(prev).add('collaboration_preference'));
     } catch (error) {
       console.error('Error fetching collaboration preference:', error);
     }
-  }, [fetchRelatedData, user]);
+  }, [fetchRelatedData, user?.links?.collaboration_preferences?.href, loadedData]);
 
   const fetchTechStack = useCallback(async () => {
-    if (!user?.links?.tech_stacks?.href) {
-      console.log('No tech stacks link available');
+    if (!user?.links?.tech_stacks?.href || loadedData.has('tech_stacks')) {
       return;
     }
     try {
       const res = await fetchRelatedData<TechStack[]>(user.links.tech_stacks.href);
-      setTechStacks(res);
+      setUser(prev => ({ ...prev!, tech_stacks: res }));
+      setLoadedData(prev => new Set(prev).add('tech_stacks'));
     } catch (error) {
       console.error('Error fetching tech stack:', error);
     }
-  }, [fetchRelatedData, user]);
+  }, [fetchRelatedData, user?.links?.tech_stacks?.href, loadedData]);
 
   const fetchInterests = useCallback(async () => {
-    if (!user?.links?.interests?.href) {
-      console.log('No interests link available');
+    if (!user?.links?.interests?.href || loadedData.has('interests')) {
       return;
     }
     try {
       const res = await fetchRelatedData<Interest[]>(user.links.interests.href);
-      setInterests(res);
+      setUser(prev => ({ ...prev!, interests: res }));
+      setLoadedData(prev => new Set(prev).add('interests'));
     } catch (error) {
       console.error('Error fetching interests:', error);
     }
-  }, [fetchRelatedData, user]);
+  }, [fetchRelatedData, user?.links?.interests?.href, loadedData]);
 
   const fetchSocialLinks = useCallback(async () => {
-    if (!user?.links?.social_links?.href) {
-      console.log('No social links available');
+    if (!user?.links?.social_links?.href || loadedData.has('social_links')) {
       return;
     }
     try {
       const res = await fetchRelatedData<SocialLink[]>(user.links.social_links.href);
-      setSocialLinks(res);
+      setUser(prev => ({ ...prev!, social_links: res }));
+      setLoadedData(prev => new Set(prev).add('social_links'));
     } catch (error) {
       console.error('Error fetching social links:', error);
     }
-  }, [fetchRelatedData, user]);
+  }, [fetchRelatedData, user?.links?.social_links?.href, loadedData]);
 
   const fetchNotifications = useCallback(async () => {
-    if (!user?.links?.notifications?.href) {
-      console.log('No notifications link available');
+    if (!user?.links?.notifications?.href || loadedData.has('notifications')) {
       return;
     }
     try {
       const res = await fetchRelatedData<Notification[]>(user.links.notifications.href);
-      setNotifications(res);
+      setUser(prev => ({ ...prev!, notifications: res }));
+      setLoadedData(prev => new Set(prev).add('notifications'));
     } catch (error) {
       console.error('Error fetching notifications:', error);
     }
-  }, [fetchRelatedData, user]);
+  }, [fetchRelatedData, user?.links?.notifications?.href, loadedData]);
 
   const fetchSessions = useCallback(async () => {
-    if (!user?.links?.sessions?.href) {
-      console.log('No sessions link available');
+    if (!user?.links?.sessions?.href || loadedData.has('sessions')) {
       return;
     }
     try {
       const res = await fetchRelatedData<Session[]>(user.links.sessions.href);
-      setSessions(res);
+      setUser(prev => ({ ...prev!, sessions: res }));
+      setLoadedData(prev => new Set(prev).add('sessions'));
     } catch (error) {
       console.error('Error fetching sessions:', error);
     }
-  }, [fetchRelatedData, user]);
+  }, [fetchRelatedData, user?.links?.sessions?.href, loadedData]);
   
   // Update user data and related data when user changes
   useEffect(() => {
-    if (!user) return;
-    
+    if (!user?.links) return;
+
     // Only try to fetch related data if the links exist
-    if (user.links) {
-      if (user.links.collaboration_preferences?.href) fetchCollaborationPreference();
-      if (user.links.tech_stacks?.href) fetchTechStack();
-      if (user.links.interests?.href) fetchInterests();
-      if (user.links.social_links?.href) fetchSocialLinks();
-      if (user.links.notifications?.href) fetchNotifications();
-      if (user.links.sessions?.href) fetchSessions();
-    }
+    const { links } = user;
+    if (links.collaboration_preferences?.href) fetchCollaborationPreference();
+    if (links.tech_stacks?.href) fetchTechStack();
+    if (links.interests?.href) fetchInterests();
+    if (links.social_links?.href) fetchSocialLinks();
+    if (links.notifications?.href) fetchNotifications();
+    if (links.sessions?.href) fetchSessions();
   }, [user, fetchCollaborationPreference, fetchTechStack, fetchInterests, fetchSocialLinks, fetchNotifications, fetchSessions]);
 
   // Initial auth check
@@ -196,11 +194,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const login = (userData: User) => {
     setUser(userData);
+    setLoadedData(new Set()); // Reset loaded data when logging in
     useAuthStore.getState().setToken(userData.auth.provider_access_token);
   };
 
   const logout = () => {
     setUser(null);
+    setLoadedData(new Set()); // Reset loaded data when logging out
     useAuthStore.getState().logout();
     router.push('/signin');
   };
@@ -213,20 +213,19 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const value = {
     user,
-    collaboration_preference,
-    tech_stacks,
-    interests,
-    social_links,
-    notifications,
-    sessions,
     isAuthenticated: !!user,
     isLoading,
     login,
     logout,
     updateUser,
+    setUser,
   };
 
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={value}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = (): UserContextType => {

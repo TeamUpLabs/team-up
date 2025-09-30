@@ -5,17 +5,15 @@ import { Lock, Smartphone, Laptop, Tablet, Check, X } from "lucide-react";
 import { useState } from "react";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import Badge from "@/components/ui/Badge";
-import { User } from "@/types/user/User";
 import { updateUserProfile } from "@/hooks/getMemberData";
 import { useAuthStore } from "@/auth/authStore";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
+import { useUser } from "@/contexts/UserContext";
 
-interface SecurityProps {
-  user: User;
-}
-
-export default function Security({ user }: SecurityProps) {  const [newPassword, setNewPassword] = useState('');
+export default function Security() {
+  const { user } = useUser();
+  const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "submitting" | "success" | "error"
@@ -59,20 +57,20 @@ export default function Security({ user }: SecurityProps) {  const [newPassword,
           <h2 className="text-lg font-semibold text-text-secondary">비밀번호 변경</h2>
           <Input
             type="password"
-            placeholder={user.auth_provider !== "local" ? "소셜 로그인을 사용 중이므로 새 비밀번호를 입력할 수 없습니다." : "새 비밀번호를 입력해주세요."}
+            placeholder={user?.auth.provider !== "local" ? "소셜 로그인을 사용 중이므로 새 비밀번호를 입력할 수 없습니다." : "새 비밀번호를 입력해주세요."}
             label="새 비밀번호"
             isRequired={true}
             startAdornment={<Lock className="w-4 h-4 text-text-secondary" />}
             isPassword={true}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            disabled={user.auth_provider !== "local"}
+            disabled={user?.auth.provider !== "local"}
             className="disabled:opacity-70 disabled:cursor-not-allowed"
           />
           <div className="space-y-1">
             <Input
               type="password"
-              placeholder={user.auth_provider !== "local" ? "소셜 로그인을 사용 중이므로 새 비밀번호를 확인할 수 없습니다." : "새 비밀번호를 확인해주세요."}
+              placeholder={user?.auth.provider !== "local" ? "소셜 로그인을 사용 중이므로 새 비밀번호를 확인할 수 없습니다." : "새 비밀번호를 확인해주세요."}
               label="새 비밀번호 확인"
               isRequired={true}
               startAdornment={<Lock className="w-4 h-4 text-text-secondary" />}
@@ -80,7 +78,7 @@ export default function Security({ user }: SecurityProps) {  const [newPassword,
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               error={newPassword !== confirmPassword ? '비밀번호가 일치하지 않습니다.' : ''}
-              disabled={user.auth_provider !== "local"}
+              disabled={user?.auth.provider !== "local"}
               className="disabled:opacity-70 disabled:cursor-not-allowed"
             />
           </div>
@@ -98,7 +96,7 @@ export default function Security({ user }: SecurityProps) {  const [newPassword,
         <div className="flex flex-col gap-4 py-6">
           <h2 className="text-lg font-semibold text-text-secondary mb-4">활성 세션</h2>
           <div className="flex flex-col gap-4">
-            {user.sessions && user.sessions.map((session, idx) => (
+            {user?.sessions && user.sessions.map((session, idx) => (
               <div key={idx} className="border border-component-border rounded-lg p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-component-tertiary-background rounded-lg">

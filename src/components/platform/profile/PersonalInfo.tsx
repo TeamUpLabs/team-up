@@ -8,7 +8,7 @@ import {
   updateUserProfileImage,
   updateUserProfile,
 } from "@/hooks/getMemberData";
-import { User as UserType, blankUser } from "@/types/user/User";
+import { blankUser } from "@/types/user/User";
 import { useAuthStore } from "@/auth/authStore";
 import ImageCropModal from "@/components/platform/profile/ImageCropModal";
 import { formatDateToString, parseStringToDate } from "@/utils/dateUtils";
@@ -26,37 +26,46 @@ import { Globe } from "lucide-react";
 import CancelBtn from "@/components/ui/button/CancelBtn";
 import SubmitBtn from "@/components/ui/button/SubmitBtn";
 import FollowListModal from "@/components/FollowListModal";
+import { useUser } from "@/contexts/UserContext";
+import { UpdateUserProfileData } from "@/types/user/User";
 
-interface PersonalInfoProps {
-  user: UserType;
-  setUser: React.Dispatch<React.SetStateAction<UserType>>;
-}
-
-export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
+export default function PersonalInfo() {
+  const { user, setUser } = useUser();
   const [isEditing, setIsEditing] = useState<string>("none");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [cropImage, setCropImage] = useState<string | null>(null);
   const [showCropModal, setShowCropModal] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(user.profile_image);
-  const [originalProfileData, setOriginalProfileData] = useState<UserType | null>(user);
+  const [previewImage, setPreviewImage] = useState<string | null>(user?.profile_image || "");
   const [newSkill, setNewSkill] = useState<string>("");
   const [newLanguage, setNewLanguage] = useState<string>("");
   const [isComposing, setIsComposing] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "submitting" | "success" | "error"
-  >("idle");
-  const [formData, setFormData] = useState<UserType>(blankUser);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [formData, setFormData] = useState<UpdateUserProfileData>(blankUser);
   const [followListModalOpen, setFollowListModalOpen] = useState(false);
   const [whatToFollow, setWhatToFollow] = useState<string>("");
 
   useEffect(() => {
-    setFormData(user);
+    if (user) {
+      const updateData = Object.fromEntries(
+        Object.entries(user).filter(([key]) =>
+          !['id', 'auth', 'links', 'following', 'followers'].includes(key)
+        )
+      ) as UpdateUserProfileData;
+      setFormData(updateData);
+    }
   }, [user]);
 
   const handleEdit = (name: string) => {
     if (name !== "none" && isEditing === "none") {
-      setOriginalProfileData({ ...user });
+      if (user) {
+        const updateData = Object.fromEntries(
+          Object.entries(user).filter(([key]) =>
+            !['id', 'auth', 'links', 'following', 'followers'].includes(key)
+          )
+        ) as UpdateUserProfileData;
+        setFormData(updateData);
+      }
     }
 
     setIsEditing(name);
@@ -68,12 +77,16 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
   };
 
   const handleCancelEdit = () => {
-    if (originalProfileData) {
-      setFormData(originalProfileData);
+    if (user) {
+      const updateData = Object.fromEntries(
+        Object.entries(user).filter(([key]) =>
+          !['id', 'auth', 'links', 'following', 'followers'].includes(key)
+        )
+      ) as UpdateUserProfileData;
+      setFormData(updateData);
     }
 
     setIsEditing("none");
-    setOriginalProfileData(null);
     useAuthStore.getState().setAlert("편집 모드를 종료했습니다.", "info");
   };
 
@@ -104,7 +117,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
     );
 
     if (user) {
-      useAuthStore.getState().setUser({
+      setUser({
         ...user,
         profile_image: response,
       });
@@ -163,10 +176,10 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
         const trimmedInput = newSkill.trim();
         if (
           trimmedInput &&
-          !formData.tech_stacks.some((stack) => stack.tech === trimmedInput)
+          !formData.tech_stacks?.some((stack) => stack.tech === trimmedInput)
         ) {
           const updatedTechStacks = [
-            ...formData.tech_stacks,
+            ...(formData.tech_stacks || []),
             { tech: trimmedInput, level: 1 },
           ];
           setFormData((prev) => ({
@@ -177,8 +190,8 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
         }
       } else if (type === "languages") {
         const trimmedInput = newLanguage.trim();
-        if (trimmedInput && !formData.languages.includes(trimmedInput)) {
-          const updatedLanguages = [...formData.languages, trimmedInput];
+        if (trimmedInput && !formData.languages?.includes(trimmedInput)) {
+          const updatedLanguages = [...(formData.languages || []), trimmedInput];
           setFormData((prev) => ({
             ...prev,
             languages: updatedLanguages,
@@ -192,36 +205,53 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
   const removeSkill = (tech: string) => {
     setFormData((prev) => ({
       ...prev,
-      tech_stacks: prev.tech_stacks.filter((s) => s.tech !== tech),
+      tech_stacks: prev?.tech_stacks?.filter((s) => s.tech !== tech),
     }));
   };
   const removeLanguage = (language: string) => {
     setFormData((prev) => ({
       ...prev,
-      languages: prev.languages.filter((l) => l !== language),
+      languages: prev?.languages?.filter((l) => l !== language),
     }));
   };
 
   const handleTimeZoneChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      collaboration_preference: {
-        ...prev.collaboration_preference,
+    setFormData((prev) => {
+      // Create a base object with default values
+      const defaultPrefs = {
+        collaboration_style: "",
+        preferred_project_type: "",
+        preferred_role: "",
         available_time_zone: value,
-      },
-    }));
+        work_hours_start: "",
+        work_hours_end: "",
+        preferred_project_length: "",
+      };
+
+      // Merge with existing preferences if they exist
+      const updatedPrefs = {
+        ...defaultPrefs,
+        ...(prev?.collaboration_preference || {}),
+        available_time_zone: value,
+      };
+
+      return {
+        ...prev,
+        collaboration_preference: updatedPrefs,
+      };
+    });
   };
 
   const handleSocialLinkChange = (platform: string, value: string) => {
     setFormData((prev) => {
       // Check if the platform already exists in social_links
-      const linkExists = prev.social_links.some(link => link.platform === platform);
+      const linkExists = (prev?.social_links || []).some(link => link.platform === platform);
 
       if (linkExists) {
         // Update existing platform's URL
         return {
           ...prev,
-          social_links: prev.social_links.map((link) =>
+          social_links: (prev?.social_links || []).map((link) =>
             link.platform === platform ? { ...link, url: value } : link
           ),
         };
@@ -230,7 +260,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
         return {
           ...prev,
           social_links: [
-            ...prev.social_links,
+            ...(prev.social_links || []),
             { platform, url: value }
           ],
         };
@@ -242,13 +272,24 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
     field: string,
     value: string | number
   ) => {
-    setFormData((prev) => ({
-      ...prev,
-      collaboration_preference: {
-        ...prev.collaboration_preference,
-        [field]: value,
-      },
-    }));
+    setFormData((prev) => {
+      const currentPrefs = prev.collaboration_preference || {
+        collaboration_style: '',
+        preferred_project_type: '',
+        preferred_role: '',
+        available_time_zone: '',
+        work_hours_start: '',
+        work_hours_end: '',
+        preferred_project_length: ''
+      };
+      return {
+        ...prev,
+        collaboration_preference: {
+          ...currentPrefs,
+          [field]: value
+        },
+      };
+    });
   };
 
   const handleWorkingHoursChange = (name: string, value: string) => {
@@ -329,7 +370,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
 
   // Filter end time options to be after the selected start time
   const getEndTimeOptions = () => {
-    if (!formData.collaboration_preference.work_hours_start) return [];
+    if (!formData?.collaboration_preference?.work_hours_start) return [];
     const startMinutes = toMinutes(
       formData.collaboration_preference.work_hours_start
     );
@@ -339,7 +380,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
   };
 
   const handleSkillLevelChange = (index: number, value: string) => {
-    const updatedTechStacks = [...formData.tech_stacks];
+    const updatedTechStacks = [...(formData?.tech_stacks || [])];
     updatedTechStacks[index].level = parseInt(value);
     setFormData((prev) => ({
       ...prev,
@@ -354,9 +395,20 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
       const response = await updateUserProfile(formData);
       if (response) {
         setUser({
-          ...user,
+          ...user!,
           ...formData,
-        })
+          id: user!.id,
+          name: formData.name ?? user!.name,
+          email: formData.email ?? user!.email,
+          profile_image: formData.profile_image ?? user!.profile_image,
+          role: formData.role ?? user!.role,
+          status: formData.status ?? user!.status,
+          bio: formData.bio ?? user!.bio,
+          languages: formData.languages ?? user!.languages,
+          phone: formData.phone ?? user!.phone,
+          birth_date: formData.birth_date ?? user!.birth_date,
+          last_login: user!.last_login // Keep the original last_login
+        });
         useAuthStore.getState().setAlert("프로필이 업데이트되었습니다.", "success");
         setIsEditing("none");
         setSubmitStatus("success");
@@ -440,7 +492,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
               </div>
             </div>
             <Badge
-              content={`${user?.auth_provider == "github" ? "Github와" : "Google과"} 연동됨`}
+              content={`${user?.auth.provider == "github" ? "Github와" : "Google과"} 연동됨`}
               color="violet"
               className="!px-2 !py-1 !text-xs"
             />
@@ -525,7 +577,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
 
         <Select
           label="시간대"
-          value={formData.collaboration_preference.available_time_zone}
+          value={formData?.collaboration_preference?.available_time_zone}
           onChange={(value) => handleTimeZoneChange(value as string)}
           options={[
             {
@@ -565,12 +617,12 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
         <div className="grid grid-cols-2 gap-2">
           <Select
             options={TIME_OPTIONS}
-            value={formatNumericTime(formData.collaboration_preference.work_hours_start)}
+            value={formatNumericTime(formData?.collaboration_preference?.work_hours_start)}
             onChange={(value) => {
               handleWorkingHoursChange("start", value as string);
               // If end time is before new start time, reset it
               if (
-                formData.collaboration_preference.work_hours_end &&
+                formData?.collaboration_preference?.work_hours_end &&
                 toMinutes(formData.collaboration_preference.work_hours_end) <=
                 toMinutes(value as string)
               ) {
@@ -590,12 +642,12 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
           />
           <Select
             options={getEndTimeOptions()}
-            value={formatNumericTime(formData.collaboration_preference.work_hours_end)}
+            value={formatNumericTime(formData?.collaboration_preference?.work_hours_end)}
             onChange={(value) =>
               handleWorkingHoursChange("end", value as string)
             }
             placeholder={
-              formData.collaboration_preference.work_hours_start
+              formData?.collaboration_preference?.work_hours_start
                 ? "종료 시간"
                 : "시작 시간을 먼저 선택"
             }
@@ -631,7 +683,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
             className="disabled:cursor-not-allowed disabled:opacity-70"
           />
           <div className="flex flex-wrap gap-2">
-            {formData.tech_stacks.map((stack, index) =>
+            {formData?.tech_stacks?.map((stack, index) =>
               isEditing === "tech_stacks" ? (
                 <Badge
                   key={index}
@@ -699,7 +751,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
             className="disabled:cursor-not-allowed disabled:opacity-70"
           />
           <div className="flex flex-wrap gap-2">
-            {formData.languages.map((language, index) =>
+            {formData?.languages?.map((language, index) =>
               isEditing === "languages" ? (
                 <Badge
                   key={index}
@@ -724,7 +776,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
             label="소개글"
             name="bio"
             placeholder="소개글을 입력해주세요."
-            value={formData.bio}
+            value={formData?.bio}
             onChange={handleOnChange}
             isEditable
             EditOnClick={() =>
@@ -740,7 +792,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
           name="website"
           placeholder="Website URL을 입력해주세요."
           value={
-            formData.social_links.find((link) => link.platform === "website")?.url || ""
+            formData?.social_links?.find((link) => link.platform === "website")?.url || ""
           }
           onChange={(e) => handleSocialLinkChange("website", e.target.value)}
           isEditable
@@ -757,7 +809,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
           name="github"
           placeholder="Github URL을 입력해주세요."
           value={
-            isEditing === "github" ? formData.social_links.find((link) => link.platform === "github")?.url : formData.social_links.find((link) => link.platform === "github")?.url.split("/")[3] || ""
+            isEditing === "github" ? formData?.social_links?.find((link) => link.platform === "github")?.url : formData?.social_links?.find((link) => link.platform === "github")?.url.split("/")[3] || ""
           }
           onChange={(e) => handleSocialLinkChange("github", e.target.value)}
           isEditable
@@ -774,8 +826,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
           name="linkedin"
           placeholder="Linkedin URL을 입력해주세요."
           value={
-            formData.social_links
-              .find((link) => link.platform === "linkedin")
+            formData?.social_links?.find((link) => link.platform === "linkedin")
               ?.url.split("/")[4] || ""
           }
           onChange={(e) => handleSocialLinkChange("linkedin", e.target.value)}
@@ -795,8 +846,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
           name="instagram"
           placeholder="Instagram URL을 입력해주세요."
           value={
-            formData.social_links
-              .find((link) => link.platform === "instagram")
+            formData?.social_links?.find((link) => link.platform === "instagram")
               ?.url.split("/")[3] || ""
           }
           onChange={(e) => handleSocialLinkChange("instagram", e.target.value)}
@@ -827,7 +877,7 @@ export default function PersonalInfo({ user, setUser }: PersonalInfoProps) {
       <FollowListModal 
         isOpen={followListModalOpen} 
         onClose={handleFollowListModalClose} 
-        followList={whatToFollow === "following" ? user.following : user.followers} 
+        followList={(whatToFollow === "following" ? user?.following : user?.followers) || []} 
         whatToFollow={whatToFollow}
       />
     </div>

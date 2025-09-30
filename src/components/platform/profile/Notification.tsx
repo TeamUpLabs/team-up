@@ -4,22 +4,19 @@ import { useState } from "react";
 import { Switch } from "@/components/ui/Switch";
 import { Info } from "lucide-react";
 import { updateUserProfile } from "@/hooks/getMemberData";
-import { User } from "@/types/user/User";
 import Badge from "@/components/ui/Badge";
+import { useUser } from "@/contexts/UserContext";
 
-interface NotificationProps {
-  notificationSettings: User['notification_settings'];
-  setUser: React.Dispatch<React.SetStateAction<User>>;
-}
-
-export default function Notification({ notificationSettings, setUser }: NotificationProps) {  const [emailEnabled, setEmailEnabled] = useState<boolean>(Boolean(notificationSettings.emailEnable));
-  const [taskNotification, setTaskNotification] = useState<boolean>(Boolean(notificationSettings.taskNotification));
-  const [milestoneNotification, setMilestoneNotification] = useState<boolean>(Boolean(notificationSettings.milestoneNotification));
-  const [scheduleNotification, setScheduleNotification] = useState<boolean>(Boolean(notificationSettings.scheduleNotification));
-  const [deadlineNotification, setDeadlineNotification] = useState<boolean>(Boolean(notificationSettings.deadlineNotification));
-  const [weeklyReport, setWeeklyReport] = useState<boolean>(Boolean(notificationSettings.weeklyReport));
-  const [pushNotification, setPushNotification] = useState<boolean>(Boolean(notificationSettings.pushNotification));
-  const [securityNotification, setSecurityNotification] = useState<boolean>(Boolean(notificationSettings.securityNotification));
+export default function Notification() {  
+  const { user, setUser } = useUser();
+  const [emailEnabled, setEmailEnabled] = useState<boolean>(Boolean(user?.notification_settings.emailEnable));
+  const [taskNotification, setTaskNotification] = useState<boolean>(Boolean(user?.notification_settings.taskNotification));
+  const [milestoneNotification, setMilestoneNotification] = useState<boolean>(Boolean(user?.notification_settings.milestoneNotification));
+  const [scheduleNotification, setScheduleNotification] = useState<boolean>(Boolean(user?.notification_settings.scheduleNotification));
+  const [deadlineNotification, setDeadlineNotification] = useState<boolean>(Boolean(user?.notification_settings.deadlineNotification));
+  const [weeklyReport, setWeeklyReport] = useState<boolean>(Boolean(user?.notification_settings.weeklyReport));
+  const [pushNotification, setPushNotification] = useState<boolean>(Boolean(user?.notification_settings.pushNotification));
+  const [securityNotification, setSecurityNotification] = useState<boolean>(Boolean(user?.notification_settings.securityNotification));
 
 
   const handleEmailToggle = async (name: string, newValue: boolean) => {
