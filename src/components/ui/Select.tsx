@@ -26,6 +26,7 @@ interface SelectProps {
   onChange: (value: string | string[]) => void;
   color?: BadgeColor;
   placeholder?: string;
+  placeholderClassName?: string;
   multiple?: boolean;
   searchable?: boolean;
   disabled?: boolean;
@@ -52,6 +53,7 @@ export default function Select({
   onChange,
   color = "gray",
   placeholder = "옵션을 선택하세요",
+  placeholderClassName = "",
   multiple = false,
   searchable = false,
   disabled = false,
@@ -247,7 +249,7 @@ export default function Select({
     }
 
     if (selectedValues.length === 0) {
-      return <span className="text-text-secondary text-xs">{placeholder}</span>
+      return <span className={`text-text-secondary text-xs ${placeholderClassName}`}>{placeholder}</span>
     }
 
     if (multiple) {
@@ -258,7 +260,7 @@ export default function Select({
             return option ? (
               <span
                 key={val}
-                className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded-md"
+                className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-md"
               >
                 {option.label}
                 <button
@@ -345,14 +347,14 @@ export default function Select({
           aria-expanded={isOpen}
         >
           <div className="flex items-center justify-between">
-            <div className="flex-1 min-w-0 text-sm">{renderDisplayValue()}</div>
+            <div className="flex min-w-0 text-xs">{renderDisplayValue()}</div>
             <div className="flex items-center gap-2">
               {clearable && selectedValues.length > 0 && (
                 <button type="button" onClick={handleClear} className="hover:bg-component-background rounded-full p-1">
                   <FontAwesomeIcon icon={faXmark} />
                 </button>
               )}
-              <FontAwesomeIcon icon={faChevronDown} size="sm" className={`ml-2 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+              <FontAwesomeIcon icon={faChevronDown} size="xs" className={`ml-2 transition-transform ${isOpen ? "rotate-180" : ""}`} />
             </div>
           </div>
         </button>
