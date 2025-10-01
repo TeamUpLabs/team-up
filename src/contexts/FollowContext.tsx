@@ -12,7 +12,10 @@ interface FollowContextType {
 }
 
 interface UserFollowingMinimal {
-  following?: Array<{ id: number }>;
+  following?: {
+    count: number;
+    users: Array<{ id: number }>;
+  };
 }
 
 const FollowContext = createContext<FollowContextType | undefined>(undefined);
@@ -29,9 +32,8 @@ export function FollowProvider({ children }: FollowProviderProps) {
   });
 
   const followingUsers = useMemo(() => {
-    const ids: number[] = Array.isArray(data?.following)
-      ? data.following.map((u: { id: number }) => u.id)
-      : [];
+    const users = data?.following?.users || [];
+    const ids = Array.isArray(users) ? users.map((u: { id: number }) => u.id) : [];
     return new Set<number>(ids);
   }, [data]);
 
@@ -42,12 +44,13 @@ export function FollowProvider({ children }: FollowProviderProps) {
     await mutate(async (current: UserFollowingMinimal | null | undefined) => {
       const optimistic: UserFollowingMinimal = {
         ...current,
-        following: Array.isArray(current?.following)
-          ? [...current.following, { id: targetUserId }]
-          : [{ id: targetUserId }],
+        following: {
+          count: (current?.following?.count || 0) + 1,
+          users: [...(current?.following?.users || []), { id: targetUserId }],
+        },
       };
       try {
-        await followUserAPI(targetUserId);
+        await followUserAPI(user?.id || 0, targetUserId);
         return optimistic; // 서버 재검증 전까지 유지
       } catch (error) {
         useAuthStore.getState().setAlert("팔로우 추가에 실패했습니다.", "error");
@@ -63,12 +66,13 @@ export function FollowProvider({ children }: FollowProviderProps) {
 
     // 낙관적 업데이트
     await mutate(async (current: UserFollowingMinimal | null | undefined) => {
-      const nextFollowing = Array.isArray(current?.following)
-        ? current.following.filter((u) => u.id !== targetUserId)
-        : [];
+      const nextFollowing = {
+        count: (current?.following?.count || 0) - 1,
+        users: (current?.following?.users || []).filter((u) => u.id !== targetUserId),
+      };
       const optimistic: UserFollowingMinimal = { ...(current ?? {}), following: nextFollowing };
       try {
-        await unfollowUserAPI(targetUserId);
+        await unfollowUserAPI(user?.id || 0, targetUserId);
         return optimistic;
       } catch (error) {
         useAuthStore.getState().setAlert("팔로우 취소에 실패했습니다.", "error");

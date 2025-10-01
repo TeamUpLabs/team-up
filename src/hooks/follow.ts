@@ -1,17 +1,10 @@
 import { server } from "@/auth/server";
-import { useAuthStore } from "@/auth/authStore";
 
-export const followUser = async (userId: number) => {
-  const token = useAuthStore.getState().token;
-  if (!token) {
-    throw new Error("No authentication token found");
-  }
+export const followUser = async (user_id: number, target_id: number) => {
   try {
-    const response = await server.post(`/follows/${userId}`, null, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
+    const response = await server.post(`/api/v1/users/${user_id}/follow`, {
+      follower_id: user_id,
+      followed_id: target_id,
     });
     return response.data;
   } catch (error) {
@@ -20,17 +13,13 @@ export const followUser = async (userId: number) => {
   }
 };
 
-export const unfollowUser = async (userId: number) => {
-  const token = useAuthStore.getState().token;
-  if (!token) {
-    throw new Error("No authentication token found");
-  }
-  try {
-    const response = await server.delete(`/follows/${userId}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
+export const unfollowUser = async (user_id: number, target_id: number) => {
+  try { 
+    const response = await server.delete(`/api/v1/users/${user_id}/follow`, {
+      data: {
+        follower_id: user_id,
+        followed_id: target_id,
+      }
     });
     return response.data;
   } catch (error) {

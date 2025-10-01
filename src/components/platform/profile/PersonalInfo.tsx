@@ -480,14 +480,14 @@ export default function PersonalInfo() {
                 className="flex flex-row items-center gap-1 cursor-pointer"
                 onClick={() => handleFollowListModalOpen("following")}
               >
-                <span>{user?.following ? user?.following.length : 0}</span>
+                <span>{user?.following ? user?.following.count : 0}</span>
                 <span>팔로우</span>
               </div>
               <div 
                 className="flex flex-row items-center gap-1 cursor-pointer"
                 onClick={() => handleFollowListModalOpen("followers")}
               >
-                <span>{user?.followers ? user?.followers.length : 0}</span>
+                <span>{user?.followers ? user?.followers.count : 0}</span>
                 <span>팔로워</span>
               </div>
             </div>
@@ -877,7 +877,7 @@ export default function PersonalInfo() {
       <FollowListModal 
         isOpen={followListModalOpen} 
         onClose={handleFollowListModalClose} 
-        followList={(whatToFollow === "following" ? user?.following : user?.followers) || []} 
+        followList={(whatToFollow === "following" ? user?.following.users : user?.followers.users) || []} 
         whatToFollow={whatToFollow}
       />
     </div>

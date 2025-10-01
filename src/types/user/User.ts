@@ -42,8 +42,14 @@ export interface User {
       provider_access_token: string;
     };
     notification_settings: NotificationSetting;
-    following: UserBrief[];
-    followers: UserBrief[];
+    following: {
+      count: number;
+      users: UserBrief[];
+    };
+    followers: {
+      count: number;
+      users: UserBrief[];
+    };
 
     links: {
       self: {
@@ -129,8 +135,14 @@ export const blankUser: User = {
         securityNotification: 1,
     },
 
-    following: [],
-    followers: [],
+    following: {
+      count: 0,
+      users: [],
+    },
+    followers: {
+      count: 0,
+      users: [],
+    },
 
     links: {
       self: {

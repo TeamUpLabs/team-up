@@ -31,10 +31,9 @@ const CommunityContext = createContext<CommunityContextType>({
 
 export const CommunityProvider = ({ children }: { children: ReactNode }) => {
   const user = useAuthStore((state) => state.user);
-  const token = useAuthStore((state) => state.token);
   const hydrated = useAuthHydration();
   const { data, error, isLoading } = useSWR<CommunityData>(
-    hydrated && user?.id ? '/api/v1/community' : null, (url: string) => fetcher(url, token || undefined));
+    hydrated && user?.id ? '/api/v1/community' : null, (url: string) => fetcher(url));
 
   return (
     <CommunityContext.Provider
