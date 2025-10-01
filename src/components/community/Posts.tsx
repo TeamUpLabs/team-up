@@ -11,14 +11,13 @@ import { useTheme } from "@/contexts/ThemeContext";
 import CommentModal from "@/components/community/CommentModal";
 import Loading from "@/components/ui/Loading";
 import { Post } from "@/types/community/Post";
-import { useAuthStore } from "@/auth/authStore";
 import { useFollow } from "@/contexts/FollowContext";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { likeCommunityPost, unlikeCommunityPost } from "@/hooks/community/getCommunityPostData";
 import { bookmarkCommunityPost, unbookmarkCommunityPost } from "@/hooks/community/getCommunityPostData";
+import { useUser } from "@/contexts/UserContext";
 
-// Decodes escaped sequences (e.g., "\n", "\t") into actual characters
 function decodeEscapedWhitespace(input?: string): string {
   if (!input) return "";
   return input
@@ -31,10 +30,9 @@ function decodeEscapedWhitespace(input?: string): string {
 
 export default function Posts({ post }: { post: Post }) {
   const { isDark } = useTheme();
-  const user = useAuthStore.getState().user;
-  const { isFollowing, followUser, unfollowUser } = useFollow();
+  const { user } = useUser();
+  const { isFollowing, followUser, unfollowUser, isFollowedBy } = useFollow();
   const [showCopied, setShowCopied] = useState(false);
-
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -55,7 +53,6 @@ export default function Posts({ post }: { post: Post }) {
       await navigator.clipboard.writeText(codeToCopy);
       setShowCopied(true);
       
-      // Clear any existing timeout and set a new one
       setTimeout(() => {
         setShowCopied(false);
       }, 2000);
@@ -150,7 +147,13 @@ export default function Posts({ post }: { post: Post }) {
                 content={
                   <div className="flex items-center gap-2">
                     {isFollowing(post.creator.id) ? <Check className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
-                    <span className="text-xs">{isFollowing(post.creator.id) ? "팔로잉" : "팔로우"}</span>
+                    <span className="text-xs">
+                      {isFollowing(post.creator.id)
+                        ? "팔로잉"
+                        : isFollowedBy(post.creator.id)
+                        ? "맞팔로우"
+                        : "팔로우"}
+                    </span>
                   </div>
                 }
                 color="purple"

@@ -9,7 +9,7 @@ import { useFollow } from "@/contexts/FollowContext";
 export default function RecommendFollow() {
   const { recommended_follow, isLoading, error } = useCommunity();
   const [isExpanded, setIsExpanded] = useState(true);
-  const { isFollowing, followUser, unfollowUser } = useFollow();
+  const { isFollowing, followUser, unfollowUser, isFollowedBy } = useFollow();
 
   const handleFollow = async (userId: number) => {
     try {
@@ -90,7 +90,11 @@ export default function RecommendFollow() {
                           <UserPlus className="w-4 h-4" />
                         )}
                         <span className="text-xs">
-                          {isFollowing(user.user_id) ? "팔로잉" : "팔로우"}
+                          {isFollowing(user.user_id)
+                            ? "팔로잉"
+                            : isFollowedBy(user.user_id)
+                            ? "맞팔로우"
+                            : "팔로우"}
                         </span>
                       </div>
                     }

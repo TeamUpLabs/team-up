@@ -6,13 +6,19 @@ import { useAuthStore, fetchUserDetail } from '@/auth/authStore';
 
 interface FollowContextType {
   followingUsers: Set<number>;
+  followerUsers: Set<number>;
   followUser: (userId: number) => Promise<void>;
   unfollowUser: (userId: number) => Promise<void>;
   isFollowing: (userId: number) => boolean;
+  isFollowedBy: (userId: number) => boolean;
 }
 
 interface UserFollowingMinimal {
   following?: {
+    count: number;
+    users: Array<{ id: number }>;
+  };
+  followers?: {
     count: number;
     users: Array<{ id: number }>;
   };
@@ -30,6 +36,12 @@ export function FollowProvider({ children }: FollowProviderProps) {
   const { data, mutate } = useSWR<UserFollowingMinimal | null>(user ? `/api/v1/users/${user.id}` : null, fetchUserDetail, {
     revalidateOnFocus: true,
   });
+
+  const followerUsers = useMemo(() => {
+    const users = data?.followers?.users || [];
+    const ids = Array.isArray(users) ? users.map((u: { id: number }) => u.id) : [];
+    return new Set<number>(ids);
+  }, [data]);
 
   const followingUsers = useMemo(() => {
     const users = data?.following?.users || [];
@@ -85,11 +97,15 @@ export function FollowProvider({ children }: FollowProviderProps) {
 
   const isFollowing = (userId: number): boolean => followingUsers.has(userId);
 
+  const isFollowedBy = (userId: number): boolean => followerUsers.has(userId);
+
   const value: FollowContextType = {
     followingUsers,
+    followerUsers,
     followUser,
     unfollowUser,
     isFollowing,
+    isFollowedBy,
   };
 
   return (
