@@ -38,8 +38,7 @@ export default function Posts({ post }: { post: Post }) {
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
-
-  console.log(post)
+  const [commentCount, setCommentCount] = useState(post.reaction?.comments?.length || 0);
 
   useEffect(() => {
     const currentUserId = user?.id;
@@ -234,7 +233,7 @@ export default function Posts({ post }: { post: Post }) {
           </div>
           <div className="flex items-center gap-2">
             <MessageCircle className="w-4 h-4 text-text-secondary cursor-pointer hover:text-green-500" onClick={() => setIsCommentModalOpen(true)} />
-            <span className="text-text-secondary text-sm">{post.reaction?.comments?.length || 0}</span>
+            <span className="text-text-secondary text-sm">{commentCount}</span>
           </div>
           <div className="flex items-center gap-2">
             <Share2 className="w-4 h-4 text-text-secondary cursor-pointer hover:text-blue-500" />
@@ -248,11 +247,12 @@ export default function Posts({ post }: { post: Post }) {
         </div>
       </div>
       <Suspense fallback={<Loading />}>
-        <CommentModal 
-          isOpen={isCommentModalOpen} 
-          onClose={() => setIsCommentModalOpen(false)} 
-          comments={post.reaction?.comments || []} 
-          post_id={post.id} 
+        <CommentModal
+          isOpen={isCommentModalOpen}
+          onClose={() => setIsCommentModalOpen(false)}
+          comments={post.reaction?.comments || []}
+          post_id={post.id}
+          onCommentChange={(count) => setCommentCount(count)}
         />
       </Suspense>
     </div>

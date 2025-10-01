@@ -17,9 +17,10 @@ interface CommentModalProps {
   onClose: () => void;
   comments: Comment[];
   post_id: number;
+  onCommentChange?: (commentCount: number) => void;
 }
 
-export default function CommentModal({ isOpen, onClose, comments, post_id }: CommentModalProps) {
+export default function CommentModal({ isOpen, onClose, comments, post_id, onCommentChange }: CommentModalProps) {
   const user = useAuthStore.getState().user;
   const [originalComments, setOriginalComments] = useState<Comment[]>(comments);
   const [comment, setComment] = useState<string>("");
@@ -31,6 +32,10 @@ export default function CommentModal({ isOpen, onClose, comments, post_id }: Com
           const data = await createComment(post_id, comment);
           useAuthStore.getState().setAlert("댓글이 성공적으로 등록되었습니다.", "success");
           setOriginalComments(data.reaction.comments);
+          // Notify parent component about the comment count change
+          if (onCommentChange) {
+            onCommentChange(data.reaction.comments.length);
+          }
         } catch (error) {
           console.error('Failed to add comment:', error);
           useAuthStore.getState().setAlert("댓글 등록에 실패했습니다.", "error");
@@ -50,6 +55,10 @@ export default function CommentModal({ isOpen, onClose, comments, post_id }: Com
           const data = await deleteComment(post_id, comment_id);
           useAuthStore.getState().setAlert("댓글이 성공적으로 삭제되었습니다.", "success");
           setOriginalComments(data.reaction.comments);
+          // Notify parent component about the comment count change
+          if (onCommentChange) {
+            onCommentChange(data.reaction.comments.length);
+          }
         } catch (error) {
           console.error('Failed to delete comment:', error);
           useAuthStore.getState().setAlert("댓글 삭제에 실패했습니다.", "error");
