@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/Input";
 import Badge from "@/components/ui/Badge";
-import { TechStack } from "@/types/user/User";
+import { TechStack } from "@/types/user/TechStack";
 
 interface SignupStep7Props {
   skills: TechStack[];

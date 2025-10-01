@@ -5,8 +5,9 @@ import { useCommunity } from "@/contexts/CommunityContext";
 import Loading from "@/components/ui/Loading";
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function CommunityPage() {
+function CommunityPageContent() {
   const searchParams = useSearchParams();
   const { posts, isLoading, error } = useCommunity();
 
@@ -55,5 +56,13 @@ export default function CommunityPage() {
         ))
       )}
     </div>
+  );
+}
+
+export default function CommunityPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <CommunityPageContent />
+    </Suspense>
   );
 }

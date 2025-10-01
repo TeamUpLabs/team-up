@@ -3,6 +3,7 @@ import { TechStack } from "@/types/user/TechStack";
 import { Interest } from "@/types/user/Interest";
 import { SocialLink } from "@/types/user/SocialLink";
 import { UserBrief } from "@/types/brief/Userbrief";
+import { Session } from "@/types/user/Session";
 
 export interface NotificationSetting {
     emailEnable: number;
@@ -200,6 +201,40 @@ export const blankUser: User = {
     },
 }
 
+export interface UserNoLinks {
+  id: number;
+  name: string;
+  email: string;
+  profile_image: string;
+  role: string;
+  status: string;
+  bio: string;
+  languages: string[];
+  phone: string;
+  birth_date: string;
+  last_login: string;
+  auth: {
+    provider: string;
+    provider_id: string;
+    provider_access_token: string;
+  };
+  notification_settings: NotificationSetting;
+  following: {
+    count: number;
+    users: UserBrief[];
+  };
+  followers: {
+    count: number;
+    users: UserBrief[];
+  };
+
+  collaboration_preference: CollaborationPreference;
+  tech_stacks: TechStack[];
+  interests: Interest[];
+  social_links: SocialLink[];
+  notifications: Notification[];
+  sessions: Session[];
+}
 // export interface User {
 //     id: number;
 //     name: string;

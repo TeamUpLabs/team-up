@@ -1,4 +1,4 @@
-import { User } from "@/types/user/User";
+import { UserNoLinks } from "@/types/user/User";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useAuthStore } from "@/auth/authStore";
@@ -19,7 +19,6 @@ import { UserBrief } from "@/types/brief/Userbrief";
 import { fetcher } from "@/auth/server";
 import useAuthHydration from "@/hooks/useAuthHydration";
 import useSWR from "swr";
-import { useUser } from "@/contexts/UserContext";
 
 interface MemberDetailModalProps {
   member: UserBrief;
@@ -36,14 +35,13 @@ export default function MemberDetailModal({
   isLeader,
   isManager,
 }: MemberDetailModalProps) {
-  const { user, collaboration_preference, tech_stacks, social_links } = useUser();
   const { project, additional_data } = useProject();
   const router = useRouter();
   const params = useParams();
   const hydrated = useAuthHydration();
 
-  const { data: userData } = useSWR<User>(
-    hydrated ? `${member.links.self.href}` : null,
+  const { data: userData } = useSWR<UserNoLinks>(
+    hydrated ? `/api/v1/users/no-links/${member.id}` : null,
     (url: string) => fetcher(url)
   );
 
@@ -157,7 +155,7 @@ export default function MemberDetailModal({
 
   // Footer content for ModalTemplete
   const footerContent =
-    user?.id === project?.owner.id && user?.id != member.id ? (
+    userData?.id === project?.owner.id && userData?.id != member.id ? (
       <button
         onClick={handleKickOutMember}
         className="w-full px-4 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400
@@ -218,7 +216,7 @@ export default function MemberDetailModal({
         icon={Clock}
       >
         <div className="space-y-2">
-          {collaboration_preference?.available_time_zone ? (
+          {userData?.collaboration_preference?.available_time_zone ? (
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
                 <div className="flex items-center gap-2">
@@ -226,15 +224,15 @@ export default function MemberDetailModal({
                   <h4 className="font-medium">Timezone</h4>
                 </div>
                 <p className="text-muted-foreground">
-                  {collaboration_preference.available_time_zone === "Asia/Seoul"
+                  {userData?.collaboration_preference?.available_time_zone === "Asia/Seoul"
                     ? "한국 표준시 (KST)"
-                    : collaboration_preference.available_time_zone === "UTC"
+                    : userData?.collaboration_preference?.available_time_zone === "UTC"
                       ? "세계 표준시 (UTC)"
-                      : collaboration_preference.available_time_zone === "America/New_York"
+                      : userData?.collaboration_preference?.available_time_zone === "America/New_York"
                         ? "동부 표준시 (EST)"
-                        : collaboration_preference.available_time_zone === "America/Los_Angeles"
+                        : userData?.collaboration_preference?.available_time_zone === "America/Los_Angeles"
                           ? "태평양 표준시 (PST)"
-                          : collaboration_preference.available_time_zone}
+                          : userData?.collaboration_preference?.available_time_zone}
                 </p>
               </div>
               <div className="bg-component-secondary-background border border-component-border p-3 rounded-lg">
@@ -243,7 +241,7 @@ export default function MemberDetailModal({
                   <h4 className="font-medium">Time</h4>
                 </div>
                 <p className="text-muted-foreground">
-                  {formatTimeFromNumber(collaboration_preference?.work_hours_start)} - {formatTimeFromNumber(collaboration_preference?.work_hours_end)}
+                  {formatTimeFromNumber(userData?.collaboration_preference?.work_hours_start)} - {formatTimeFromNumber(userData?.collaboration_preference?.work_hours_end)}
                 </p>
               </div>
             </div>
@@ -284,12 +282,12 @@ export default function MemberDetailModal({
 
       {/* Skills Accordian */}
       <Accordion
-        title={`Skills (${tech_stacks && tech_stacks.length || 0})`}
+        title={`Skills (${userData?.tech_stacks && userData?.tech_stacks.length || 0})`}
         icon={ShieldCheck}
       >
         <div className="space-x-2">
-          {tech_stacks && tech_stacks.length > 0 ? (
-            tech_stacks.map((skill, index) => (
+          {userData?.tech_stacks && userData?.tech_stacks.length > 0 ? (
+            userData?.tech_stacks.map((skill, index) => (
               <Badge
                 key={index}
                 content={
@@ -311,12 +309,12 @@ export default function MemberDetailModal({
 
       {/* Languages Accordian */}
       <Accordion
-        title={`Languages (${userData?.languages && userData.languages.length || 0})`}
+        title={`Languages (${userData?.languages && userData?.languages.length || 0})`}
         icon={Language}
       >
         <div className="space-x-2">
-          {userData?.languages && userData.languages.length > 0 ? (
-            userData.languages.map((language: string, index: number) => (
+          {userData?.languages && userData?.languages.length > 0 ? (
+            userData?.languages.map((language: string, index: number) => (
               <Badge key={index} content={language} color="purple" fit />
             ))
           ) : (
@@ -329,12 +327,12 @@ export default function MemberDetailModal({
 
       {/* Social Links Accordian */}
       <Accordion
-        title={`Social Links (${social_links && social_links.length || 0})`}
+        title={`Social Links (${userData?.social_links && userData?.social_links.length || 0})`}
         icon={LinkIcon}
       >
         <div className="flex flex-wrap gap-2">
-          {social_links && social_links.length > 0 ? (
-            social_links.map((link, index) => (
+          {userData?.social_links && userData?.social_links.length > 0 ? (
+            userData?.social_links.map((link, index) => (
               <Link
                 key={index}
                 href={link.url}

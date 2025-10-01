@@ -147,7 +147,7 @@ export default function IssueToMilestoneModal({ isOpen, onClose, issueData }: Is
     if (project?.id) {
       try {
         setSubmitStatus('submitting');
-        await createMilestone({
+        await createMilestone(project.id || "", {
           ...formData,
           title: issueData.title,
           description: issueData.body,

@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Header from "@/components/community/Header";
-import SideBar from "@/components/community/SideBar";
-import { CommunityProvider } from "@/contexts/CommunityContext";
+import { useState, useCallback, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Header from '@/components/community/Header';
+import SideBar from '@/components/community/SideBar';
+import Loading from '@/components/ui/Loading';
+import { CommunityProvider } from '@/contexts/CommunityContext';
 
-export default function CommunityLayout({ children }: { children: React.ReactNode }) {
+function CommunityLayoutContent({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
@@ -24,26 +25,34 @@ export default function CommunityLayout({ children }: { children: React.ReactNod
   }, [router, searchParams]);
 
   return (
-    <CommunityProvider>
-      <div className="flex min-h-screen bg-background">
-        <SideBar 
+    <div className="flex min-h-screen bg-background">
+      <SideBar 
+        isSidebarOpen={isSidebarOpen} 
+        onTopicClick={(topic) => handleSearchChange(topic)}
+        onOpenSearch={() => setIsSearchOpen(true)}
+      />
+      <div className={`flex-1 transition-all duration-300 ${!isSidebarOpen ? 'md:ml-80' : 'md:ml-0'}`}>
+        <Header 
           isSidebarOpen={isSidebarOpen} 
-          onTopicClick={(topic) => handleSearchChange(topic)}
-          onOpenSearch={() => setIsSearchOpen(true)}
-        />
-        <div className={`flex-1 transition-all duration-300 ${!isSidebarOpen ? 'md:ml-80' : 'md:ml-0'}`}>
-          <Header 
-            isSidebarOpen={isSidebarOpen} 
-            setIsSidebarOpen={setIsSidebarOpen}
-            searchQuery={searchQuery}
-            onSearchQueryChange={handleSearchChange}
-            isSearchOpen={isSearchOpen}
-            onSearchOpenChange={setIsSearchOpen}
-          >
-            {children}
-          </Header>
-        </div>
+          setIsSidebarOpen={setIsSidebarOpen}
+          searchQuery={searchQuery}
+          onSearchQueryChange={handleSearchChange}
+          isSearchOpen={isSearchOpen}
+          onSearchOpenChange={setIsSearchOpen}
+        >
+          {children}
+        </Header>
       </div>
-    </CommunityProvider>
+    </div>
   );
 }
+
+export default function CommunityLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <CommunityProvider>
+      <Suspense fallback={<Loading />}>
+        <CommunityLayoutContent>{children}</CommunityLayoutContent>
+      </Suspense>
+    </CommunityProvider>
+  );
+} 
