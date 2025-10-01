@@ -21,7 +21,7 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
     name: channel.name,
     description: channel.description,
     is_public: channel.is_public,
-    member_ids: channel.members.map((member) => member.id),
+    member_ids: channel.members.map((member) => member.user.id),
   });
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
@@ -59,9 +59,10 @@ export default function ChannelMemberEditModal({ isOpen, onClose, channel }: Cha
 
     try {
       setSubmitStatus('submitting');
-      await updateChannel(channel.channel_id, {
+      await updateChannel(project?.id || '', channel.channel_id, {
         ...formData,
         member_ids: formData.member_ids,
+        updated_by: project?.members?.find((member) => member.user.id === formData.member_ids[0])?.user.id || 0,
       });
       useAuthStore.getState().setAlert("채널이 성공적으로 수정되었습니다.", "success");
       setSubmitStatus('success');
