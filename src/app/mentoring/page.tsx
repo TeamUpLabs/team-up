@@ -3,17 +3,212 @@
 import SearchBar from "@/components/mentoring/SearchBar";
 import { useState } from "react";
 import Select from "@/components/ui/Select";
+import MentorCard from "@/components/mentoring/MentorCard";
+
+export interface Mentor {
+  name: string;
+  profile_image: string;
+  job: string;
+  location: string[];
+  experience: string;
+  topic: string[];
+  bio: string;
+  availablefor: string[];
+}
+
+const mentors: Mentor[] = [
+  {
+    name: "Sarah Kim",
+    profile_image: "https://randomuser.me/api/portraits/women/44.jpg",
+    job: "UX/UI Designer",
+    location: ["Seoul", "Online"],
+    experience: "8",
+    topic: ["UX Design", "UI/UX Research", "Prototyping"],
+    bio: "Lead Designer at DesignHub with a passion for creating intuitive user experiences",
+    availablefor: ["Mentoring", "Portfolio Reviews", "Design Critiques"]
+  },
+  {
+    name: "David Park",
+    profile_image: "https://randomuser.me/api/portraits/men/32.jpg",
+    job: "Full Stack Developer",
+    location: ["Busan", "Online"],
+    experience: "5",
+    topic: ["React", "Node.js", "TypeScript"],
+    bio: "Senior Developer at TechCorp, specializing in scalable web applications",
+    availablefor: ["Code Reviews", "Technical Interviews", "Project Guidance"]
+  },
+  {
+    name: "Minji Lee",
+    profile_image: "https://randomuser.me/api/portraits/women/65.jpg",
+    job: "Data Scientist",
+    location: ["Seoul", "Online"],
+    experience: "6",
+    topic: ["Machine Learning", "Python", "Data Analysis"],
+    bio: "Data Science Lead at AI Research Lab, passionate about NLP and computer vision",
+    availablefor: ["Research Collaboration", "Data Science Mentoring", "Project Consulting"]
+  },
+  {
+    name: "James Wilson",
+    profile_image: "https://randomuser.me/api/portraits/men/86.jpg",
+    job: "DevOps Engineer",
+    location: ["Online"],
+    experience: "7",
+    topic: ["AWS", "Docker", "Kubernetes"],
+    bio: "Cloud Architect helping startups scale their infrastructure efficiently",
+    availablefor: ["System Design", "Cloud Architecture", "DevOps Best Practices"]
+  },
+  {
+    name: "Yuna Kim",
+    profile_image: "https://randomuser.me/api/portraits/women/22.jpg",
+    job: "Product Manager",
+    location: ["Seoul", "Busan", "Online"],
+    experience: "9",
+    topic: ["Product Strategy", "Agile", "User Research"],
+    bio: "Product Leader with experience in both startups and enterprise companies",
+    availablefor: ["Product Strategy", "Career Advice", "Startup Consulting"]
+  },
+  {
+    name: "Taehoon Kim",
+    profile_image: "https://randomuser.me/api/portraits/men/75.jpg",
+    job: "Mobile Developer",
+    location: ["Seoul", "Online"],
+    experience: "4",
+    topic: ["React Native", "iOS", "Android"],
+    bio: "Mobile Developer creating beautiful cross-platform applications",
+    availablefor: ["App Development", "Code Review", "Technical Interviews"]
+  },
+  {
+    name: "Hyejin Park",
+    profile_image: "https://randomuser.me/api/portraits/women/33.jpg",
+    job: "Frontend Developer",
+    location: ["Busan", "Online"],
+    experience: "3",
+    topic: ["React", "TypeScript", "Next.js"],
+    bio: "Passionate about creating responsive and accessible web applications",
+    availablefor: ["Frontend Development", "Code Pairing", "Technical Writing"]
+  },
+  {
+    name: "Joon-ho Kim",
+    profile_image: "https://randomuser.me/api/portraits/men/55.jpg",
+    job: "Blockchain Developer",
+    location: ["Seoul", "Online"],
+    experience: "5",
+    topic: ["Solidity", "Ethereum", "Smart Contracts"],
+    bio: "Blockchain enthusiast building decentralized applications",
+    availablefor: ["Blockchain Development", "Smart Contract Auditing", "Web3 Consulting"]
+  },
+  {
+    name: "Ji-woo Lee",
+    profile_image: "https://randomuser.me/api/portraits/women/51.jpg",
+    job: "UX Researcher",
+    location: ["Seoul", "Online"],
+    experience: "4",
+    topic: ["User Research", "Usability Testing", "UX Strategy"],
+    bio: "Helping teams build user-centered products through research",
+    availablefor: ["Research Planning", "User Testing", "UX Workshops"]
+  },
+  {
+    name: "Min-soo Park",
+    profile_image: "https://randomuser.me/api/portraits/men/68.jpg",
+    job: "Backend Developer",
+    location: ["Seoul", "Online"],
+    experience: "6",
+    topic: ["Node.js", "Python", "Microservices"],
+    bio: "Backend specialist focused on building scalable APIs and services",
+    availablefor: ["System Design", "Code Reviews", "Technical Interviews"]
+  },
+  {
+    name: "Eun-ji Kim",
+    profile_image: "https://randomuser.me/api/portraits/women/77.jpg",
+    job: "UI/UX Designer",
+    location: ["Busan", "Online"],
+    experience: "5",
+    topic: ["UI Design", "Design Systems", "Figma"],
+    bio: "Creating beautiful and functional user interfaces",
+    availablefor: ["Design Critiques", "Portfolio Reviews", "UI/UX Mentoring"]
+  },
+  {
+    name: "Sang-hoon Lee",
+    profile_image: "https://randomuser.me/api/portraits/men/45.jpg",
+    job: "Cybersecurity Expert",
+    location: ["Online"],
+    experience: "10+",
+    topic: ["Security", "Penetration Testing", "Compliance"],
+    bio: "Helping companies secure their applications and infrastructure",
+    availablefor: ["Security Audits", "Consulting", "Security Training"]
+  }
+]
 
 export default function MentoringPage() {
   const [searchLookingforQuery, setSearchLookingforQuery] = useState('');
   const [searchAvailableforQuery, setSearchAvailableforQuery] = useState('');
-  const [searchExperience, setSearchExperience] = useState<string | string[]>('');
+  const [searchExperience, setSearchExperience] = useState<string>('');
   const [searchTopic, setSearchTopic] = useState<string | string[]>('');
   const [searchLocation, setSearchLocation] = useState<string | string[]>('');
   
+  const filteredMentors = mentors.filter((mentor) => {
+    // If no search queries, show all mentors
+    if (!searchLookingforQuery && !searchAvailableforQuery && !searchExperience && !searchTopic && !searchLocation) {
+      return true;
+    }
+
+    // Search in topic, job, and bio for the "looking for" query
+    const matchesLookingFor = !searchLookingforQuery || (
+      mentor.topic.some(topic => topic.toLowerCase().includes(searchLookingforQuery.toLowerCase())) ||
+      mentor.job.toLowerCase().includes(searchLookingforQuery.toLowerCase()) ||
+      mentor.bio.toLowerCase().includes(searchLookingforQuery.toLowerCase())
+    );
+
+    // Search in availablefor for the "available for" query
+    const matchesAvailableFor = !searchAvailableforQuery || (
+      mentor.availablefor.some(af => af.toLowerCase().includes(searchAvailableforQuery.toLowerCase()))
+    );
+
+    // Enhanced experience filtering
+    const matchesExperience = !searchExperience || (() => {
+      if (!searchExperience) return true;
+      
+      const mentorExp = parseInt(mentor.experience) || 0;
+      
+      switch(searchExperience.toLowerCase()) {
+        case 'junior':
+          return mentorExp < 1; // Less than 1 year
+        case '1-2':
+          return mentorExp >= 1 && mentorExp <= 2;
+        case '3-5':
+          return mentorExp >= 3 && mentorExp <= 5;
+        case '6-10':
+          return mentorExp >= 6 && mentorExp <= 10;
+        case 'senior':
+          return mentorExp > 10 || mentor.experience.toLowerCase().includes('+');
+        default:
+          return true;
+      }
+    })();
+
+    // Enhanced topic filtering
+    const matchesTopic = !searchTopic || (() => {
+      if (!searchTopic) return true;
+      const searchTerm = searchTopic.toString().toLowerCase();
+      
+      // Check if any of the mentor's topics match the search term
+      return mentor.topic.some(topic => {
+        const topicLower = topic.toLowerCase();
+        return topicLower.includes(searchTerm);
+      });
+    })();
+
+    // Filter by location if specified
+    const matchesLocation = !searchLocation || (
+      (typeof searchLocation === 'string' && mentor.location.some(location => location.toLowerCase().includes(searchLocation.toLowerCase()))) ||
+      (Array.isArray(searchLocation) && searchLocation.some(searchTerm => mentor.location.some(location => location.toLowerCase().includes(searchTerm.toLowerCase()))))
+    );
+
+    return matchesLookingFor && matchesAvailableFor && matchesExperience && matchesTopic && matchesLocation;
+  });
 
   return (
-    <div className="w-full flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-3xl font-bold">Discover Professionals</h1>
         <p className="text-text-secondary">Find the right mentor for your career goals</p>
@@ -29,36 +224,58 @@ export default function MentoringPage() {
         <div className="w-full flex gap-2">
           <Select
             options={[
+              { name: 'experience', value: '', label: '경력 전체' },
               { name: 'experience', value: 'junior', label: '신입' },
               { name: 'experience', value: '1-2', label: '1-2년차' },
               { name: 'experience', value: '3-5', label: '3-5년차' },
               { name: 'experience', value: '6-10', label: '6-10년차' },
-              { name: 'experience', value: 'senior', label: '고수' },
+              { name: 'experience', value: 'senior', label: '10년차 이상' },
             ]}
             value={searchExperience}
-            onChange={(value) => setSearchExperience(value)}
-            className="!bg-transparent !rounded-full !px-2 !py-0.5"
+            onChange={(value) => setSearchExperience(value as string)}
+            className="!bg-transparent !rounded-full !px-2 !py-0.5 min-w-[120px]"
             placeholder="Experience"
             placeholderClassName="!font-medium"
           />
 
           <Select
             options={[
-              { name: 'topic', value: 'web-developer', label: '웹 개발자' },
-              { name: 'topic', value: 'frontend-developer', label: '프론트엔드 개발자' },
-              { name: 'topic', value: 'backend-developer', label: '백엔드 개발자' },
-              { name: 'topic', value: 'fullstack-developer', label: '풀스택 개발자' },
-              { name: 'topic', value: 'data-scientist', label: '데이터 과학자' },
-              { name: 'topic', value: 'data-engineer', label: '데이터 엔지니어' },
-              { name: 'topic', value: 'data-analyst', label: '데이터 분석가' },
-              { name: 'topic', value: 'ux-designer', label: 'UX 디자이너' },
-              { name: 'topic', value: 'ui-designer', label: 'UI 디자이너' },
-              { name: 'topic', value: 'product-manager', label: '프로젝트 매니저' },
-              
+              { name: 'topic', value: '', label: '분야 전체' },
+              { name: 'topic', value: 'UX Design', label: 'UX Design' },
+              { name: 'topic', value: 'UI/UX Research', label: 'UI/UX Research' },
+              { name: 'topic', value: 'Prototyping', label: 'Prototyping' },
+              { name: 'topic', value: 'React', label: 'React' },
+              { name: 'topic', value: 'Node.js', label: 'Node.js' },
+              { name: 'topic', value: 'TypeScript', label: 'TypeScript' },
+              { name: 'topic', value: 'Machine Learning', label: 'Machine Learning' },
+              { name: 'topic', value: 'Python', label: 'Python' },
+              { name: 'topic', value: 'Data Analysis', label: 'Data Analysis' },
+              { name: 'topic', value: 'AWS', label: 'AWS' },
+              { name: 'topic', value: 'Docker', label: 'Docker' },
+              { name: 'topic', value: 'Kubernetes', label: 'Kubernetes' },
+              { name: 'topic', value: 'Product Strategy', label: 'Product Strategy' },
+              { name: 'topic', value: 'Agile', label: 'Agile' },
+              { name: 'topic', value: 'User Research', label: 'User Research' },
+              { name: 'topic', value: 'React Native', label: 'React Native' },
+              { name: 'topic', value: 'iOS', label: 'iOS' },
+              { name: 'topic', value: 'Android', label: 'Android' },
+              { name: 'topic', value: 'Next.js', label: 'Next.js' },
+              { name: 'topic', value: 'Solidity', label: 'Solidity' },
+              { name: 'topic', value: 'Ethereum', label: 'Ethereum' },
+              { name: 'topic', value: 'Smart Contracts', label: 'Smart Contracts' },
+              { name: 'topic', value: 'Usability Testing', label: 'Usability Testing' },
+              { name: 'topic', value: 'UX Strategy', label: 'UX Strategy' },
+              { name: 'topic', value: 'Microservices', label: 'Microservices' },
+              { name: 'topic', value: 'UI Design', label: 'UI Design' },
+              { name: 'topic', value: 'Design Systems', label: 'Design Systems' },
+              { name: 'topic', value: 'Figma', label: 'Figma' },
+              { name: 'topic', value: 'Security', label: 'Security' },
+              { name: 'topic', value: 'Penetration Testing', label: 'Penetration Testing' },
+              { name: 'topic', value: 'Compliance', label: 'Compliance' },
             ]}
             value={searchTopic}
-            onChange={(value) => setSearchTopic(value)}
-            className="!bg-transparent !rounded-full !px-2 !py-0.5"
+            onChange={(value) => setSearchTopic(value as string)}
+            className="!bg-transparent !rounded-full !px-2 !py-0.5 min-w-[160px]"
             placeholder="Topics"
             placeholderClassName="!font-medium"
             autoWidth
@@ -66,6 +283,7 @@ export default function MentoringPage() {
 
           <Select
             options={[
+              { name: 'location', value: '', label: '위치 전체' },
               { name: 'location', value: 'online', label: '온라인' },
               { name: 'location', value: 'seoul', label: '서울' },
               { name: 'location', value: 'gyeonggi', label: '경기도' },
@@ -78,11 +296,20 @@ export default function MentoringPage() {
               { name: 'location', value: 'jeju', label: '제주도' },
             ]}
             value={searchLocation}
-            onChange={(value) => setSearchLocation(value)}
+            onChange={(value) => setSearchLocation(value as string)}
             className="!bg-transparent !rounded-full !px-2 !py-0.5"
             placeholder="Location"
             placeholderClassName="!font-medium"
           />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h2 className="text-xl font-bold">{filteredMentors.length} {searchLookingforQuery || "Mentors"} available {searchAvailableforQuery && `for ${searchAvailableforQuery}`}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredMentors.map((mentor, idx) => {
+            return <MentorCard key={idx} mentor={mentor} />
+          })}
         </div>
       </div>
     </div>
