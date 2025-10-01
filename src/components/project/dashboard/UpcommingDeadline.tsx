@@ -52,11 +52,11 @@ export default function UpcommingDeadline({ isLoading = false }: UpcommingDeadli
   const [isMilestoneModalOpen, setIsMilestoneModalOpen] = useState(false);
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Task | MileStone | Schedule | null>(null);
-  const { tasks, milestones, schedules } = useProject();
+  const { additional_data } = useProject();
 
   // Generate sample activities from project data
   const activities: Activity[] = [
-    ...(tasks?.map(task => ({
+    ...(additional_data?.tasks?.map(task => ({
       id: `task-${task.id}`,
       user: {
         name: task.creator.name || '담당자 없음',
@@ -71,7 +71,7 @@ export default function UpcommingDeadline({ isLoading = false }: UpcommingDeadli
       timestamp: new Date(task.due_date || "")
     })) || []),
 
-    ...(milestones?.map(milestone => {
+    ...(additional_data?.milestones?.map(milestone => {
       return {
         id: `milestone-${milestone.id}`,
         user: {
@@ -88,7 +88,7 @@ export default function UpcommingDeadline({ isLoading = false }: UpcommingDeadli
       };
     }) || []),
 
-    ...(schedules?.filter(schedule => schedule.type === 'meeting').map(schedule => {
+    ...(additional_data?.schedules?.filter(schedule => schedule.type === 'meeting').map(schedule => {
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
@@ -105,7 +105,7 @@ export default function UpcommingDeadline({ isLoading = false }: UpcommingDeadli
       };
     }) || []),
 
-    ...(schedules?.filter(schedule => schedule.type === 'event').map(schedule => {
+    ...(additional_data?.schedules?.filter(schedule => schedule.type === 'event').map(schedule => {
       return {
         id: `${schedule.type}-${schedule.id}`,
         user: {
@@ -138,19 +138,19 @@ export default function UpcommingDeadline({ isLoading = false }: UpcommingDeadli
     const itemId = id.split('-')[1]; // Extract the ID from the activity ID
     
     if (type === 'task') {
-      const task = tasks?.find(t => t.id.toString() === itemId);
+      const task = additional_data?.tasks?.find(t => t.id.toString() === itemId);
       if (task) {
         setSelectedItem(task);
         setIsTaskModalOpen(true);
       }
     } else if (type === 'milestone') {
-      const milestone = milestones?.find(m => m.id.toString() === itemId);
+      const milestone = additional_data?.milestones?.find(m => m.id.toString() === itemId);
       if (milestone) {
         setSelectedItem(milestone);
         setIsMilestoneModalOpen(true);
       }
     } else if (type === 'meeting' || type === 'event') {
-      const schedule = schedules?.find(s => s.id.toString() === itemId);
+      const schedule = additional_data?.schedules?.find(s => s.id.toString() === itemId);
       if (schedule) {
         setSelectedItem(schedule);
         setIsScheduleModalOpen(true);
