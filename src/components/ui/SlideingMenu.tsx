@@ -10,8 +10,8 @@ export interface IconProps {
 
 interface SlideingMenuProps {
   icons: IconProps[];
-  isSearchOpen: boolean;
-  setIsSearchOpen: (open: boolean) => void;
+  isSearchOpen?: boolean;
+  setIsSearchOpen?: (open: boolean) => void;
 }
 
 
@@ -38,7 +38,7 @@ export default function SlideingMenu({ icons, isSearchOpen, setIsSearchOpen }: S
             href={value.href || ""}
             className="p-2 rounded-md text-text-secondary hover:bg-component-tertiary-background hover:text-text-primary cursor-pointer"
             aria-label={value.label}
-            onClick={() => value.label === "Search" && setIsSearchOpen(!isSearchOpen)}
+            onClick={() => value.label === "Search" && setIsSearchOpen?.(!isSearchOpen)}
           >
             {value.icon}
           </Link>
