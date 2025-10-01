@@ -41,8 +41,8 @@ export default function Posts({ post }: { post: Post }) {
   useEffect(() => {
     const currentUserId = user?.id;
     setIsLiked(post.reaction?.likes?.users.some(u => u.id === currentUserId));
-    setIsBookmarked(post.bookmark?.is_bookmarked);
-  }, [post.reaction?.likes?.users, post.bookmark?.is_bookmarked, user?.id]);
+    setIsBookmarked(user?.bookmarked_posts?.some(p => p.id === post.id) || false);
+  }, [post.reaction?.likes?.users, post.bookmark?.is_bookmarked, user?.id, user?.bookmarked_posts, post.id]);
 
   const handleCopyCode = async () => {
     const raw = typeof post.code === 'object' ? post.code.code : post.code;
@@ -94,11 +94,9 @@ export default function Posts({ post }: { post: Post }) {
       if (isBookmarked) {
         await unbookmarkCommunityPost(post.id);
         setIsBookmarked(false);
-        post.bookmark.count = post.bookmark.count - 1;
       } else {
         await bookmarkCommunityPost(post.id);
         setIsBookmarked(true);
-        post.bookmark.count = post.bookmark.count + 1;
       }
     } catch (error) {
       console.error('Bookmark action failed:', error);

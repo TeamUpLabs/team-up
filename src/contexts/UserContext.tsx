@@ -12,6 +12,7 @@ import { Interest } from '@/types/user/Interest';
 import { SocialLink } from '@/types/user/SocialLink';
 import { Notification } from '@/types/Notification';
 import { Session } from '@/types/user/Session';
+import { Post } from '@/types/community/Post';
 
 export interface IntegratedUser extends User {
   collaboration_preference?: CollaborationPreference;
@@ -20,6 +21,7 @@ export interface IntegratedUser extends User {
   social_links?: SocialLink[];
   notifications?: Notification[];
   sessions?: Session[];
+  bookmarked_posts?: Post[];
 }
 
 interface UserContextType {
@@ -148,6 +150,19 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       console.error('Error fetching sessions:', error);
     }
   }, [fetchRelatedData, user?.links?.sessions?.href, loadedData]);
+
+  const fetchBookmarkedPosts = useCallback(async () => {
+    if (!user?.links?.bookmarked_posts?.href || loadedData.has('bookmarked_posts')) {
+      return;
+    }
+    try {
+      const res = await fetchRelatedData<Post[]>(user.links.bookmarked_posts.href);
+      setUser(prev => ({ ...prev!, bookmarked_posts: res }));
+      setLoadedData(prev => new Set(prev).add('bookmarked_posts'));
+    } catch (error) {
+      console.error('Error fetching bookmarked posts:', error);
+    }
+  }, [fetchRelatedData, user?.links?.bookmarked_posts?.href, loadedData]);
   
   // Update user data and related data when user changes
   useEffect(() => {
@@ -161,7 +176,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     if (links.social_links?.href) fetchSocialLinks();
     if (links.notifications?.href) fetchNotifications();
     if (links.sessions?.href) fetchSessions();
-  }, [user, fetchCollaborationPreference, fetchTechStack, fetchInterests, fetchSocialLinks, fetchNotifications, fetchSessions]);
+    if (links.bookmarked_posts?.href) fetchBookmarkedPosts();
+  }, [user, fetchCollaborationPreference, fetchTechStack, fetchInterests, fetchSocialLinks, fetchNotifications, fetchSessions, fetchBookmarkedPosts]);
 
   // Initial auth check
   useEffect(() => {

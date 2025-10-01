@@ -118,7 +118,7 @@ export const deleteComment = async (post_id: number, comment_id: number) => {
 
 export const bookmarkCommunityPost = async (post_id: number) => {
   try {
-    const res = await server.post(`/api/v1/community/posts/${post_id}/bookmark`, null);
+    const res = await server.post(`/api/v1/community/posts/${post_id}/bookmarks`, null);
     if (res.status === 200) {
       return res.data;
     } else {
@@ -132,7 +132,7 @@ export const bookmarkCommunityPost = async (post_id: number) => {
 
 export const unbookmarkCommunityPost = async (post_id: number) => {
   try {
-    const res = await server.delete(`/api/v1/community/posts/${post_id}/bookmark`);
+    const res = await server.delete(`/api/v1/community/posts/${post_id}/bookmarks`);
     if (res.status === 200) {
       return res.data;
     } else {

@@ -104,6 +104,11 @@ export interface User {
         href: string;
         method: string;
         title: string;
+      },
+      bookmarked_posts: {
+        href: string;
+        method: string;
+        title: string;
       }
     };
 }
@@ -198,6 +203,11 @@ export const blankUser: User = {
         method: "",
         title: "",
       },
+      bookmarked_posts: {
+        href: "",
+        method: "",
+        title: "",
+      }
     },
 }
 
