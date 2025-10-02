@@ -149,7 +149,7 @@ export default function MemberCard({
 
           <div className="flex items-center text-text-secondary">
             <p className="text-text-secondary font-medium">
-              {convertRoleName(member.role) || "역할 미지정"}
+              {convertRoleName(member.job) || "직업 미지정"}
             </p>
           </div>
 
