@@ -26,7 +26,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, icon, children, defaultOpe
     <div className="rounded-md mb-2">
       <button
         onClick={toggleAccordion}
-        className="group w-full flex justify-between items-center pb-2 focus:outline-none transition-colors duration-200 ease-in-out"
+        className="group w-full flex justify-between items-center pb-2 focus:outline-none transition-colors duration-200 ease-in-out cursor-pointer"
         aria-expanded={isOpen}
       >
         <div className="flex items-center gap-2 text-text-primary group-hover:underline font-bold">
