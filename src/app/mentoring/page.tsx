@@ -7,12 +7,10 @@ import MentorCard from "@/components/mentoring/MentorCard";
 import TabSlider from "@/components/ui/TabSlider";
 import { GalleryHorizontal, List } from "lucide-react";
 import mentors from "../../../public/json/mentors.json";
+import { UserBrief } from "@/types/brief/Userbrief";
 
 export interface Mentor {
-  id: number;
-  name: string;
-  profile_image: string;
-  job: string;
+  user: UserBrief;
   location: string[];
   experience: string;
   topic: string[];
@@ -54,7 +52,7 @@ export default function MentoringPage() {
     // Search in topic, job, and bio for the "looking for" query
     const matchesLookingFor = !searchLookingforQuery || (
       mentor.topic.some(topic => topic.toLowerCase().includes(searchLookingforQuery.toLowerCase())) ||
-      mentor.job.toLowerCase().includes(searchLookingforQuery.toLowerCase()) ||
+      mentor.user.job.toLowerCase().includes(searchLookingforQuery.toLowerCase()) ||
       mentor.bio.toLowerCase().includes(searchLookingforQuery.toLowerCase())
     );
 
@@ -219,11 +217,13 @@ export default function MentoringPage() {
             onTabChange={setTab}
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredMentors.map((mentor, idx) => {
-            return <MentorCard key={idx} mentor={mentor} />
-          })}
-        </div>
+        {tab === "card" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredMentors.map((mentor, idx) => {
+              return <MentorCard key={idx} mentor={mentor} />
+            })}
+          </div>
+        )}
       </div>
     </div>
   )

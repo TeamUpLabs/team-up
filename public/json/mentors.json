@@ -1,9 +1,22 @@
 [
   {
-    "id": 1,
-    "name": "Sarah Kim",
-    "profile_image": "https://randomuser.me/api/portraits/women/44.jpg",
-    "job": "UX/UI Designer",
+    "user": {
+      "id": 1,
+      "name": "Sarah Kim",
+      "email": "sarah.kim@example.com",
+      "profile_image": "https://randomuser.me/api/portraits/women/44.jpg",
+      "job": "UX/UI Designer",
+      "status": "active",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/1",
+          "method": "GET",
+          "title": "Mentor"
+        }
+      }
+    },
     "location": ["Seoul", "Online"],
     "experience": "8",
     "topic": ["UX Design", "UI/UX Research", "Prototyping"],
@@ -57,10 +70,23 @@
     ]
   },
   {
-    "id": 2,
-    "name": "David Park",
-    "profile_image": "https://randomuser.me/api/portraits/men/32.jpg",
-    "job": "Full Stack Developer",
+    "user": {
+      "id": 2,
+      "name": "David Park",
+      "profile_image": "https://randomuser.me/api/portraits/men/32.jpg",
+      "job": "Full Stack Developer",
+      "email": "david.park@example.com",
+      "status": "active",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/2",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Busan", "Online"],
     "experience": "5",
     "topic": ["React", "Node.js", "TypeScript"],
@@ -107,9 +133,23 @@
   },
   {
     "id": 3,
-    "name": "Minji Lee",
-    "profile_image": "https://randomuser.me/api/portraits/women/65.jpg",
-    "job": "Data Scientist",
+    "user": {
+      "id": 3,
+      "name": "Minji Lee",
+      "profile_image": "https://randomuser.me/api/portraits/women/65.jpg",
+      "job": "Data Scientist",
+      "email": "minji.lee@example.com",
+      "status": "active",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/3",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Seoul", "Online"],
     "experience": "6",
     "topic": ["Machine Learning", "Python", "Data Analysis"],
@@ -163,10 +203,23 @@
     ]
   },
   {
-    "id": 4,
-    "name": "James Wilson",
-    "profile_image": "https://randomuser.me/api/portraits/men/86.jpg",
-    "job": "DevOps Engineer",
+    "user": {
+      "id": 4,
+      "name": "James Wilson",
+      "profile_image": "https://randomuser.me/api/portraits/men/86.jpg",
+      "job": "DevOps Engineer",
+      "email": "james.wilson@example.com",
+      "status": "inactive",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/4",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Online"],
     "experience": "7",
     "topic": ["AWS", "Docker", "Kubernetes"],
@@ -212,10 +265,23 @@
     ]
   },
   {
-    "id": 5,
-    "name": "Yuna Kim",
-    "profile_image": "https://randomuser.me/api/portraits/women/22.jpg",
-    "job": "Product Manager",
+    "user": {
+      "id": 5,
+      "name": "Yuna Kim",
+      "profile_image": "https://randomuser.me/api/portraits/women/22.jpg",
+      "job": "Product Manager",
+      "email": "yuna.kim@example.com",
+      "status": "active",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/5",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Seoul", "Busan", "Online"],
     "experience": "9",
     "topic": ["Product Strategy", "Agile", "User Research"],
@@ -269,10 +335,23 @@
     ]
   },
   {
-    "id": 6,
-    "name": "Taehoon Kim",
-    "profile_image": "https://randomuser.me/api/portraits/men/75.jpg",
-    "job": "Mobile Developer",
+    "user": {
+      "id": 6,
+      "name": "Taehoon Kim",
+      "profile_image": "https://randomuser.me/api/portraits/men/75.jpg",
+      "job": "Mobile Developer",
+      "email": "taehoon.kim@example.com",
+      "status": "active",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/6",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Seoul", "Online"],
     "experience": "4",
     "topic": ["React Native", "iOS", "Android"],
@@ -318,10 +397,23 @@
     ]
   },
   {
-    "id": 7,
-    "name": "Hyejin Park",
-    "profile_image": "https://randomuser.me/api/portraits/women/33.jpg",
-    "job": "Frontend Developer",
+    "user": {
+      "id": 7,
+      "name": "Hyejin Park",
+      "profile_image": "https://randomuser.me/api/portraits/women/33.jpg",
+      "job": "Frontend Developer",
+      "email": "hyejin.park@example.com",
+      "status": "active",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/7",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Busan", "Online"],
     "experience": "3",
     "topic": ["React", "TypeScript", "Next.js"],
@@ -367,10 +459,23 @@
     ]
   },
   {
-    "id": 8,
-    "name": "Joon-ho Kim",
-    "profile_image": "https://randomuser.me/api/portraits/men/55.jpg",
-    "job": "Blockchain Developer",
+    "user": {
+      "id": 8,
+      "name": "Joon-ho Kim",
+      "profile_image": "https://randomuser.me/api/portraits/men/55.jpg",
+      "job": "Blockchain Developer",
+      "email": "joon-ho.kim@example.com",
+      "status": "active",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/8",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Seoul", "Online"],
     "experience": "5",
     "topic": ["Solidity", "Ethereum", "Smart Contracts"],
@@ -416,10 +521,23 @@
     ]
   },
   {
-    "id": 9,
-    "name": "Ji-woo Lee",
-    "profile_image": "https://randomuser.me/api/portraits/women/51.jpg",
-    "job": "UX Researcher",
+    "user": {
+      "id": 9,
+      "name": "Ji-woo Lee",
+      "profile_image": "https://randomuser.me/api/portraits/women/51.jpg",
+      "job": "UX Researcher",
+      "email": "ji-woo.lee@example.com",
+      "status": "inactive",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/9",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Seoul", "Online"],
     "experience": "4",
     "topic": ["User Research", "Usability Testing", "UX Strategy"],
@@ -465,10 +583,23 @@
     ]
   },
   {
-    "id": 10,
-    "name": "Min-soo Park",
-    "profile_image": "https://randomuser.me/api/portraits/men/68.jpg",
-    "job": "Backend Developer",
+    "user": {
+      "id": 10,
+      "name": "Min-soo Park",
+      "profile_image": "https://randomuser.me/api/portraits/men/68.jpg",
+      "job": "Backend Developer",
+      "email": "min-soo.park@example.com",
+      "status": "inactive",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/10",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Seoul", "Online"],
     "experience": "6",
     "topic": ["Node.js", "Python", "Microservices"],
@@ -522,10 +653,23 @@
     ]
   },
   {
-    "id": 11,
-    "name": "Eun-ji Kim",
-    "profile_image": "https://randomuser.me/api/portraits/women/77.jpg",
-    "job": "UI/UX Designer",
+    "user": {
+      "id": 11,
+      "name": "Eun-ji Kim",
+      "profile_image": "https://randomuser.me/api/portraits/women/77.jpg",
+      "job": "UI/UX Designer",
+      "email": "eun-ji.kim@example.com",
+      "status": "inactive",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/11",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Busan", "Online"],
     "experience": "5",
     "topic": ["UI Design", "Design Systems", "Figma"],
@@ -571,10 +715,23 @@
     ]
   },
   {
-    "id": 12,
-    "name": "Sang-hoon Lee",
-    "profile_image": "https://randomuser.me/api/portraits/men/45.jpg",
-    "job": "Cybersecurity Expert",
+    "user": {
+      "id": 12,
+      "name": "Sang-hoon Lee",
+      "profile_image": "https://randomuser.me/api/portraits/men/45.jpg",
+      "job": "Cybersecurity Expert",
+      "email": "sang-hoon.lee@example.com",
+      "status": "active",
+      "created_at": "2024-09-15T10:30:00Z",
+      "updated_at": "2024-09-15T10:30:00Z",
+      "links": {
+        "self": {
+          "href": "/api/v1/user/12",
+          "method": "GET",
+          "title": "User"
+        }
+      }
+    },
     "location": ["Online"],
     "experience": "10+",
     "topic": ["Security", "Penetration Testing", "Compliance"],
