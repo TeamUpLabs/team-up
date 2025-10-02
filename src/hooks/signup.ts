@@ -8,7 +8,7 @@ export const signup = async (data: SignUpFormData) => {
     email: data.email,
     password: data.password,
     profile_image: "https://vnaetwpgkoexfobnveuv.supabase.co/storage/v1/object/public/profile-images/default-profile-image.jpg",
-    role: data.role,
+    job: data.job,
     languages: data.languages,
     phone: data.phone,
     status: 'inactive',

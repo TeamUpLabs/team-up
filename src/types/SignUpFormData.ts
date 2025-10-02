@@ -7,7 +7,7 @@ export interface SignUpFormData {
   email: string;
   password: string;
   profile_image: string;
-  role: string;
+  job: string;
   languages: string[];
   phone: string;
   status: string;
@@ -20,7 +20,7 @@ export interface SignUpFormData {
 }
 
 export interface ExtraInfoFormData {
-  role: string;
+  job: string;
   status: string;
   languages: string[];
   phone: string;

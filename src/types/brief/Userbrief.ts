@@ -3,7 +3,7 @@ export interface UserBrief {
   name: string;
   email: string;
   profile_image: string;
-  role: string;
+  job: string;
   status: string;
   created_at: string;
   updated_at: string;
@@ -22,7 +22,7 @@ export const blankUserBrief: UserBrief = {
   name: "",
   email: "",
   profile_image: "",
-  role: "",
+  job: "",
   status: "",
   created_at: "",
   updated_at: "",

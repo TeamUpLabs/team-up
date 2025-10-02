@@ -2,19 +2,19 @@ import React from "react";
 import { Braces, Palette, Brain } from "lucide-react";
 
 interface Step3Props {
-  selectedRole: string;
-  onSelectRole: (role: string) => void;
+  selectedJob: string;
+  onSelectJob: (job: string) => void;
 }
 
-interface RoleOption {
+interface JobOption {
   value: string;
   label: string;
   description: string;
   icon: React.ReactNode;
 }
 
-export default function SignupStep3({ selectedRole, onSelectRole }: Step3Props) {
-  const roles: RoleOption[] = [
+export default function SignupStep3({ selectedJob, onSelectJob }: Step3Props) {
+  const jobs: JobOption[] = [
     {
       value: "developer",
       label: "개발자",
@@ -37,22 +37,22 @@ export default function SignupStep3({ selectedRole, onSelectRole }: Step3Props) 
 
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-text-secondary">역할을 선택해주세요 <span className="text-purple-500">*</span></label>
+      <label className="block text-sm font-medium text-text-secondary">직업을 선택해주세요 <span className="text-purple-500">*</span></label>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {roles.map((role) => (
+        {jobs.map((job) => (
           <button
-            key={role.value}
+            key={job.value}
             type="button"
-            onClick={() => onSelectRole(role.value)}
+            onClick={() => onSelectJob(job.value)}
             className={`p-6 rounded-lg border border-component-border ${
-              selectedRole === role.value
+              selectedJob === job.value
                 ? "border-point-color-indigo bg-point-color-indigo/30"
                 : "border-component-border bg-component-secondary-background hover:bg-component-tertiary-background hover:border-point-color-indigo"
             } transition-all duration-200 flex flex-col items-center cursor-pointer`}
           >
-            {role.icon}
-            <span className="text-lg font-medium text-text-primary">{role.label}</span>
-            <span className="text-xs text-text-secondary mt-2 text-center">{role.description}</span>
+            {job.icon}
+            <span className="text-lg font-medium text-text-primary">{job.label}</span>
+            <span className="text-xs text-text-secondary mt-2 text-center">{job.description}</span>
           </button>
         ))}
       </div>

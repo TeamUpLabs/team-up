@@ -31,7 +31,7 @@ export default function SignUpLayout() {
     email: "",
     password: "",
     profile_image: "",
-    role: "",
+    job: "",
     status: "inactive",
     bio: "",
     languages: [],
@@ -69,8 +69,8 @@ export default function SignUpLayout() {
       MiniIcon: <Lock className="h-4 w-4" />,
     },
     {
-      title: "역할",
-      description: "프로젝트에서 어떤 역할을 하고 싶은가요?",
+      title: "직업",
+      description: "당신의 직업을 선택해주세요",
       icon: <Users className="h-12 w-12 mx-auto text-primary mb-2" />,
       MiniIcon: <Users className="h-4 w-4" />,
     },
@@ -151,10 +151,10 @@ export default function SignUpLayout() {
     }
   };
 
-  const handleRoleSelect = (selectedRole: string) => {
+  const handleJobSelect = (selectedJob: string) => {
     setFormData((prev) => ({
       ...prev,
-      role: selectedRole,
+      job: selectedJob,
     }));
   };
 
@@ -361,8 +361,8 @@ export default function SignUpLayout() {
         return;
       }
 
-      if (step === 3 && !formData.role) {
-        useAuthStore.getState().setAlert("역할을 선택해주세요.", "error");
+      if (step === 3 && !formData.job) {
+        useAuthStore.getState().setAlert("직업을 선택해주세요.", "error");
         return;
       }
 
@@ -458,9 +458,9 @@ export default function SignUpLayout() {
 
           {step === 3 && (
             <SignupStep3
-              selectedRole={formData.role}
-              onSelectRole={(role) => {
-                handleRoleSelect(role);
+              selectedJob={formData.job}
+              onSelectJob={(job) => {
+                handleJobSelect(job);
               }}
             />
           )}
@@ -500,7 +500,7 @@ export default function SignUpLayout() {
                   type
                 )
               }
-              role={formData.role}
+              job={formData.job}
               preferred_role={formData.collaboration_preference.preferred_role}
               setPreferredRole={(role) =>
                 handleCollaborationPreferenceChange("preferred_role", role)

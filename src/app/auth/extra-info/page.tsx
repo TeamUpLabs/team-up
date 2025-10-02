@@ -34,7 +34,7 @@ const ExtraInfoPage = () => {
   });
 
   const [formData, setFormData] = useState<ExtraInfoFormData>({
-    role: "",
+    job: "",
     status: "inactive",
     languages: [],
     phone: "",
@@ -59,8 +59,8 @@ const ExtraInfoPage = () => {
 
   const stepInfo = [
     {
-      title: "역할",
-      description: "프로젝트에서 어떤 역할을 하고 싶은가요?",
+      title: "직업",
+      description: "당신의 직업을 선택해주세요",
       icon: <Users className="h-12 w-12 mx-auto text-primary mb-2" />,
       MiniIcon: <Users className="h-4 w-4" />,
     },
@@ -103,10 +103,10 @@ const ExtraInfoPage = () => {
     }
   }, []);
 
-  const handleRoleSelect = (selectedRole: string) => {
+  const handleJobSelect = (selectedJob: string) => {
     setFormData((prev) => ({
       ...prev,
-      role: selectedRole,
+      job: selectedJob,
     }));
   };
 
@@ -312,7 +312,7 @@ const ExtraInfoPage = () => {
         router.push("/signin");
       }
     } else {
-      if (step - 2 === 1 && !formData.role) {
+      if (step - 2 === 1 && !formData.job) {
         useAuthStore.getState().setAlert("역할을 선택해주세요.", "error");
         return;
       }
@@ -370,9 +370,9 @@ const ExtraInfoPage = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {step === 3 && (
             <SignupStep3
-              selectedRole={formData.role}
-              onSelectRole={(role) => {
-                handleRoleSelect(role);
+              selectedJob={formData.job}
+              onSelectJob={(job) => {
+                handleJobSelect(job);
               }}
             />
           )}
@@ -398,7 +398,7 @@ const ExtraInfoPage = () => {
               setCollaborationStyle={(style) => handleCollaborationPreferenceChange("collaboration_style", style)}
               projectType={formData.collaboration_preference.preferred_project_type}
               setProjectType={(type) => handleCollaborationPreferenceChange("preferred_project_type", type)}
-              role={formData.role}
+              job={formData.job}
               preferred_role={formData.collaboration_preference.preferred_role}
               setPreferredRole={(role) => handleCollaborationPreferenceChange("preferred_role", role)}
               workingHours={{

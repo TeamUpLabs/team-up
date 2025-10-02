@@ -7,7 +7,7 @@ interface SignupStep5Props {
   setCollaborationStyle: (style: string) => void;
   projectType: string;
   setProjectType: (type: string) => void;
-  role: string;
+  job: string;
   preferred_role: string;
   setPreferredRole: (role: string) => void;
   workingHours: {
@@ -24,7 +24,7 @@ export default function SignupStep5({
   setCollaborationStyle,
   projectType,
   setProjectType,
-  role,
+  job,
   preferred_role,
   setPreferredRole,
   workingHours,
@@ -134,7 +134,7 @@ export default function SignupStep5({
       </div>
 
       <Select
-        options={preferred_roles[role as keyof typeof preferred_roles]}
+        options={preferred_roles[job as keyof typeof preferred_roles]}
         value={preferred_role}
         onChange={(value) => setPreferredRole(value as string)}
         placeholder="선호 역할을 선택해주세요"

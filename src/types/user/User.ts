@@ -30,7 +30,7 @@ export interface User {
     name: string;
     email: string;
     profile_image: string;
-    role: string;
+    job: string;
     status: string;
     bio: string;
     languages: string[];
@@ -118,7 +118,7 @@ export const blankUser: User = {
     name: "",
     email: "",
     profile_image: "",
-    role: "",
+    job: "",
     status: "",
     bio: "",
     languages: [],
@@ -216,7 +216,7 @@ export interface UserNoLinks {
   name: string;
   email: string;
   profile_image: string;
-  role: string;
+  job: string;
   status: string;
   bio: string;
   languages: string[];
@@ -335,7 +335,7 @@ export interface UpdateUserProfileData {
     email?: string;
     password?: string;
     profile_image?: string;
-    role?: string;
+    job?: string;
     status?: string;
     bio?: string;
     languages?: string[];
