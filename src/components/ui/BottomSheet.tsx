@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 type BottomSheetProps = {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
+  title?: string;
   children: React.ReactNode;
   size?: 'compact' | 'half' | 'full';
   isHandle?: boolean;
@@ -167,10 +167,11 @@ export default function BottomSheet({ isOpen, onClose, title, children, size = '
               </div>
             )}
 
-            {/* Header */}
-            <div className={`px-6 border-b border-component-border ${isHandle ? 'pb-4' : 'py-4'}`}>
-              <h2 className="text-xl font-semibold text-text-primary">{title}</h2>
-            </div>
+            {title && (
+              <div className={`px-6 border-b border-component-border ${isHandle ? 'pb-4' : 'py-4'}`}>
+                <h2 className="text-xl font-semibold text-text-primary">{title}</h2>
+              </div>
+            )}
 
             {/* Content */}
             <div className="p-6">

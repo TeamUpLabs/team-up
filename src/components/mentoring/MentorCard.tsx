@@ -4,7 +4,8 @@ import Badge from "@/components/ui/Badge";
 import { useState } from "react";
 import { Mentor } from "@/app/mentoring/page";
 import { getStatusInfo } from "@/utils/getStatusColor";
-import { Star, MapPin, CircleCheck } from "lucide-react";
+import { Star, MapPin, CircleCheck, Shell, Calendar, Clock, Mail } from "lucide-react";
+import Accordion from "@/components/ui/Accordion";
 
 export default function MentorCard({ mentor }: { mentor: Mentor }) {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -97,81 +98,155 @@ export default function MentorCard({ mentor }: { mentor: Mentor }) {
                 className="!text-xs !py-0.5 !px-2 !rounded-full"
               />
             )}
-          </div>
         </div>
+      </div>
       </div>
 
       <BottomSheet
         isOpen={isBottomSheetOpen}
         onClose={() => setIsBottomSheetOpen(false)}
-        title={`${mentor.user.name} - ${mentor.user.job}`}
         size="full"
       >
-        <div className="flex flex-col gap-6">
-          {/* Profile Image and Basic Info */}
-          <div className="flex items-center gap-4">
-            <Image
-              src={mentor.user.profile_image}
-              alt={mentor.user.name}
-              className="rounded-full w-20 h-20"
-              width={80}
-              height={80}
-            />
-            <div className="flex flex-col">
-              <h3 className="text-xl font-semibold text-text-primary">{mentor.user.name}</h3>
-              <p className="text-text-secondary">{mentor.user.job}</p>
-              <p className="text-text-tertiary text-sm">경력 {mentor.experience}년</p>
+        <div className="flex flex-col gap-6 max-w-3xl mx-auto">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-6">
+              <div className="bg-component-tertiary-background rounded-lg w-32 h-32">
+                <Image
+                  src={mentor.user.profile_image}
+                  alt={mentor.user.name}
+                  className="rounded-lg"
+                  width={128}
+                  height={128}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <h3 className="text-text-primary text-xl font-semibold">{mentor.user.name}</h3>
+                <p className="text-text-secondary">{mentor.user.job}</p>
+                <div className="flex flex-wrap gap-2">
+                  {mentor.topic.map((topic, idx) => (
+                    <Badge
+                      key={idx}
+                      color="fuchsia"
+                      content={topic}
+                      className="!text-xs !py-0.5 !px-2 !rounded-full"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 bg-component-tertiary-background/60 border border-component-border/60 px-3 py-1 rounded-full">
+              <Star className="w-4 h-4 text-yellow-300 fill-yellow-300" />
+              <span className="text-sm font-medium">
+                {parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1))}
+                <span className="text-text-secondary ml-1">({mentor.reviews.length}개 후기)</span>
+              </span>
             </div>
           </div>
 
-          {/* Bio */}
-          <div className="flex flex-col gap-2">
-            <h4 className="text-lg font-semibold text-text-primary">소개</h4>
-            <p className="text-text-secondary">{mentor.bio}</p>
+          <div className="flex flex-col gap-1">
+            <span className="text-text-secondary text-sm font-medium">소개</span>
+            <p className="text-text-primary text-sm font-semibold">{mentor.bio}</p>
           </div>
 
-          {/* Available For */}
-          <div className="flex flex-col gap-2">
-            <h4 className="text-lg font-semibold text-text-primary">제공 가능한 서비스</h4>
-            <div className="flex flex-wrap gap-2">
-              {mentor.availablefor.map((af, idx) => (
-                <Badge
-                  key={idx}
-                  color="violet"
-                  content={af}
-                  className="!text-sm !py-1 !px-3"
-                />
-              ))}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-col gap-1">
+              <span className="text-text-secondary text-sm font-medium">경력</span>
+              <p className="text-text-primary text-sm font-semibold">{mentor.experience}년</p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-text-secondary text-sm font-medium">장소</span>
+              <p className="text-text-primary text-sm font-semibold">{mentor.location.join(', ')}</p>
+            </div>
+            <div className="col-span-2 flex flex-col gap-1">
+              <span className="text-text-secondary text-sm font-medium">가능한 작업</span>
+              <div className="flex flex-wrap gap-2">
+                {mentor.availablefor.map((af, idx) => (
+                  <Badge
+                    key={idx}
+                    color="violet"
+                    content={af}
+                    className="!text-xs !py-0.5 !px-2 !rounded-full"
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Topics */}
-          <div className="flex flex-col gap-2">
-            <h4 className="text-lg font-semibold text-text-primary">전문 분야</h4>
-            <div className="flex flex-wrap gap-2">
-              {mentor.topic.map((topic, idx) => (
-                <Badge
-                  key={idx}
-                  color="blue"
-                  content={topic}
-                  className="!text-sm !py-1 !px-3"
-                />
+          <Accordion title={`세션 (${mentor.sessions.length})`} icon={Shell}>
+            <div className="flex flex-col gap-4">
+              {mentor.sessions.length > 0 ? (
+                mentor.sessions.map((session) => (
+                  <div 
+                    key={session.id} 
+                    className="p-4 border border-component-border rounded-lg hover:bg-component-tertiary-background/50 transition-colors"
+                  >
+                    <div className="flex flex-col gap-2">
+                      <h4 className="text-text-primary font-medium">{session.title}</h4>
+                      {session.description && (
+                        <p className="text-text-secondary text-sm">{session.description}</p>
+                      )}
+                      <div className="flex items-center text-xs text-text-secondary mt-2">
+                        <Calendar className="w-3.5 h-3.5 mr-1.5" />
+                        <span>
+                          {new Date(session.created_at).toLocaleDateString('ko-KR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            weekday: 'short',
+                          })}
+                        </span>
+                        <span className="mx-2">•</span>
+                        <Clock className="w-3.5 h-3.5 mr-1.5" />
+                        <span>
+                          {new Date(session.created_at).toLocaleTimeString('ko-KR', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true,
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-text-secondary text-sm">등록된 세션이 없습니다.</p>
+                </div>
+              )}
+            </div>
+          </Accordion>
+
+          <Accordion title={`후기 (${mentor.reviews.length})`} icon={Star}>
+            <div className="flex flex-col gap-4">
+              {mentor.reviews.map((review, idx) => (
+                <div key={idx} className="border-b border-component-border/70 pb-4 last:border-0 last:pb-0">
+                  <div className="flex items-center gap-2">
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`w-4 h-4 ${review.rating >= star ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-text-secondary">
+                      {new Date(review.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-text-primary text-sm">{review.comment}</p>
+                </div>
               ))}
             </div>
-          </div>
+          </Accordion>
 
-          {/* Location */}
-          <div className="flex flex-col gap-2">
-            <h4 className="text-lg font-semibold text-text-primary">활동 지역</h4>
-            <div className="flex flex-wrap gap-2">
-              {mentor.location.map((location, idx) => (
-                <Badge
-                  key={idx}
-                  color="orange"
-                  content={location}
-                  className="!text-sm !py-1 !px-3"
-                />
-              ))}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex items-center gap-4 w-full bg-transparent hover:bg-component-tertiary-background border border-component-border justify-center py-2 rounded-lg transition-colors duration-200 ease-in-out cursor-pointer active:scale-95">
+              <Mail className="w-5 h-5" />
+              <span>연락하기</span>
+            </div>
+            <div className="flex items-center gap-4 w-full bg-transparent hover:bg-component-tertiary-background border border-component-border justify-center py-2 rounded-lg transition-colors duration-200 ease-in-out cursor-pointer active:scale-95">
+              <Calendar className="w-5 h-5" />
+              <span>세션 예약</span>
             </div>
           </div>
         </div>
