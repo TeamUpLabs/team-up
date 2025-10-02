@@ -4,7 +4,7 @@ import Badge from "@/components/ui/Badge";
 
 export default function MentorCard({ mentor }: { mentor: Mentor }) {
   return (
-    <div className="flex flex-col gap-4 bg-transparent border border-component-border rounded-lg p-4">
+    <div className="flex flex-col gap-4 bg-transparent border border-component-border rounded-lg p-4 hover:translate-y-[-5px] transition-all hover:shadow-md hover:shadow-component-border-hover cursor-pointer">
       <div className="bg-component-tertiary-background rounded-full w-16 h-16">
         <Image 
           src={mentor.profile_image} 
