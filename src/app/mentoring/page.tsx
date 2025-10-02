@@ -4,8 +4,12 @@ import SearchBar from "@/components/mentoring/SearchBar";
 import { useState } from "react";
 import Select from "@/components/ui/Select";
 import MentorCard from "@/components/mentoring/MentorCard";
+import TabSlider from "@/components/ui/TabSlider";
+import { GalleryHorizontal, List } from "lucide-react";
+import mentors from "../../../public/json/mentors.json";
 
 export interface Mentor {
+  id: number;
   name: string;
   profile_image: string;
   job: string;
@@ -14,130 +18,24 @@ export interface Mentor {
   topic: string[];
   bio: string;
   availablefor: string[];
+  reviews: {
+    id: number;
+    rating: number;
+    comment: string;
+    mentor_id: number;
+    created_at: string;
+    updated_at: string;
+  }[];
+  sessions: {
+    id: number;
+    title: string;
+    description: string;
+    mentor_id: number;
+    mentee_id: number;
+    created_at: string;
+    updated_at: string;
+  }[];
 }
-
-const mentors: Mentor[] = [
-  {
-    name: "Sarah Kim",
-    profile_image: "https://randomuser.me/api/portraits/women/44.jpg",
-    job: "UX/UI Designer",
-    location: ["Seoul", "Online"],
-    experience: "8",
-    topic: ["UX Design", "UI/UX Research", "Prototyping"],
-    bio: "Lead Designer at DesignHub with a passion for creating intuitive user experiences",
-    availablefor: ["Mentoring", "Portfolio Reviews", "Design Critiques"]
-  },
-  {
-    name: "David Park",
-    profile_image: "https://randomuser.me/api/portraits/men/32.jpg",
-    job: "Full Stack Developer",
-    location: ["Busan", "Online"],
-    experience: "5",
-    topic: ["React", "Node.js", "TypeScript"],
-    bio: "Senior Developer at TechCorp, specializing in scalable web applications",
-    availablefor: ["Code Reviews", "Technical Interviews", "Project Guidance"]
-  },
-  {
-    name: "Minji Lee",
-    profile_image: "https://randomuser.me/api/portraits/women/65.jpg",
-    job: "Data Scientist",
-    location: ["Seoul", "Online"],
-    experience: "6",
-    topic: ["Machine Learning", "Python", "Data Analysis"],
-    bio: "Data Science Lead at AI Research Lab, passionate about NLP and computer vision",
-    availablefor: ["Research Collaboration", "Data Science Mentoring", "Project Consulting"]
-  },
-  {
-    name: "James Wilson",
-    profile_image: "https://randomuser.me/api/portraits/men/86.jpg",
-    job: "DevOps Engineer",
-    location: ["Online"],
-    experience: "7",
-    topic: ["AWS", "Docker", "Kubernetes"],
-    bio: "Cloud Architect helping startups scale their infrastructure efficiently",
-    availablefor: ["System Design", "Cloud Architecture", "DevOps Best Practices"]
-  },
-  {
-    name: "Yuna Kim",
-    profile_image: "https://randomuser.me/api/portraits/women/22.jpg",
-    job: "Product Manager",
-    location: ["Seoul", "Busan", "Online"],
-    experience: "9",
-    topic: ["Product Strategy", "Agile", "User Research"],
-    bio: "Product Leader with experience in both startups and enterprise companies",
-    availablefor: ["Product Strategy", "Career Advice", "Startup Consulting"]
-  },
-  {
-    name: "Taehoon Kim",
-    profile_image: "https://randomuser.me/api/portraits/men/75.jpg",
-    job: "Mobile Developer",
-    location: ["Seoul", "Online"],
-    experience: "4",
-    topic: ["React Native", "iOS", "Android"],
-    bio: "Mobile Developer creating beautiful cross-platform applications",
-    availablefor: ["App Development", "Code Review", "Technical Interviews"]
-  },
-  {
-    name: "Hyejin Park",
-    profile_image: "https://randomuser.me/api/portraits/women/33.jpg",
-    job: "Frontend Developer",
-    location: ["Busan", "Online"],
-    experience: "3",
-    topic: ["React", "TypeScript", "Next.js"],
-    bio: "Passionate about creating responsive and accessible web applications",
-    availablefor: ["Frontend Development", "Code Pairing", "Technical Writing"]
-  },
-  {
-    name: "Joon-ho Kim",
-    profile_image: "https://randomuser.me/api/portraits/men/55.jpg",
-    job: "Blockchain Developer",
-    location: ["Seoul", "Online"],
-    experience: "5",
-    topic: ["Solidity", "Ethereum", "Smart Contracts"],
-    bio: "Blockchain enthusiast building decentralized applications",
-    availablefor: ["Blockchain Development", "Smart Contract Auditing", "Web3 Consulting"]
-  },
-  {
-    name: "Ji-woo Lee",
-    profile_image: "https://randomuser.me/api/portraits/women/51.jpg",
-    job: "UX Researcher",
-    location: ["Seoul", "Online"],
-    experience: "4",
-    topic: ["User Research", "Usability Testing", "UX Strategy"],
-    bio: "Helping teams build user-centered products through research",
-    availablefor: ["Research Planning", "User Testing", "UX Workshops"]
-  },
-  {
-    name: "Min-soo Park",
-    profile_image: "https://randomuser.me/api/portraits/men/68.jpg",
-    job: "Backend Developer",
-    location: ["Seoul", "Online"],
-    experience: "6",
-    topic: ["Node.js", "Python", "Microservices"],
-    bio: "Backend specialist focused on building scalable APIs and services",
-    availablefor: ["System Design", "Code Reviews", "Technical Interviews"]
-  },
-  {
-    name: "Eun-ji Kim",
-    profile_image: "https://randomuser.me/api/portraits/women/77.jpg",
-    job: "UI/UX Designer",
-    location: ["Busan", "Online"],
-    experience: "5",
-    topic: ["UI Design", "Design Systems", "Figma"],
-    bio: "Creating beautiful and functional user interfaces",
-    availablefor: ["Design Critiques", "Portfolio Reviews", "UI/UX Mentoring"]
-  },
-  {
-    name: "Sang-hoon Lee",
-    profile_image: "https://randomuser.me/api/portraits/men/45.jpg",
-    job: "Cybersecurity Expert",
-    location: ["Online"],
-    experience: "10+",
-    topic: ["Security", "Penetration Testing", "Compliance"],
-    bio: "Helping companies secure their applications and infrastructure",
-    availablefor: ["Security Audits", "Consulting", "Security Training"]
-  }
-]
 
 export default function MentoringPage() {
   const [searchLookingforQuery, setSearchLookingforQuery] = useState('');
@@ -145,7 +43,8 @@ export default function MentoringPage() {
   const [searchExperience, setSearchExperience] = useState<string>('');
   const [searchTopic, setSearchTopic] = useState<string | string[]>('');
   const [searchLocation, setSearchLocation] = useState<string | string[]>('');
-  
+  const [tab, setTab] = useState('card');
+
   const filteredMentors = mentors.filter((mentor) => {
     // If no search queries, show all mentors
     if (!searchLookingforQuery && !searchAvailableforQuery && !searchExperience && !searchTopic && !searchLocation) {
@@ -305,7 +204,21 @@ export default function MentoringPage() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <h2 className="text-xl font-bold">{filteredMentors.length} {searchLookingforQuery || "Mentors"} available {searchAvailableforQuery && `for ${searchAvailableforQuery}`}</h2>
+        <div className="flex justify-between">
+          <h2 className="text-xl font-bold">{filteredMentors.length} {searchLookingforQuery || "Mentors"} available {searchAvailableforQuery && `for ${searchAvailableforQuery}`}</h2>
+          <TabSlider
+            tabs={{
+              'card': {
+                'label': <GalleryHorizontal className="w-4 h-4" />,
+              },
+              'list': {
+                'label': <List className="w-4 h-4" />,
+              },
+            }}
+            selectedTab={tab}
+            onTabChange={setTab}
+          />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredMentors.map((mentor, idx) => {
             return <MentorCard key={idx} mentor={mentor} />

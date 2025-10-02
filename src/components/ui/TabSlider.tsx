@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
 interface TabSliderProps {
-  tabs: Record<string, string | { label: string; count?: number }>; // key: tab value, value: display name or { label: string; count?: number }
+  tabs: Record<string, string | { label: string | React.ReactNode; count?: number }>; // key: tab value, value: display name or { label: string; count?: number }
   selectedTab: string;
   onTabChange: (tab: string) => void;
   className?: string;
