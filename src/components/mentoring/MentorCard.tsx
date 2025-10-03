@@ -178,7 +178,7 @@ export default function MentorCard({ mentor }: { mentor: Mentor }) {
                 mentor.sessions.map((session) => (
                   <div 
                     key={session.id} 
-                    className="p-4 border border-component-border rounded-lg hover:bg-component-tertiary-background/50 transition-colors"
+                    className="p-4 border border-component-border rounded-lg hover:bg-component-tertiary-background/50 transition-colors cursor-pointer"
                   >
                     <div className="flex flex-col gap-2">
                       <h4 className="text-text-primary font-medium">{session.title}</h4>
