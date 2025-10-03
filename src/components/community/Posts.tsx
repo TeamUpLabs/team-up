@@ -129,8 +129,8 @@ export default function Posts({ post }: { post: Post }) {
                 {post.created_at ? `${formatDistanceToNow(new Date(post.created_at), { locale: ko })} 전` : '방금 전'}
               </span>
             </div>
-            {post.creator?.role && (
-              <span className="text-xs text-text-secondary">{post.creator.role}</span>
+            {post.creator?.job && (
+              <span className="text-xs text-text-secondary">{post.creator.job}</span>
             )}
           </div>
         </div>

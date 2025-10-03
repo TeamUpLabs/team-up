@@ -104,7 +104,7 @@ export default function AssigneeSelect({
                 </div>
               </div>
               <span className="text-text-primary">{member.name}</span>
-              <span className="text-text-secondary text-sm">{member.role}</span>
+              <span className="text-text-secondary text-sm">{member.job}</span>
               <Badge
                 className="!px-2 !py-1 !rounded-full !text-xs !font-medium"
                 color={getWorkloadColor(additional_data?.tasks.filter((task) => task.assignees.some((assignee) => assignee.id === member.id)).length || 0)}

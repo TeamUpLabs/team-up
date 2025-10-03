@@ -1014,7 +1014,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                             {member.name}
                           </p>
                           <p className="text-xs text-text-secondary">
-                            {member.role}
+                            {member.job}
                           </p>
                         </div>
                       </div>
@@ -1077,7 +1077,7 @@ export default function TaskModal({ task, isOpen, onClose }: TaskModalProps) {
                       <p className="text-sm font-medium text-text-primary">
                         {assi.name}
                       </p>
-                      <p className="text-xs text-text-secondary">{assi.role}</p>
+                      <p className="text-xs text-text-secondary">{assi.job}</p>
                     </div>
                   </div>
                 ))}

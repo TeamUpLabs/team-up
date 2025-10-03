@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, Suspense, lazy, useMemo, useCallback } fro
 import { ProjectMember } from "@/types/Project";
 import { useProject } from "@/contexts/ProjectContext";
 import TabSlider from "@/components/ui/TabSlider";
-import { convertRoleName } from "@/utils/ConvertRoleName";
+import { convertJobName } from "@/utils/ConvertJobName";
 
 // 지연 로딩을 위한 컴포넌트들
 const MemberDetailModal = lazy(() => import("@/components/project/members/MemberDetailModal"));
@@ -36,7 +36,7 @@ export default function MembersPage() {
   
   // 메모이제이션을 통한 탭 데이터 최적화
   const memberTabs = useMemo(() => {
-    const uniqueRoles = Array.from(new Set(project?.members?.map(member => member.user.role) || []));
+    const uniqueJobs = Array.from(new Set(project?.members?.map(member => member.user.job) || []));
     
     return {
       '전체': { 
@@ -44,11 +44,11 @@ export default function MembersPage() {
         count: project?.members?.length || 0 
       },
       ...Object.fromEntries(
-        uniqueRoles.map(role => [
-          role,
+        uniqueJobs.map(job => [
+          job,
           { 
-            label: convertRoleName(role), 
-            count: project?.members?.filter(member => member.user.role === role).length || 0 
+            label: convertJobName(job), 
+            count: project?.members?.filter(member => member.user.job === job).length || 0 
           }
         ])
       )
@@ -108,13 +108,13 @@ export default function MembersPage() {
       .filter((member) => {
         const matchesTab = 
           tab === '전체' || 
-          (member.user.role === tab);
+          (member.user.job === tab);
         if (!searchQuery.trim()) return matchesTab;
 
         const searchLower = searchQuery.toLowerCase();
         const matchesSearch = 
           member.user.name.toLowerCase().includes(searchLower) ||
-          member.user.role.toLowerCase().includes(searchLower) ||
+          member.user.job.toLowerCase().includes(searchLower) ||
           member.user.email?.toLowerCase().includes(searchLower) ||
           additional_data?.tasks?.some(task => 
             task.title.toLowerCase().includes(searchLower)
@@ -133,7 +133,7 @@ export default function MembersPage() {
   const memberStats = useMemo(() => {
     const totalMemberCount = project?.members?.length ?? 0;
     const activeMemberCount = project?.members?.filter(member => member.user.status === 'active')?.length ?? 0;
-    const departments = project?.members?.map(member => member.user.role) ?? [];
+    const departments = project?.members?.map(member => member.user.job) ?? [];
     const avgTaskCount = project?.members?.length 
       ? additional_data?.tasks?.length / project.members.length 
       : 0;

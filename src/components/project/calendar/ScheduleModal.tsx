@@ -579,7 +579,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                           {member.user.name}
                         </p>
                         <p className="text-xs text-text-secondary">
-                          {member.user.role}
+                          {member.user.job}
                         </p>
                       </div>
                     </div>
@@ -642,7 +642,7 @@ export default function ScheduleModal({ schedule, isOpen, onClose }: ScheduleMod
                         {assi.name}
                       </p>
                       <p className="text-xs text-text-secondary">
-                        {assi.role}
+                        {assi.job}
                       </p>
                     </div>
                   </div>

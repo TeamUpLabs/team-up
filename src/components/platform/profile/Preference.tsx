@@ -143,7 +143,7 @@ export default function Preference() {
         </div>
 
         <Select
-          options={preferred_roles[user?.role as keyof typeof preferred_roles]}
+          options={preferred_roles[user?.job as keyof typeof preferred_roles]}
           value={formData.preferredRole}
           onChange={(value) => handleCollaborationPreferenceChange("preferredRole", value as string)}
           placeholder="선호 역할을 선택해주세요"

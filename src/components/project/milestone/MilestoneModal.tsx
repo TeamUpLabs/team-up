@@ -706,7 +706,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                           {member.user.name}
                         </p>
                         <p className="text-xs text-text-secondary">
-                          {member.user.role}
+                          {member.user.job}
                         </p>
                       </div>
                     </div>
@@ -769,7 +769,7 @@ export default function MilestoneModal({ milestone, isOpen, onClose }: Milestone
                         {assi.name}
                       </p>
                       <p className="text-xs text-text-secondary">
-                        {assi.role}
+                        {assi.job}
                       </p>
                     </div>
                   </div>

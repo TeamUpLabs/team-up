@@ -401,7 +401,7 @@ export default function PersonalInfo() {
           name: formData.name ?? user!.name,
           email: formData.email ?? user!.email,
           profile_image: formData.profile_image ?? user!.profile_image,
-          role: formData.role ?? user!.role,
+          job: formData.job ?? user!.job,
           status: formData.status ?? user!.status,
           bio: formData.bio ?? user!.bio,
           languages: formData.languages ?? user!.languages,
@@ -497,7 +497,7 @@ export default function PersonalInfo() {
               className="!px-2 !py-1 !text-xs"
             />
           </div>
-          <p className="text-base text-text-secondary">{user?.role}</p>
+          <p className="text-base text-text-secondary">{user?.job}</p>
         </div>
       </div>
 

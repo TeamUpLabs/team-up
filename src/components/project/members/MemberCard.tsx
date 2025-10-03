@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBolt, faStar, faShieldAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { useProject } from "@/contexts/ProjectContext";
-import { convertRoleName } from "@/utils/ConvertRoleName";
+import { convertJobName } from "@/utils/ConvertJobName";
 import { User } from '@/types/user/User';
 import { UserBrief } from '@/types/brief/Userbrief';
 import { MileStone } from '@/types/MileStone';
@@ -149,7 +149,7 @@ export default function MemberCard({
 
           <div className="flex items-center text-text-secondary">
             <p className="text-text-secondary font-medium">
-              {convertRoleName(member.job) || "직업 미지정"}
+              {convertJobName(member.job) || "직업 미지정"}
             </p>
           </div>
 

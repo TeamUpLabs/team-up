@@ -60,7 +60,7 @@ export default function ExploreMember() {
     return users.filter((user: User) =>
       user.id.toString().includes(lowercaseQuery) ||
       user.name.toLowerCase().includes(lowercaseQuery) ||
-      user.role.toLowerCase().includes(lowercaseQuery) ||
+      user.job.toLowerCase().includes(lowercaseQuery) ||
       (user.email && user.email.toLowerCase().includes(lowercaseQuery)) ||
       (user.phone && user.phone.toLowerCase().includes(lowercaseQuery)) ||
       user.languages.some(lang => lang.toLowerCase().includes(lowercaseQuery))

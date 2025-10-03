@@ -6,7 +6,7 @@ import { useAuthStore } from "@/auth/authStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings, Moon, Sun, LogOut } from "lucide-react";
 import { logout } from "@/auth/authApi";
-import { convertRoleName } from "@/utils/ConvertRoleName";
+import { convertJobName } from "@/utils/ConvertJobName";
 import { useTheme } from "@/contexts/ThemeContext";
 
 export default function UserDropdown() {
@@ -55,7 +55,7 @@ export default function UserDropdown() {
                 text={
                   <div className="flex flex-col">
                     <span className="font-semibold">{user?.name}</span>
-                    <span className="text-text-secondary">{convertRoleName(user?.role || "")}</span>
+                    <span className="text-text-secondary">{convertJobName(user?.job || "")}</span>
                   </div>
                 }
                 isHover={false}

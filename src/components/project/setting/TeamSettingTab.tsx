@@ -22,7 +22,7 @@ import Image from "next/image";
 import Badge from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { Search } from "lucide-react";
-import { convertRoleName } from "@/utils/ConvertRoleName";
+import { convertJobName } from "@/utils/ConvertJobName";
 import { AdditionalData, useProject } from "@/contexts/ProjectContext";
 import { useUser } from "@/contexts/UserContext";
 
@@ -205,7 +205,7 @@ export default function TeamSettingTab({ project, additional_data }: TeamSetting
                                   {request.user.name}
                                 </p>
                                 <span className="bg-component-tertiary-background text-text-secondary text-xs px-2 py-0.5 rounded-md">
-                                  {request.user.role}
+                                  {request.user.job}
                                 </span>
                               </div>
                               <p className="text-text-secondary text-xs">
@@ -308,7 +308,7 @@ export default function TeamSettingTab({ project, additional_data }: TeamSetting
                             />
                           )}
                           <Badge
-                            content={convertRoleName(member.user.role)}
+                            content={convertJobName(member.user.job)}
                             color="cyan"
                             className="!text-xs !px-2 !py-0.5"
                           />
