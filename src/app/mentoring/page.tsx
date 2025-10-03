@@ -4,6 +4,7 @@ import SearchBar from "@/components/mentoring/SearchBar";
 import { useState } from "react";
 import Select from "@/components/ui/Select";
 import MentorCard from "@/components/mentoring/MentorCard";
+import MentorList from "@/components/mentoring/MentorList";
 import TabSlider from "@/components/ui/TabSlider";
 import { GalleryHorizontal, List } from "lucide-react";
 import mentors from "../../../public/json/mentors.json";
@@ -221,6 +222,14 @@ export default function MentoringPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredMentors.map((mentor, idx) => {
               return <MentorCard key={idx} mentor={mentor} />
+            })}
+          </div>
+        )}
+
+        {tab === "list" && (
+          <div className="divide-y divide-component-border">
+            {filteredMentors.map((mentor, idx) => {
+              return <MentorList key={idx} mentor={mentor} />
             })}
           </div>
         )}

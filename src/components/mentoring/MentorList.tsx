@@ -1,25 +1,30 @@
+"use client";
+
 import Image from "next/image";
-import BottomSheet from "@/components/ui/BottomSheet";
-import Badge from "@/components/ui/Badge";
-import { useState } from "react";
 import { Mentor } from "@/app/mentoring/page";
 import { getStatusInfo } from "@/utils/getStatusColor";
-import { Star, MapPin, CircleCheck, Shell, Calendar, Clock, Mail } from "lucide-react";
+import { useState } from "react";
+import { Star, Shell, Calendar, Clock, Mail } from "lucide-react";
 import Accordion from "@/components/ui/Accordion";
+import BottomSheet from "@/components/ui/BottomSheet";
+import Badge from "@/components/ui/Badge";
 
-export default function MentorCard({ mentor }: { mentor: Mentor }) {
+interface MentorListProps {
+  mentor: Mentor;
+}
+
+export default function MentorList({ mentor }: MentorListProps) {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-
   const statusInfo = getStatusInfo(mentor.user.status);
 
   return (
     <>
       <div
-        className="flex flex-col gap-4 bg-transparent border border-component-border rounded-lg p-4 hover:translate-y-[-5px] transition-all hover:shadow-md hover:shadow-component-border-hover cursor-pointer"
+        className="flex items-center justify-between p-2 bg-transparent hover:bg-component-tertiary-background transition-colors duration-200 ease-in-out cursor-pointer first:rounded-t-lg last:rounded-b-lg"
         onClick={() => setIsBottomSheetOpen(true)}
       >
         <div className="flex items-center gap-4">
-          <div className="bg-component-tertiary-background rounded-full w-16 h-16">
+          <div className="bg-component-tertiary-background w-12 h-12 rounded-full">
             {mentor.user.profile_image ? (
               <div className="relative">
                 <Image
@@ -36,7 +41,7 @@ export default function MentorCard({ mentor }: { mentor: Mentor }) {
               </div>
             ) : (
               <div className="relative">
-                <div className={`w-[70px] h-[70px] rounded-full bg-component-secondary-background flex items-center justify-center text-2xl font-bold text-gray-700 ring-2 ${statusInfo.ringColor} ring-offset-2`}>
+                <div className={`w-12 h-12 rounded-full bg-component-secondary-background flex items-center justify-center text-2xl font-bold text-gray-700 ring-2 ${statusInfo.ringColor} ring-offset-2`}>
                   {mentor.user.name.charAt(0).toUpperCase()}
                 </div>
                 <span
@@ -47,7 +52,7 @@ export default function MentorCard({ mentor }: { mentor: Mentor }) {
             )}
           </div>
           <div className="flex flex-col">
-            <h3 className="text-text-primary text-lg font-semibold">{mentor.user.name}</h3>
+            <h2 className="text-text-primary text-lg font-semibold">{mentor.user.name}</h2>
             <p className="text-text-secondary text-sm">{mentor.user.job}</p>
           </div>
         </div>
@@ -58,47 +63,6 @@ export default function MentorCard({ mentor }: { mentor: Mentor }) {
             <span className="font-medium text-sm">{parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1))}</span>
           </div>
           <span className="text-text-secondary text-sm">{mentor.sessions.length} sessions</span>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-1">
-            <MapPin className="w-4 h-4" />
-            <span className="text-text-primary text-sm font-semibold">Location</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {mentor.location.map((location, idx) => (
-              <Badge
-                key={idx}
-                color="orange"
-                content={location}
-                className="!text-xs !py-0.5 !px-2 !rounded-full"
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-1">
-            <CircleCheck className="w-4 h-4" />
-            <span className="text-text-primary text-sm font-semibold">Available for</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {mentor.availablefor.slice(0, 3).map((af, idx) => (
-              <Badge
-                key={idx}
-                color="violet"
-                content={af}
-                className="!text-xs !py-0.5 !px-2 !rounded-full"
-              />
-            ))}
-            {mentor.availablefor.length > 3 && (
-              <Badge
-                color="violet"
-                content={`+${mentor.availablefor.length - 2}`}
-                className="!text-xs !py-0.5 !px-2 !rounded-full"
-              />
-            )}
-          </div>
         </div>
       </div>
 
