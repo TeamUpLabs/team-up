@@ -6,6 +6,7 @@ import { MentorExtended } from "@/types/mentoring/Mentor";
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { Star, MapPin, CircleCheck, Shell, Calendar, Clock, Mail } from "lucide-react";
 import Accordion from "@/components/ui/Accordion";
+import { convertJobName } from "@/utils/ConvertJobName";
 
 export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -48,7 +49,7 @@ export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
           </div>
           <div className="flex flex-col">
             <h3 className="text-text-primary text-lg font-semibold">{mentor.user.name}</h3>
-            <p className="text-text-secondary text-sm">{mentor.user.job}</p>
+            <p className="text-text-secondary text-sm">{convertJobName(mentor.user.job)}</p>
           </div>
         </div>
 
@@ -125,7 +126,7 @@ export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
               </div>
               <div className="flex flex-col gap-2">
                 <h3 className="text-text-primary text-xl font-semibold">{mentor.user.name}</h3>
-                <p className="text-text-secondary">{mentor.user.job}</p>
+                <p className="text-text-secondary">{convertJobName(mentor.user.job)}</p>
                 <div className="flex flex-wrap gap-2">
                   {mentor.topic.map((topic, idx) => (
                     <Badge

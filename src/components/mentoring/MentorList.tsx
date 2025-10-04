@@ -8,6 +8,7 @@ import Accordion from "@/components/ui/Accordion";
 import BottomSheet from "@/components/ui/BottomSheet";
 import Badge from "@/components/ui/Badge";
 import { MentorExtended } from "@/types/mentoring/Mentor";
+import { convertJobName } from "@/utils/ConvertJobName";
 
 interface MentorListProps {
   mentor: MentorExtended;
@@ -54,7 +55,7 @@ export default function MentorList({ mentor }: MentorListProps) {
           </div>
           <div className="flex flex-col min-w-0">
             <h2 className="text-text-primary text-base font-semibold truncate">{mentor.user.name}</h2>
-            <p className="text-text-secondary text-sm truncate">{mentor.user.job}</p>
+            <p className="text-text-secondary text-sm truncate">{convertJobName(mentor.user.job)}</p>
           </div>
         </div>
 
@@ -129,7 +130,7 @@ export default function MentorList({ mentor }: MentorListProps) {
               </div>
               <div className="flex flex-col gap-2">
                 <h3 className="text-text-primary text-xl font-semibold">{mentor.user.name}</h3>
-                <p className="text-text-secondary">{mentor.user.job}</p>
+                <p className="text-text-secondary">{convertJobName(mentor.user.job)}</p>
                 <div className="flex flex-wrap gap-2">
                   {mentor.topic.map((topic, idx) => (
                     <Badge
