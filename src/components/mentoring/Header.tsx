@@ -3,8 +3,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Search from "@/components/ui/Search";
 import UserDropdown from "@/components/platform/UserDropdown";
-import { Home } from "lucide-react";
+import { Home, UserRoundPlus } from "lucide-react";
 import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
+import Badge from "@/components/ui/Badge";
 
 interface HeaderProps {
   searchQuery?: string;
@@ -84,16 +85,28 @@ export default function Header({
 
           {localIsSearchOpen && (
             <div className="flex-1">
-              <Search 
-                placeholder="내용, 태그, 작성자를 검색하세요." 
-                searchQuery={localSearchQuery} 
-                setSearchQuery={handleSearchChange} 
-                inputRef={inputRef} 
+              <Search
+                placeholder="내용, 태그, 작성자를 검색하세요."
+                searchQuery={localSearchQuery}
+                setSearchQuery={handleSearchChange}
+                inputRef={inputRef}
                 autoFocus
               />
             </div>
           )}
-          <UserDropdown />
+          <div className="flex items-center gap-6">
+            <Badge
+              content={
+                <div className="flex items-center gap-2">
+                  <UserRoundPlus className="w-4 h-4" />
+                  <span>멘토 등록하기</span>
+                </div>
+              }
+              color="black"
+              className="!px-3 !py-1 cursor-pointer active:scale-95"
+            />
+            <UserDropdown />
+          </div>
         </div>
       </header>
     </div>
