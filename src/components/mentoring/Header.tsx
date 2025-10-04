@@ -6,6 +6,7 @@ import UserDropdown from "@/components/platform/UserDropdown";
 import { Home, UserRoundPlus } from "lucide-react";
 import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
 import Badge from "@/components/ui/Badge";
+import EnrollMentorModal from "@/components/mentoring/EnrollMentorModal";
 
 interface HeaderProps {
   searchQuery?: string;
@@ -31,6 +32,7 @@ export default function Header({
   const [localIsSearchOpen, setLocalIsSearchOpen] = useState(propIsSearchOpen);
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isEnrollMentorModalOpen, setIsEnrollMentorModalOpen] = useState(false);
 
   // Sync with prop
   useEffect(() => {
@@ -104,10 +106,12 @@ export default function Header({
               }
               color="black"
               className="!px-3 !py-1 cursor-pointer active:scale-95"
+              onClick={() => setIsEnrollMentorModalOpen(true)}
             />
             <UserDropdown />
           </div>
         </div>
+        <EnrollMentorModal isOpen={isEnrollMentorModalOpen} onClose={() => setIsEnrollMentorModalOpen(false)} />
       </header>
     </div>
   );
