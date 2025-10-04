@@ -2,7 +2,7 @@ import Image from "next/image";
 import BottomSheet from "@/components/ui/BottomSheet";
 import Badge from "@/components/ui/Badge";
 import { useState } from "react";
-import { Mentor } from "@/app/mentoring/page";
+import { Mentor } from "@/types/mentoring/Mentor";
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { Star, MapPin, CircleCheck, Shell, Calendar, Clock, Mail } from "lucide-react";
 import Accordion from "@/components/ui/Accordion";

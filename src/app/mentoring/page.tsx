@@ -8,33 +8,6 @@ import MentorList from "@/components/mentoring/MentorList";
 import TabSlider from "@/components/ui/TabSlider";
 import { GalleryHorizontal, List } from "lucide-react";
 import mentors from "../../../public/json/mentors.json";
-import { UserBrief } from "@/types/brief/Userbrief";
-
-export interface Mentor {
-  user: UserBrief;
-  location: string[];
-  experience: string;
-  topic: string[];
-  bio: string;
-  availablefor: string[];
-  reviews: {
-    id: number;
-    rating: number;
-    comment: string;
-    mentor_id: number;
-    created_at: string;
-    updated_at: string;
-  }[];
-  sessions: {
-    id: number;
-    title: string;
-    description: string;
-    mentor_id: number;
-    mentee_id: number;
-    created_at: string;
-    updated_at: string;
-  }[];
-}
 
 export default function MentoringPage() {
   const [searchLookingforQuery, setSearchLookingforQuery] = useState('');

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Mentor } from "@/app/mentoring/page";
+import { Mentor } from "@/types/mentoring/Mentor";
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { useState } from "react";
 import { Star, Shell, Calendar, Clock, Mail } from "lucide-react";
