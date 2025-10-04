@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, useState } from "react";
+import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { Mentor, MentorExtended } from "@/types/mentoring/Mentor";
 import useSWR from "swr";
 import { fetcher } from "@/auth/server";
@@ -21,47 +21,59 @@ export const MentoringProvider = ({ children }: { children: ReactNode }) => {
   const user = useAuthStore((state) => state.user);
   const hydrated = useAuthHydration();
   const [localMentors, setLocalMentors] = useState<MentorExtended[]>([]);
+  const [isExtending, setIsExtending] = useState(false);
   
-  const { error, isLoading, mutate } = useSWR<Mentor[]>(
+  const { data, error, isLoading, mutate } = useSWR<Mentor[]>(
     hydrated && user?.id ? '/api/v1/mentors/all' : null,
-    (url: string) => fetcher(url),
-    {
-      onSuccess: async (data) => {
-        if (data) {
-          // Fetch reviews and sessions for each mentor
-          const extendedMentors = await Promise.all(
-            data.map(async (mentor) => {
-              try {
-                const [reviews, sessions] = await Promise.all([
-                  mentor.links.reviews.href 
-                    ? fetcher(mentor.links.reviews.href).catch(() => [])
-                    : Promise.resolve([]),
-                  mentor.links.sessions.href 
-                    ? fetcher(mentor.links.sessions.href).catch(() => [])
-                    : Promise.resolve([])
-                ]);
-                
-                return {
-                  ...mentor,
-                  reviews: reviews || [],
-                  sessions: sessions || []
-                } as MentorExtended;
-              } catch (err) {
-                console.error('Failed to fetch mentor links:', err);
-                return {
-                  ...mentor,
-                  reviews: [],
-                  sessions: []
-                } as MentorExtended;
-              }
-            })
-          );
-          
-          setLocalMentors(extendedMentors);
-        }
-      }
-    }
+    (url: string) => fetcher(url)
   );
+
+  // Fetch extended data whenever base data changes
+  useEffect(() => {
+    const extendMentors = async () => {
+      if (!data || data.length === 0) {
+        setLocalMentors([]);
+        return;
+      }
+
+      setIsExtending(true);
+      try {
+        const extendedMentors = await Promise.all(
+          data.map(async (mentor) => {
+            try {
+              const [reviews, sessions] = await Promise.all([
+                mentor.links.reviews.href 
+                  ? fetcher(mentor.links.reviews.href).catch(() => [])
+                  : Promise.resolve([]),
+                mentor.links.sessions.href 
+                  ? fetcher(mentor.links.sessions.href).catch(() => [])
+                  : Promise.resolve([])
+              ]);
+              
+              return {
+                ...mentor,
+                reviews: reviews || [],
+                sessions: sessions || []
+              } as MentorExtended;
+            } catch (err) {
+              console.error('Failed to fetch mentor links:', err);
+              return {
+                ...mentor,
+                reviews: [],
+                sessions: []
+              } as MentorExtended;
+            }
+          })
+        );
+        
+        setLocalMentors(extendedMentors);
+      } finally {
+        setIsExtending(false);
+      }
+    };
+
+    extendMentors();
+  }, [data]);
 
   const refetchMentors = async (): Promise<MentorExtended[] | undefined> => {
     const result = await mutate();
@@ -190,7 +202,7 @@ export const MentoringProvider = ({ children }: { children: ReactNode }) => {
     <MentoringContext.Provider
       value={{
         mentors: localMentors,
-        isLoading,
+        isLoading: isLoading || isExtending,
         error: error || null,
         refetchMentors,
         addMentor,
