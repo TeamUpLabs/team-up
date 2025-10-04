@@ -156,16 +156,16 @@ export default function MentoringPage() {
           <Select
             options={[
               { name: 'location', value: '', label: '위치 전체' },
-              { name: 'location', value: 'online', label: '온라인' },
-              { name: 'location', value: 'seoul', label: '서울' },
-              { name: 'location', value: 'gyeonggi', label: '경기도' },
-              { name: 'location', value: 'incheon', label: '인천' },
-              { name: 'location', value: 'daejeon', label: '대전' },
-              { name: 'location', value: 'daegwallyeong', label: '대구' },
-              { name: 'location', value: 'gwangju', label: '광주' },
-              { name: 'location', value: 'ulsan', label: '울산' },
-              { name: 'location', value: 'busan', label: '부산' },
-              { name: 'location', value: 'jeju', label: '제주도' },
+              { name: 'location', value: '온라인', label: '온라인' },
+              { name: 'location', value: '서울', label: '서울' },
+              { name: 'location', value: '경기도', label: '경기도' },
+              { name: 'location', value: '인천', label: '인천' },
+              { name: 'location', value: '대전', label: '대전' },
+              { name: 'location', value: '대구', label: '대구' },
+              { name: 'location', value: '광주', label: '광주' },
+              { name: 'location', value: '울산', label: '울산' },
+              { name: 'location', value: '부산', label: '부산' },
+              { name: 'location', value: '제주도', label: '제주도' },
             ]}
             value={searchLocation}
             onChange={(value) => setSearchLocation(value as string)}
