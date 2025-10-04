@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Mentor } from "@/types/mentoring/Mentor";
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { useState } from "react";
-import { Star, Shell, Calendar, Clock, Mail } from "lucide-react";
+import { Star, Shell, Calendar, Clock, Mail, MapPin, CircleCheck } from "lucide-react";
 import Accordion from "@/components/ui/Accordion";
 import BottomSheet from "@/components/ui/BottomSheet";
 import Badge from "@/components/ui/Badge";
@@ -20,19 +20,20 @@ export default function MentorList({ mentor }: MentorListProps) {
   return (
     <>
       <div
-        className="flex items-center justify-between p-2 bg-transparent hover:bg-component-tertiary-background transition-colors duration-200 ease-in-out cursor-pointer first:rounded-t-lg last:rounded-b-lg"
+        className="grid grid-cols-[minmax(200px,2fr)_minmax(150px,1.5fr)_minmax(150px,1.5fr)_minmax(120px,1fr)] gap-4 items-center p-4 bg-transparent hover:bg-component-tertiary-background transition-colors duration-200 ease-in-out cursor-pointer first:rounded-t-lg last:rounded-b-lg"
         onClick={() => setIsBottomSheetOpen(true)}
       >
-        <div className="flex items-center gap-4">
-          <div className="bg-component-tertiary-background w-12 h-12 rounded-full">
+        {/* Profile and Name */}
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="bg-component-tertiary-background w-12 h-12 rounded-full flex-shrink-0">
             {mentor.user.profile_image ? (
               <div className="relative">
                 <Image
                   src={mentor.user.profile_image}
                   alt={mentor.user.name}
                   className="rounded-full"
-                  width={100}
-                  height={100}
+                  width={48}
+                  height={48}
                 />
                 <span
                   className={`absolute bottom-0 right-0 w-4 h-4 ${statusInfo.indicator} rounded-full border-2 border-component-background`}
@@ -51,18 +52,61 @@ export default function MentorList({ mentor }: MentorListProps) {
               </div>
             )}
           </div>
-          <div className="flex flex-col">
-            <h2 className="text-text-primary text-lg font-semibold">{mentor.user.name}</h2>
-            <p className="text-text-secondary text-sm">{mentor.user.job}</p>
+          <div className="flex flex-col min-w-0">
+            <h2 className="text-text-primary text-base font-semibold truncate">{mentor.user.name}</h2>
+            <p className="text-text-secondary text-sm truncate">{mentor.user.job}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* Location */}
+        <div className="flex flex-col gap-1 min-w-0">
+          <div className="flex items-center gap-1">
+            <MapPin className="w-4 h-4" />
+            <span className="text-text-primary text-sm font-semibold">Location</span>
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {mentor.location.slice(0, 2).map((loc, idx) => (
+              <Badge
+                key={idx}
+                color="orange"
+                content={loc}
+                className="!text-xs !py-0.5 !px-2 !rounded-full"
+              />
+            ))}
+            {mentor.location.length > 2 && (
+              <span className="text-xs text-text-secondary">+{mentor.location.length - 2}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Available For */}
+        <div className="flex flex-col gap-1 min-w-0">
+          <div className="flex items-center gap-1">
+            <CircleCheck className="w-4 h-4" />
+            <span className="text-text-primary text-sm font-semibold">Available for</span>
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {mentor.availablefor.slice(0, 2).map((af, idx) => (
+              <Badge
+                key={idx}
+                color="violet"
+                content={af}
+                className="!text-xs !py-0.5 !px-2 !rounded-full"
+              />
+            ))}
+            {mentor.availablefor.length > 2 && (
+              <span className="text-xs text-text-secondary">+{mentor.availablefor.length - 2}</span>
+            )}
+          </div>
+        </div>
+
+        {/* Rating and Sessions */}
+        <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
-            <Star className="text-yellow-500 fill-yellow-500 w-5 h-5" />
+            <Star className="text-yellow-500 fill-yellow-500 w-4 h-4" />
             <span className="font-medium text-sm">{parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1))}</span>
           </div>
-          <span className="text-text-secondary text-sm">{mentor.sessions.length} sessions</span>
+          <span className="text-text-secondary text-xs">{mentor.sessions.length} sessions</span>
         </div>
       </div>
 

@@ -33,19 +33,28 @@ export const getStatusInfo = (status: string) => {
       return { 
         indicator: "bg-green-500", 
         label: "온라인",
-        ringColor: "ring-green-500"
+        ringColor: "ring-green-500",
+        bgColor: "bg-green-500/20",
+        textColor: "text-green-600",
+        color: "green"
       };
     case "away":
       return { 
         indicator: "bg-yellow-400", 
         label: "자리비움",
-        ringColor: "ring-yellow-400"
+        ringColor: "ring-yellow-400",
+        bgColor: "bg-yellow-400/20",
+        textColor: "text-yellow-600",
+        color: "yellow"
       };
     default:
       return { 
         indicator: "bg-gray-400", 
         label: "오프라인",
-        ringColor: "ring-gray-400"
+        ringColor: "ring-gray-400",
+        bgColor: "bg-gray-400/20",
+        textColor: "text-gray-600",
+        color: "gray"
       };
   }
 };
