@@ -7,9 +7,10 @@ import MentorCard from "@/components/mentoring/MentorCard";
 import MentorList from "@/components/mentoring/MentorList";
 import TabSlider from "@/components/ui/TabSlider";
 import { GalleryHorizontal, List } from "lucide-react";
-import mentors from "../../../public/json/mentors.json";
+import { useMentoring } from "@/contexts/MentoringContext";
 
 export default function MentoringPage() {
+  const { mentors } = useMentoring();
   const [searchLookingforQuery, setSearchLookingforQuery] = useState('');
   const [searchAvailableforQuery, setSearchAvailableforQuery] = useState('');
   const [searchExperience, setSearchExperience] = useState<string>('');
@@ -39,7 +40,7 @@ export default function MentoringPage() {
     const matchesExperience = !searchExperience || (() => {
       if (!searchExperience) return true;
       
-      const mentorExp = parseInt(mentor.experience) || 0;
+      const mentorExp = mentor.experience || 0;
       
       switch(searchExperience.toLowerCase()) {
         case 'junior':
@@ -51,7 +52,7 @@ export default function MentoringPage() {
         case '6-10':
           return mentorExp >= 6 && mentorExp <= 10;
         case 'senior':
-          return mentorExp > 10 || mentor.experience.toLowerCase().includes('+');
+          return mentorExp > 10 || String(mentor.experience || '').toLowerCase().includes('+');
         default:
           return true;
       }
