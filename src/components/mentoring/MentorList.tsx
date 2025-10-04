@@ -64,7 +64,7 @@ export default function MentorList({ mentor }: MentorListProps) {
             <MapPin className="w-4 h-4" />
             <span className="text-text-primary text-sm font-semibold">Location</span>
           </div>
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             {mentor.location.slice(0, 2).map((loc, idx) => (
               <Badge
                 key={idx}
@@ -85,7 +85,7 @@ export default function MentorList({ mentor }: MentorListProps) {
             <CircleCheck className="w-4 h-4" />
             <span className="text-text-primary text-sm font-semibold">Available for</span>
           </div>
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             {mentor.availablefor.slice(0, 2).map((af, idx) => (
               <Badge
                 key={idx}
@@ -226,6 +226,11 @@ export default function MentorList({ mentor }: MentorListProps) {
 
           <Accordion title={`후기 (${mentor.reviews.length})`} icon={Star}>
             <div className="flex flex-col gap-4">
+              {mentor.reviews.length === 0 && (
+                <div className="text-center py-6">
+                  <p className="text-text-secondary text-sm">등록된 후기가 없습니다.</p>
+                </div>
+              )}
               {mentor.reviews.map((review, idx) => (
                 <div key={idx} className="border-b border-component-border/70 pb-4 last:border-0 last:pb-0">
                   <div className="flex items-center gap-2">
