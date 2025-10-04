@@ -1,16 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { Mentor } from "@/types/mentoring/Mentor";
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { useState } from "react";
 import { Star, Shell, Calendar, Clock, Mail, MapPin, CircleCheck } from "lucide-react";
 import Accordion from "@/components/ui/Accordion";
 import BottomSheet from "@/components/ui/BottomSheet";
 import Badge from "@/components/ui/Badge";
+import { MentorExtended } from "@/types/mentoring/Mentor";
 
 interface MentorListProps {
-  mentor: Mentor;
+  mentor: MentorExtended;
 }
 
 export default function MentorList({ mentor }: MentorListProps) {
@@ -104,7 +104,7 @@ export default function MentorList({ mentor }: MentorListProps) {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
             <Star className="text-yellow-500 fill-yellow-500 w-4 h-4" />
-            <span className="font-medium text-sm">{parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1))}</span>
+            <span className="font-medium text-sm">{mentor.reviews.length > 0 ? parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1)) : "0"}</span>
           </div>
           <span className="text-text-secondary text-xs">{mentor.sessions.length} sessions</span>
         </div>
@@ -145,7 +145,7 @@ export default function MentorList({ mentor }: MentorListProps) {
             <div className="flex items-center gap-2 bg-component-tertiary-background/60 border border-component-border/60 px-3 py-1 rounded-full">
               <Star className="w-4 h-4 text-yellow-300 fill-yellow-300" />
               <span className="text-sm font-medium">
-                {parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1))}
+                {mentor.reviews.length > 0 ? parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1)) : "0"}
                 <span className="text-text-secondary ml-1">({mentor.reviews.length}개 후기)</span>
               </span>
             </div>

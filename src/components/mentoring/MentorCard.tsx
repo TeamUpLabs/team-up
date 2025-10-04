@@ -2,12 +2,12 @@ import Image from "next/image";
 import BottomSheet from "@/components/ui/BottomSheet";
 import Badge from "@/components/ui/Badge";
 import { useState } from "react";
-import { Mentor } from "@/types/mentoring/Mentor";
+import { MentorExtended } from "@/types/mentoring/Mentor";
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { Star, MapPin, CircleCheck, Shell, Calendar, Clock, Mail } from "lucide-react";
 import Accordion from "@/components/ui/Accordion";
 
-export default function MentorCard({ mentor }: { mentor: Mentor }) {
+export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
   const statusInfo = getStatusInfo(mentor.user.status);
@@ -55,7 +55,11 @@ export default function MentorCard({ mentor }: { mentor: Mentor }) {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Star className="text-yellow-500 fill-yellow-500 w-5 h-5" />
-            <span className="font-medium text-sm">{parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1))}</span>
+            <span className="font-medium text-sm">
+              {mentor.reviews.length > 0
+                ? parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1))
+                : "0"}
+            </span>
           </div>
           <span className="text-text-secondary text-sm">{mentor.sessions.length} sessions</span>
         </div>
@@ -137,7 +141,9 @@ export default function MentorCard({ mentor }: { mentor: Mentor }) {
             <div className="flex items-center gap-2 bg-component-tertiary-background/60 border border-component-border/60 px-3 py-1 rounded-full">
               <Star className="w-4 h-4 text-yellow-300 fill-yellow-300" />
               <span className="text-sm font-medium">
-                {parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1))}
+                {mentor.reviews.length > 0
+                  ? parseFloat((mentor.reviews.reduce((acc, review) => acc + review.rating, 0) / mentor.reviews.length).toFixed(1))
+                  : "0"}
                 <span className="text-text-secondary ml-1">({mentor.reviews.length}개 후기)</span>
               </span>
             </div>
@@ -218,11 +224,16 @@ export default function MentorCard({ mentor }: { mentor: Mentor }) {
 
           <Accordion title={`후기 (${mentor.reviews.length})`} icon={Star}>
             <div className="flex flex-col gap-4">
-              {mentor.reviews.map((review, idx) => (
-                <div key={idx} className="border-b border-component-border/70 pb-4 last:border-0 last:pb-0">
-                  <div className="flex items-center gap-2">
-                    <div className="flex">
-                      {[1, 2, 3, 4, 5].map((star) => (
+              {mentor.reviews.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="text-text-secondary text-sm">등록된 후기가 없습니다.</p>
+                </div>
+              ) : (
+                mentor.reviews.map((review, idx) => (
+                  <div key={idx} className="border-b border-component-border/70 pb-4 last:border-0 last:pb-0">
+                    <div className="flex items-center gap-2">
+                      <div className="flex">
+                        {[1, 2, 3, 4, 5].map((star) => (
                         <Star
                           key={star}
                           className={`w-4 h-4 ${review.rating >= star ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
@@ -235,7 +246,7 @@ export default function MentorCard({ mentor }: { mentor: Mentor }) {
                   </div>
                   <p className="mt-2 text-text-primary text-sm">{review.comment}</p>
                 </div>
-              ))}
+                )))}
             </div>
           </Accordion>
 
