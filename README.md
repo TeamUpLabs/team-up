@@ -1,6 +1,6 @@
 # 🚀 TeamUp - 원격 협업 플랫폼
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/2e8fcf47-6b5c-467c-bf92-1ba9c92b8e2b/deploy-status)](https://app.netlify.com/sites/team-up-service/deploys)
+![Vercel Deploy](https://deploy-badge.vercel.app/?url=https%3A%2F%2Fteam-up.kro.kr%2F&logo=vercel&name=vercel)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-13+-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-4.9+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
