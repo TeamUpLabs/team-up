@@ -99,7 +99,7 @@ export default function Header({
               content={
                 <div className="flex items-center gap-2">
                   <UserRoundPlus className="w-4 h-4" />
-                  <span>멘토 등록하기</span>
+                  <span className="font-semibold">멘토 등록하기</span>
                 </div>
               }
               color="black"
