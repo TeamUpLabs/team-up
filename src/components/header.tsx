@@ -34,7 +34,7 @@ export default function Header() {
               로그인
             </span>
           }
-          color="purple"
+          color="white"
           className="!px-3 !py-1 flex"
           isHover
         />
