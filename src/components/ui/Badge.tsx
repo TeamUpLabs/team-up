@@ -61,7 +61,7 @@ export const darkBadgeColors = {
   zinc: "!bg-zinc-800/20 !text-zinc-500 !border !border-zinc-800",
   neutral: "!bg-neutral-800/20 !text-neutral-500 !border !border-neutral-800",
   stone: "!bg-stone-800/20 !text-stone-500 !border !border-stone-800",
-  black: "!bg-black/20 !text-white !border !border-black",
+  black: "!bg-black/20 !text-white !border !border-white",
   white: "!bg-white/20 !text-white !border !border-white",
   none: "!bg-transparent !text-text-primary !border !border-component-border"
 };
