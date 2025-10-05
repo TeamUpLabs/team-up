@@ -3,12 +3,13 @@
 import Image from "next/image";
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { useState } from "react";
-import { Star, Shell, Calendar, Clock, Mail, MapPin, CircleCheck } from "lucide-react";
+import { Star, Shell, Calendar, Mail, MapPin, CircleCheck } from "lucide-react";
 import Accordion from "@/components/ui/Accordion";
 import BottomSheet from "@/components/ui/BottomSheet";
 import Badge from "@/components/ui/Badge";
 import { MentorExtended } from "@/types/mentoring/Mentor";
 import { convertJobName } from "@/utils/ConvertJobName";
+import NewSessionModal from "@/components/mentoring/modal/NewSessionModal";
 
 interface MentorListProps {
   mentor: MentorExtended;
@@ -17,6 +18,7 @@ interface MentorListProps {
 export default function MentorList({ mentor }: MentorListProps) {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const statusInfo = getStatusInfo(mentor.user.status);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
@@ -197,20 +199,11 @@ export default function MentorList({ mentor }: MentorListProps) {
                       <div className="flex items-center text-xs text-text-secondary mt-2">
                         <Calendar className="w-3.5 h-3.5 mr-1.5" />
                         <span>
-                          {new Date(session.created_at).toLocaleDateString('ko-KR', {
+                          {new Date(session.start_date).toLocaleDateString('ko-KR', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
                             weekday: 'short',
-                          })}
-                        </span>
-                        <span className="mx-2">•</span>
-                        <Clock className="w-3.5 h-3.5 mr-1.5" />
-                        <span>
-                          {new Date(session.created_at).toLocaleTimeString('ko-KR', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true,
                           })}
                         </span>
                       </div>
@@ -258,13 +251,20 @@ export default function MentorList({ mentor }: MentorListProps) {
               <Mail className="w-5 h-5" />
               <span>연락하기</span>
             </div>
-            <div className="flex items-center gap-4 w-full bg-transparent hover:bg-component-tertiary-background border border-component-border justify-center py-2 rounded-lg transition-colors duration-200 ease-in-out cursor-pointer active:scale-95">
+            <div
+              onClick={() => {
+                setIsBottomSheetOpen(false);
+                setIsModalOpen(true);
+              }}
+              className="flex items-center gap-4 w-full bg-transparent hover:bg-component-tertiary-background border border-component-border justify-center py-2 rounded-lg transition-colors duration-200 ease-in-out cursor-pointer active:scale-95"
+            >
               <Calendar className="w-5 h-5" />
               <span>세션 예약</span>
             </div>
           </div>
         </div>
       </BottomSheet>
+      <NewSessionModal mentor={mentor} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 }

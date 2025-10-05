@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { fetcher } from "@/auth/server";
 import useAuthHydration from "@/hooks/useAuthHydration";
 import { useAuthStore } from "@/auth/authStore";
+import { MentorSession } from "@/types/mentoring/MentorSession";
 
 interface MentoringContextType {
   mentors: MentorExtended[];  
@@ -13,6 +14,8 @@ interface MentoringContextType {
   addMentor: (mentor: Mentor) => Promise<void>;
   updateMentor: (mentor: Mentor) => Promise<void>;
   deleteMentor: (mentorId: number) => Promise<void>;
+
+  addSession: (session: MentorSession) => Promise<void>;
 }
 
 const MentoringContext = createContext<MentoringContextType | undefined>(undefined);
@@ -198,6 +201,25 @@ export const MentoringProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const addSession = async (session: MentorSession): Promise<void> => {
+    try {
+      // Optimistic update
+      const updatedMentors = localMentors.map(m => 
+        m.user.id === session.mentor_id ? { ...m, sessions: [...m.sessions, session] } : m
+      );
+      setLocalMentors(updatedMentors);
+      mutate(updatedMentors, false);
+      
+      // Revalidate
+      await mutate();
+    } catch (err) {
+      console.error('Failed to add session:', err);
+      // Rollback on error
+      await mutate();
+      throw err;
+    }
+  };
+
   return (
     <MentoringContext.Provider
       value={{
@@ -208,6 +230,7 @@ export const MentoringProvider = ({ children }: { children: ReactNode }) => {
         addMentor,
         updateMentor,
         deleteMentor,
+        addSession,
       }}
     >
       {children}

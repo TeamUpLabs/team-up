@@ -4,12 +4,14 @@ import Badge from "@/components/ui/Badge";
 import { useState } from "react";
 import { MentorExtended } from "@/types/mentoring/Mentor";
 import { getStatusInfo } from "@/utils/getStatusColor";
-import { Star, MapPin, CircleCheck, Shell, Calendar, Clock, Mail } from "lucide-react";
+import { Star, MapPin, CircleCheck, Shell, Calendar, Mail } from "lucide-react";
 import Accordion from "@/components/ui/Accordion";
 import { convertJobName } from "@/utils/ConvertJobName";
+import NewSessionModal from "@/components/mentoring/modal/NewSessionModal";
 
 export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const statusInfo = getStatusInfo(mentor.user.status);
 
@@ -195,20 +197,11 @@ export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
                       <div className="flex items-center text-xs text-text-secondary mt-2">
                         <Calendar className="w-3.5 h-3.5 mr-1.5" />
                         <span>
-                          {new Date(session.created_at).toLocaleDateString('ko-KR', {
+                          {new Date(session.start_date).toLocaleDateString('ko-KR', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
                             weekday: 'short',
-                          })}
-                        </span>
-                        <span className="mx-2">•</span>
-                        <Clock className="w-3.5 h-3.5 mr-1.5" />
-                        <span>
-                          {new Date(session.created_at).toLocaleTimeString('ko-KR', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true,
                           })}
                         </span>
                       </div>
@@ -235,18 +228,18 @@ export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
                     <div className="flex items-center gap-2">
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`w-4 h-4 ${review.rating >= star ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
-                        />
-                      ))}
+                          <Star
+                            key={star}
+                            className={`w-4 h-4 ${review.rating >= star ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-text-secondary">
+                        {new Date(review.created_at).toLocaleDateString()}
+                      </span>
                     </div>
-                    <span className="text-xs text-text-secondary">
-                      {new Date(review.created_at).toLocaleDateString()}
-                    </span>
+                    <p className="mt-2 text-text-primary text-sm">{review.comment}</p>
                   </div>
-                  <p className="mt-2 text-text-primary text-sm">{review.comment}</p>
-                </div>
                 )))}
             </div>
           </Accordion>
@@ -256,13 +249,20 @@ export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
               <Mail className="w-5 h-5" />
               <span>연락하기</span>
             </div>
-            <div className="flex items-center gap-4 w-full bg-transparent hover:bg-component-tertiary-background border border-component-border justify-center py-2 rounded-lg transition-colors duration-200 ease-in-out cursor-pointer active:scale-95">
+            <div
+              onClick={() => {
+                setIsBottomSheetOpen(false);
+                setIsModalOpen(true);
+              }}
+              className="flex items-center gap-4 w-full bg-transparent hover:bg-component-tertiary-background border border-component-border justify-center py-2 rounded-lg transition-colors duration-200 ease-in-out cursor-pointer active:scale-95"
+            >
               <Calendar className="w-5 h-5" />
               <span>세션 예약</span>
             </div>
           </div>
         </div>
       </BottomSheet>
+      <NewSessionModal mentor={mentor} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 }
