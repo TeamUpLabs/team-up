@@ -5,6 +5,7 @@ import { fetcher } from "@/auth/server";
 import useAuthHydration from "@/hooks/useAuthHydration";
 import { useAuthStore } from "@/auth/authStore";
 import { MentorSession } from "@/types/mentoring/MentorSession";
+import { MentorReview } from "@/types/mentoring/MentorReview";
 
 interface MentoringContextType {
   mentors: MentorExtended[];  
@@ -16,6 +17,12 @@ interface MentoringContextType {
   deleteMentor: (mentorId: number) => Promise<void>;
 
   addSession: (session: MentorSession) => Promise<void>;
+  updateSession: (session: MentorSession) => Promise<void>;
+  deleteSession: (sessionId: number) => Promise<void>;
+
+  addReview: (review: MentorReview) => Promise<void>;
+  updateReview: (review: MentorReview) => Promise<void>;
+  deleteReview: (reviewId: number) => Promise<void>;
 }
 
 const MentoringContext = createContext<MentoringContextType | undefined>(undefined);
@@ -220,6 +227,101 @@ export const MentoringProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateSession = async (session: MentorSession): Promise<void> => {
+    try {
+      // Optimistic update
+      const updatedMentors = localMentors.map(m => 
+        m.user.id === session.mentor_id ? { ...m, sessions: m.sessions.map(s => s.id === session.id ? session : s) } : m
+      );
+      setLocalMentors(updatedMentors);
+      mutate(updatedMentors, false);
+      
+      // Revalidate
+      await mutate();
+    } catch (err) {
+      console.error('Failed to update session:', err);
+      // Rollback on error
+      await mutate();
+      throw err;
+    }
+  };
+
+  const deleteSession = async (session_id: number): Promise<void> => {
+    try {
+      // Optimistic update
+      const updatedMentors = localMentors.map(m => 
+        m.user.id === session_id ? { ...m, sessions: m.sessions.filter(s => s.id !== session_id) } : m
+      );
+      setLocalMentors(updatedMentors);
+      mutate(updatedMentors, false);
+      
+      // Revalidate
+      await mutate();
+    } catch (err) {
+      console.error('Failed to delete session:', err);
+      // Rollback on error
+      await mutate();
+      throw err;
+    }
+  };
+
+  const addReview = async (review: MentorReview): Promise<void> => {
+    try {
+      // Optimistic update
+      const updatedMentors = localMentors.map(m => 
+        m.user.id === review.mentor.user.id ? { ...m, reviews: [...m.reviews, review] } : m
+      );
+      setLocalMentors(updatedMentors);
+      mutate(updatedMentors, false);
+      
+      // Revalidate
+      await mutate();
+    } catch (err) {
+      console.error('Failed to add review:', err);
+      // Rollback on error
+      await mutate();
+      throw err;
+    }
+  };
+
+  const updateReview = async (review: MentorReview): Promise<void> => {
+    try {
+      // Optimistic update
+      const updatedMentors = localMentors.map(m => 
+        m.user.id === review.mentor.user.id ? { ...m, reviews: m.reviews.map(r => r.id === review.id ? review : r) } : m
+      );
+      setLocalMentors(updatedMentors);
+      mutate(updatedMentors, false);
+      
+      // Revalidate
+      await mutate();
+    } catch (err) {
+      console.error('Failed to update review:', err);
+      // Rollback on error
+      await mutate();
+      throw err;
+    }
+  };
+
+  const deleteReview = async (review_id: number): Promise<void> => {
+    try {
+      // Optimistic update
+      const updatedMentors = localMentors.map(m => 
+        m.user.id === review_id ? { ...m, reviews: m.reviews.filter(r => r.id !== review_id) } : m
+      );
+      setLocalMentors(updatedMentors);
+      mutate(updatedMentors, false);
+      
+      // Revalidate
+      await mutate();
+    } catch (err) {
+      console.error('Failed to delete review:', err);
+      // Rollback on error
+      await mutate();
+      throw err;
+    }
+  };
+
   return (
     <MentoringContext.Provider
       value={{
@@ -231,6 +333,11 @@ export const MentoringProvider = ({ children }: { children: ReactNode }) => {
         updateMentor,
         deleteMentor,
         addSession,
+        updateSession,
+        deleteSession,
+        addReview,
+        updateReview,
+        deleteReview,
       }}
     >
       {children}

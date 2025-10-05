@@ -221,7 +221,9 @@ export default function NewSessionModal({ mentor, isOpen, onClose }: NewSessionM
         {/* Mentor Info Section */}
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-text-primary">
-            <User className="w-5 h-5 text-point-color-purple" />
+            <div className="w-5 h-5 bg-point-color-purple rounded-full flex items-center justify-center">
+              <span className="text-xs text-white font-bold">M</span>
+            </div>
             <h3 className="text-lg font-semibold">멘토 정보</h3>
           </div>
           <div className="p-4 bg-component-secondary-background rounded-lg border border-component-border">

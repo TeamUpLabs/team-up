@@ -3,13 +3,14 @@
 import Image from "next/image";
 import { getStatusInfo } from "@/utils/getStatusColor";
 import { useState } from "react";
-import { Star, Shell, Calendar, Mail, MapPin, CircleCheck } from "lucide-react";
+import { Star, Shell, Calendar, MapPin, CircleCheck } from "lucide-react";
 import Accordion from "@/components/ui/Accordion";
 import BottomSheet from "@/components/ui/BottomSheet";
 import Badge from "@/components/ui/Badge";
 import { MentorExtended } from "@/types/mentoring/Mentor";
 import { convertJobName } from "@/utils/ConvertJobName";
 import NewSessionModal from "@/components/mentoring/modal/NewSessionModal";
+import NewReviewModal from "@/components/mentoring/modal/NewReviewModal";
 
 interface MentorListProps {
   mentor: MentorExtended;
@@ -18,7 +19,8 @@ interface MentorListProps {
 export default function MentorList({ mentor }: MentorListProps) {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const statusInfo = getStatusInfo(mentor.user.status);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNewSessionModalOpen, setIsNewSessionModalOpen] = useState(false);
+  const [isNewReviewModalOpen, setIsNewReviewModalOpen] = useState(false);
 
   return (
     <>
@@ -247,24 +249,31 @@ export default function MentorList({ mentor }: MentorListProps) {
           </Accordion>
 
           <div className="grid grid-cols-2 gap-2">
-            <div className="flex items-center gap-4 w-full bg-transparent hover:bg-component-tertiary-background border border-component-border justify-center py-2 rounded-lg transition-colors duration-200 ease-in-out cursor-pointer active:scale-95">
-              <Mail className="w-5 h-5" />
-              <span>연락하기</span>
+            <div
+              onClick={() => {
+                setIsBottomSheetOpen(false);
+                setIsNewReviewModalOpen(true);
+              }}
+              className="flex items-center gap-4 w-full bg-transparent hover:bg-component-tertiary-background border border-component-border justify-center py-2 rounded-lg transition-colors duration-200 ease-in-out cursor-pointer active:scale-95"
+            >
+              <Star className="w-5 h-5" />
+              <span className="font-medium">후기 작성</span>
             </div>
             <div
               onClick={() => {
                 setIsBottomSheetOpen(false);
-                setIsModalOpen(true);
+                setIsNewSessionModalOpen(true);
               }}
               className="flex items-center gap-4 w-full bg-transparent hover:bg-component-tertiary-background border border-component-border justify-center py-2 rounded-lg transition-colors duration-200 ease-in-out cursor-pointer active:scale-95"
             >
               <Calendar className="w-5 h-5" />
-              <span>세션 예약</span>
+              <span className="font-medium">세션 예약</span>
             </div>
           </div>
         </div>
       </BottomSheet>
-      <NewSessionModal mentor={mentor} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <NewSessionModal mentor={mentor} isOpen={isNewSessionModalOpen} onClose={() => setIsNewSessionModalOpen(false)} />
+      <NewReviewModal mentor={mentor} isOpen={isNewReviewModalOpen} onClose={() => setIsNewReviewModalOpen(false)} />
     </>
   );
 }
