@@ -6,7 +6,7 @@ import UserDropdown from "@/components/platform/UserDropdown";
 import { Home, UserRoundPlus } from "lucide-react";
 import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
 import Badge from "@/components/ui/Badge";
-import EnrollMentorModal from "@/components/mentoring/EnrollMentorModal";
+import EnrollMentorModal from "@/components/mentoring/modal/EnrollMentorModal";
 
 interface HeaderProps {
   searchQuery?: string;
