@@ -11,9 +11,10 @@ interface ModalTempleteProps {
   footer?: React.ReactNode;
   isOpen: boolean;
   onClose: () => void;
+  zIndex?: number;
 }
 
-export default function ModalTemplete({ header, children, footer, isOpen, onClose }: ModalTempleteProps) {
+export default function ModalTemplete({ header, children, footer, isOpen, onClose, zIndex }: ModalTempleteProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -62,7 +63,7 @@ export default function ModalTemplete({ header, children, footer, isOpen, onClos
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4">
             <motion.div
-              className="w-full max-w-2xl overflow-hidden rounded-xl bg-component-background backdrop-blur-sm text-left align-middle shadow-xl border border-component-border flex flex-col max-h-[90vh]"
+              className={`w-full max-w-2xl overflow-hidden rounded-xl bg-component-background backdrop-blur-sm text-left align-middle shadow-xl border border-component-border flex flex-col max-h-[90vh] z-${zIndex}`}
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{
                 opacity: isVisible ? 1 : 0,
