@@ -11,6 +11,7 @@ import { NewMentorReviewForm, blankNewMentorReviewForm } from "@/types/mentoring
 import { Mentor } from "@/types/mentoring/Mentor";
 import { createReview } from "@/hooks/mentoring/getMentorReviewData";
 import { useMentoring } from "@/contexts/MentoringContext";
+import { convertJobName } from "@/utils/ConvertJobName";
 
 interface NewReviewModalProps {
   mentor: Mentor;
@@ -173,7 +174,7 @@ export default function NewReviewModal({ mentor, isOpen, onClose }: NewReviewMod
               </div>
               <div>
                 <p className="font-medium text-text-primary">{mentor.user.name}</p>
-                <p className="text-sm text-text-secondary">멘토</p>
+                <p className="text-sm text-text-secondary">{convertJobName(mentor.user.job)}</p>
               </div>
             </div>
           </div>

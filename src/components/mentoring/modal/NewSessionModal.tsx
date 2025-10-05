@@ -12,6 +12,7 @@ import { NewSessionForm, blankNewSessionForm } from "@/types/mentoring/MentorSes
 import { Mentor } from "@/types/mentoring/Mentor";
 import { createSession } from "@/hooks/mentoring/getMentorSessionData";
 import { useMentoring } from "@/contexts/MentoringContext";
+import { convertJobName } from "@/utils/ConvertJobName";
 
 interface NewSessionModalProps {
   mentor: Mentor;
@@ -233,7 +234,7 @@ export default function NewSessionModal({ mentor, isOpen, onClose }: NewSessionM
               </div>
               <div>
                 <p className="font-medium text-text-primary">{mentor.user.name}</p>
-                <p className="text-sm text-text-secondary">멘토</p>
+                <p className="text-sm text-text-secondary">{convertJobName(mentor.user.job)}</p>
               </div>
             </div>
           </div>
