@@ -236,9 +236,13 @@ export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
                           />
                         ))}
                       </div>
-                      <span className="text-xs text-text-secondary">
-                        {new Date(review.created_at).toLocaleDateString()}
-                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-text-secondary text-xs">{review.user.name}</span>
+                        <span className="text-text-secondary">·</span>
+                        <span className="text-xs text-text-secondary">
+                          {new Date(review.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
                     <p className="mt-2 text-text-primary text-sm">{review.comment}</p>
                   </div>
