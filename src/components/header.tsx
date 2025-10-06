@@ -11,7 +11,10 @@ export default function Header() {
   const alertServicePreparing = () => {
     useAuthStore.getState().setAlert("서비스 준비중입니다.", "info");
   }
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const alertServiceisNotAuthenticated = () => {
+    useAuthStore.getState().setAlert("로그인 후 이용해주세요.", "info");
+  }
+  const isAuthenticated = useAuthStore.getState().isAuthenticated;
 
   useEffect(() => {
     setIsMounted(true);
@@ -49,14 +52,58 @@ export default function Header() {
           <Logo />
         </Link>
         <nav className="md:flex space-x-5 sm:space-x-10 text-sm font-medium">
-          <Link href="/platform" className="hover:text-point-color-purple transition-colors duration-200">플랫폼</Link>
-          <Link href="/community" className="hover:text-point-color-purple transition-colors duration-200">커뮤니티</Link>
-          <Link href="/mentoring" className="hover:text-point-color-purple transition-colors duration-200" onClick={() => {
-            if (process.env.NODE_ENV === 'production') {
-              alertServicePreparing();
-            }
-          }}>멘토링</Link>
-          <Link href="#" className="hover:text-point-color-purple transition-colors duration-200" onClick={alertServicePreparing}>이벤트</Link>
+          <Link
+            href="/platform"
+            className="hover:text-point-color-purple transition-colors duration-200"
+            onClick={(e) => {
+              if (!isAuthenticated()) {
+                e.preventDefault();
+                alertServiceisNotAuthenticated();
+                return;
+              }
+            }}>
+            플랫폼
+          </Link>
+          <Link
+            href="/community"
+            className="hover:text-point-color-purple transition-colors duration-200"
+            onClick={(e) => {
+              if (!isAuthenticated()) {
+                e.preventDefault();
+                alertServiceisNotAuthenticated();
+              }
+            }}
+          >
+            커뮤니티
+          </Link>
+          <Link
+            href="/mentoring"
+            className="hover:text-point-color-purple transition-colors duration-200"
+            onClick={(e) => {
+              if (!isAuthenticated()) {
+                e.preventDefault();
+                alertServiceisNotAuthenticated();
+                return;
+              }
+            }}>
+            멘토링
+          </Link>
+          <Link
+            href="#"
+            className="hover:text-point-color-purple transition-colors duration-200"
+            onClick={(e) => {
+              if (!isAuthenticated()) {
+                e.preventDefault();
+                alertServiceisNotAuthenticated();
+                return;
+              } else if (process.env.NODE_ENV === 'production') {
+                e.preventDefault();
+                alertServicePreparing();
+              }
+            }}
+          >
+            이벤트
+          </Link>
         </nav>
         {renderAuthContent()}
       </div>
