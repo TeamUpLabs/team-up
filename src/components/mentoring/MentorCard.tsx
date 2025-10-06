@@ -4,18 +4,31 @@ import Badge from "@/components/ui/Badge";
 import { useState } from "react";
 import { MentorExtended } from "@/types/mentoring/Mentor";
 import { getStatusInfo } from "@/utils/getStatusColor";
-import { Star, MapPin, CircleCheck, Shell, Calendar } from "lucide-react";
+import { Star, MapPin, CircleCheck, Shell, Calendar, Trash2 } from "lucide-react";
 import Accordion from "@/components/ui/Accordion";
 import { convertJobName } from "@/utils/ConvertJobName";
 import NewSessionModal from "@/components/mentoring/modal/NewSessionModal";
 import NewReviewModal from "@/components/mentoring/modal/NewReviewModal";
+import { useAuthStore } from "@/auth/authStore";
+import { deleteReview as deleteReviewHook } from "@/hooks/mentoring/getMentorReviewData";
+import { useMentoring } from "@/contexts/MentoringContext";
 
 export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isNewSessionModalOpen, setIsNewSessionModalOpen] = useState(false);
   const [isNewReviewModalOpen, setIsNewReviewModalOpen] = useState(false);
+  const user = useAuthStore.getState().user;
+  const { deleteReview } = useMentoring();
 
   const statusInfo = getStatusInfo(mentor.user.status);
+
+  const handleDeleteReview = async (review_id: number) => {
+    useAuthStore.getState().setConfirm("후기를 삭제하시겠습니까?", async () => {
+      await deleteReviewHook(review_id);
+      useAuthStore.getState().setAlert("후기가 삭제되었습니다.", "success");
+      deleteReview(review_id);
+    })
+  };
 
   return (
     <>
@@ -227,22 +240,33 @@ export default function MentorCard({ mentor }: { mentor: MentorExtended }) {
               ) : (
                 mentor.reviews.map((review, idx) => (
                   <div key={idx} className="border-b border-component-border/70 pb-4 last:border-0 last:pb-0">
-                    <div className="flex items-center gap-2">
-                      <div className="flex">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            className={`w-4 h-4 ${review.rating >= star ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
-                          />
-                        ))}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="flex">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`w-4 h-4 ${review.rating >= star ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="text-text-secondary text-xs">{review.user.name}</span>
+                          <span className="text-text-secondary">·</span>
+                          <span className="text-xs text-text-secondary">
+                            {new Date(review.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <span className="text-text-secondary text-xs">{review.user.name}</span>
-                        <span className="text-text-secondary">·</span>
-                        <span className="text-xs text-text-secondary">
-                          {new Date(review.created_at).toLocaleDateString()}
-                        </span>
-                      </div>
+                      {review.user.id === user?.id && (
+                          <button
+                            className="cursor-pointer"
+                            onClick={() => handleDeleteReview(review.id)}
+                          >
+                            <Trash2 className="w-4 h-4 text-text-secondary hover:text-red-500" />
+                          </button>
+                        )
+                      }
                     </div>
                     <p className="mt-2 text-text-primary text-sm">{review.comment}</p>
                   </div>

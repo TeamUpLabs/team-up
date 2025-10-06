@@ -14,3 +14,17 @@ export const createReview = async (review: NewMentorReviewForm) => {
     throw error;
   }
 };
+
+export const deleteReview = async (review_id: number) => {
+  try {
+    const res = await server.delete(`/api/v1/mentors/reviews/${review_id}`);
+    if (res.status === 200) {
+      return true;
+    } else {
+      throw new Error("Failed to delete review");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
