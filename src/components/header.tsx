@@ -89,7 +89,7 @@ export default function Header() {
             멘토링
           </Link>
           <Link
-            href="#"
+            href="/event"
             className="hover:text-point-color-purple transition-colors duration-200"
             onClick={(e) => {
               if (!isAuthenticated()) {
