@@ -1,19 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import Search from "@/components/ui/Search";
+import { useState } from "react";
 import UserDropdown from "@/components/platform/UserDropdown";
 import { Home, UserRoundPlus } from "lucide-react";
 import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
 import Badge from "@/components/ui/Badge";
 import EnrollMentorModal from "@/components/mentoring/modal/EnrollMentorModal";
-
-interface HeaderProps {
-  searchQuery?: string;
-  onSearchQueryChange?: (query: string) => void;
-  isSearchOpen?: boolean;
-  onSearchOpenChange?: (isOpen: boolean) => void;
-}
 
 const icons: IconProps[] = [
   {
@@ -23,59 +15,8 @@ const icons: IconProps[] = [
   }
 ]
 
-export default function Header({
-  searchQuery = '',
-  onSearchQueryChange = () => { },
-  isSearchOpen: propIsSearchOpen = false,
-  onSearchOpenChange: setPropIsSearchOpen = () => { }
-}: HeaderProps) {
-  const [localIsSearchOpen, setLocalIsSearchOpen] = useState(propIsSearchOpen);
-  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
-  const inputRef = useRef<HTMLInputElement>(null);
+export default function Header() {
   const [isEnrollMentorModalOpen, setIsEnrollMentorModalOpen] = useState(false);
-
-  // Sync with prop
-  useEffect(() => {
-    setLocalIsSearchOpen(propIsSearchOpen);
-  }, [propIsSearchOpen]);
-
-  // Sync search query with prop
-  useEffect(() => {
-    setLocalSearchQuery(searchQuery);
-  }, [searchQuery]);
-
-  const handleSearchChange = (query: string) => {
-    setLocalSearchQuery(query);
-    onSearchQueryChange(query);
-  };
-
-  const handleSearchOpenChange = useCallback((isOpen: boolean) => {
-    setLocalIsSearchOpen(isOpen);
-    setPropIsSearchOpen(isOpen);
-  }, [setPropIsSearchOpen]);
-
-  // Handle keyboard shortcut for search
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Only trigger if not in an input field and '/' is pressed
-      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
-        e.preventDefault();
-        handleSearchOpenChange(true);
-        // Use setTimeout to ensure the input is rendered before focusing
-        setTimeout(() => {
-          inputRef.current?.focus();
-        }, 0);
-      }
-      // Close search on Escape key
-      if (e.key === 'Escape' && localIsSearchOpen) {
-        e.preventDefault();
-        handleSearchOpenChange(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [localIsSearchOpen, handleSearchOpenChange]);
 
   return (
     <div className="w-full">
@@ -84,18 +25,6 @@ export default function Header({
           <div className="flex items-center">
             <SlideingMenu icons={icons} />
           </div>
-
-          {localIsSearchOpen && (
-            <div className="flex-1">
-              <Search
-                placeholder="내용, 태그, 작성자를 검색하세요."
-                searchQuery={localSearchQuery}
-                setSearchQuery={handleSearchChange}
-                inputRef={inputRef}
-                autoFocus
-              />
-            </div>
-          )}
           <div className="flex items-center gap-6">
             <Badge
               content={
