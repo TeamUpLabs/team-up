@@ -26,7 +26,7 @@ export default function SearchBar({
               onChange={(e) => setSearchLookingforQuery(e.target.value)}
             />
 
-            <span className={`absolute inset-y-0 start-2 text-text-secondary transition-transform peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-7 text-sm font-medium cursor-text ${searchLookingforQuery == '' ? "translate-y-0" : "-translate-y-7"}`}>Looking for</span>
+            <span className={`absolute bg-component-background px-1 inset-y-0 start-2 text-text-secondary transition-transform peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-7 text-sm font-medium cursor-text ${searchLookingforQuery == '' ? "translate-y-0" : "-translate-y-7"}`}>Looking for</span>
           </label>
         </div>
 
@@ -42,7 +42,7 @@ export default function SearchBar({
               onChange={(e) => setSearchAvailableforQuery(e.target.value)}
             />
 
-            <span className={`absolute inset-y-0 start-3 text-text-secondary transition-transform peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-7 text-sm font-medium cursor-text ${searchAvailableforQuery == '' ? "translate-y-0" : "-translate-y-7"}`}>Available for</span>
+            <span className={`absolute bg-component-background px-1 inset-y-0 start-3 text-text-secondary transition-transform peer-placeholder-shown:translate-y-0 peer-focus:-translate-y-7 text-sm font-medium cursor-text ${searchAvailableforQuery == '' ? "translate-y-0" : "-translate-y-7"}`}>Available for</span>
           </label>
         </div>
       </div>
