@@ -8,9 +8,6 @@ import Badge from "@/components/ui/Badge"
 
 export default function Header() {
   const [isMounted, setIsMounted] = useState(false);
-  const alertServicePreparing = () => {
-    useAuthStore.getState().setAlert("서비스 준비중입니다.", "info");
-  }
   const alertServiceisNotAuthenticated = () => {
     useAuthStore.getState().setAlert("로그인 후 이용해주세요.", "info");
   }
@@ -96,9 +93,6 @@ export default function Header() {
                 e.preventDefault();
                 alertServiceisNotAuthenticated();
                 return;
-              } else if (process.env.NODE_ENV === 'production') {
-                e.preventDefault();
-                alertServicePreparing();
               }
             }}
           >
