@@ -14,4 +14,8 @@ export interface Event {
   size: EventSize;
   color: EventColor;
   description: string;
+  fullDescription: string;
+  organizer: string;
+  schedule: string[];
+  tags: string[];
 }
