@@ -86,7 +86,7 @@ export default function Events() {
       </div>
 
       <Link
-        href="#"
+        href="/event"
         className="flex group mt-12 justify-center w-full sm:w-fit justify-self-center"
       >
         <Badge
