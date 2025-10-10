@@ -3,10 +3,16 @@ import { ArrowRight, Users, MapPin, CalendarMonth } from "flowbite-react-icons/o
 import Badge, { BadgeColor } from '@/components/ui/Badge';
 import Link from 'next/link';
 import { Event } from '@/types/event/Event';
+import { useAuthStore } from '@/auth/authStore';
 
-export default function Events() {  
-  const events: Event[] = (eventsData as Event[]).slice(0, 3);
+export default function Events() {
+  const alertServiceisNotAuthenticated = () => {
+    useAuthStore.getState().setAlert("로그인 후 이용해주세요.", "info");
+  }
+  const isAuthenticated = useAuthStore.getState().isAuthenticated;
   
+  const events: Event[] = (eventsData as Event[]).slice(0, 3);
+
   const colorPalette = [
     {
       color: "green",
@@ -29,7 +35,7 @@ export default function Events() {
       borderColor: "border-blue-500",
       iconColor: "text-blue-500",
       textColor: "text-blue-500",
-      bgColor: "bg-blue-500", 
+      bgColor: "bg-blue-500",
       hoverBgColor: "hover:bg-blue-600",
     },
   ];
@@ -73,7 +79,7 @@ export default function Events() {
                 {event.location}
               </div>
             </div>
-            <button 
+            <button
               className={`flex items-center gap-2 justify-self-center 
                 ${colorPalette[index % colorPalette.length].textColor}
                 p-2 cursor-pointer hover:underline`}
@@ -88,6 +94,13 @@ export default function Events() {
       <Link
         href="/event"
         className="flex group mt-12 justify-center w-full sm:w-fit justify-self-center"
+        onClick={(e) => {
+          if (!isAuthenticated()) {
+            e.preventDefault();
+            alertServiceisNotAuthenticated();
+            return;
+          }
+        }}
       >
         <Badge
           content={
