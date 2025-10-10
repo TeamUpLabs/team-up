@@ -4,7 +4,7 @@ import Search from "@/components/ui/Search";
 import UserDropdown from "@/components/platform/UserDropdown";
 import NotificationDropdown from "@/components/platform/NotificationDropdown";
 import { OpenSidebarAlt, CloseSidebarAlt } from "flowbite-react-icons/outline";
-import { Home, Search as SearchIcon } from "lucide-react";
+import { Home, Search as SearchIcon, Users, Speech, Ticket } from "lucide-react";
 
 interface HeaderProps {
   isSidebarOpen: boolean;
@@ -47,6 +47,21 @@ export default function Header({ isSidebarOpen, setIsSidebarOpen, isNotification
       icon: <Home className="w-5 h-5" />,
       label: "Home",
       href: "/",
+    },
+    {
+      icon: <Users className="w-5 h-5" />,
+      label: "community",
+      href: "/community",
+    },
+    {
+      icon: <Speech className="w-5 h-5"/>,
+      label: "mentoring",
+      href: "/mentoring",
+    },
+    {
+      icon: <Ticket className="w-5 h-5"/>,
+      label: "event",
+      href: "/event",
     },
     {
       icon: <SearchIcon className="w-5 h-5" />,

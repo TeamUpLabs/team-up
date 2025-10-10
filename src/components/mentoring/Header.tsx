@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import UserDropdown from "@/components/platform/UserDropdown";
-import { Home, UserRoundPlus } from "lucide-react";
+import { Home, UserRoundPlus, Users, Speech, Ticket } from "lucide-react";
 import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
 import Badge from "@/components/ui/Badge";
 import EnrollMentorModal from "@/components/mentoring/modal/EnrollMentorModal";
@@ -12,7 +12,22 @@ const icons: IconProps[] = [
     icon: <Home className="w-5 h-5" />,
     label: "Home",
     href: "/",
-  }
+  },
+  {
+    icon: <Users className="w-5 h-5" />,
+    label: "community",
+    href: "/community",
+  },
+  {
+    icon: <Speech className="w-5 h-5"/>,
+    label: "mentoring",
+    href: "/mentoring",
+  },
+  {
+    icon: <Ticket className="w-5 h-5"/>,
+    label: "event",
+    href: "/event",
+  },
 ]
 
 export default function Header() {

@@ -1,6 +1,7 @@
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import Tooltip from "./Tooltip";
 
 export interface IconProps {
   icon: React.ReactNode;
@@ -28,20 +29,20 @@ export default function SlideingMenu({ icons, isSearchOpen, setIsSearchOpen }: S
         <Menu className="w-5 h-5" />
       </button>
       <div
-        className={`flex items-center gap-2 transition-all duration-300 overflow-hidden ${isMenuOpen ? 'max-w-[200px]' : 'max-w-0'}`}
+        className={`flex items-center gap-2 transition-all duration-300 overflow-hidden ${isMenuOpen ? 'max-w-[300px]' : 'max-w-0'}`}
         onMouseEnter={() => setIsMenuOpen(true)}
         onMouseLeave={() => setIsMenuOpen(false)}
       >
         {icons.map((value) => (
-          <Link
-            key={value.label}
-            href={value.href || ""}
-            className="p-2 rounded-md text-text-secondary hover:bg-component-tertiary-background hover:text-text-primary cursor-pointer"
-            aria-label={value.label}
-            onClick={() => value.label === "Search" && setIsSearchOpen?.(!isSearchOpen)}
-          >
-            {value.icon}
-          </Link>
+          <Tooltip key={value.label} content={value.label} placement="bottom" className="p-2 hover:bg-component-tertiary-background rounded-md text-text-secondary hover:text-text-primary cursor-pointer">
+            <Link
+              href={value.href || ""}
+              aria-label={value.label}
+              onClick={() => value.label === "Search" && setIsSearchOpen?.(!isSearchOpen)}
+            >
+              {value.icon}
+            </Link>
+          </Tooltip>
         ))}
       </div>
     </div>

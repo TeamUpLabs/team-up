@@ -1,6 +1,6 @@
 import { OpenSidebarAlt, CloseSidebarAlt } from "flowbite-react-icons/outline";
 import UserDropdown from "@/components/platform/UserDropdown";
-import { Home, Pencil, Search as SearchIcon } from "lucide-react";
+import { Home, Pencil, Search as SearchIcon, Users, Speech, Ticket } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
 import { useState, useRef, useEffect, useCallback, ReactNode } from "react";
@@ -22,6 +22,21 @@ const icons: IconProps[] = [
     icon: <Home className="w-5 h-5" />,
     label: "Home",
     href: "/",
+  },
+  {
+    icon: <Users className="w-5 h-5" />,
+    label: "community",
+    href: "/community",
+  },
+  {
+    icon: <Speech className="w-5 h-5"/>,
+    label: "mentoring",
+    href: "/mentoring",
+  },
+  {
+    icon: <Ticket className="w-5 h-5"/>,
+    label: "event",
+    href: "/event",
   },
   {
     icon: <SearchIcon className="w-5 h-5" />,

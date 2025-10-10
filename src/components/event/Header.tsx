@@ -1,7 +1,7 @@
 "use client";
 
 import UserDropdown from "@/components/platform/UserDropdown";
-import { Home } from "lucide-react";
+import { Home, Users, Speech, Ticket } from "lucide-react";
 import SlideingMenu, { IconProps } from "@/components/ui/SlideingMenu";
 
 const icons: IconProps[] = [
@@ -9,7 +9,22 @@ const icons: IconProps[] = [
     icon: <Home className="w-5 h-5" />,
     label: "Home",
     href: "/",
-  }
+  },
+  {
+    icon: <Users className="w-5 h-5" />,
+    label: "community",
+    href: "/community",
+  },
+  {
+    icon: <Speech className="w-5 h-5"/>,
+    label: "mentoring",
+    href: "/mentoring",
+  },
+  {
+    icon: <Ticket className="w-5 h-5"/>,
+    label: "event",
+    href: "/event",
+  },
 ]
 
 export default function Header() {
