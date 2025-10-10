@@ -1,10 +1,11 @@
+export type EventType = 'hackathon' | 'conference' | 'meetup';
 export type EventSize = 'small' | 'medium' | 'large';
 export type EventColor = 'violet' | 'green' | 'pink' | 'emerald' | 'amber' | 'red' | 'blue';
 
 export interface Event {
   id: number;
   title: string;
-  type: string;
+  type: EventType;
   date: string;
   location: string;
   attendees: number;

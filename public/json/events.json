@@ -1,26 +1,222 @@
 [
     {
         "id": 1,
-        "title": "프론트엔드 밋업",
-        "description": "최신 프론트엔드 기술 트렌드와 실무 적용 사례 공유",
+        "title": "프론트엔드 개발자 밋업",
+        "type": "meetup",
         "date": "2025년 6월 15일",
         "location": "온라인 (Zoom)",
-        "participant": 100
+        "attendees": 100,
+        "price": "무료",
+        "color": "blue",
+        "description": "최신 프론트엔드 기술 트렌드와 실무 적용 사례를 공유하는 밋업"
     },
     {
         "id": 2,
         "title": "TeamUp 코딩 해커톤",
-        "description": "24시간 동안 혁신적인 서비스를 함께 개발하는 챌린지",
+        "type": "hackathon",
         "date": "2025년 7월 1-2일",
-        "location": "서울 강남구",
-        "participant": 45
+        "location": "서울 강남구 테헤란로",
+        "attendees": 45,
+        "price": "참가비 10,000원",
+        "color": "violet",
+        "description": "24시간 동안 혁신적인 서비스를 함께 개발하는 해커톤 챌린지"
     },
     {
         "id": 3,
         "title": "AI 개발자 컨퍼런스",
-        "description": "인공지능과 머신러닝의 최신 동향과 실무 활용법",
+        "type": "conference",
         "date": "2025년 7월 20일",
         "location": "온라인 (YouTube Live)",
-        "participant": 50
+        "attendees": 50,
+        "price": "유료 (얼리버드 30,000원)",
+        "color": "green",
+        "description": "인공지능과 머신러닝의 최신 동향과 실무 활용법을 다루는 컨퍼런스"
+    },
+    {
+        "id": 4,
+        "title": "스타트업 네트워킹 데이",
+        "type": "meetup",
+        "date": "2025년 8월 5일",
+        "location": "부산 해운대구 센텀동",
+        "attendees": 80,
+        "price": "무료",
+        "color": "pink",
+        "description": "스타트업 창업자와 투자자들의 네트워킹을 위한 특별 이벤트"
+    },
+    {
+        "id": 5,
+        "title": "풀스택 개발 워크숍",
+        "type": "conference",
+        "date": "2025년 8월 12일",
+        "location": "대구 동구 신천동",
+        "attendees": 120,
+        "price": "50,000원",
+        "color": "emerald",
+        "description": "백엔드와 프론트엔드를 아우르는 풀스택 개발 실무 교육"
+    },
+    {
+        "id": 6,
+        "title": "모바일 앱 해커톤",
+        "type": "hackathon",
+        "date": "2025년 9월 8-9일",
+        "location": "서울 홍대입구",
+        "attendees": 60,
+        "price": "참가비 15,000원",
+        "color": "amber",
+        "description": "모바일 애플리케이션 개발에 특화된 48시간 해커톤"
+    },
+    {
+        "id": 7,
+        "title": "디자인 시스템 밋업",
+        "type": "meetup",
+        "date": "2025년 9월 18일",
+        "location": "온라인 (Discord)",
+        "attendees": 90,
+        "price": "무료",
+        "color": "blue",
+        "description": "디자인 시스템 구축과 운영 경험을 공유하는 모임"
+    },
+    {
+        "id": 8,
+        "title": "클라우드 컴퓨팅 컨퍼런스",
+        "type": "conference",
+        "date": "2025년 10월 3일",
+        "location": "서울 코엑스",
+        "attendees": 200,
+        "price": "얼리버드 80,000원",
+        "color": "green",
+        "description": "AWS, Azure, GCP 등 클라우드 플랫폼 활용 전략"
+    },
+    {
+        "id": 9,
+        "title": "React 개발자 모임",
+        "type": "meetup",
+        "date": "2025년 10월 14일",
+        "location": "성남 판교 테크노밸리",
+        "attendees": 70,
+        "price": "5,000원",
+        "color": "blue",
+        "description": "React 생태계와 최신 업데이트를 나누는 정기 모임"
+    },
+    {
+        "id": 10,
+        "title": "데이터 사이언스 해커톤",
+        "type": "hackathon",
+        "date": "2025년 11월 5-6일",
+        "location": "대전 유성구",
+        "attendees": 40,
+        "price": "참가비 20,000원",
+        "color": "violet",
+        "description": "빅데이터 분석과 머신러닝 모델 개발에 도전하는 해커톤"
+    },
+    {
+        "id": 11,
+        "title": "DevOps 실무 컨퍼런스",
+        "type": "conference",
+        "date": "2025년 11월 18일",
+        "location": "온라인 (Zoom Webinar)",
+        "attendees": 150,
+        "price": "60,000원",
+        "color": "emerald",
+        "description": "CI/CD 파이프라인과 인프라 자동화 실무 경험 공유"
+    },
+    {
+        "id": 12,
+        "title": "UX/UI 디자이너 밋업",
+        "type": "meetup",
+        "date": "2025년 12월 2일",
+        "location": "서울 강남구 역삼동",
+        "attendees": 85,
+        "price": "무료",
+        "color": "pink",
+        "description": "사용자 경험 디자인과 인터페이스 설계 노하우 공유"
+    },
+    {
+        "id": 13,
+        "title": "블록체인 기술 세미나",
+        "type": "conference",
+        "date": "2025년 12월 10일",
+        "location": "부산 센텀시티",
+        "attendees": 110,
+        "price": "40,000원",
+        "color": "amber",
+        "description": "블록체인 기술 발전과 실제 적용 사례를 다루는 세미나"
+    },
+    {
+        "id": 14,
+        "title": "게임 개발 해커톤",
+        "type": "hackathon",
+        "date": "2026년 1월 12-13일",
+        "location": "서울 상암동",
+        "attendees": 55,
+        "price": "참가비 12,000원",
+        "color": "red",
+        "description": "인디 게임 개발에 도전하는 크리에이티브 해커톤"
+    },
+    {
+        "id": 15,
+        "title": "마이크로서비스 아키텍처 밋업",
+        "type": "meetup",
+        "date": "2026년 1월 20일",
+        "location": "온라인 (Teams)",
+        "attendees": 95,
+        "price": "무료",
+        "color": "green",
+        "description": "분산 시스템과 마이크로서비스 설계 경험을 나누는 모임"
+    },
+    {
+        "id": 16,
+        "title": "사이버 보안 컨퍼런스",
+        "type": "conference",
+        "date": "2026년 2월 8일",
+        "location": "서울 삼성동 코엑스",
+        "attendees": 180,
+        "price": "얼리버드 90,000원",
+        "color": "red",
+        "description": "정보보안 위협과 대응 전략을 다루는 전문 컨퍼런스"
+    },
+    {
+        "id": 17,
+        "title": "오픈소스 기여자 밋업",
+        "type": "meetup",
+        "date": "2026년 2월 15일",
+        "location": "성남 판교",
+        "attendees": 75,
+        "price": "5,000원",
+        "color": "emerald",
+        "description": "오픈소스 프로젝트 기여 경험과 노하우를 공유하는 모임"
+    },
+    {
+        "id": 18,
+        "title": "웹 성능 최적화 워크숍",
+        "type": "conference",
+        "date": "2026년 3월 5일",
+        "location": "대구 수성구",
+        "attendees": 130,
+        "price": "55,000원",
+        "color": "blue",
+        "description": "웹사이트 속도 개선과 사용자 경험 향상을 위한 실무 교육"
+    },
+    {
+        "id": 19,
+        "title": "IoT 개발자 해커톤",
+        "type": "hackathon",
+        "date": "2026년 3월 18-19일",
+        "location": "서울 마포구",
+        "attendees": 35,
+        "price": "참가비 18,000원",
+        "color": "violet",
+        "description": "사물인터넷 디바이스와 서비스 개발에 특화된 해커톤"
+    },
+    {
+        "id": 20,
+        "title": "테크 리더스 네트워킹",
+        "type": "meetup",
+        "date": "2026년 3월 25일",
+        "location": "서울 강남구",
+        "attendees": 65,
+        "price": "참가비 8,000원",
+        "color": "pink",
+        "description": "기술팀 리더들과의 네트워킹과 경험 공유 모임"
     }
 ]

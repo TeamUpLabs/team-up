@@ -1,119 +1,89 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Event } from "@/types/event/Event";
 import EventCard from "@/components/event/EventCard";
+import SearchBar from "@/components/event/SearchBar";
+import { Sparkles, Code, Mic, Users, Rocket } from "lucide-react";
+import events from "../../../public/json/events.json";
+import { assignEventSizes } from "@/lib/eventUtils";
 
-const events: Event[] = [
-  {
-    id: 1,
-    title: "AI Hackathon 2025",
-    type: "hackathon",
-    date: "Mar 15-17, 2025",
-    location: "San Francisco, CA",
-    attendees: 500,
-    price: "Free",
-    image: "/placeholder.svg?height=400&width=600",
-    size: "large",
-    color: "primary",
-    description: "Build the future of AI in 48 hours",
-  },
-  {
-    id: 2,
-    title: "Design Systems Conference",
-    type: "conference",
-    date: "Apr 5, 2025",
-    location: "New York, NY",
-    attendees: 1200,
-    price: "$299",
-    image: "/placeholder.svg?height=300&width=400",
-    size: "medium",
-    color: "secondary",
-    description: "Learn from industry leaders",
-  },
-  {
-    id: 3,
-    title: "React Developers Meetup",
-    type: "meetup",
-    date: "Mar 20, 2025",
-    location: "Austin, TX",
-    attendees: 80,
-    price: "Free",
-    image: "/placeholder.svg?height=300&width=400",
-    size: "small",
-    color: "accent",
-    description: "Monthly React community gathering",
-  },
-  {
-    id: 4,
-    title: "Web3 Summit",
-    type: "conference",
-    date: "May 10-12, 2025",
-    location: "Miami, FL",
-    attendees: 2000,
-    price: "$499",
-    image: "/placeholder.svg?height=400&width=600",
-    size: "large",
-    color: "chart-1",
-    description: "The future of decentralized web",
-  },
-  {
-    id: 5,
-    title: "Startup Weekend",
-    type: "hackathon",
-    date: "Apr 1-3, 2025",
-    location: "Seattle, WA",
-    attendees: 150,
-    price: "$99",
-    image: "/placeholder.svg?height=300&width=400",
-    size: "medium",
-    color: "chart-2",
-    description: "Launch your startup idea",
-  },
-  {
-    id: 6,
-    title: "Coffee & Code",
-    type: "meetup",
-    date: "Every Friday",
-    location: "Portland, OR",
-    attendees: 30,
-    price: "Free",
-    image: "/placeholder.svg?height=300&width=400",
-    size: "small",
-    color: "chart-3",
-    description: "Casual coding sessions",
-  },
-  {
-    id: 7,
-    title: "DevOps Days",
-    type: "conference",
-    date: "Jun 8-9, 2025",
-    location: "Boston, MA",
-    attendees: 800,
-    price: "$349",
-    image: "/placeholder.svg?height=300&width=400",
-    size: "medium",
-    color: "chart-4",
-    description: "Cloud & infrastructure best practices",
-  },
-  {
-    id: 8,
-    title: "Women in Tech Meetup",
-    type: "meetup",
-    date: "Mar 25, 2025",
-    location: "Chicago, IL",
-    attendees: 120,
-    price: "Free",
-    image: "/placeholder.svg?height=300&width=400",
-    size: "small",
-    color: "chart-5",
-    description: "Empowering women in technology",
-  },
+const categories = [
+  { id: "all", label: "All Events", icon: Sparkles },
+  { id: "hackathon", label: "Hackathons", icon: Code },
+  { id: "conference", label: "Conferences", icon: Mic },
+  { id: "meetup", label: "Meetups", icon: Users },
 ]
 
 export default function EventPage() {
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [searchEventQuery, setSearchEventQuery] = useState("");
+  const [displayedEventsCount, setDisplayedEventsCount] = useState(10);
+
+  // 필터가 변경될 때마다 표시 카운트를 초기화
+  useEffect(() => {
+    setDisplayedEventsCount(10);
+  }, [activeCategory, searchEventQuery]);
+
+  const eventsWithSizes = assignEventSizes(events as Event[]);
+
+  const filteredEvents = activeCategory === "all" ? eventsWithSizes : eventsWithSizes.filter((event) => event.type === activeCategory)
+
+  const filteredEventsBySearch = filteredEvents.filter((event) => {
+    return event.title.toLowerCase().includes(searchEventQuery.toLowerCase()) ||
+      event.type.toLowerCase().includes(searchEventQuery.toLowerCase()) ||
+      event.location.toLowerCase().includes(searchEventQuery.toLowerCase())
+  })
+
+  const displayedEvents = filteredEventsBySearch.slice(0, displayedEventsCount);
+
+  const handleLoadMore = () => {
+    setDisplayedEventsCount(prev => Math.min(prev + 5, filteredEventsBySearch.length));
+  };
+
   return (
-    <div className="grid auto-rows-[280px] grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {events.map((event) => (
-        <EventCard key={event.id} event={event} />
-      ))}
+    <div className="space-y-8">
+      <div className="space-y-6">
+        <div className="flex flex-col justify-center items-center">
+          <h1 className="text-6xl font-black">DISCOVER</h1>
+          <p className="text-text-secondary text-xl">Find your next adventure in hackathons, conferences, and meetups</p>
+        </div>
+        <SearchBar searchEventQuery={searchEventQuery} setSearchEventQuery={setSearchEventQuery} />
+      </div>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        {categories.map((category) => {
+          const Icon = category.icon
+          return (
+            <button
+              key={category.id}
+              onClick={() => setActiveCategory(category.id)}
+              className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-full transition-all hover:scale-105 ${activeCategory === category.id ? "bg-blue-400 text-white" : "border border-component-border hover:bg-teal-500 hover:text-white"}`}
+            >
+              <Icon className="h-4 w-4" />
+              {category.label}
+            </button>
+          )
+        })}
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr">
+        {displayedEvents.map((event) => (
+          <EventCard key={event.id} event={event as Event} />
+        ))}
+      </div>
+
+      {/* Load More */}
+      {displayedEventsCount < filteredEventsBySearch.length && (
+        <div className="flex justify-center pt-8">
+          <button
+            onClick={handleLoadMore}
+            className="flex items-center gap-2 rounded-full px-4 py-2 text-sm border border-component-border font-semibold text-text-primary transition-all duration-300 hover:scale-[1.02] focus:outline-none hover:bg-teal-500 hover:text-white"
+            aria-label="Load more events"
+          >
+            <Rocket className="h-4 w-4" />
+            Load More Events
+          </button>
+        </div>
+      )}
     </div>
   );
 }
