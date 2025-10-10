@@ -11,7 +11,7 @@ export interface Event {
   attendees: number;
   price: string;
   image?: string;
-  size: EventSize;
+  size?: EventSize;
   color: EventColor;
   description: string;
   fullDescription: string;

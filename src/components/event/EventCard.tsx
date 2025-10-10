@@ -33,13 +33,12 @@ const colorClasses: Record<EventColor, string> = {
 export default function EventCard({ event }: EventCardProps) {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const { isDark } = useTheme();
-
   return (
     <>
       <div
         className={cn(
           "group relative overflow-hidden rounded-3xl border-4 !border-white bg-gradient-to-br transition-all duration-300 shadow-xl hover:scale-[1.02] hover:shadow-2xl",
-          sizeClasses[event.size],
+          sizeClasses[event.size || 'medium'],
           colorClasses[event.color as keyof typeof colorClasses],
         )}
       >

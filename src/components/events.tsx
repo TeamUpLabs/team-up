@@ -2,17 +2,11 @@ import eventsData from '../../public/json/events.json';
 import { ArrowRight, Users, MapPin, CalendarMonth } from "flowbite-react-icons/outline"
 import Badge, { BadgeColor } from '@/components/ui/Badge';
 import Link from 'next/link';
+import { Event } from '@/types/event/Event';
 
-interface event {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  location: string;
-  participant: number;
-}
-
-export default function Events() {  const events: event[] = eventsData.slice(0, 3);
+export default function Events() {  
+  const events: Event[] = (eventsData as Event[]).slice(0, 3);
+  
   const colorPalette = [
     {
       color: "green",
@@ -68,7 +62,7 @@ export default function Events() {  const events: event[] = eventsData.slice(0, 
               />
               <div className="flex items-center gap-1 text-sm text-text-secondary">
                 <Users className="h-4 w-4" />
-                {event.participant}명 참여
+                {event.attendees}명 참여
               </div>
             </div>
             <div className="space-y-2">
