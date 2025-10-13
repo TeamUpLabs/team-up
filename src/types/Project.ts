@@ -46,7 +46,7 @@ export interface Project extends Partial<ResourceLinksMap> {
   end_date: string;
   tags: string[];
   location: string;
-  github_url?: string;
+  github_url?: string[];
   completed_at: string;
   owner: UserBrief
   members: ProjectMember[];
@@ -82,7 +82,7 @@ export const blankProject: Project = {
   end_date: "",
   tags: [],
   location: "",
-  github_url: "",
+  github_url: [],
   completed_at: "",
   owner: blankUserBrief,
   members: [],

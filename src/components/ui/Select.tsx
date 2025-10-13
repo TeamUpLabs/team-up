@@ -406,7 +406,7 @@ export default function Select({
                           key={option.value}
                           onClick={() => handleOptionSelect(option)}
                           className={`
-                            px-3 py-2 cursor-pointer text-sm
+                            px-3 py-2 cursor-pointer text-sm first:rounded-t-md last:rounded-b-md
                             ${option.disabled ? "text-text-secondary cursor-not-allowed" : "hover:bg-component-secondary-background"}
                             ${isSelected ? "bg-component-secondary-background text-text-primary" : "text-text-primary"}
                             ${isFocused ? "bg-component-secondary-background" : ""}
