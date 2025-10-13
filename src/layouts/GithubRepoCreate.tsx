@@ -16,7 +16,13 @@ interface CreateRepositoryData {
   is_private: boolean;
 }
 
-export default function GithubRepoCreate() {
+interface GithubRepoCreateProps {
+  setIsGithubRepoCreated: (value: boolean) => void;
+}
+
+export default function GithubRepoCreate({
+  setIsGithubRepoCreated,
+}: GithubRepoCreateProps) {
   const { project } = useProject();
   const { user, isLoading } = useUser();
   const [formData, setFormData] = useState<CreateRepositoryData>({
@@ -237,6 +243,7 @@ export default function GithubRepoCreate() {
             )}
           </div>
         </div>
+        <div className="flex items-center justify-between">
         <SubmitBtn
           onClick={handleConnect}
           submitStatus={submitStatus}
@@ -246,6 +253,14 @@ export default function GithubRepoCreate() {
           fit
           withIcon
         />
+
+        <button
+          onClick={() => setIsGithubRepoCreated(true)}
+          className="text-sm text-text-primary hover:underline hover:text-point-color-indigo cursor-pointer"
+        >
+          이미 저장소가 있나요?
+        </button>
+        </div>
       </div>
     </div>
   )
