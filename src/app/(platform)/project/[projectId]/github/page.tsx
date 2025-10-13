@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useProject } from "@/contexts/ProjectContext";
 import GithubRepoCreate from "@/layouts/GithubRepoCreate";
+import GithubRepoConnect from "@/layouts/GithubRepoConnect";
 import RepoCard from "@/components/project/github/RepoCard";
 import IssueCountCard from "@/components/project/github/IssueCountCard";
 import PRCountCard from "@/components/project/github/PRCountCard";
@@ -29,6 +30,8 @@ import { useUser } from "@/contexts/UserContext";
 export default function GithubPage() {
   const { project } = useProject();
   const { user } = useUser();
+
+  const [isGithubRepoCreated, setIsGithubRepoCreated] = useState(false);
 
   const [repoData, setRepoData] = useState<RepoData | null>(null);
   const [prData, setPrData] = useState<PrData[]>([]);
@@ -152,7 +155,11 @@ export default function GithubPage() {
           )}
         </div>
       ) : (
-        <GithubRepoCreate />
+        isGithubRepoCreated ? (
+          <GithubRepoConnect setIsGithubRepoCreated={setIsGithubRepoCreated} />
+        ) : (
+          <GithubRepoCreate setIsGithubRepoCreated={setIsGithubRepoCreated} />
+        )
       )}
     </div>
   );
