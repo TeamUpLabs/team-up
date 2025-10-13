@@ -103,14 +103,24 @@ export default function OrgCard({ orgData }: OrgDataProps) {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex flex-col items-center gap-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-lg p-4">
-          <span className="text-lg font-semibold">{orgData.public_repos || 0}</span>
-          <span className="text-lg font-semibold">Total Repos</span>
-        </div>
-        <div className="flex flex-col items-center gap-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-lg p-4">
-          <span className="text-lg font-semibold">{orgData.collaborators || 0}</span>
-          <span className="text-lg font-semibold">Team Members</span>
-        </div>
+        <Badge
+          content={
+            <div className="flex flex-col w-full items-center gap-1 rounded-lg p-4">
+              <span className="text-lg font-semibold">{orgData.public_repos || 0}</span>
+              <span className="text-lg font-semibold">Total Repos</span>
+            </div>
+          }
+          color="blue"
+        />
+        <Badge
+          content={
+            <div className="flex flex-col w-full items-center gap-1 rounded-lg p-4">
+              <span className="text-lg font-semibold">{orgData.collaborators || 0}</span>
+              <span className="text-lg font-semibold">Team Members</span>
+            </div>
+          }
+          color="green"
+        />
       </div>
     </div>
   )
