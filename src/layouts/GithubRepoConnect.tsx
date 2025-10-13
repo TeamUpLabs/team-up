@@ -102,7 +102,7 @@ export default function GithubRepoConnect({
     setSubmitStatus('submitting');
     try {
       const res = await server.put(`/api/v1/projects/${project?.id}`, {
-        github_url: repoUrl,
+        github_url: [repoUrl],
       })
 
       if (res.status === 200) {
@@ -123,7 +123,7 @@ export default function GithubRepoConnect({
   };
 
   return (
-    <div className="w-full max-w-2xl h-[85vh] flex flex-col overflow-y-auto border border-component-border bg-component-background p-6 rounded-lg space-y-6">
+    <div className="w-full flex flex-col h-full overflow-y-auto p-6 rounded-lg space-y-6">
       <div className="text-center">
         <Github className="text-text-primary w-12 h-12 mb-2 justify-self-center" />
         <h1 className="text-2xl font-bold text-text-primary">Github 레포지터리 연결</h1>
@@ -220,7 +220,7 @@ export default function GithubRepoConnect({
         />
 
         <button
-          onClick={() => setIsGithubRepoCreated(false)}
+          onClick={() => setIsGithubRepoCreated?.(false)}
           className="text-sm text-text-primary hover:underline hover:text-point-color-indigo cursor-pointer"
         >
           저장소가 없나요?

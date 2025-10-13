@@ -87,7 +87,6 @@ export default function GithubRepoCreate({
     }
 
     setSubmitStatus('submitting');
-    console.log({...formData, github_access_token: user?.auth.provider === "github" ? user?.auth.provider_access_token : null})
     try {
       const res = await server.post(`/api/v1/projects/${project?.id}/github/create-repo`, JSON.stringify({
         ...formData,
@@ -116,7 +115,7 @@ export default function GithubRepoCreate({
   }
 
   return (
-    <div className="w-full max-w-2xl max-h-[85vh] overflow-y-auto border border-component-border bg-component-background p-6 rounded-lg space-y-6">
+    <div className="w-full overflow-y-auto p-6 rounded-lg space-y-6">
       <div className="text-center">
         <Github className="text-text-primary w-12 h-12 mb-2 justify-self-center" />
         <h1 className="text-2xl font-bold text-text-primary">Github 레포지터리 생성</h1>
