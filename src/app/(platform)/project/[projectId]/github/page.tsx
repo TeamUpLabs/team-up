@@ -63,7 +63,7 @@ export default function GithubPage() {
   }, [project, user]);
 
   useEffect(() => {
-    if (project?.github_url) {
+    if (project?.github_url && project.github_url.length > 0) {
       const initialRepo = project.github_url[0];
       setSelectedRepo(initialRepo);
       const repoName = initialRepo.split("/").pop() || "";

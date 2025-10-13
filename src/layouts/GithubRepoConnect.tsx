@@ -99,6 +99,16 @@ export default function GithubRepoConnect({
   }, [repoUrl, debouncedValidation]);
 
   const handleConnect = async () => {
+    if (repoUrl == "") {
+      useAuthStore.getState().setAlert("저장소 URL을 입력해주세요.", "error");
+      return;
+    }
+
+    if (!isValid) {
+      useAuthStore.getState().setAlert("올바른 저장소 URL을 입력해주세요.", "error");
+      return;
+    }
+
     setSubmitStatus('submitting');
     try {
       const res = await server.put(`/api/v1/projects/${project?.id}`, {
@@ -220,7 +230,7 @@ export default function GithubRepoConnect({
         />
 
         <button
-          onClick={() => setIsGithubRepoCreated?.(false)}
+          onClick={() => setIsGithubRepoCreated(false)}
           className="text-sm text-text-primary hover:underline hover:text-point-color-indigo cursor-pointer"
         >
           저장소가 없나요?

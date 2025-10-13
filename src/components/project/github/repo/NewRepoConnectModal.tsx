@@ -13,12 +13,13 @@ export default function NewRepoConnectModal({
   onClose
 }: NewRepoConnectModalProps) {
   const [isGithubRepoCreated, setIsGithubRepoCreated] = useState(false);
+
   return (
     <ModalTemplete header="" isOpen={isOpen} onClose={onClose}>
       {isGithubRepoCreated ? (
-        <GithubRepoCreate setIsGithubRepoCreated={setIsGithubRepoCreated} />
-      ) : (
         <GithubRepoConnect setIsGithubRepoCreated={setIsGithubRepoCreated} />
+      ) : (
+        <GithubRepoCreate setIsGithubRepoCreated={setIsGithubRepoCreated} />
       )}
     </ModalTemplete>
   )
