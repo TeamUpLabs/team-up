@@ -39,6 +39,7 @@ export default function GithubPage() {
   const [issueData, setIssueData] = useState<IssueData[]>([]);
   const [githubUser, setGithubUser] = useState<GithubUser | null>(null);
   const [orgData, setOrgData] = useState<OrgData | null>(null);
+  const [selectedRepo, setSelectedRepo] = useState<string>("");
   const [selectedTab, setSelectedTab] = useState<
     | "overview"
     | "repo"
@@ -48,8 +49,6 @@ export default function GithubPage() {
     | "org"
     | "analytics"
   >("overview");
-  const org = "TeamUpLabs";
-  const repo = project?.github_url?.split("/").pop() || "";
 
   const fetchAllData = useCallback(async (org: string, repo: string) => {
     if (project?.github_url && user) {
@@ -65,9 +64,20 @@ export default function GithubPage() {
 
   useEffect(() => {
     if (project?.github_url) {
-      fetchAllData(org, repo);
+      const initialRepo = project.github_url[0];
+      setSelectedRepo(initialRepo);
+      const repoName = initialRepo.split("/").pop() || "";
+      const ownerName = initialRepo.split("/").slice(-2, -1)[0] || "";
+      fetchAllData(ownerName, repoName);
     }
-  }, [fetchAllData, project, org, repo]);
+  }, [fetchAllData, project]);
+
+  const handleRepoChange = useCallback((repoUrl: string) => {
+    setSelectedRepo(repoUrl);
+    const repoName = repoUrl.split("/").pop() || "";
+    const ownerName = repoUrl.split("/").slice(-2, -1)[0] || "";
+    fetchAllData(ownerName, repoName);
+  }, [fetchAllData]);
 
   // 안전한 기본값
   const emptyOrgData = {
@@ -111,7 +121,7 @@ export default function GithubPage() {
             프로젝트를 불러오는 중입니다. 잠시만 기다려주세요...
           </p>
         </div>
-      ) : project?.github_url ? (
+      ) : (project?.github_url && project.github_url.length > 0) ? (
         <div className="w-full space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
             <RepoCard repoData={repoData || {}} />
@@ -120,7 +130,13 @@ export default function GithubPage() {
             <CommitCountCard commitData={commitData || {}} />
           </div>
 
-          <ProfileCard user={user as User || undefined} githubUser={githubUser || undefined} onRefresh={() => fetchAllData(org, repo)} />
+          <ProfileCard user={user as User || undefined} githubUser={githubUser || undefined} onRefresh={() => {
+            if (selectedRepo) {
+              const repoName = selectedRepo.split("/").pop() || "";
+              const ownerName = selectedRepo.split("/").slice(-2, -1)[0] || "";
+              fetchAllData(ownerName, repoName);
+            }
+          }} />
 
           <Tab selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
@@ -136,6 +152,17 @@ export default function GithubPage() {
             <Repo
               repoData={repoData || emptyRepoData}
               prCount={(prData || []).length || 0}
+              availableRepos={project?.github_url?.map((url) => {
+                const repoName = url.split("/").pop() || "";
+                const ownerName = url.split("/").slice(-2, -1)[0] || "";
+                return {
+                  value: url,
+                  label: `${ownerName}/${repoName}`,
+                  name: url,
+                };
+              }) || []}
+              onRepoChange={handleRepoChange}
+              selectedRepo={selectedRepo}
             />
           )}
           {selectedTab === "issue" && (
@@ -155,11 +182,13 @@ export default function GithubPage() {
           )}
         </div>
       ) : (
-        isGithubRepoCreated ? (
-          <GithubRepoConnect setIsGithubRepoCreated={setIsGithubRepoCreated} />
-        ) : (
-          <GithubRepoCreate setIsGithubRepoCreated={setIsGithubRepoCreated} />
-        )
+        <div className="w-3xl h-[85vh] overflow-y-auto border border-component-border bg-transparent rounded-lg">
+          {isGithubRepoCreated ? (
+            <GithubRepoConnect setIsGithubRepoCreated={setIsGithubRepoCreated} />
+          ) : (
+            <GithubRepoCreate setIsGithubRepoCreated={setIsGithubRepoCreated} />
+          )}
+        </div>
       )}
     </div>
   );

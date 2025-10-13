@@ -127,7 +127,7 @@ export default function ProjectLayout({
       href: `/project/${projectId}/github`,
       isActive: pathname === `/project/${projectId}/github`,
       hasIndicator: true,
-      IndicatorColor: project?.github_url ? "green" : "red",
+      IndicatorColor: project?.github_url && project.github_url.length > 0 ? "green" : "red",
     },
     {
       icon: ArrowRightToBracketOutline,
